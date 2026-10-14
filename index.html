@@ -231,6 +231,119 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
   box-shadow: none !important;
   padding: 0;
 }
+
+
+/* === Typography hierarchy & subtle navigation surfaces, 2026-10-14 ===
+   H1 / section / accordion = clear, near-white.
+   Reading text = softer cool white.
+   Metadata and editorial notes = muted blue-gray.
+   Links = one consistent, accessible pale blue.
+   Gold and coral = editorial emphasis, never background highlight. */
+:root {
+  --bg: #111417;
+  --paper: #1D252B;
+  --ink: #DCE4E8;
+  --muted: #A6B3BC;
+  --line: #35414A;
+  --accent: #EDA994;
+  --text-heading: #F5F7F8;
+  --text-body: #DCE4E8;
+  --text-secondary: #B5C0C8;
+  --text-caption: #9EACB6;
+  --link: #A9D8F3;
+  --link-hover: #D2ECFC;
+  --tag-gold: #EBC489;
+}
+body {color:var(--text-body)}
+.hero h1,.hero .welcome {color:var(--text-heading)}
+.hero h1 span,.eyebrow {color:var(--accent)}
+.hero .tagline {color:var(--text-secondary)}
+.below-nav,footer {color:var(--text-caption)}
+.nav-title {color:var(--text-heading)}
+.nav-subtitle {color:var(--text-secondary)}
+.nav-arrow {color:var(--text-secondary)}
+
+.site-content h2 {color:var(--text-heading);font-weight:790}
+.site-content h3,.site-content h4 {color:#E6ECEF}
+.site-content p,.site-content li,.site-content td {color:var(--text-body)}
+.site-content th {color:var(--text-heading)}
+.site-content details.root-accordion > summary {color:var(--text-heading)}
+.site-content details.nested-accordion > summary {color:#E0E8EC}
+.site-content details summary::after {color:#A9B8C2}
+.site-content details {background:var(--paper)}
+.site-content details.nested-accordion {background:#242E35}
+.site-content .selected-value {color:#D4E0E6;background:#2C3740}
+.site-content figure figcaption {color:var(--text-caption)}
+
+/* Links remain easy to recognize, without competing with section headings. */
+a,.site-content a,.site-content a[href^="https://maps.app.goo.gl"],
+.site-content .venue-list-item > a[href^="https://maps.app.goo.gl"],
+.site-content .venue-list-item mark a[href^="https://maps.app.goo.gl"] {
+  color:var(--link);
+}
+a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:hover {
+  color:var(--link-hover);
+}
+.site-content a[href^="https://maps.app.goo.gl"] {
+  text-decoration-color:rgba(169,216,243,.58);
+  text-decoration-thickness:1px;
+}
+.site-content a:not([href^="https://maps.app.goo.gl"]) {
+  text-decoration-color:rgba(169,216,243,.48);
+}
+.site-content .venue-list-item {color:var(--text-caption)}
+.site-content .venue-list-item mark:not(.highlight-yellow):not(.highlight-red),
+.site-content .venue-list-item em {color:inherit}
+
+/* Preserve Notion's editorial emphasis as text only: no yellow blocks. */
+.site-content mark,.site-content mark[class*="highlight-"] {
+  background:transparent !important;
+  box-shadow:none !important;
+  color:inherit;
+  padding:0;
+}
+.site-content mark.highlight-gray {color:var(--text-caption)}
+.site-content mark.highlight-yellow,
+.site-content .venue-list-item mark.highlight-yellow {color:var(--tag-gold)}
+.site-content mark.highlight-red,
+.site-content .venue-list-item mark.highlight-red {color:#F4A89B}
+.site-content mark.highlight-blue:not(:has(a)) {color:#B7DFF5}
+.site-content mark a {color:var(--link)}
+.site-content strong {font-weight:750}
+
+/* Editorial notes keep a transparent background and a quieter tone. */
+.site-content .callout,.site-content .callout.block-color-gray_background {
+  background:transparent !important;
+  color:var(--text-caption);
+  border:0;
+  box-shadow:none;
+}
+.site-content .callout p,.site-content .callout li {color:inherit}
+.site-content .section-note,.site-content .section-note mark {
+  color:var(--text-caption) !important;
+  background:transparent !important;
+}
+
+/* All pills have a visible but understated surface; active pill gets a clearer edge. */
+.site-content .tab-pill {
+  color:#C7D2D9;
+  background:#2B353D;
+  border:1px solid #40505B;
+  box-shadow:0 1px 0 rgba(255,255,255,.025) inset;
+}
+.site-content .tab-pill[aria-selected="true"] {
+  color:var(--text-heading);
+  background:#40525E;
+  border-color:#7695A7;
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset;
+}
+.site-content .tab-pill:hover {color:var(--text-heading);background:#354550;border-color:#647E8C}
+.site-content .tab-pill[aria-selected="true"]:hover {background:#465D6A}
+.site-content .tab-pill:focus-visible {outline-color:var(--link)}
+@media (prefers-reduced-motion:reduce) {
+  .site-content .tab-pill {transition:none}
+}
+
 </style></head><body>
 <header class="hero wrapper" id="top"><div class="eyebrow">A LOCAL'S SELECTION · TAIWAN</div><h1>TAIPEI<br/><span>CITY GUIDE.</span></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav"><a class="nav-button" data-target="travel" href="#travel"><span aria-hidden="true" class="nav-icon">✈️</span><span class="nav-copy"><span class="nav-title">交通・基本情報</span><span class="nav-subtitle">出発前のヒント</span></span><span aria-hidden="true" class="nav-arrow">↘</span></a>
 <a class="nav-button" data-target="food" href="#food"><span aria-hidden="true" class="nav-icon">🥢</span><span class="nav-copy"><span class="nav-title">おすすめグルメ</span><span class="nav-subtitle">地元目線でセレクト</span></span><span aria-hidden="true" class="nav-arrow">↘</span></a>
