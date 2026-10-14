@@ -880,7 +880,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .travel-caution > .indented,
 .site-content .travel-twac > .indented {margin-top:10px;}
 .site-content .travel-caution > .indented > .bulleted-list:first-child {
-  background:#373429;border-left:2px solid #C7AA6D;
+  background:#373429;border-left:0;
   padding:10px 10px 10px 29px;border-radius:5px;
   font-size:12px;line-height:1.8;
 }
@@ -925,6 +925,179 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   .site-content .travel-key-title {font-size:13px;}
   .site-content details.destination-card > summary.destination-summary {gap:8px;padding-left:10px;}
   .site-content .destination-pr {font-size:10.5px;}
+}
+
+/* === Editorial polish: in-page links are clear without repeated external arrows. === */
+.site-content a[href]::after,
+.site-content .venue-directory-section .venue-name-line a.venue-main-link::after,
+.site-content .venue-directory-section .venue-secondary-links a::after,
+.site-content .travel-twac .travel-twac-link::after {
+  content:none!important;
+  display:none!important;
+}
+/* Keep the existing underline/contrast for discoverability without decoration. */
+.site-content .venue-directory-section .venue-name-line a.venue-main-link:hover {text-decoration:underline!important;}
+
+/* === Travel basics: prominent caution, then calm scan-friendly topic rows. === */
+.site-content .travel-caution > .indented {padding:2px 0 5px;}
+.site-content .travel-alert {
+  background:#383125;border:1px solid #63523B;
+  border-radius:10px;padding:12px 12px 13px;margin:4px 0 13px;
+}
+.site-content .travel-alert-label {
+  display:block;color:#EBD0A5;font-size:10px;font-weight:760;
+  letter-spacing:.10em;margin:0 0 6px;line-height:1.4;
+}
+.site-content .travel-caution .travel-alert .bulleted-list,
+.site-content .travel-caution .travel-alert .bulleted-list:first-child {
+  margin:0;padding:0;list-style:none;background:none;border:0;
+  color:#F2E9DB;font-size:12px;line-height:1.75;
+}
+.site-content .travel-caution .travel-alert li {list-style:none!important;color:#F2E9DB;margin:0;}
+.site-content .travel-caution details.travel-topic {
+  background:#242D30;border:1px solid #3B494D;
+  border-radius:10px;margin:7px 0;overflow:hidden;
+}
+.site-content .travel-caution details.travel-topic > summary.travel-topic-summary {
+  display:flex;align-items:center;gap:10px;min-height:65px;
+  padding:11px 36px 11px 11px;
+  font-size:13px;line-height:1.45;
+}
+.site-content .travel-topic-icon {
+  display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;
+  border-radius:9px;background:#354248;font-size:17px;
+}
+.site-content .travel-topic-copy {min-width:0;display:flex;flex-direction:column;gap:2px;}
+.site-content .travel-topic-title {font-size:12.5px;line-height:1.5;font-weight:700;color:#EDF1F2;}
+.site-content .travel-topic-subtitle {color:#A4B4BA;font-size:10.5px;line-height:1.5;font-weight:440;}
+.site-content .travel-caution details.travel-topic[open] {background:#283339;border-color:#53646B;}
+.site-content .travel-caution details.travel-topic[open] > summary {border-color:#40525A;}
+.site-content .travel-caution details.travel-topic > .indented {margin:10px 11px 12px;padding:0;}
+.site-content .travel-caution aside.travel-tip,
+.site-content .travel-caution aside.travel-tip.block-color-gray_background {
+  display:block!important;margin:0 0 8px!important;padding:10px 12px!important;
+  background:#20292E!important;border:1px solid #35474D!important;
+  border-radius:7px!important;
+  color:#CBD7DA!important;white-space:normal!important;
+}
+.site-content .travel-caution aside.travel-tip:last-child {margin-bottom:0!important;}
+.site-content .travel-caution aside.travel-tip > div:first-child {display:none!important;}
+.site-content .travel-caution aside.travel-tip > div:last-child {width:100%!important;min-width:0;}
+.site-content .travel-caution aside.travel-tip p,
+.site-content .travel-caution aside.travel-tip li {
+  color:#CED9DC!important;line-height:1.82;font-size:11.5px;margin:0 0 7px;
+}
+.site-content .travel-caution aside.travel-tip p:last-child {margin-bottom:0;}
+.site-content .travel-caution aside.travel-tip strong {color:#F2F6F5;}
+
+/* TWAC: compact green action, not an oversized framed block. */
+.site-content .travel-twac > .indented {margin-top:7px;margin-bottom:12px;}
+.site-content .travel-twac .bulleted-list {
+  list-style:none;padding:0;margin:4px 0 0;font-size:12px;
+}
+.site-content .travel-twac .bulleted-list > li {list-style:none!important;margin:0;color:#CAD9D3;line-height:1.9;}
+.site-content .travel-twac .travel-twac-link {
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:5px 10px;min-height:33px;border-radius:6px;
+  background:#2B483C;border:1px solid #527866;
+  color:#DAF2E4!important;text-decoration:none!important;
+  font-size:11.5px;font-weight:690;letter-spacing:0;
+}
+.site-content .travel-twac .travel-twac-link:hover {background:#355948;border-color:#7EAA91;}
+.site-content .travel-twac .bulleted-list em {
+  display:block;margin-top:8px;padding:9px 11px;
+  border-radius:7px;background:#1C2B28;
+  color:#B4C9BF;
+  line-height:1.75;font-size:11px;font-style:normal;
+}
+
+/* === Nearby destinations: transport tabs and steps within the destination cards. === */
+.site-content .destination-body {padding:4px 0 11px!important;min-width:0;}
+.site-content .destination-guide-label {
+  display:flex;align-items:center;gap:7px;margin:4px 1px 7px!important;
+  font-size:10.5px;font-weight:700;color:#A5BDC8;letter-spacing:.015em;
+}
+.site-content .destination-guide-label::before {
+  content:none;display:none;
+}
+.site-content .destination-card .tab-pills {padding:4px 0 11px;gap:6px;}
+.site-content .destination-card .tab-pill {
+  min-height:39px;padding:7px 10px;font-size:11.5px;
+  background:#283740;border-color:#465863;
+}
+.site-content .destination-card .tab-pill[aria-selected=true] {
+  background:#405863;border-color:#7599A5;
+}
+.site-content .destination-card .tab-panel {
+  background:#202D34;border:1px solid #364954;
+  border-radius:11px;padding:12px 11px 13px;
+}
+.site-content .destination-card .tab-panel > .indented {margin:0;padding:0;}
+.site-content .destination-card .tab-panel > .indented > p:first-child {
+  margin:1px 0 10px;font-size:11px;color:#BFD0D8;line-height:1.65;
+}
+.site-content .destination-card .tab-panel em mark.highlight-gray {color:#A8BCC5!important;}
+.site-content .destination-card .tab-panel details.nested-accordion {
+  background:#273640;border:1px solid #43545E;border-radius:9px;margin:7px 0;
+}
+.site-content .destination-card .tab-panel details.nested-accordion > summary {
+  padding:11px 31px 11px 12px;color:#E7EEF0;font-size:12px;
+}
+.site-content .destination-card .tab-panel details.nested-accordion > .indented {
+  margin:9px 10px 12px;padding:0;
+}
+.site-content .destination-card .tab-panel details.nested-accordion .indented > p {
+  margin:5px 0;line-height:1.8;color:#C7D5DB;font-size:11.5px;
+}
+/* Independently numbered Notion lists read as a single short sequence. */
+.site-content .destination-card .tab-panel ol.numbered-list {
+  position:relative;list-style:none;margin:0 0 0 10px;
+  padding:8px 2px 9px 20px;border-left:1px solid #526A75;
+}
+.site-content .destination-card .tab-panel ol.numbered-list::before {
+  content:attr(start);position:absolute;left:-11px;top:9px;
+  width:20px;height:20px;display:grid;place-items:center;
+  background:#2E4753;border:1px solid #6A8A99;border-radius:50%;
+  color:#D9EAF0;font-size:10px;font-weight:750;font-variant-numeric:tabular-nums;
+}
+.site-content .destination-card .tab-panel ol.numbered-list > li {
+  list-style:none;margin:0;line-height:1.8;font-size:11.5px;color:#D5DEE2;
+}
+.site-content .destination-card .tab-panel ol.numbered-list:last-child {border-left-color:transparent;}
+/* Keelung and Yehliu: distinguish how to get there from places to visit. */
+.site-content .destination-info-group {
+  background:#202D34;border:1px solid #374A54;border-radius:10px;
+  margin:8px 0 11px;padding:12px 12px 13px;min-width:0;
+}
+.site-content .destination-info-title {
+  display:flex;align-items:center;gap:7px;margin:0 0 8px!important;
+  color:#DCEAF0;font-size:11px;font-weight:730;letter-spacing:.02em;
+}
+.site-content .destination-info-title::before {
+  content:none;display:none;
+}
+.site-content .destination-info-group > p {
+  color:#CCD9DD;line-height:1.85;font-size:11.5px;
+  margin:0 0 10px;padding:0 0 10px;border-bottom:1px solid #354852;
+}
+.site-content .destination-info-group > p:last-child {margin-bottom:0;padding-bottom:0;border-bottom:0;}
+.site-content .destination-spots > ol.numbered-list {
+  margin:0!important;padding:9px 0!important;border-bottom:1px solid #354852;
+  font-size:12px;list-style:none;
+}
+.site-content .destination-spots > ol.numbered-list:last-child {border-bottom:0;padding-bottom:0!important;}
+.site-content .destination-spots > ol.numbered-list li {list-style:none;margin:0;color:#CAD9DF;font-size:11.5px;line-height:1.75;}
+.site-content .destination-spots > ol.numbered-list a {font-weight:650;text-decoration:none;}
+.site-content .destination-spots > ol.numbered-list a:hover {text-decoration:underline;}
+@media(min-width:570px){
+  .site-content .destination-spots {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:18px;}
+  .site-content .destination-spots > .destination-info-title {grid-column:1/-1;}
+  .site-content .destination-spots > ol.numbered-list {min-width:0;}
+}
+@media(max-width:365px){
+  .site-content .travel-topic-subtitle{font-size:10px;}
+  .site-content .destination-card .tab-panel{padding:10px 8px;}
+  .site-content .destination-card .tab-pill{font-size:11px;}
 }
 </style>
 </head><body>
@@ -1178,53 +1351,60 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   }, {once:true});
   const back=document.querySelector('.back-top');
   if(back){
-    let previousY=window.scrollY;
-    let returningToTop=false;
-    let fadeTimer=null;
-    function setBackVisible(visible){
+    let lastY=window.scrollY;
+    let hideTimer=null;
+    const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+    function showBack(visible){
       back.classList.toggle('show',visible);
       back.tabIndex=visible?0:-1;
       back.setAttribute('aria-hidden',String(!visible));
     }
-    function scheduleFade(){
-      if(fadeTimer)clearTimeout(fadeTimer);
-      fadeTimer=setTimeout(()=>{
-        if(!returningToTop) setBackVisible(false);
-      },1500);
+    function atBottom(){
+      const maxY=Math.max(0,(document.scrollingElement?.scrollHeight||document.documentElement.scrollHeight)-window.innerHeight);
+      return maxY>180 && window.scrollY>=maxY-4;
     }
-    const update=()=>{
-      const now=window.scrollY;
-      const delta=Math.abs(now-previousY);
-      previousY=now;
-      if(returningToTop){
-        setBackVisible(false);
-        if(now<720)returningToTop=false;
-        return;
+    function clearHideTimer(){
+      if(hideTimer!==null){clearTimeout(hideTimer);hideTimer=null;}
+    }
+    function startFadeTimer(){
+      clearHideTimer();
+      if(atBottom()){showBack(true);return;}
+      // Each new scroll event resets the one-second idle countdown.
+      hideTimer=setTimeout(()=>{
+        hideTimer=null;
+        if(atBottom()) showBack(true);
+        else showBack(false);
+      },1000);
+    }
+    function onScroll(){
+      const y=window.scrollY;
+      const moved=Math.abs(y-lastY)>0.5;
+      lastY=y;
+      if(atBottom()){
+        clearHideTimer();
+        showBack(true);
+      }else if(moved){
+        showBack(true);
+        startFadeTimer();
       }
-      if(now<720 || document.activeElement?.matches('input, textarea, [contenteditable="true"]')){
-        if(fadeTimer)clearTimeout(fadeTimer);
-        setBackVisible(false);
-        return;
-      }
-      if(delta<2) return;
-      setBackVisible(true);
-      scheduleFade();
-    };
-    window.addEventListener('scroll',update,{passive:true});
-    document.addEventListener('focusin',event=>{
-      if(event.target.matches('input, textarea, [contenteditable="true"]')){
-        if(fadeTimer)clearTimeout(fadeTimer);
-        setBackVisible(false);
-      }
-    });
+    }
+    window.addEventListener('scroll',onScroll,{passive:true});
+    window.addEventListener('resize',()=>{
+      if(atBottom()){
+        clearHideTimer();showBack(true);
+      }else if(back.classList.contains('show'))startFadeTimer();
+    },{passive:true});
     back.addEventListener('click',()=>{
-      if(fadeTimer)clearTimeout(fadeTimer);
-      returningToTop=true;
-      setBackVisible(false);
-      window.scrollTo({top:0,behavior:reduceMotion.matches?'auto':'smooth'});
+      clearHideTimer();
+      back.blur();
+      // No locked "returning to top" state: smooth-scrolling events use
+      // the exact same visibility / idle fade rules as finger scrolling.
+      showBack(true);
+      window.scrollTo({top:0,behavior:reducedMotion.matches?'auto':'smooth'});
       history.replaceState(null,'',location.pathname+location.search);
+      startFadeTimer();
     });
-    setBackVisible(false);
+    showBack(atBottom());
   }
 })();</script>
 
@@ -1546,7 +1726,7 @@ if (food.spice) {
   if (isMaybe) {
     const icon = document.createElement("img");
     icon.className = "spice-icon";
-    icon.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAMAAABhEH5lAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAHIUExURQAAAO4AAPgAAP8AAfoAAPcAANIAAPoBASEAAOQAAfkBAfAAAPkAAf8BAfkAAPwAAf8AANQAAPoAAZ0AABMAAE4AAAIAALcAAPQAAd0AAPgAAdgAAKkAABIAAAwAAPwAAOsAABoAAHUAAEYAAP0BAfYAAFcAAKgAAHcAAP4BAP4BAZkAAPYAAf0AAI4AAOQAAPkBAPsBAfsBAPgAAfgAAfUAAPcAAPgAAPgAAfgAAPcAAPgAAPgAAfgAAfkAAfgAAPgAAPkAAPkAAPgBAfgAAPgAAfgAAPgAAfgAAfgBAfgBAfgAAPgAAPgAAPgAAPgAAPgAAPkBAfkBAfgAAPkAAPkAAfkAAfkAAPkAAPgAAfkAAfkAAPkAAPgAAPgAAfkAAPkAAfgAAfkAAfgAAPkAAfkAAfgAAfgAAfcAAfcBAfkBAfkBAfgBAfkAAPkAAfgAAPgAAfgAAPkBAfgAAPkBAfkBAfgAAfkAAfkAAfgAAPgAAfkAAPkAAPkBAfkAAPkAAfgAAfgAAfgAAPgBAfgAAfgAAfgBAPkBAPkBAfkBAfkBAfkBAfkBAfgAAfgBAPgAAPgAAPkBAPkBAfkAAfkBAPkAAfoBAf///8IofYQAAACXdFJOUwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEIAQUyPzsURgcmOS03DkQLITE2GTodQiwdBSkqEUELHjgzHg1FQQUWPygtMCQSRAZCCBolAQMeRBIxKU0pPDQ+NgwePARKCw8YGAogQgpADjMJGBEQFSQ3PiIBDyQ4NTQrFAOWe9P6AAAAAWJLR0SX5m4brwAAAAd0SU1FB+oKDgsFLJKeipEAAAEGSURBVBjTY2BAAoxMxiamzMgiDCxm5haWJihCrFbWNrZ2yCJsLOz2Do5OCAEOTi5nF1c3dw+EEDePp5e3j6+fP1yElykgMIiPXyA4BC4kKBQaxiPMIBAeARMRYTaJjGJmEOWLjoGKiInzxcbxSTBI8sQnMEhJMfFKy/CyJyYl88nKySenpDKkpQdk8LFnZmXn8CsoKvHk5vEx5BcUxsQXFZeUMivzqvCVlVfwM1RWqVbX1Nbx8qqp80jVNzQyazAEN6Wx8HFp8mqx8zS32LUKaTMwMAU4FPq1tXd0dnX39Pbx6ACtl2LS7Z9gPnHS5ClTp0nx6oGdpM/CwmfAxc7FxWNoBBYAAKEhMs68kdcpAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDI2LTEwLTE0VDExOjA0OjU2KzAwOjAwKt8jJwAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyNi0xMC0xNFQxMTowNDo1NiswMDowMFuCm5sAAAAodEVYdGRhdGU6dGltZXN0YW1wADIwMjYtMTAtMTRUMTE6MDU6NDQrMDA6MDC4YMDNAAAAAElFTkSuQmCC";
+    icon.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAA90lEQVR4nK2SoRYBQRSGv3WON1AkT6AoiqIomwmyLMveQJEVhapIiqCsoCgEb6AohF+5u2fOYO0uc849O3Nn7jf/3n8C8Z9R+qH2DsiiMGgAlIEA2ABKkAXiIpCgI1ARRU1gDlScdW4VE1NxsjmCSHDIA+kapOnlp8rZI1mRn28XAb3LDwUKMj7IHVAFam/2rsA2i5J+ippEKYKxYG3N9A9N7WD/A+RmriXEyL4SXJ25BK0PkPgSXFBsaSgYWTRSfmdmdQ0XFJPHGfrVcZTW3b3YtS6wMBf2wBI4Aw9zK7TA9nov3nk3hoKV4O716SgYpKnN+o6+jifwJgi73wNeVAAAAABJRU5ErkJggg==";
     icon.alt = "";
     icon.setAttribute("aria-hidden", "true");
     spice.append(icon);
@@ -1679,6 +1859,86 @@ async function loadData() {
 }
 loadData();
 
+})();
+</script>
+<script id="guide-details-polish">
+/* Enhances the original exported content without rewriting store names, links, or travel instructions. */
+(function () {
+  const caution=document.querySelector('.travel-caution');
+  if(caution){
+    const wrapper=caution.querySelector(':scope > .indented');
+    const notice=wrapper?.querySelector(':scope > ul.bulleted-list');
+    if(notice){
+      const alert=document.createElement('div');
+      alert.className='travel-alert';
+      const label=document.createElement('span');
+      label.className='travel-alert-label';
+      label.textContent='持ち込み禁止';
+      alert.append(label);
+      notice.before(alert);
+      alert.append(notice);
+    }
+    const topics=[
+      ['🧳','アメニティは持参前に確認'],
+      ['🚻','場所によって利用ルールが異なる'],
+      ['🚰','飲む前にチェック'],
+      ['🚇','MRT・バス・歩行時のルール'],
+      ['💳','現金・カード・悠遊カード'],
+      ['🎟️','買い物後のレシートもチェック']
+    ];
+    [...wrapper.querySelectorAll(':scope > details.nested-accordion')].forEach((detail,i)=>{
+      detail.classList.add('travel-topic');
+      const summary=detail.querySelector(':scope > summary');
+      if(!summary)return;
+      const label=summary.textContent.trim();
+      const icon=document.createElement('span');
+      icon.className='travel-topic-icon';
+      icon.setAttribute('aria-hidden','true');
+      icon.textContent=(topics[i]||['💡',''])[0];
+      const copy=document.createElement('span');
+      copy.className='travel-topic-copy';
+      const name=document.createElement('span');
+      name.className='travel-topic-title';
+      name.textContent=label;
+      const note=document.createElement('span');
+      note.className='travel-topic-subtitle';
+      note.textContent=(topics[i]||['',''])[1];
+      copy.append(name,note);
+      summary.classList.add('travel-topic-summary');
+      summary.replaceChildren(icon,copy);
+      detail.querySelectorAll('aside.callout').forEach(a=>a.classList.add('travel-tip'));
+    });
+  }
+  document.querySelectorAll('details.destination-card').forEach(detail=>{
+    const body=detail.querySelector(':scope > .indented');
+    if(!body)return;
+    body.classList.add('destination-body');
+    const tab=body.querySelector(':scope > .tab');
+    if(tab){
+      const label=document.createElement('p');
+      label.className='destination-guide-label';
+      label.textContent='交通手段を選ぶ';
+      body.prepend(label);
+      return;
+    }
+    // Keelung / Yehliu have direct text and Notion lists, so group only the
+    // display wrappers and keep each original paragraph, anchor and link intact.
+    const paras=[...body.children].filter(el=>el.matches('p'));
+    const lists=[...body.children].filter(el=>el.matches('ol.numbered-list'));
+    function group(elements, heading, cls){
+      if(!elements.length)return;
+      const group=document.createElement('section');
+      group.className='destination-info-group '+cls;
+      const title=document.createElement('h4');
+      title.className='destination-info-title';
+      title.textContent=heading;
+      group.append(title);
+      elements[0].before(group);
+      elements.forEach(el=>group.append(el));
+    }
+    group(paras,'アクセス','destination-access');
+    group(lists,'立ち寄りスポット','destination-spots');
+  });
 })();
 </script>
 </body></html>
