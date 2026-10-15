@@ -1969,6 +1969,26 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
       });
     }));
   }
+  // Area-category accordions should not snap their summary to the top.
+  // When an earlier sibling closes, compensate for the height lost above the
+  // tapped row so the row stays near the user's finger on small screens.
+  function keepAreaSelectionStable(anchor, initialTop) {
+    if (!anchor?.isConnected) return;
+    const stabilize = () => {
+      if (!anchor.isConnected || !anchor.getClientRects().length) return;
+      const delta = anchor.getBoundingClientRect().top - initialTop;
+      if (Math.abs(delta) < 1) return;
+      // The site uses smooth scroll for intentional section navigation; this
+      // adjustment is not navigation and must never animate the viewport.
+      const root = document.documentElement;
+      const priorBehavior = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo({ left: window.scrollX, top: window.scrollY + delta, behavior: 'instant' });
+      root.style.scrollBehavior = priorBehavior;
+    };
+    stabilize();
+    requestAnimationFrame(() => requestAnimationFrame(stabilize));
+  }
   const siteContent = document.querySelector('.site-content');
   siteContent?.addEventListener('click', event => {
     const summary = event.target.closest('summary');
@@ -1978,12 +1998,15 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
     // A link inside a summary must continue to work like a normal link.
     if (event.target.closest('a, button')) return;
     event.preventDefault(); // avoid a second native <details> toggle
+    const inAreaDirectory = Boolean(detail.closest('.area-directory-section'));
+    const positionBeforeClick = inAreaDirectory ? summary.getBoundingClientRect().top : 0;
     if (detail.open) {
       closeBranch(detail);
     } else {
       openAccordion(detail);
-      scrollOpenedSummaryIntoView(detail);
+      if (!inAreaDirectory) scrollOpenedSummaryIntoView(detail);
     }
+    if (inAreaDirectory) keepAreaSelectionStable(summary, positionBeforeClick);
   });
   // Also enforce sibling exclusivity if a detail is opened by other scripts.
   document.querySelectorAll('.site-content details').forEach(detail => {
@@ -2035,12 +2058,19 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
   document.querySelectorAll('.tab-pills').forEach(tablist=>{
     const pills=Array.from(tablist.querySelectorAll(':scope > .tab-pill'));
     pills.forEach((pill,index)=>{
-      pill.addEventListener('click',()=>activateTab(tablist,index));
+      const isAreaTablist = Boolean(tablist.closest('.area-directory-section'));
+      pill.addEventListener('click',()=>{
+        const topBefore = isAreaTablist ? tablist.getBoundingClientRect().top : 0;
+        activateTab(tablist,index);
+        if (isAreaTablist) keepAreaSelectionStable(tablist,topBefore);
+      });
       pill.addEventListener('keydown',e=>{
         if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
         e.preventDefault();
         const next=e.key==='Home'?0:e.key==='End'?pills.length-1:index+(e.key==='ArrowRight'?1:-1);
+        const topBefore = isAreaTablist ? tablist.getBoundingClientRect().top : 0;
         activateTab(tablist,next,true);
+        if (isAreaTablist) keepAreaSelectionStable(tablist,topBefore);
       });
     });
   });
