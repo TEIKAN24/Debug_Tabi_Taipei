@@ -1826,6 +1826,30 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 #guide .tab-pill[aria-selected="false"] {background:transparent!important;color:#C4C4C4!important;border-color:#494949!important;}
 #guide .tab-pill img.inline-category-icon {filter:none!important;}
 </style>
+<style id="area-focus-and-mobile-tap-20261015">
+/* Keep pinch-to-zoom and normal panning. Suppress double-tap zoom on modern
+   iOS Safari / Android browsers without disabling accessibility zoom. */
+html, body,
+.nav-button, .site-content a, .site-content button,
+.site-content details > summary,
+#food-explorer button, #food-explorer .pill, #food-explorer .quick button,
+.back-top { touch-action:manipulation; }
+/* A focused open area reads as a current selection without a bright new box. */
+.site-content .area-directory-section .area-category-list > details[open] > summary {
+  color:#FAFAFA!important;
+}
+.site-content .area-directory-section .tab-panel {scroll-padding-top:10px;}
+
+/* Stable accordion focus inside the independent area directory scrollport. */
+.site-content .area-directory-section,
+.site-content .area-directory-section .tab-panel,
+.site-content .area-directory-section .area-category-list {
+  overflow-anchor:none;
+}
+.site-content .area-directory-section .area-category-list > details[open] > summary {
+  box-shadow:inset 2px 0 0 #EAEAEA;
+}
+</style>
 </head><body>
 <header class="hero wrapper" id="top"><div class="eyebrow"><span class="ta">TA</span>BI / <span class="ta">TA</span>IPEI</div><h1><a aria-label="台湾グルメ検索へ" class="hero-title-link" data-target="food-search" href="#food-search">TAIPEI<br/><span>CITY GUIDE</span></a></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
 <a class="nav-button" data-target="travel" href="#travel"><span aria-hidden="true" class="nav-icon">✈️</span><span class="nav-copy"><span class="nav-title">旅の準備・交通</span><span class="nav-subtitle">入国・空港・注意事項</span></span></a>
@@ -1969,25 +1993,53 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
       });
     }));
   }
-  // Area-category accordions should not snap their summary to the top.
-  // When an earlier sibling closes, compensate for the height lost above the
-  // tapped row so the row stays near the user's finger on small screens.
-  function keepAreaSelectionStable(anchor, initialTop) {
-    if (!anchor?.isConnected) return;
-    const stabilize = () => {
-      if (!anchor.isConnected || !anchor.getClientRects().length) return;
-      const delta = anchor.getBoundingClientRect().top - initialTop;
-      if (Math.abs(delta) < 1) return;
-      // The site uses smooth scroll for intentional section navigation; this
-      // adjustment is not navigation and must never animate the viewport.
-      const root = document.documentElement;
-      const priorBehavior = root.style.scrollBehavior;
-      root.style.scrollBehavior = 'auto';
-      window.scrollTo({ left: window.scrollX, top: window.scrollY + delta, behavior: 'instant' });
-      root.style.scrollBehavior = priorBehavior;
-    };
-    stabilize();
-    requestAnimationFrame(() => requestAnimationFrame(stabilize));
+  // Area directory: focus the actual accordion heading, not merely the bubble.
+  // Its category list is a nested scroll container. Align within that list first,
+  // then check the heading's position in the visible phone viewport. Browser
+  // scroll anchoring is disabled for this section so opening one large row does
+  // not unexpectedly move the entire document.
+  let areaFocusSequence = 0;
+  function focusAreaCategory(summary) {
+    const panel = summary.closest('.area-directory-section .tab-panel');
+    const detail = summary.parentElement;
+    if (!panel || !detail) return;
+    const sequence = ++areaFocusSequence;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (sequence !== areaFocusSequence || !detail.open || !summary.getClientRects().length) return;
+      summary.focus({preventScroll:true});
+      const viewportHeight = window.visualViewport?.height || window.innerHeight;
+      const preferredY = Math.min(235, Math.max(165, viewportHeight * .29));
+      const panelBox = panel.getBoundingClientRect();
+      const rowBox = summary.getBoundingClientRect();
+      const maxPanelScroll = Math.max(0, panel.scrollHeight - panel.clientHeight);
+      const targetPanelScroll = Math.min(maxPanelScroll,
+        Math.max(0, panel.scrollTop + rowBox.top - panelBox.top - 12));
+      // An immediate alignment avoids racing the page's own smooth scrolling.
+      panel.scrollTop = targetPanelScroll;
+      requestAnimationFrame(() => {
+        if (sequence !== areaFocusSequence || !detail.open) return;
+        const row = summary.getBoundingClientRect();
+        const list = panel.getBoundingClientRect();
+        const topVisible = Math.max(76, list.top + 10);
+        const bottomVisible = Math.min(viewportHeight - 95, list.bottom - 25);
+        // Move the document only when the chosen heading is not in a comfortable
+        // reading position. Short categories near the end cannot always scroll
+        // to the top inside the list; a small page adjustment handles those.
+        if (row.top < topVisible || row.top > Math.min(preferredY + 65, bottomVisible)) {
+          const delta = row.top - preferredY;
+          // Never jump hundreds of pixels past the category heading on one tap.
+          const limit = Math.max(180, viewportHeight * .45);
+          const scrollDelta = Math.max(-limit, Math.min(limit, delta));
+          window.scrollTo({top: Math.max(0, window.scrollY + scrollDelta), behavior:'instant'});
+        }
+      });
+    }));
+  }
+  // When switching area bubbles, preserve the horizontal pill position and
+  // reset ONLY the newly selected category list to its beginning.
+  function prepareAreaTab(panel) {
+    if (!panel) return;
+    panel.scrollTop = 0;
   }
   const siteContent = document.querySelector('.site-content');
   siteContent?.addEventListener('click', event => {
@@ -1998,15 +2050,17 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
     // A link inside a summary must continue to work like a normal link.
     if (event.target.closest('a, button')) return;
     event.preventDefault(); // avoid a second native <details> toggle
-    const inAreaDirectory = Boolean(detail.closest('.area-directory-section'));
-    const positionBeforeClick = inAreaDirectory ? summary.getBoundingClientRect().top : 0;
+    const isAreaCategory = detail.parentElement?.classList.contains('area-category-list');
+    // Stop a still-running homepage smooth jump before focusing a row.
+    // Otherwise that animation can pull the page away after the row opens.
+    if (isAreaCategory) window.scrollTo({top:window.scrollY,behavior:'instant'});
     if (detail.open) {
       closeBranch(detail);
     } else {
       openAccordion(detail);
-      if (!inAreaDirectory) scrollOpenedSummaryIntoView(detail);
+      if (isAreaCategory) focusAreaCategory(summary);
+      else scrollOpenedSummaryIntoView(detail);
     }
-    if (inAreaDirectory) keepAreaSelectionStable(summary, positionBeforeClick);
   });
   // Also enforce sibling exclusivity if a detail is opened by other scripts.
   document.querySelectorAll('.site-content details').forEach(detail => {
@@ -2060,17 +2114,16 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
     pills.forEach((pill,index)=>{
       const isAreaTablist = Boolean(tablist.closest('.area-directory-section'));
       pill.addEventListener('click',()=>{
-        const topBefore = isAreaTablist ? tablist.getBoundingClientRect().top : 0;
         activateTab(tablist,index);
-        if (isAreaTablist) keepAreaSelectionStable(tablist,topBefore);
+        if (isAreaTablist) prepareAreaTab(tablist.nextElementSibling?.children[index]);
       });
       pill.addEventListener('keydown',e=>{
         if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
         e.preventDefault();
         const next=e.key==='Home'?0:e.key==='End'?pills.length-1:index+(e.key==='ArrowRight'?1:-1);
-        const topBefore = isAreaTablist ? tablist.getBoundingClientRect().top : 0;
+        const normalized=(next+pills.length)%pills.length;
         activateTab(tablist,next,true);
-        if (isAreaTablist) keepAreaSelectionStable(tablist,topBefore);
+        if (isAreaTablist) prepareAreaTab(tablist.nextElementSibling?.children[normalized]);
       });
     });
   });
