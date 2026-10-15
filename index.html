@@ -2271,6 +2271,87 @@ html, body,
 }
 @media(prefers-reduced-motion:reduce){#guide .daytrip-destination-button{transition:none;}}
 </style>
+
+<style id="matte-glass-preview-20261015">
+/* Matte-frosted preview (dark theme remains active). Scope: 6 hero shortcuts + food search.
+   Variable-based surfaces make a future system light/dark theme switch straightforward.
+   No new backgrounds or blur effects are added to the rest of the guide. */
+:root {
+  --guide-glass-fill:rgba(255,255,255,.057);
+  --guide-glass-line:rgba(255,255,255,.18);
+  --guide-glass-inner:rgba(255,255,255,.08);
+  --guide-glass-text:#F5F5F5;
+  --guide-glass-subtext:#C4C4C4;
+  --guide-glass-shadow:0 8px 24px rgba(0,0,0,.11);
+  --guide-glass-blur:blur(18px) saturate(85%);
+}
+/* Six existing category colors remain, softened by neutral translucent matte glass. */
+.quick-nav > .nav-button:nth-child(n) {
+  background:
+    linear-gradient(175deg,
+      rgba(var(--nav-rgb),.21) 0%,
+      rgba(var(--nav-rgb),.085) 46%,
+      rgba(var(--nav-rgb),.012) 100%),
+    var(--guide-glass-fill) !important;
+  border:1px solid var(--guide-glass-line) !important;
+  border-top:1px solid rgba(var(--nav-rgb),.43) !important;
+  box-shadow:inset 0 1px 0 var(--guide-glass-inner),var(--guide-glass-shadow) !important;
+  -webkit-backdrop-filter:var(--guide-glass-blur);
+  backdrop-filter:var(--guide-glass-blur);
+  isolation:isolate;
+}
+.quick-nav > .nav-button:nth-child(n):hover {
+  background:
+    linear-gradient(175deg,
+      rgba(var(--nav-rgb),.26) 0%,
+      rgba(var(--nav-rgb),.11) 48%,
+      rgba(var(--nav-rgb),.022) 100%),
+    rgba(255,255,255,.083) !important;
+  border-color:rgba(255,255,255,.28)!important;
+  border-top-color:rgba(var(--nav-rgb),.58)!important;
+}
+.quick-nav .nav-title {color:var(--guide-glass-text)!important;}
+.quick-nav .nav-subtitle,.quick-nav .nav-arrow {color:var(--guide-glass-subtext)!important;}
+/* Food index is one translucent glass sheet, rather than a solid opaque card. */
+#guide #food-explorer .food-panel {
+  background:
+    linear-gradient(155deg,rgba(255,255,255,.092),rgba(255,255,255,.035) 36%,rgba(255,255,255,.008) 100%),
+    var(--guide-glass-fill) !important;
+  border:1px solid var(--guide-glass-line)!important;
+  box-shadow:inset 0 1px 0 var(--guide-glass-inner),var(--guide-glass-shadow)!important;
+  -webkit-backdrop-filter:var(--guide-glass-blur);
+  backdrop-filter:var(--guide-glass-blur);
+}
+/* Input has its own softer frosted inset; preserve the 16px iOS input font and mint focus. */
+#guide #food-explorer .search-shell {
+  background:rgba(255,255,255,.052)!important;
+  border-color:rgba(255,255,255,.20)!important;
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+}
+#guide #food-explorer .search-shell:focus-within {
+  border-color:var(--accent)!important;
+  box-shadow:0 0 0 2px rgba(131,211,176,.17)!important;
+}
+#guide #food-explorer .pill {
+  background:rgba(255,255,255,.044)!important;
+  border-color:rgba(255,255,255,.15)!important;
+}
+#guide #food-explorer .pill.active {
+  background:rgba(131,211,176,.13)!important;
+  border-color:rgba(131,211,176,.60)!important;
+  color:var(--accent)!important;
+}
+/* Keep list readability: rows stay transparent, separated by thin neutral dividers. */
+#guide #food-explorer .results-head,
+#guide #food-explorer .result {border-color:rgba(255,255,255,.13)!important;}
+@media (prefers-reduced-transparency:reduce) {
+  .quick-nav > .nav-button:nth-child(n) { -webkit-backdrop-filter:none;backdrop-filter:none;
+    background:linear-gradient(180deg,rgba(var(--nav-rgb),.16),rgba(var(--nav-rgb),.025)),#242424!important; }
+  #guide #food-explorer .food-panel { -webkit-backdrop-filter:none;backdrop-filter:none;background:#252525!important; }
+  #guide #food-explorer .search-shell { -webkit-backdrop-filter:none;backdrop-filter:none; }
+}
+</style>
 </head><body>
 <header class="hero wrapper" id="top"><div class="eyebrow"><span class="ta">TA</span>BI / <span class="ta">TA</span>IPEI</div><h1><a aria-label="台湾グルメ検索へ" class="hero-title-link" data-target="food-search" href="#food-search">TAIPEI<br/><span>CITY GUIDE</span></a></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
 <a class="nav-button" data-target="travel" href="#travel"><span aria-hidden="true" class="nav-icon">✈️</span><span class="nav-copy"><span class="nav-title">旅の準備・交通</span><span class="nav-subtitle">入国・空港・注意事項</span></span></a>
