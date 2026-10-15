@@ -2019,11 +2019,8 @@ html, body,
   display:flex;flex-direction:column;position:relative;
   width:100%;min-width:0;margin:9px 0 13px;padding:0;gap:0;
 }
-#guide .sights-day-trips .daytrip-timeline::before {
-  content:"";position:absolute;top:22px;bottom:22px;
-  left:calc(var(--dt-label) + var(--dt-gap) + var(--dt-axis) / 2);
-  transform:translateX(-50%);width:2px;background:#666;pointer-events:none;
-}
+/* No continuous track underneath hollow stops. Individual colored legs leave visible gaps. */
+#guide .sights-day-trips .daytrip-timeline::before { content:none!important;display:none!important; }
 #guide .sights-day-trips .daytrip-timeline-stop,
 #guide .sights-day-trips .daytrip-timeline-leg {
   display:grid!important;grid-template-columns:var(--dt-label) var(--dt-axis) minmax(0,1fr)!important;
@@ -2047,10 +2044,16 @@ html, body,
   background:transparent;z-index:2;box-shadow:none;
 }
 #guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-node {
-  width:13px;height:13px;border:3px solid #f5f5f5;background:transparent;
+  width:13px;height:13px;border:3px solid #f5f5f5;
+  background:#0D0D0D; /* mask the route line behind the ring */
+  box-shadow:0 0 0 2px #0D0D0D;
 }
-/* Start, transfer and destination stops use the same clean white outline. */
-#guide .sights-day-trips .daytrip-timeline-stop--end .daytrip-timeline-node {background:transparent;}
+/* Start and transfer stay hollow; the destination is a solid white stop. */
+#guide .sights-day-trips .daytrip-timeline-stop--end .daytrip-timeline-node {
+  background:#f5f5f5!important;
+  border-color:#f5f5f5!important;
+  box-shadow:0 0 0 2px transparent;
+}
 #guide .sights-day-trips .daytrip-timeline-name {
   grid-column:3;grid-row:1;display:block;min-width:0;
   color:#f3f3f3;font-size:14px;font-weight:760;line-height:1.5;overflow-wrap:anywhere;
@@ -2111,7 +2114,7 @@ html, body,
 #guide .sights-day-trips .daytrip-timeline-leg--bus { --travel-leg:#898989; }
 #guide .sights-day-trips .daytrip-timeline-leg::before {
   content:"";position:absolute;
-  top:-22px;bottom:-22px;
+  top:-8px;bottom:-8px; /* extra gap so the line does not intrude into station rings */
   left:calc(var(--dt-label) + var(--dt-gap) + var(--dt-axis) / 2);
   transform:translateX(-50%);
   width:3px; background:var(--travel-leg);
@@ -2370,6 +2373,77 @@ html, body,
 #guide #food-explorer .results-head, #guide #food-explorer .result { border-color:rgba(255,255,255,.10)!important; }
 .quick-nav::before, #guide .food-browser-banner::before { content:none!important; display:none!important; }
 @media(prefers-reduced-motion:reduce){ .quick-nav > .nav-button:nth-child(n){ transition:none!important; } }
+</style>
+
+
+<style id="daytrip-alternative-liquid-glow-20261015">
+/* Apply the clear-glass material to route gradient option cards,
+   but use a self-illuminated diffused glow instead of a hard wash. */
+#guide .sights-day-trips .daytrip-option--alternative {
+  --choice-rgb: 154,164,174;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.09)!important;
+  border-left:1px solid rgba(255,255,255,.09)!important;
+  border-radius:14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.030) 0%, rgba(255,255,255,.018) 56%, rgba(255,255,255,.010) 100%),
+    linear-gradient(145deg, rgba(var(--choice-rgb),.016) 0%, rgba(var(--choice-rgb),.008) 45%, rgba(var(--choice-rgb),.003) 100%)!important;
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.11),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -1px 0 rgba(255,255,255,.015)!important;
+}
+#guide .sights-day-trips .daytrip-option--alternative::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:0;
+  padding:.9px;
+  background:conic-gradient(from 196deg at 50% 50%,
+    rgba(255,255,255,.016) 0%,
+    rgba(255,255,255,.032) 16%,
+    rgba(255,255,255,.14) 28%,
+    rgba(255,255,255,.045) 46%,
+    rgba(255,255,255,.012) 65%,
+    rgba(var(--choice-rgb),.13) 83%,
+    rgba(255,255,255,.016) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;
+}
+#guide .sights-day-trips .daytrip-option--alternative::after {
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:13px;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(110% 68% at 8% 0%, rgba(255,255,255,.09) 0%, rgba(255,255,255,.028) 20%, transparent 48%),
+    radial-gradient(90% 72% at 50% -6%, rgba(var(--choice-rgb),.11) 0%, rgba(var(--choice-rgb),.040) 28%, rgba(var(--choice-rgb),.012) 52%, transparent 74%),
+    radial-gradient(72% 58% at 102% 106%, rgba(var(--choice-rgb),.075) 0%, rgba(var(--choice-rgb),.022) 28%, transparent 58%),
+    linear-gradient(180deg, rgba(255,255,255,.016) 0%, transparent 32%);
+}
+#guide .sights-day-trips .daytrip-option--alternative > * {
+  position:relative;
+  z-index:1;
+}
+#guide .sights-day-trips .daytrip-option--bus-choice { --choice-rgb: 154,164,174; }
+#guide .sights-day-trips .daytrip-option--taxi-choice { --choice-rgb: 219,183,76; }
+#guide .sights-day-trips .daytrip-soft-badge {
+  border-color:rgba(255,255,255,.13);
+  background:rgba(255,255,255,.028);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+@media(max-width:355px){
+  #guide .sights-day-trips .daytrip-option--alternative { border-radius:13px; }
+  #guide .sights-day-trips .daytrip-option--alternative::after { border-radius:12px; }
+}
 </style>
 
 </head><body>
