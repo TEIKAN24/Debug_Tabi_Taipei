@@ -1587,7 +1587,7 @@ body{color:var(--mono-body)}
 .site-content :is(p,li,td,th,summary,summary strong):not(.travel-caution *):not(.travel-twac *):not(#food-explorer *){color:var(--mono-body)}
 .site-content :is(.airport-access-subheading,.airport-mode-name,.airport-route-stop,.airport-fare-amount,.destination-title,.venue-name-line,.area-intro-title,.travel-topic-title):not(.travel-caution *){color:var(--mono-main)!important}
 .site-content :is(.airport-fare-label,.airport-fare-time,.airport-root-meta,.airport-direction-text small,.destination-pr,.destination-lead,.destination-guide-label,.destination-info-title,.metro-transfer-note,.metro-route-key-item,.venue-row-index,.venue-extra-note,.area-intro-description,.section-note):not(.travel-caution *):not(.travel-twac *){color:var(--mono-sub)!important}
-.site-content :is(.airport-direction-text strong,.airport-direction-button,.tab-pill,.tab-pill[aria-selected='true'],.venue-tag,.selected-value,.venue-main-link,.section-jump-button):not(#food-explorer *){color:var(--mono-main)!important}
+.site-content :is(.airport-direction-text strong,.airport-direction-button,.selected-value,.venue-main-link,.section-jump-button):not(#food-explorer *){color:var(--mono-main)!important}
 .site-content :is(.airport-direction-icon,.airport-direction-indicator,.airport-mode-icon,.section-jump-arrow){color:var(--mono-body)!important}
 /* Navigation links remain recognizable through underlines / outlines rather than cyan text. */
 .site-content a:not(.travel-twac a):not(#food-explorer a){color:var(--mono-main)!important;text-decoration-color:rgba(245,245,245,.5)!important}
@@ -1600,7 +1600,7 @@ body{color:var(--mono-body)}
 .site-content .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon),
 .site-content .airport-direction-switcher .airport-mode-heading > .airport-mode-icon,
 .site-content .airport-direction-switcher .airport-mode-compact > .airport-mode-icon{
-  filter:grayscale(1) saturate(0)!important;
+  filter:none!important;
 }
 .site-content .airport-direction-switcher .airport-direction-icon svg,
 .site-content .airport-direction-switcher .airport-direction-indicator svg{stroke:currentColor!important;}
@@ -1678,13 +1678,13 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 /* Six entry cards stay recognizable and tappable, but visually quiet. */
 .quick-nav .nav-button:nth-child(n){background:#181818!important;border:1px solid #333333!important;box-shadow:none!important;}
 .quick-nav .nav-button:hover{background:#222222!important;border-color:#505050!important;}
-.quick-nav .nav-icon{filter:grayscale(1) saturate(0);}
+.quick-nav .nav-icon{filter:none;}
 .quick-nav .nav-title{color:#F3F3F3!important;}
 .quick-nav .nav-subtitle,.quick-nav .nav-arrow{color:#A8A8A8!important;}
 /* Neutral airport icons; distinct route colors remain functional. */
 .site-content .airport-direction-switcher .airport-direction-icon,
 .site-content .airport-direction-switcher .airport-direction-indicator{color:#DADADA!important;}
-.site-content .airport-direction-switcher :is(.airport-mode-icon,.airport-access .tab-pill img,.airport-access .tab-pill .icon){filter:grayscale(1) saturate(0)!important;}
+.site-content .airport-direction-switcher :is(.airport-mode-icon,.airport-access .tab-pill img,.airport-access .tab-pill .icon){filter:none!important;}
 /* Travel caution and TWAC maintain role-specific emphasis, but remove over-saturated fills. */
 .site-content details.travel-caution{background:#191815!important;border-color:#545047!important;}
 .site-content details.travel-twac{background:#151A17!important;border-color:#465148!important;}
@@ -1722,7 +1722,7 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 }
 /* Logos inside selected bubbles become solid dark silhouettes. */
 .site-content .tab-pill[aria-selected="true"] img.inline-category-icon {
-  filter:grayscale(1) brightness(0)!important;
+  filter:none!important;
 }
 /* Emoji inside selected tabs remain legible in their natural rendering. */
 .site-content .tab-pill[aria-selected="false"] {
@@ -1734,6 +1734,97 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
   outline:2px solid #F5F5F5!important;
   outline-offset:3px!important;
 }
+</style>
+<style id="threads-color-icons-and-inverse-pill-fix-20261015">
+/* Restore original full-colour emoji and icon artwork, including selected tabs. */
+.quick-nav .nav-icon,
+.site-content .airport-direction-switcher :is(.airport-mode-icon,.airport-access .tab-pill img,.airport-access .tab-pill .icon),
+.site-content .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon),
+.site-content .tab-pill img.inline-category-icon,
+.site-content .tab-pill[aria-selected="true"] img.inline-category-icon {
+  filter:none!important;
+}
+/* High-specificity active state: WHITE background and BLACK label, including nested strong. */
+.site-content .tab-pill[aria-selected="true"],
+.site-content .destination-card .tab-pill[aria-selected="true"],
+.site-content .tab-pill[aria-selected="true"]:hover {
+  background:#F5F5F5!important;
+  background-image:none!important;
+  border-color:#F5F5F5!important;
+  color:#111111!important;
+}
+.site-content .tab-pill[aria-selected="true"] :is(strong,b,small,span,em),
+.site-content .destination-card .tab-pill[aria-selected="true"] :is(strong,b,small,span,em) {
+  color:#111111!important;
+}
+/* Emoji are rendered natively in colour; image logos retain their original appearance. */
+</style>
+
+<style id="threads-nav-gradient-gold-tags-and-selected-label-fix-20261015">
+/* Keep the ordinary chips neutral; restore only the editorial recommendation gold. */
+.site-content .venue-directory-section .venue-tag--featured {
+  color:#EBC489!important;
+  background:#423A2D!important;
+  background-image:none!important;
+  border:1px solid #66533B!important;
+}
+/* Restore gold editorial highlights, without reintroducing highlighted backgrounds. */
+.site-content mark.highlight-yellow:not(:has(a)),
+.site-content .venue-list-item mark.highlight-yellow:not(:has(a)) {
+  color:#EBC489!important;
+  background:transparent!important;
+}
+
+/* Category shortcuts: airport express/commuter-style top-to-bottom fade, six muted hues. */
+.quick-nav > .nav-button:nth-child(1) {--nav-rgb:89,189,175;--nav-accent:#66BFAF;}
+.quick-nav > .nav-button:nth-child(2) {--nav-rgb:215,158,105;--nav-accent:#D79E69;}
+.quick-nav > .nav-button:nth-child(3) {--nav-rgb:115,163,210;--nav-accent:#73A3D2;}
+.quick-nav > .nav-button:nth-child(4) {--nav-rgb:169,149,204;--nav-accent:#A995CC;}
+.quick-nav > .nav-button:nth-child(5) {--nav-rgb:204,145,172;--nav-accent:#CC91AC;}
+.quick-nav > .nav-button:nth-child(6) {--nav-rgb:196,169,104;--nav-accent:#C4A968;}
+.quick-nav > .nav-button:nth-child(n) {
+  background:linear-gradient(180deg,
+    rgba(var(--nav-rgb),.27) 0%,
+    rgba(var(--nav-rgb),.10) 41%,
+    rgba(var(--nav-rgb),0) 92%),#181818!important;
+  border:1px solid #383838!important;
+  border-top:2px solid var(--nav-accent)!important;
+  box-shadow:none!important;
+}
+.quick-nav > .nav-button:nth-child(n):hover {
+  background:linear-gradient(180deg,
+    rgba(var(--nav-rgb),.33) 0%,
+    rgba(var(--nav-rgb),.13) 45%,
+    rgba(var(--nav-rgb),0) 94%),#1A1A1A!important;
+  border-color:#505050!important;
+  border-top-color:var(--nav-accent)!important;
+}
+.quick-nav > .nav-button:nth-child(n):focus-visible {
+  outline:2px solid #F2F2F2;
+  outline-offset:3px;
+}
+.quick-nav .nav-title {color:#F7F7F7!important;}
+.quick-nav .nav-subtitle {color:#BDBDBD!important;}
+
+/* WHITE inverse tabs need BLACK text, including nested bold/span labels.
+   The old ID-specific :not(#food-explorer *) rule was corrected above. */
+#guide .tab-pill[aria-selected="true"],
+#guide .destination-card .tab-pill[aria-selected="true"],
+#guide .tab-pill[aria-selected="true"]:hover {
+  background:#F5F5F5!important;
+  background-image:none!important;
+  color:#111111!important;
+  border-color:#F5F5F5!important;
+  outline:none!important;
+}
+#guide .tab-pill[aria-selected="true"] :is(strong,b,small,em,span),
+#guide .destination-card .tab-pill[aria-selected="true"] :is(strong,b,small,em,span) {
+  color:#111111!important;
+  -webkit-text-fill-color:#111111;
+}
+#guide .tab-pill[aria-selected="true"]:focus-visible {outline:2px solid #F5F5F5!important;outline-offset:3px!important;}
+#guide .tab-pill[aria-selected="false"] {background:transparent!important;color:#C4C4C4!important;border-color:#494949!important;}
+#guide .tab-pill img.inline-category-icon {filter:none!important;}
 </style>
 </head><body>
 <header class="hero wrapper" id="top"><div class="eyebrow"><span class="ta">TA</span>BI / <span class="ta">TA</span>IPEI</div><h1><a aria-label="台湾グルメ検索へ" class="hero-title-link" data-target="food-search" href="#food-search">TAIPEI<br/><span>CITY GUIDE</span></a></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
