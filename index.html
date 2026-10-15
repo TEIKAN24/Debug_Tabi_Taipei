@@ -2668,6 +2668,47 @@ html, body,
   margin-top:0!important;
 }
 </style>
+
+<style id="food-dictionary-expandable-descriptions-20261016">
+/* Keep the original compact search rows; reveal the original, unmodified description on demand. */
+#guide #food-explorer .result { min-width:0; }
+#guide #food-explorer .food-entry-toggle {
+  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
+  width:100%;min-width:0;padding:0;margin:0;border:0;border-radius:4px;
+  background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#guide #food-explorer .food-entry-toggle:focus-visible {
+  outline:2px solid var(--accent,#83D3B0);outline-offset:3px;
+}
+#guide #food-explorer .food-entry-left,
+#guide #food-explorer .food-entry-static-left { flex:1 1 auto;min-width:0; }
+#guide #food-explorer .food-entry-static-meta,
+#guide #food-explorer .food-entry-toggle .result-meta {flex:0 0 auto;}
+#guide #food-explorer .food-desc-preview {
+  display:block;max-width:min(15em,100%);white-space:nowrap;overflow:hidden;
+  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 73%,transparent 100%);
+  mask-image:linear-gradient(to right,#000 0%,#000 73%,transparent 100%);
+}
+#guide #food-explorer .food-desc-preview[hidden],
+#guide #food-explorer .food-desc-full[hidden]{display:none!important;}
+#guide #food-explorer .food-desc-full {
+  display:block;max-width:100%;white-space:normal;overflow-wrap:anywhere;
+  -webkit-mask-image:none;mask-image:none;
+}
+#guide #food-explorer .food-expand-cue {
+  display:inline-flex;align-items:center;justify-content:flex-end;
+  color:var(--muted);font-size:10px;line-height:1.45;white-space:nowrap;
+  opacity:.88;letter-spacing:0;
+}
+#guide #food-explorer .result.is-expanded .food-expand-cue {color:var(--accent,#83D3B0);}
+#guide #food-explorer .result.is-expanded .desc {line-height:1.7;}
+#guide #food-explorer #results.scrolling {overflow-anchor:none;}
+@media(max-width:350px){
+  #guide #food-explorer .food-entry-toggle {gap:5px;}
+  #guide #food-explorer .food-expand-cue {font-size:9.5px;}
+}
+</style>
 </head><body>
 <header class="hero wrapper" id="top"><div class="eyebrow"><span class="ta">TA</span>BI / <span class="ta">TA</span>IPEI</div><h1><a aria-label="台湾グルメ検索へ" class="hero-title-link" data-target="food-search" href="#food-search">TAIPEI<br/><span>CITY GUIDE</span></a></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
 <a class="nav-button" data-target="travel" href="#travel"><span aria-hidden="true" class="nav-icon">✈️</span><span class="nav-copy"><span class="nav-title">旅の準備・交通</span><span class="nav-subtitle">入国・空港・注意事項</span></span></a>
@@ -3549,6 +3590,53 @@ function resizeResultViewport() {
   results.style.maxHeight = `${Math.ceil(fullHeight + nextHeight * fraction)}px`;
 }
 
+// Approx. fifteen visible Japanese characters; leave a few extra characters for the fade.
+// Segment by grapheme so emoji and combining characters are not cut in half.
+function descriptionGraphemes(value) {
+  const str = String(value || "");
+  if (typeof Intl !== "undefined" && Intl.Segmenter) {
+    return [...new Intl.Segmenter("ja", {granularity:"grapheme"}).segment(str)].map(part => part.segment);
+  }
+  return Array.from(str);
+}
+
+function setFoodEntryExpanded(row, expanded) {
+  if (!row || !row.classList.contains("food-entry-expandable")) return;
+  const button = row.querySelector(".food-entry-toggle");
+  const preview = row.querySelector(".food-desc-preview");
+  const full = row.querySelector(".food-desc-full");
+  const cue = row.querySelector(".food-expand-cue");
+  if (!button || !preview || !full || !cue) return;
+  row.classList.toggle("is-expanded", expanded);
+  button.setAttribute("aria-expanded", String(expanded));
+  button.setAttribute("aria-label", `${row.dataset.dishName}：${expanded ? "説明を閉じる" : "説明の続きを見る"}`);
+  preview.hidden = expanded;
+  full.hidden = !expanded;
+  cue.textContent = expanded ? "閉じる ⌃" : "続きを読む ⌄";
+}
+
+// Collapse only once the ENTIRE entry has left the internal food-result scrollport.
+// When an entry above the viewport shrinks, compensate its height so reading position stays stable.
+let foodCollapseFrame = 0;
+function collapseFoodEntriesOutsideViewport() {
+  foodCollapseFrame = 0;
+  if (!results.classList.contains("scrolling")) return;
+  const viewport = results.getBoundingClientRect();
+  for (const row of results.querySelectorAll(".result.is-expanded")) {
+    const rect = row.getBoundingClientRect();
+    const above = rect.bottom <= viewport.top + 1;
+    const below = rect.top >= viewport.bottom - 1;
+    if (!above && !below) continue;
+    const beforeHeight = row.getBoundingClientRect().height;
+    const scrollBefore = results.scrollTop;
+    setFoodEntryExpanded(row, false);
+    if (above) results.scrollTop = Math.max(0, scrollBefore - (beforeHeight - row.getBoundingClientRect().height));
+  }
+}
+results.addEventListener("scroll", () => {
+  if (!foodCollapseFrame) foodCollapseFrame = requestAnimationFrame(collapseFoodEntriesOutsideViewport);
+}, {passive:true});
+
 function drawResults() {
   const matched = currentMatches();
   count.textContent = `${matched.length} 件`;
@@ -3573,12 +3661,27 @@ function drawResults() {
       const row = document.createElement("article");
       row.className = "result";
       const left = document.createElement("div");
+      left.className = "food-entry-left";
       const name = document.createElement("h3");
       name.className = "dish";
       const desc = document.createElement("p");
       desc.className = "desc";
       addHighlightedText(name, food.name, highlightTerms);
-      addHighlightedText(desc, food.description, highlightTerms);
+      const graphemes = descriptionGraphemes(food.description);
+      const expandable = graphemes.length > 15;
+      if (expandable) {
+        const preview = document.createElement("span");
+        preview.className = "food-desc-preview";
+        // Display up to ~15 characters, with the last few fading out.
+        addHighlightedText(preview, graphemes.slice(0, 18).join(""), highlightTerms);
+        const full = document.createElement("span");
+        full.className = "food-desc-full";
+        full.hidden = true;
+        addHighlightedText(full, food.description, highlightTerms);
+        desc.append(preview, full);
+      } else {
+        addHighlightedText(desc, food.description, highlightTerms);
+      }
       left.append(name, desc);
       
 const meta = document.createElement("div");
@@ -3621,7 +3724,31 @@ if (food.spice) {
   meta.append(spice);
 }
 
-row.append(left, meta);
+if (expandable) {
+  row.classList.add("food-entry-expandable");
+  row.dataset.dishName = food.name;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "food-entry-toggle";
+  button.setAttribute("aria-expanded", "false");
+  button.setAttribute("aria-label", `${food.name}：説明の続きを見る`);
+  const cue = document.createElement("span");
+  cue.className = "food-expand-cue";
+  cue.textContent = "続きを読む ⌄";
+  meta.append(cue);
+  button.append(left, meta);
+  button.addEventListener("click", () => {
+    const open = !row.classList.contains("is-expanded");
+    // Show one explanation at a time to keep the scroll list compact.
+    for (const other of results.querySelectorAll(".result.is-expanded")) {
+      if (other !== row) setFoodEntryExpanded(other, false);
+    }
+    setFoodEntryExpanded(row, open);
+  });
+  row.append(button);
+} else {
+  row.append(left, meta);
+}
 
       results.append(row);
     }
