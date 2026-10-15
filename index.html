@@ -1482,6 +1482,69 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .sights-day-trips > .destination-lead {margin:0 0 14px;}
 .site-content .sights-day-trips > .jump-anchor {scroll-margin-top:18px;}
 </style>
+<style id="flight-panel-demo-refinement">
+/* Page-heading shortcut: no surrounding background, outline, or card. */
+.site-content .travel-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:32px 0 13px;}
+.site-content .travel-title-row>h2{margin:0!important;min-width:0;flex:1;}
+.site-content .flight-panel-trigger{appearance:none;background:transparent!important;border:0!important;box-shadow:none!important;padding:0 1px;min-width:37px;height:37px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;color:#A9D8F3;cursor:pointer;border-radius:6px;transition:color .16s ease,transform .16s ease;}
+.site-content .flight-panel-trigger>span{font-size:26px;line-height:1;font-weight:400;}
+.site-content .flight-panel-trigger:hover,.site-content .flight-panel-trigger[aria-expanded="true"]{color:#D6EDFF;transform:translateY(-1px);}
+.site-content .flight-panel-trigger:focus-visible{outline:2px solid #A9D8F3;outline-offset:3px;}
+.site-content .flight-panel-independent[hidden]{display:none!important;}
+.site-content .flight-panel-independent{min-width:0;margin:0 0 19px;}
+.site-content .flight-panel-independent .flight-lookup{margin:0;padding:14px;background:linear-gradient(150deg,#202D39,#1B2430 90%);border:1px solid #42576A;border-radius:13px;}
+.site-content .flight-panel-top{display:flex;justify-content:space-between;align-items:start;gap:10px;margin-bottom:5px;}
+.site-content .flight-panel-top .flight-lookup-heading{display:flex;flex-direction:column;align-items:start;gap:2px;margin:0;}
+.site-content .flight-panel-top .flight-lookup-heading strong{font-size:13px;font-weight:740;color:#F1F6FC;}
+.site-content .flight-panel-top .flight-lookup-heading small{font-size:11px;color:#9FAFBD;}
+.site-content .flight-demo-pill{flex:0 0 auto;font-size:9px;color:#A9D8F3;letter-spacing:.13em;font-weight:750;border:1px solid #577995;border-radius:999px;padding:3px 8px;}
+.site-content .flight-demo-notice{margin:8px 0 13px;font-size:10.5px;line-height:1.65;color:#9CB4C9;}
+.site-content .flight-lookup-form{grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);gap:10px;}
+.site-content .flight-lookup-field input,.site-content .flight-lookup-field select{box-sizing:border-box;width:100%;min-width:0;height:40px;padding:0 10px;background:#131E28;border:1px solid #4C6275;border-radius:9px;color:#EAF3F9;color-scheme:dark;font-size:12px;font-weight:650;appearance:auto;}
+.site-content .flight-lookup-field input[type=date]{min-height:40px;}
+.site-content .flight-lookup-field select{color-scheme:dark;}
+.site-content .flight-lookup-form .flight-lookup-submit{grid-column:2;min-height:40px;height:40px;background:#416788;border-color:#739BC1;}
+.site-content .flight-lookup-hint{font-size:10px;margin:9px 0 0;}
+/* Result closely follows the two-airport visual hierarchy of the reference. */
+.site-content .flight-lookup-result{margin-top:13px;background:#1B222C;border:1px solid #506071;border-radius:16px;padding:14px 13px 13px;box-shadow:inset 0 1px 0 rgba(222,238,255,.025);min-width:0;}
+.site-content .flight-lookup-result-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:16px;}
+.site-content .flight-lookup-result-number{color:#F2F6FB;font-size:15px;letter-spacing:.012em;}
+.site-content .flight-lookup-result-route{color:#A4B5C6;text-align:left;font-size:10.5px;line-height:1.6;margin-top:2px;}
+.site-content .flight-lookup-status-tag{border:1px solid #6597C2;background:#203246;color:#AFD6FB;font-size:10.5px;padding:5px 9px;border-radius:6px;flex-shrink:0;font-weight:700;max-width:50%;white-space:normal;line-height:1.3;text-align:center;}
+.site-content .flight-lookup-hero{padding:4px 1px 0;margin-bottom:15px;}
+.site-content .flight-lookup-route-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;}
+.site-content .flight-lookup-code-wrap{min-width:0;}
+.site-content .flight-lookup-code{color:#F1F5FA;font-size:clamp(29px,8.6vw,56px);font-weight:360;letter-spacing:-.05em;line-height:1.1;white-space:nowrap;}
+.site-content .flight-lookup-code-label{display:block;font-size:10px;color:#A5B4C3;margin-top:5px;}
+.site-content .flight-lookup-line-wrap{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:8px;align-items:center;padding-bottom:13px;}
+.site-content .flight-lookup-line-meta{font-size:10px;line-height:1.3;color:#A9B8C7;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.site-content .flight-lookup-line{height:3px;width:100%;position:relative;border-radius:999px;background:linear-gradient(90deg,#4F7FAE,#719DC7 65%,#405A78);}
+.site-content .flight-lookup-line::before{content:"";position:absolute;inset:-3px 0;filter:blur(6px);background:linear-gradient(90deg,transparent,rgba(102,159,218,.2),transparent);pointer-events:none;}
+.site-content .flight-lookup-plane{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:22px;color:#91BFEA;text-shadow:0 0 7px rgba(95,157,220,.18);}
+.site-content .flight-lookup-data-rows{border-top:1px solid #4A5869;padding-top:12px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+.site-content .flight-lookup-airport-data{min-width:0;padding:1px 12px 4px 0;}
+.site-content .flight-lookup-airport-data+.flight-lookup-airport-data{border-left:1px solid #3C4A5B;padding:1px 0 4px 12px;}
+.site-content .flight-lookup-airport-title{color:#E8F1F9;font-size:12px;line-height:1.45;font-weight:750;margin-bottom:11px;}
+.site-content .flight-lookup-detail-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:9px 6px;}
+.site-content .flight-lookup-detail-label{display:block;color:#9AABBC;font-size:9px;line-height:1.4;}
+.site-content .flight-lookup-detail-value{display:block;color:#E9F2FB;font-size:clamp(14px,4.1vw,21px);font-weight:700;line-height:1.35;margin-top:6px;overflow-wrap:anywhere;}
+.site-content .flight-lookup-detail-value.is-accent{color:#98C9F4;}
+.site-content .flight-lookup-extra{margin-top:10px;color:#BDC9D6;font-size:10px;}
+.site-content .flight-lookup-source{margin-top:12px!important;border-top:1px solid #415060;padding-top:9px;color:#95AABC;font-size:10px;line-height:1.6;}
+@media(max-width:375px){
+ .site-content .flight-panel-independent .flight-lookup{padding:10px;}
+ .site-content .flight-lookup-form{grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);}
+ .site-content .flight-lookup-field input{font-size:12px;}
+ .site-content .flight-lookup-result{padding:12px 9px;}
+ .site-content .flight-lookup-route-row{gap:5px;}
+ .site-content .flight-lookup-airport-data{padding-right:7px;}
+ .site-content .flight-lookup-airport-data+.flight-lookup-airport-data{padding-left:7px;}
+ .site-content .flight-lookup-detail-grid{gap:8px 4px;}
+ .site-content .flight-lookup-detail-label{font-size:8.5px;}
+ .site-content .flight-lookup-detail-value{font-size:14px;}
+}
+@media(prefers-reduced-motion:reduce){.site-content .flight-panel-trigger{transition:none!important;}}
+</style>
 </head><body>
 <header class="hero wrapper" id="top"><div class="eyebrow"><span class="ta">TA</span>BI / <span class="ta">TA</span>IPEI</div><h1><a class="hero-title-link" data-target="food-search" href="#food-search" aria-label="台湾グルメ検索へ">TAIPEI<br/><span>CITY GUIDE</span></a></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
 <a class="nav-button" data-target="travel" href="#travel"><span aria-hidden="true" class="nav-icon">✈️</span><span class="nav-copy"><span class="nav-title">旅の準備・交通</span><span class="nav-subtitle">入国・空港・注意事項</span></span></a>
@@ -1490,7 +1553,25 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 <a class="nav-button" data-target="areas" href="#areas"><span aria-hidden="true" class="nav-icon">📍</span><span class="nav-copy"><span class="nav-title">注目の街歩きエリア</span><span class="nav-subtitle">街歩き・ショッピング</span></span></a>
 <a class="nav-button" data-target="experiences" href="#experiences"><span aria-hidden="true" class="nav-icon">✨</span><span class="nav-copy"><span class="nav-title">台湾ならではの体験</span><span class="nav-subtitle">変身・美容・手作り</span></span></a>
 <a class="nav-button" data-target="souvenirs" href="#souvenirs"><span aria-hidden="true" class="nav-icon">🎁</span><span class="nav-copy"><span class="nav-title">お土産を探す</span><span class="nav-subtitle">お菓子・雑貨・コスメ</span></span></a>
-</nav><p class="below-nav">気になるカテゴリーをタップすると、ページ内を移動します。</p></header><main class="wrapper site-content" id="guide"><hr class="divider"/><div class="page-body"><span class="jump-anchor" id="travel"></span><h2 class="" dir="auto" id="3f86bda0-4caa-8049-b865-f2a862bb77c5">✈️ 旅の準備・交通</h2><details class="travel-caution block-color-yellow_background toggle root-accordion" data-group="root" data-notion-highlight="yellow_background" dir="auto" id="3f56bda0-4caa-80c6-9629-df3b09a0ff5a"><summary class="travel-key-summary"><span class="travel-key-icon" aria-hidden="true">⚠️</span><span class="travel-key-copy"><span class="travel-key-title">旅行前に知っておきたいこと</span><span class="travel-key-subtitle">台湾旅行で気をつけたいポイント</span></span></summary><div class="indented"><ul class="bulleted-list" dir="auto" id="3f56bda0-4caa-80d0-a9dc-fb38b91fbb88"><li style="list-style-type:disc">電子／加熱式たばこの持込み・使用禁止</li></ul><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-80c7-9c95-f08f24dc1924"><summary>宿泊先のアメニティ事情</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f76bda0-4caa-805c-a6f9-da768afdc128" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-80fd-ae4a-d9700cade6df">台湾の宿泊施設では、環境保護のため使い捨てアメニティが客室に用意されていない場合があります。必要なものは持参するか、宿泊先に事前に確認すると安心です。</p></div></aside></div></details><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-80ad-b30e-fb2c935b071b"><summary>トイレの紙事情</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f76bda0-4caa-809a-ae79-ed8de2b1f1e1" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f66bda0-4caa-8005-9706-fa574564f9af">トイレの個室に流せるペーパーがない場所や、使用済みの紙を横にあるゴミ箱に捨てるルール（または流せる表示がある場所）が混在しています。<br/><br/>水に流せるティッシュやウェットティッシュを持ち歩くと安心です。</p></div></aside></div></details><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-80db-8bd2-e77fe90c45dc"><summary>水道水</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f76bda0-4caa-80a9-9cde-fa53708f942d" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-8016-92f2-cced0cf6f33d">水質自体に問題はありませんが、配管などの影響があるため、そのまま飲むのは避けましょう。</p></div></aside></div></details><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-80ef-af5d-c26731493f09"><summary>交通・移動</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f56bda0-4caa-80b4-8cc6-f13d0a333363" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-801d-8998-da289a67be90">MRT（地下鉄）車内・改札付近の黄色い線から先は原則飲食禁止です。水を飲むことやガムを噛むことも禁止なので、注意してください。</p></div></aside><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f56bda0-4caa-80ec-995c-d9b2b5c5d0f7" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-801e-9b43-f70d7f04fa8c"><strong>バスに乗るときは手を挙げて</strong>乗車する意思を示す必要があります。手を挙げないと、そのまま通過してしまうこともあります。</p><p class="" dir="auto" id="3f56bda0-4caa-80ea-888d-da30fb4340ea">日本より運転が荒いことも多いので、急発進や急ブレーキに注意してください。  降りるときは、早めに降車ボタンを押しましょう。</p></div></aside><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f56bda0-4caa-80b3-a21f-dc8d278c1802" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-8033-8acb-d9bd1c270590">台湾は右側通行です。バイクも多いので、青信号でも左右をよく確認してから渡りましょう。特に右左折してくる車には気をつけてください。</p></div></aside><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f66bda0-4caa-8075-826a-f08e498735b3" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f66bda0-4caa-80d4-a71e-df93ca3cb2fc">Uberも利用できます。</p></div></aside></div></details><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-800d-986b-dce0b4bd4353"><summary>お金・支払い・交通系IC</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f56bda0-4caa-80cc-9f26-c8694ac5fc75" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-802c-9c2d-e2ac1ca20995">少額の現金を持っておくと安心です。</p><p class="" dir="auto" id="3f56bda0-4caa-80c5-a0bc-d2089825bd3f">ショッピングモールや大きなレストランではクレジットカードが使えることが多いですが、夜市やローカルなお店では現金のみの場合もあります。</p></div></aside><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f56bda0-4caa-80f7-b456-f47bdf762774" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-808b-b1d7-d753922681bb">悠遊カード（EasyCard）</p><p class="" dir="auto" id="3f56bda0-4caa-80c3-9728-dccae39a9451">日本のSuicaのような交通系ICカード。MRTやバス、コンビニなどで利用できます。MRT駅やコンビニで購入・チャージでき、かわいいキャラクターやキーチェーンなど、さまざまな種類から選べます。</p></div></aside></div></details><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-8007-a9ac-d2d2fc995658"><summary>レシートは宝くじ</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f76bda0-4caa-80e0-b1aa-d86e8ba3d82c" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f66bda0-4caa-8009-896d-cb9b8e0c61a3">台湾のレシートには宝くじ機能があり、2か月に1回抽選が行われます。最高賞金は1,000万台湾ドル。</p></div></aside></div></details></div></details><details class="travel-twac block-color-yellow_background toggle root-accordion" data-group="root" data-notion-highlight="yellow_background" dir="auto" id="3f86bda0-4caa-8096-bae1-da66498fb83c"><summary class="travel-key-summary"><span class="travel-key-icon" aria-hidden="true">🪪</span><span class="travel-key-copy"><span class="travel-key-title"><span class="travel-required">必須</span>電子入国カード（TWAC）</span><span class="travel-key-subtitle">無料・オンラインで申請</span></span></summary><div class="indented"><ul class="bulleted-list" dir="auto" id="3f86bda0-4caa-802a-a0dc-fa8f04464dfa"><li style="list-style-type:disc"><a class="travel-twac-link" href="https://twac.immigration.gov.tw/" rel="noopener noreferrer" target="_blank">TWAC公式サイト</a>から申請する（無料）<br/><em><mark class="highlight-gray" data-notion-highlight="gray"><mark class="highlight-default_background" data-notion-highlight="default_background">必要情報: パスポート情報、往復の航空便名、台湾での滞在先（ホテル名や住所）など。</mark></mark></em></li></ul></div></details><h3 class="airport-access-subheading">空港アクセス</h3><div class="airport-direction-switcher" aria-label="空港アクセス">
+</nav><p class="below-nav">気になるカテゴリーをタップすると、ページ内を移動します。</p></header><main class="wrapper site-content" id="guide"><hr class="divider"/><div class="page-body"><span class="jump-anchor" id="travel"></span><div class="travel-title-row">
+<h2 class="" dir="auto" id="3f86bda0-4caa-8049-b865-f2a862bb77c5">✈️ 旅の準備・交通</h2>
+<button class="flight-panel-trigger" type="button" aria-label="フライト情報を確認" aria-expanded="false" aria-controls="flight-panel-independent" title="フライト情報を確認"><span aria-hidden="true">✈︎</span></button>
+</div>
+<section class="flight-panel-independent" id="flight-panel-independent" hidden aria-label="フライト情報を確認">
+  <div class="flight-lookup" aria-label="フライト検索デザインプレビュー">
+    <div class="flight-panel-top"><div class="flight-lookup-heading"><strong>フライト情報を確認</strong><small>便名と出発日から出発情報を検索</small></div><span class="flight-demo-pill">DEMO</span></div>
+    <p class="flight-demo-notice">画面確認用のサンプルです。現在はTDXに接続していません。</p>
+    <form class="flight-lookup-form">
+      <label class="flight-lookup-field"><span>便名</span><input name="flight" type="text" value="BR198" placeholder="例：BR198" autocapitalize="characters" spellcheck="false" autocomplete="off" maxlength="9" required></label>
+      <label class="flight-lookup-field"><span>出発日</span><input name="date" type="date" value="2026-10-15" required></label>
+      <label class="flight-lookup-field flight-lookup-field-airport"><span>出発空港</span><select name="airport" aria-label="出発空港"><option value="TPE">桃園（TPE）</option><option value="TSA">松山（TSA）</option></select></label>
+      <button class="flight-lookup-submit" type="submit">検索</button>
+    </form>
+    <p class="flight-lookup-hint">展示用データ：2026年10月15日・BR198・桃園国際空港。ほかの条件ではテスト結果を表示しません。</p>
+    <p class="flight-lookup-status" role="status" aria-live="polite" hidden></p>
+    <div class="flight-lookup-results" hidden></div>
+  </div>
+</section><details class="travel-caution block-color-yellow_background toggle root-accordion" data-group="root" data-notion-highlight="yellow_background" dir="auto" id="3f56bda0-4caa-80c6-9629-df3b09a0ff5a"><summary class="travel-key-summary"><span class="travel-key-icon" aria-hidden="true">⚠️</span><span class="travel-key-copy"><span class="travel-key-title">旅行前に知っておきたいこと</span><span class="travel-key-subtitle">台湾旅行で気をつけたいポイント</span></span></summary><div class="indented"><ul class="bulleted-list" dir="auto" id="3f56bda0-4caa-80d0-a9dc-fb38b91fbb88"><li style="list-style-type:disc">電子／加熱式たばこの持込み・使用禁止</li></ul><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-80c7-9c95-f08f24dc1924"><summary>宿泊先のアメニティ事情</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f76bda0-4caa-805c-a6f9-da768afdc128" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-80fd-ae4a-d9700cade6df">台湾の宿泊施設では、環境保護のため使い捨てアメニティが客室に用意されていない場合があります。必要なものは持参するか、宿泊先に事前に確認すると安心です。</p></div></aside></div></details><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-80ad-b30e-fb2c935b071b"><summary>トイレの紙事情</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f76bda0-4caa-809a-ae79-ed8de2b1f1e1" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f66bda0-4caa-8005-9706-fa574564f9af">トイレの個室に流せるペーパーがない場所や、使用済みの紙を横にあるゴミ箱に捨てるルール（または流せる表示がある場所）が混在しています。<br/><br/>水に流せるティッシュやウェットティッシュを持ち歩くと安心です。</p></div></aside></div></details><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-80db-8bd2-e77fe90c45dc"><summary>水道水</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f76bda0-4caa-80a9-9cde-fa53708f942d" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-8016-92f2-cced0cf6f33d">水質自体に問題はありませんが、配管などの影響があるため、そのまま飲むのは避けましょう。</p></div></aside></div></details><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-80ef-af5d-c26731493f09"><summary>交通・移動</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f56bda0-4caa-80b4-8cc6-f13d0a333363" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-801d-8998-da289a67be90">MRT（地下鉄）車内・改札付近の黄色い線から先は原則飲食禁止です。水を飲むことやガムを噛むことも禁止なので、注意してください。</p></div></aside><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f56bda0-4caa-80ec-995c-d9b2b5c5d0f7" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-801e-9b43-f70d7f04fa8c"><strong>バスに乗るときは手を挙げて</strong>乗車する意思を示す必要があります。手を挙げないと、そのまま通過してしまうこともあります。</p><p class="" dir="auto" id="3f56bda0-4caa-80ea-888d-da30fb4340ea">日本より運転が荒いことも多いので、急発進や急ブレーキに注意してください。  降りるときは、早めに降車ボタンを押しましょう。</p></div></aside><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f56bda0-4caa-80b3-a21f-dc8d278c1802" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-8033-8acb-d9bd1c270590">台湾は右側通行です。バイクも多いので、青信号でも左右をよく確認してから渡りましょう。特に右左折してくる車には気をつけてください。</p></div></aside><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f66bda0-4caa-8075-826a-f08e498735b3" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f66bda0-4caa-80d4-a71e-df93ca3cb2fc">Uberも利用できます。</p></div></aside></div></details><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-800d-986b-dce0b4bd4353"><summary>お金・支払い・交通系IC</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f56bda0-4caa-80cc-9f26-c8694ac5fc75" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-802c-9c2d-e2ac1ca20995">少額の現金を持っておくと安心です。</p><p class="" dir="auto" id="3f56bda0-4caa-80c5-a0bc-d2089825bd3f">ショッピングモールや大きなレストランではクレジットカードが使えることが多いですが、夜市やローカルなお店では現金のみの場合もあります。</p></div></aside><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f56bda0-4caa-80f7-b456-f47bdf762774" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f56bda0-4caa-808b-b1d7-d753922681bb">悠遊カード（EasyCard）</p><p class="" dir="auto" id="3f56bda0-4caa-80c3-9728-dccae39a9451">日本のSuicaのような交通系ICカード。MRTやバス、コンビニなどで利用できます。MRT駅やコンビニで購入・チャージでき、かわいいキャラクターやキーチェーンなど、さまざまな種類から選べます。</p></div></aside></div></details><details class="toggle nested-accordion" dir="auto" id="3f56bda0-4caa-8007-a9ac-d2d2fc995658"><summary>レシートは宝くじ</summary><div class="indented"><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" data-notion-callout-icon="💡" dir="ltr" id="3f76bda0-4caa-80e0-b1aa-d86e8ba3d82c" style="white-space:pre-wrap;display:flex"><div style="font-size:1.5em"><span class="icon" data-emoji="💡"></span></div><div style="width:100%"><p class="" dir="auto" id="3f66bda0-4caa-8009-896d-cb9b8e0c61a3">台湾のレシートには宝くじ機能があり、2か月に1回抽選が行われます。最高賞金は1,000万台湾ドル。</p></div></aside></div></details></div></details><details class="travel-twac block-color-yellow_background toggle root-accordion" data-group="root" data-notion-highlight="yellow_background" dir="auto" id="3f86bda0-4caa-8096-bae1-da66498fb83c"><summary class="travel-key-summary"><span class="travel-key-icon" aria-hidden="true">🪪</span><span class="travel-key-copy"><span class="travel-key-title"><span class="travel-required">必須</span>電子入国カード（TWAC）</span><span class="travel-key-subtitle">無料・オンラインで申請</span></span></summary><div class="indented"><ul class="bulleted-list" dir="auto" id="3f86bda0-4caa-802a-a0dc-fa8f04464dfa"><li style="list-style-type:disc"><a class="travel-twac-link" href="https://twac.immigration.gov.tw/" rel="noopener noreferrer" target="_blank">TWAC公式サイト</a>から申請する（無料）<br/><em><mark class="highlight-gray" data-notion-highlight="gray"><mark class="highlight-default_background" data-notion-highlight="default_background">必要情報: パスポート情報、往復の航空便名、台湾での滞在先（ホテル名や住所）など。</mark></mark></em></li></ul></div></details><h3 class="airport-access-subheading">空港アクセス</h3><div class="airport-direction-switcher" aria-label="空港アクセス">
   <div class="airport-direction-buttons" role="group" aria-label="空港アクセスの方向を選択">
     <button class="airport-direction-button" type="button" data-airport-target="arrival" aria-controls="3f86bda0-4caa-80c0-9c97-d0b56f336ce5" aria-expanded="false">
       <span class="airport-direction-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21h20"/><path d="m3.2 8.5 2.4-1.2 3.8 3-1.3-5.6 2-1 4.1 8 4.9 2.6c2.2 1.1 2.3 2.3 1.5 3.3-.8 1-2 1.3-3.4.7L4.8 13z"/></svg></span>
@@ -1527,17 +1608,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 <section class="airport-mode-card airport-mode-rail"><div class="airport-mode-heading"><span aria-hidden="true" class="airport-mode-icon">🚆</span><span class="airport-mode-name">台北MRT（台北駅まで）</span><span class="airport-mode-recommended">おすすめ</span></div><div aria-label="松山機場駅から忠孝復興駅で乗り換えて台北駅へ。文湖線と板南線。" class="metro-route metro-route--transfer" role="img">
 <div class="metro-route-stops"><span>松山機場駅</span><span>忠孝復興駅</span><span>台北駅</span></div>
 <div class="metro-route-track"><span class="metro-route-dot"></span><span class="metro-route-segment" style="--metro-line:#B58A51;--metro-glow:#E4B77D"><span class="metro-route-chip">BR 文湖線</span></span><span class="metro-route-dot metro-route-dot--transfer"></span><span class="metro-route-segment" style="--metro-line:#358AC5;--metro-glow:#83C5EE"><span class="metro-route-chip">BL 板南線</span></span><span class="metro-route-dot"></span></div><div class="metro-route-key"><span class="metro-transfer-note">忠孝復興駅で乗り換え</span></div></div><div class="airport-single-fare"><span>$20〜</span><span>約20分（乗り換え1回）</span></div></section><div class="airport-mode-card airport-mode-compact airport-mode-bus"><span aria-hidden="true" class="airport-mode-icon">🚌</span><span class="airport-mode-name">路線バス（現地確認）</span></div><div class="airport-mode-card airport-mode-compact airport-mode-taxi"><span aria-hidden="true" class="airport-mode-icon">🚕</span><span class="airport-mode-name">タクシー（台北駅まで約20分）</span></div></div></div></div></div></div></details><details class="block-color-blue_background toggle root-accordion airport-access" data-airport-direction="departure" data-group="root" data-notion-highlight="blue_background" dir="auto" id="3f66bda0-4caa-80da-a883-e8ec520808d0"><summary class="airport-root-heading"><mark class="highlight-default_background" data-notion-highlight="default_background">🛫  台北市内→空港アクセス</mark></summary><div class="indented"><div class="tab" data-notion-tab-container="" dir="ltr" id="3f66bda0-4caa-805e-bd84-f0bd3b5aaf33"><div aria-label="カテゴリーを選択" class="tab-pills" role="tablist"><button aria-controls="3f66bda0-4caa-80d3-81b4-c63095437d6c" aria-selected="true" class="tab-pill" id="pill-3f66bda0-4caa-80d3-81b4-c63095437d6c" role="tab" tabindex="0" type="button"><img alt="" class="inline-category-icon" data-original-src="0E8EB05B-70CF-EC11-BBBB-005056BD475F.png" decoding="async" height="30" loading="lazy" src="assets/icons/taoyuan-airport.webp" width="30"/><strong>桃園国際空港</strong></button><button aria-controls="3f66bda0-4caa-809e-b64d-d80918724511" aria-selected="false" class="tab-pill" id="pill-3f66bda0-4caa-809e-b64d-d80918724511" role="tab" tabindex="-1" type="button"><img alt="" class="inline-category-icon" data-original-src="songshan-airport-logo.png" decoding="async" height="30" loading="lazy" src="assets/icons/songshan-airport.webp" width="30"/>台北松山空港</button></div><div class="tab-panels"><div aria-labelledby="pill-3f66bda0-4caa-80d3-81b4-c63095437d6c" class="tab-panel airport-access-panel" id="3f66bda0-4caa-80d3-81b4-c63095437d6c" role="tabpanel"><div class="indented airport-options">
-<section class="flight-lookup" data-airport="TPE" aria-label="桃園国際空港のフライト検索">
-  <div class="flight-lookup-heading"><span><strong>フライト情報を確認</strong><small>便名から出発情報を検索</small></span></div>
-  <form class="flight-lookup-form">
-    <label class="flight-lookup-field"><span>便名</span><input name="flight" type="text" placeholder="例：BR198" autocapitalize="characters" spellcheck="false" autocomplete="off" inputmode="text" maxlength="9" required></label>
-    <label class="flight-lookup-field"><span>出発日</span><input name="date" type="date" required></label>
-    <button class="flight-lookup-submit" type="submit">検索</button>
-  </form>
-  <p class="flight-lookup-hint">台湾時間の前日・当日・翌日が対象。便名・日時・ターミナルは運航状況により変更される場合があります。</p>
-  <p class="flight-lookup-status" role="status" aria-live="polite" hidden></p>
-  <div class="flight-lookup-results" hidden></div>
-</section>
 <section class="airport-mode-card airport-mode-rail"><div class="airport-mode-heading"><span aria-hidden="true" class="airport-mode-icon">🚆</span><span class="airport-mode-name">空港MRT</span><span class="airport-mode-recommended">おすすめ</span></div><div aria-label="台北駅から桃園国際空港まで、空港MRT。直達車は紫色、普通車は青色。" class="metro-route metro-route--taoyuan" role="img">
 <div class="metro-route-stops"><span>台北駅</span><span>桃園国際空港</span></div>
 <div class="metro-route-track"><span class="metro-route-dot metro-route-dot--taoyuan"></span><span class="metro-route-segment metro-route-segment--dual"><span class="metro-route-chip">空港MRT</span></span><span class="metro-route-dot metro-route-dot--taoyuan"></span></div>
@@ -1550,17 +1620,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 <div class="airport-fare-amount">$160</div>
 <div class="airport-fare-time">空港まで 約50分</div>
 </div></div></section><div class="airport-mode-card airport-mode-compact airport-mode-bus"><span aria-hidden="true" class="airport-mode-icon">🚌</span><span class="airport-mode-name">路線バス（現地確認）</span></div><div class="airport-mode-card airport-mode-compact airport-mode-taxi"><span aria-hidden="true" class="airport-mode-icon">🚕</span><span class="airport-mode-name">タクシー（空港まで約35分）</span></div></div></div><div aria-labelledby="pill-3f66bda0-4caa-809e-b64d-d80918724511" class="tab-panel airport-access-panel" hidden="" id="3f66bda0-4caa-809e-b64d-d80918724511" role="tabpanel"><div class="indented airport-options">
-<section class="flight-lookup" data-airport="TSA" aria-label="台北松山空港のフライト検索">
-  <div class="flight-lookup-heading"><span><strong>フライト情報を確認</strong><small>便名から出発情報を検索</small></span></div>
-  <form class="flight-lookup-form">
-    <label class="flight-lookup-field"><span>便名</span><input name="flight" type="text" placeholder="例：BR198" autocapitalize="characters" spellcheck="false" autocomplete="off" inputmode="text" maxlength="9" required></label>
-    <label class="flight-lookup-field"><span>出発日</span><input name="date" type="date" required></label>
-    <button class="flight-lookup-submit" type="submit">検索</button>
-  </form>
-  <p class="flight-lookup-hint">台湾時間の前日・当日・翌日が対象。便名・日時・ターミナルは運航状況により変更される場合があります。</p>
-  <p class="flight-lookup-status" role="status" aria-live="polite" hidden></p>
-  <div class="flight-lookup-results" hidden></div>
-</section>
 <section class="airport-mode-card airport-mode-rail"><div class="airport-mode-heading"><span aria-hidden="true" class="airport-mode-icon">🚆</span><span class="airport-mode-name">台北MRT（松山機場駅まで）</span><span class="airport-mode-recommended">おすすめ</span></div><div aria-label="台北駅から忠孝復興駅で乗り換えて松山機場駅へ。板南線と文湖線。" class="metro-route metro-route--transfer metro-route--return" role="img">
 <div class="metro-route-stops"><span>台北駅</span><span>忠孝復興駅</span><span>松山機場駅</span></div>
 <div class="metro-route-track"><span class="metro-route-dot"></span><span class="metro-route-segment" style="--metro-line:#358AC5;--metro-glow:#83C5EE"><span class="metro-route-chip">BL 板南線</span></span><span class="metro-route-dot metro-route-dot--transfer"></span><span class="metro-route-segment" style="--metro-line:#B58A51;--metro-glow:#E4B77D"><span class="metro-route-chip">BR 文湖線</span></span><span class="metro-route-dot"></span></div><div class="metro-route-key"><span class="metro-transfer-note">忠孝復興駅で乗り換え</span></div></div><div class="airport-single-fare"><span>$20〜</span><span>約20分（乗り換え1回）</span></div></section><div class="airport-mode-card airport-mode-compact airport-mode-bus"><span aria-hidden="true" class="airport-mode-icon">🚌</span><span class="airport-mode-name">路線バス（現地確認）</span></div><div class="airport-mode-card airport-mode-compact airport-mode-taxi"><span aria-hidden="true" class="airport-mode-icon">🚕</span><span class="airport-mode-name">タクシー（空港まで約20分）</span></div></div></div></div></div></div></details></div></div><div class="section-jump-row"><a class="section-jump-button" data-target="day-trips" href="#day-trips" aria-label="少し足を延ばしてへ移動"><span aria-hidden="true">🚋</span><span>少し足を延ばして…</span><span class="section-jump-arrow" aria-hidden="true">↘</span></a></div><section class="sights-day-trips" aria-labelledby="3f76bda0-4caa-8031-9c18-e63b9e9dcae1">
@@ -2404,196 +2463,188 @@ loadData();
 <script id="flight-lookup-behavior">
 (() => {
   'use strict';
+  // When the layout is approved, change to false to reactivate the existing TDX Worker.
+  const FLIGHT_LOOKUP_DEMO = true;
   const WORKER_URL = 'https://taipei-flight-api.thy224-jp.workers.dev/flight';
-  const lookups = [...document.querySelectorAll('.site-content .flight-lookup')];
-  if (!lookups.length) return;
-  const dateParts = (date) => new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',
-  }).formatToParts(date).reduce((acc, part) => {acc[part.type]=part.value;return acc;}, {});
-  const taiwanDay = (offset) => {
-    const d = new Date(Date.now() + offset * 86400000);
-    const p = dateParts(d);
-    return `${p.year}-${p.month}-${p.day}`;
-  };
-  const formatTime = (value) => {
-    if (!value) return '未発表';
-    const str = String(value);
-    // A timestamp with an explicit offset represents a precise instant.
-    if (/(?:Z|[+-]\d{2}:\d{2})$/i.test(str)) {
-      const date = new Date(str);
-      if (Number.isFinite(date.getTime())) return new Intl.DateTimeFormat('ja-JP', {
-        timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hour12:false,
-      }).format(date);
-    }
-    const match = str.match(/(?:T|\s|^)(\d{1,2}):(\d{2})/);
-    return match ? `${match[1].padStart(2,'0')}:${match[2]}` : str;
-  };
-  const terminalText = (value) => {
-    const s = String(value ?? '').trim();
-    if (!s) return '未発表';
-    const match = /^(?:terminal\s*|t\s*|第\s*)?([12])(?:\s*(?:ターミナル|航廈))?$/i.exec(s);
-    return match ? `第${match[1]}ターミナル` : s;
-  };
-  const addText = (parent, tag, className, value) => {
-    const el = document.createElement(tag);
-    if (className) el.className = className;
-    el.textContent = value;
-    parent.append(el);
-    return el;
-  };
-  const addCell = (parent, label, value, extraClass) => {
-    const cell = document.createElement('div');
-    cell.className='flight-lookup-result-cell' + (extraClass ? ' ' + extraClass : '');
-    addText(cell,'small','',label);
-    addText(cell,'strong','',value || '未発表');
-    parent.append(cell);
-  };
+  const panel = document.getElementById('flight-panel-independent');
+  const trigger = document.querySelector('.flight-panel-trigger');
+  const lookup = panel?.querySelector('.flight-lookup');
+  if (!trigger || !panel || !lookup) return;
+  const form = lookup.querySelector('form');
+  const flightField = form.elements.namedItem('flight');
+  const dateField = form.elements.namedItem('date');
+  const airportField = form.elements.namedItem('airport');
+  const button = form.querySelector('button[type="submit"]');
+  const status = lookup.querySelector('.flight-lookup-status');
+  const results = lookup.querySelector('.flight-lookup-results');
+  let activeRequest = 0;
 
-  lookups.forEach(lookup => {
-    const form = lookup.querySelector('form');
-    const field = form.elements.namedItem('flight');
-    const dateField = form.elements.namedItem('date');
-    const button = form.querySelector('button[type="submit"]');
-    const status = lookup.querySelector('.flight-lookup-status');
-    const results = lookup.querySelector('.flight-lookup-results');
+  const taiwanDay = offset => {
+    const date = new Date(Date.now() + offset * 86400000);
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'
+    }).formatToParts(date).reduce((a,p) => {a[p.type]=p.value;return a;},{});
+    return `${parts.year}-${parts.month}-${parts.day}`;
+  };
+  if (!FLIGHT_LOOKUP_DEMO) {
     dateField.min = taiwanDay(-1);
     dateField.max = taiwanDay(1);
     dateField.value = taiwanDay(0);
-
-    let activeRequest = 0;
-    const message = (text, kind) => {
-      status.hidden = !text;
-      status.textContent = text;
-      status.dataset.kind = kind || '';
-    };
-    const render = payload => {
-      results.replaceChildren();
-      const rows = Array.isArray(payload.results) ? payload.results.slice(0,6) : [];
-      if (payload.found !== true || rows.length===0) {
-        results.hidden = true;
-        message('該当する便が見つかりません。便名・日付・空港を確認し、下の公式サイトでもご確認ください。');
+    lookup.querySelector('.flight-demo-pill')?.remove();
+    lookup.querySelector('.flight-demo-notice')?.remove();
+    lookup.querySelector('.flight-lookup-hint').textContent = '台湾時間の前日・当日・翌日が対象。運航情報は変更される場合があります。';
+    lookup.setAttribute('aria-label','TDXフライト情報検索');
+  }
+  function showMessage(text, kind='') {
+    status.hidden = !text;
+    status.textContent = text;
+    status.dataset.kind = kind;
+  }
+  function addText(parent, tag, className, content) {
+    const el=document.createElement(tag);
+    if (className) el.className=className;
+    el.textContent=content == null ? '' : String(content);
+    parent.append(el);
+    return el;
+  }
+  function formatTime(value, tz='Asia/Taipei') {
+    if (!value) return '未発表';
+    const str=String(value);
+    if (/(?:Z|[+-]\d{2}:\d{2})$/i.test(str)) {
+      const d=new Date(str);
+      if (!isNaN(d.getTime())) return new Intl.DateTimeFormat('ja-JP', {
+        timeZone:tz,hour:'2-digit',minute:'2-digit',hour12:false
+      }).format(d);
+    }
+    const m=str.match(/(?:T|\s|^)(\d{1,2}):(\d{2})/);
+    return m ? `${m[1].padStart(2,'0')}:${m[2]}` : str;
+  }
+  function formatDay(date) {
+    const m=String(date || '').match(/^(\d{4})-(\d\d)-(\d\d)/);
+    return m ? `${Number(m[2])}月${Number(m[3])}日` : '日付未発表';
+  }
+  function terminalText(value) {
+    const s=String(value || '').trim();
+    if (!s) return '未発表';
+    const m=/^(?:terminal\s*|t\s*|第\s*)?([12])(?:\s*(?:ターミナル|航廈))?$/i.exec(s);
+    return m ? `第${m[1]}` : s;
+  }
+  const airportNames = {TPE:'桃園',TSA:'台北松山',NRT:'東京・成田',HND:'東京・羽田',KIX:'大阪・関西',NGO:'名古屋・中部',FUK:'福岡',CTS:'札幌・新千歳'};
+  const place=code => airportNames[code] || code || '未発表';
+  function detailBlock(parent,label,value,accent=false){
+    const block=addText(parent,'div','flight-lookup-detail','');
+    addText(block,'span','flight-lookup-detail-label',label);
+    addText(block,'span','flight-lookup-detail-value'+(accent?' is-accent':''),value || '—');
+  }
+  function render(data){
+    results.replaceChildren();
+    const flights=Array.isArray(data.results)?data.results.slice(0,3):[];
+    if(!data.found || !flights.length){
+      results.hidden=true;
+      showMessage('該当する便が見つかりません。便名・日付・出発空港をご確認ください。');
+      return;
+    }
+    results.hidden=false;
+    showMessage('');
+    for(const f of flights){
+      const dep=String(f.departureAirport || data.airport || 'TPE').toUpperCase();
+      const arr=String(f.arrivalAirport || '---').toUpperCase();
+      const card=addText(results,'article','flight-lookup-result','');
+      const head=addText(card,'div','flight-lookup-result-top','');
+      const left=addText(head,'div','flight-lookup-result-headtext','');
+      addText(left,'div','flight-lookup-result-number',f.flightNumber || data.flight || '便名未発表');
+      addText(left,'div','flight-lookup-result-route',`${place(dep)} 発  ·  ${place(arr)} 行き`);
+      addText(head,'span','flight-lookup-status-tag',f.status || '運航状況未発表');
+      const hero=addText(card,'div','flight-lookup-hero','');
+      const row=addText(hero,'div','flight-lookup-route-row','');
+      const depWrap=addText(row,'div','flight-lookup-code-wrap','');
+      addText(depWrap,'span','flight-lookup-code',dep);
+      addText(depWrap,'span','flight-lookup-code-label','出発');
+      const lineWrap=addText(row,'div','flight-lookup-line-wrap','');
+      addText(lineWrap,'div','flight-lookup-line-meta',f.duration || 'FLIGHT');
+      const line=addText(lineWrap,'div','flight-lookup-line','');
+      addText(line,'span','flight-lookup-plane','✈');
+      const arrWrap=addText(row,'div','flight-lookup-code-wrap','');
+      addText(arrWrap,'span','flight-lookup-code',arr);
+      addText(arrWrap,'span','flight-lookup-code-label','到着');
+      const dataRows=addText(card,'div','flight-lookup-data-rows','');
+      const depData=addText(dataRows,'section','flight-lookup-airport-data','');
+      addText(depData,'div','flight-lookup-airport-title',`${place(dep)} · ${formatDay(data.date)}`);
+      const depGrid=addText(depData,'div','flight-lookup-detail-grid','');
+      detailBlock(depGrid,'出発予定',formatTime(f.scheduledDeparture),true);
+      detailBlock(depGrid,'ターミナル',terminalText(f.terminal));
+      detailBlock(depGrid,'ゲート',f.gate || '—');
+      if(f.checkInCounter) detailBlock(depGrid,'チェックイン',f.checkInCounter);
+      const arrData=addText(dataRows,'section','flight-lookup-airport-data','');
+      addText(arrData,'div','flight-lookup-airport-title',`${place(arr)} · ${formatDay(f.arrivalDate || data.date)}`);
+      const arrGrid=addText(arrData,'div','flight-lookup-detail-grid','');
+      detailBlock(arrGrid,'到着予定',f.scheduledArrival?formatTime(f.scheduledArrival,'Asia/Tokyo'):'—',Boolean(f.scheduledArrival));
+      detailBlock(arrGrid,'ターミナル',f.arrivalTerminal || '—');
+      detailBlock(arrGrid,'ゲート',f.arrivalGate || '—');
+      const extras=[];
+      if(f.estimatedDeparture) extras.push('出発見込み：'+formatTime(f.estimatedDeparture));
+      if(f.actualDeparture) extras.push('実際の出発：'+formatTime(f.actualDeparture));
+      if(extras.length) addText(card,'div','flight-lookup-extra',extras.join(' · '));
+      addText(card,'div','flight-lookup-source',FLIGHT_LOOKUP_DEMO?'デモデータ · 実際の運航情報ではありません':'情報提供：TDX · 航空会社・空港の公式情報でも最終確認してください');
+    }
+  }
+  trigger.addEventListener('click',()=>{
+    const next=panel.hidden;
+    panel.hidden=!next;
+    trigger.setAttribute('aria-expanded',String(next));
+    if (next) {
+      // Stay on the same page and keep the panel header visible after opening.
+      requestAnimationFrame(()=>{
+        const y=panel.getBoundingClientRect().top;
+        if(y>window.innerHeight-90 || y<0) panel.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    } else {
+      ++activeRequest;
+    }
+  });
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();
+    const flight=String(flightField.value).trim().toUpperCase().replace(/[\s-]/g,'');
+    const date=dateField.value;
+    const airport=airportField.value;
+    if(!/^[A-Z0-9]{2}\d{1,4}$/.test(flight)){
+      showMessage('便名を確認してください（例：BR198）。','error');return;
+    }
+    const req=++activeRequest;
+    results.hidden=true;results.replaceChildren();
+    if(FLIGHT_LOOKUP_DEMO){
+      if(flight!=='BR198' || date!=='2026-10-15' || airport!=='TPE'){
+        showMessage('展示モードです。BR198・2026/10/15・桃園（TPE）を選んで検索してください。');
         return;
       }
-      message('');
-      results.hidden = false;
-      const formatDateLabel = (value) => {
-        const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        if (!match) return '日付未設定';
-        return `${Number(match[2])}月${Number(match[3])}日`;
-      };
-      const airportPlace = (code) => ({
-        TPE:'桃園', TSA:'台北松山', NRT:'東京都', HND:'東京都', KIX:'大阪', ITM:'大阪', UKB:'神戸', NGO:'名古屋', FUK:'福岡', CTS:'札幌', OKA:'沖縄'
-      }[String(code || '').toUpperCase()] || '到着地');
-      rows.forEach(flight => {
-        const departureCode = flight.departureAirport || payload.airport || 'TPE';
-        const arrivalCode = flight.arrivalAirport || '---';
-        const scheduled = formatTime(flight.scheduledDeparture);
-        const terminal = terminalText(flight.terminal);
-        const gate = flight.gate || '未発表';
-        const counter = flight.checkInCounter || '未発表';
-        const statusText = flight.status || '運航状況確認中';
-        const card = document.createElement('div');
-        card.className='flight-lookup-result';
-
-        const head = document.createElement('div');
-        head.className='flight-lookup-result-top';
-        const headInfo = document.createElement('div');
-        addText(headInfo,'span','flight-lookup-result-number',flight.flightNumber || payload.flight || '便名未発表');
-        addText(headInfo,'span','flight-lookup-result-route',`${departureCode} 発 → ${arrivalCode} 行き`);
-        head.append(headInfo);
-        addText(head,'span','flight-lookup-status-tag',statusText);
-        card.append(head);
-
-        const hero = document.createElement('div');
-        hero.className='flight-lookup-hero';
-        const routeRow = document.createElement('div');
-        routeRow.className='flight-lookup-route-row';
-
-        const depWrap = document.createElement('div');
-        depWrap.className='flight-lookup-code-wrap';
-        addText(depWrap,'span','flight-lookup-code',departureCode);
-        addText(depWrap,'span','flight-lookup-code-label','出発空港');
-        routeRow.append(depWrap);
-
-        const lineWrap = document.createElement('div');
-        lineWrap.className='flight-lookup-line-wrap';
-        addText(lineWrap,'div','flight-lookup-line-meta',`${formatDateLabel(payload.date)} ・ ${scheduled}`);
-        const line = document.createElement('div');
-        line.className='flight-lookup-line';
-        addText(line,'span','flight-lookup-plane','✈');
-        lineWrap.append(line);
-        routeRow.append(lineWrap);
-
-        const arrWrap = document.createElement('div');
-        arrWrap.className='flight-lookup-code-wrap';
-        addText(arrWrap,'span','flight-lookup-code',arrivalCode);
-        addText(arrWrap,'span','flight-lookup-code-label',airportPlace(arrivalCode));
-        routeRow.append(arrWrap);
-        hero.append(routeRow);
-        card.append(hero);
-
-        const grid = document.createElement('div');
-        grid.className='flight-lookup-grid';
-        const infoCell = (label, value, accent=false) => {
-          const box = document.createElement('div');
-          box.className='flight-lookup-info';
-          addText(box,'span','flight-lookup-info-label',label);
-          const valueEl = addText(box,'span','flight-lookup-info-value' + (accent ? ' is-accent' : ''), value);
-          if (!value) valueEl.textContent = '未発表';
-          return box;
-        };
-        grid.append(infoCell('出発予定', scheduled, true));
-        grid.append(infoCell('ターミナル', terminal, true));
-        grid.append(infoCell('搭乗ゲート', gate, false));
-        grid.append(infoCell('チェックイン', counter, false));
-        card.append(grid);
-
-        const extras = [];
-        if (flight.estimatedDeparture) extras.push('出発見込み：' + formatTime(flight.estimatedDeparture));
-        if (flight.actualDeparture) extras.push('実際の出発：' + formatTime(flight.actualDeparture));
-        if (extras.length) addText(card,'div','flight-lookup-extra',extras.join('  ·  '));
-        if (flight.updatedAt) addText(card,'p','flight-lookup-source','更新：' + String(flight.updatedAt).replace('T',' ' ).slice(0,16) + '  ·  情報提供：TDX');
-        else addText(card,'p','flight-lookup-source','情報提供：TDX（公式サイトでも最終確認してください）');
-        results.append(card);
-      });
-    };
-    form.addEventListener('submit', async evt => {
-      evt.preventDefault();
-      const flightNumber = String(field.value).toUpperCase().replace(/[\s-]/g,'');
-      const date = dateField.value;
-      const validFlight = /^[A-Z0-9]{2}\d{1,4}$/.test(flightNumber);
-      const range = [taiwanDay(-1),taiwanDay(1)];
-      if (!validFlight) { message('便名を確認してください（例：BR198）。','error');return; }
-      if (!date || date < range[0] || date > range[1]) {
-        message('台湾時間の前日・当日・翌日から出発日を選択してください。','error');return;
-      }
-      const requestId=++activeRequest;
-      const controller=new AbortController();
-      const timeout=setTimeout(() => controller.abort(), 12000);
-      button.disabled=true;button.textContent='検索中…';
-      results.hidden=true;results.replaceChildren();
-      message('TDXで便情報を確認しています…');
-      try {
-        const query=new URLSearchParams({number:flightNumber,airport:lookup.dataset.airport,date});
-        const response=await fetch(WORKER_URL+'?'+query, {signal:controller.signal});
-        let payload;
-        try {payload=await response.json();}catch{throw new Error('invalid_json');}
-        if (!response.ok) {
-          if (response.status===400) throw new Error('invalid_request');
-          throw new Error('service_error');
-        }
-        if (requestId===activeRequest) render(payload);
-      } catch (error) {
-        if (requestId!==activeRequest) return;
-        const msg=error.name==='AbortError' ? '通信がタイムアウトしました。時間をおいて再度お試しください。'
-          : error.message==='invalid_request' ? '検索条件を確認してください。直近3日間の出発便のみ対象です。'
-          : '便情報を取得できませんでした。時間をおいて再試行するか、下の公式サイトをご利用ください。';
-        message(msg,'error');
-      } finally {
-        clearTimeout(timeout);
-        if (requestId===activeRequest) {button.disabled=false;button.textContent='検索';}
-      }
-    });
+      render({flight:'BR198',airport:'TPE',date:'2026-10-15',found:true,results:[{
+        flightNumber:'BR198',departureAirport:'TPE',arrivalAirport:'NRT',
+        scheduledDeparture:'2026-10-15T09:00:00+08:00',
+        scheduledArrival:'2026-10-15T13:25:00+09:00',
+        terminal:'2',gate:null,checkInCounter:null,
+        status:'出発予定',duration:'3h25m'
+      }]});
+      return;
+    }
+    if(!date || date<taiwanDay(-1) || date>taiwanDay(1)){
+      showMessage('台湾時間の前日・当日・翌日から出発日を選んでください。','error');return;
+    }
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),12000);
+    button.disabled=true;button.textContent='検索中…';
+    showMessage('TDXでフライト情報を確認しています…');
+    try{
+      const query=new URLSearchParams({number:flight,date,airport});
+      const response=await fetch(WORKER_URL+'?'+query,{signal:controller.signal});
+      if(!response.ok) throw new Error('HTTP_'+response.status);
+      const data=await response.json();
+      if(req===activeRequest) render(data);
+    }catch(error){
+      if(req===activeRequest) showMessage(error.name==='AbortError'?'通信がタイムアウトしました。もう一度お試しください。':'情報を取得できませんでした。時間をおいて再度お試しください。','error');
+    }finally{
+      clearTimeout(timeout);
+      if(req===activeRequest){button.disabled=false;button.textContent='検索';}
+    }
   });
 })();
 </script>
