@@ -1543,7 +1543,141 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
  .site-content .flight-lookup-detail-label{font-size:8.5px;}
  .site-content .flight-lookup-detail-value{font-size:14px;}
 }
+/* Flight route alignment: airport code and track share the same optical center.
+   Keep destination labels and duration outside the alignment calculation. */
+.site-content .flight-panel-independent .flight-lookup-route-row{
+  align-items:center;
+  column-gap:8px;
+}
+.site-content .flight-panel-independent .flight-lookup-code-wrap{
+  position:relative;
+  align-self:center;
+}
+.site-content .flight-panel-independent .flight-lookup-code-label{
+  position:absolute;
+  left:0;
+  top:calc(100% + 3px);
+  margin-top:0;
+  white-space:nowrap;
+}
+.site-content .flight-panel-independent .flight-lookup-line-wrap{
+  position:relative;
+  align-self:center;
+  height:26px;
+  min-height:26px;
+  padding:0;
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+}
+.site-content .flight-panel-independent .flight-lookup-line-meta{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:calc(50% + 15px);
+  margin:0;
+  text-align:center;
+  pointer-events:none;
+}
+.site-content .flight-panel-independent .flight-lookup-hero{
+  padding-bottom:20px;
+  margin-bottom:14px;
+}
+.site-content .flight-panel-independent .flight-lookup-line{
+  gap:4px;
+  height:26px;
+}
+.site-content .flight-panel-independent .flight-lookup-track-before{flex-basis:18%;}
+.site-content .flight-panel-independent .flight-lookup-plane{
+  flex:0 0 33px!important;
+  width:33px!important;
+  height:23px!important;
+  filter:drop-shadow(0 0 3px rgba(110,167,223,.15));
+}
+@media(max-width:375px){
+  .site-content .flight-panel-independent .flight-lookup-route-row{column-gap:5px;}
+  .site-content .flight-panel-independent .flight-lookup-plane{
+    flex-basis:29px!important;
+    width:29px!important;
+    height:21px!important;
+  }
+}
 @media(prefers-reduced-motion:reduce){.site-content .flight-panel-trigger{transition:none!important;}}
+
+/* Flight form: one compact row, no overflowing native date label. */
+.site-content .flight-panel-independent .flight-lookup-form{
+  display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.92fr) 44px;
+  gap:0;align-items:stretch;min-width:0;margin:12px 0 0;
+  border:1px solid #50687e;background:#131e28;border-radius:10px;overflow:visible;
+}
+.site-content .flight-panel-independent .flight-lookup-field{
+  position:relative;min-width:0;min-height:48px;margin:0;padding:5px 9px 6px;
+  gap:0;overflow:hidden;justify-content:center;
+}
+.site-content .flight-panel-independent .flight-lookup-flight-field{border-right:1px solid #354b5d;}
+.site-content .flight-panel-independent .flight-lookup-date-field{padding-right:24px;border-right:1px solid #354b5d;cursor:pointer;}
+.site-content .flight-panel-independent .flight-lookup-field>span:first-child{
+  display:block;font-size:9px;font-weight:650;line-height:1.3;white-space:nowrap;color:#93a9bd;
+}
+.site-content .flight-panel-independent .flight-lookup-flight-field input{
+  margin:0;border:0!important;background:transparent!important;height:24px;min-height:0;
+  padding:0!important;font-size:13px!important;font-weight:750;color:#f0f6fc!important;
+  box-shadow:none!important;outline-offset:0;
+}
+.site-content .flight-panel-independent .flight-lookup-date-field input[type=date]{
+  position:absolute;inset:0;width:100%;height:100%;padding:0!important;
+  min-width:0;min-height:0;opacity:0;z-index:2;cursor:pointer;
+}
+.site-content .flight-panel-independent .flight-lookup-date-field input[type=date]::-webkit-calendar-picker-indicator{
+  position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;cursor:pointer;
+}
+.site-content .flight-panel-independent .flight-date-compact{
+  display:block;margin-top:3px;font-size:13px;line-height:1.4;color:#f0f6fc;font-weight:740;white-space:nowrap;
+}
+.site-content .flight-panel-independent .flight-date-calendar{
+  position:absolute;right:7px;bottom:14px;width:14px;height:14px;color:#9dbbd6;pointer-events:none;z-index:1;
+}
+.site-content .flight-panel-independent .flight-lookup-submit{
+  display:flex;grid-column:auto;width:44px;min-width:0;height:auto;min-height:48px;margin:0;padding:0;
+  border:0!important;border-radius:0 9px 9px 0;
+  background:#3d6487!important;align-items:center;justify-content:center;
+}
+.site-content .flight-panel-independent .flight-lookup-submit:hover{background:#517da4!important;}
+.site-content .flight-panel-independent .flight-lookup-submit svg{display:block;width:20px;height:20px;stroke:#ecf6ff;}
+.site-content .flight-panel-independent .flight-lookup-submit-text{display:none;}
+.site-content .flight-panel-independent .flight-lookup-date-field:focus-within,
+.site-content .flight-panel-independent .flight-lookup-flight-field:focus-within{background:rgba(93,135,177,.1);}
+.site-content .flight-panel-independent .flight-lookup-date-field:focus-within{outline:2px solid #9fc5ef;outline-offset:-2px;}
+/* Explicit segmented track and a real SVG plane avoid glyph/track collisions. */
+.site-content .flight-panel-independent .flight-lookup-line{
+  display:flex;align-items:center;justify-content:center;gap:3px;
+  height:22px;width:100%;position:relative;background:none!important;min-width:0;
+}
+.site-content .flight-panel-independent .flight-lookup-line::before{content:none!important;}
+.site-content .flight-panel-independent .flight-lookup-track{
+  position:relative;display:block;height:2px;border-radius:999px;min-width:0;
+  background:linear-gradient(90deg,#436a91,#8fbbe5 62%,#5982ae);
+  box-shadow:0 0 7px rgba(85,148,211,.18);
+}
+.site-content .flight-panel-independent .flight-lookup-track-before{flex:0 0 12%;opacity:.66;}
+.site-content .flight-panel-independent .flight-lookup-track-after{flex:1;}
+.site-content .flight-panel-independent .flight-lookup-plane{
+  display:block;position:static!important;transform:none!important;
+  flex:0 0 23px;width:23px;height:17px;color:#93c4f3;
+  filter:drop-shadow(0 0 4px rgba(110,167,223,.22));
+}
+.site-content .flight-panel-independent .flight-lookup-line-wrap{padding-bottom:0;gap:3px;align-self:center;}
+.site-content .flight-panel-independent .flight-lookup-hero{margin-bottom:15px;}
+@media(max-width:375px){
+  .site-content .flight-panel-independent .flight-lookup-form{grid-template-columns:minmax(0,1.03fr) minmax(0,.95fr) 40px;}
+  .site-content .flight-panel-independent .flight-lookup-field{padding-left:7px;padding-right:7px;}
+  .site-content .flight-panel-independent .flight-lookup-date-field{padding-right:20px;}
+  .site-content .flight-panel-independent .flight-date-calendar{right:5px;width:12px;height:12px;}
+  .site-content .flight-panel-independent .flight-lookup-submit{width:40px;}
+  .site-content .flight-panel-independent .flight-lookup-plane{flex-basis:19px;width:19px;height:15px;}
+}
 </style>
 </head><body>
 <header class="hero wrapper" id="top"><div class="eyebrow"><span class="ta">TA</span>BI / <span class="ta">TA</span>IPEI</div><h1><a class="hero-title-link" data-target="food-search" href="#food-search" aria-label="台湾グルメ検索へ">TAIPEI<br/><span>CITY GUIDE</span></a></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
@@ -1561,13 +1695,12 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   <div class="flight-lookup" aria-label="フライト検索デザインプレビュー">
     <div class="flight-panel-top"><div class="flight-lookup-heading"><strong>フライト情報を確認</strong><small>便名と出発日から出発情報を検索</small></div><span class="flight-demo-pill">DEMO</span></div>
     <p class="flight-demo-notice">画面確認用のサンプルです。現在はTDXに接続していません。</p>
-    <form class="flight-lookup-form">
-      <label class="flight-lookup-field"><span>便名</span><input name="flight" type="text" value="BR198" placeholder="例：BR198" autocapitalize="characters" spellcheck="false" autocomplete="off" maxlength="9" required></label>
-      <label class="flight-lookup-field"><span>出発日</span><input name="date" type="date" value="2026-10-15" required></label>
-      <label class="flight-lookup-field flight-lookup-field-airport"><span>出発空港</span><select name="airport" aria-label="出発空港"><option value="TPE">桃園（TPE）</option><option value="TSA">松山（TSA）</option></select></label>
-      <button class="flight-lookup-submit" type="submit">検索</button>
+    <form class="flight-lookup-form" aria-label="フライト検索">
+      <label class="flight-lookup-field flight-lookup-flight-field"><span>便名</span><input name="flight" type="text" value="BR198" placeholder="BR198" autocapitalize="characters" spellcheck="false" autocomplete="off" maxlength="9" required></label>
+      <label class="flight-lookup-field flight-lookup-date-field"><span>出発日</span><span class="flight-date-compact" aria-hidden="true">10/15</span><input name="date" type="date" value="2026-10-15" aria-label="出発日を選択" required><svg class="flight-date-calendar" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></label>
+      <button class="flight-lookup-submit" type="submit" aria-label="フライト検索" title="検索"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><span class="flight-lookup-submit-text">検索</span></button>
     </form>
-    <p class="flight-lookup-hint">展示用データ：2026年10月15日・BR198・桃園国際空港。ほかの条件ではテスト結果を表示しません。</p>
+    <p class="flight-lookup-hint">展示用データ：2026年10月15日・BR198。ほかの条件ではテスト結果を表示しません。</p>
     <p class="flight-lookup-status" role="status" aria-live="polite" hidden></p>
     <div class="flight-lookup-results" hidden></div>
   </div>
@@ -2473,11 +2606,24 @@ loadData();
   const form = lookup.querySelector('form');
   const flightField = form.elements.namedItem('flight');
   const dateField = form.elements.namedItem('date');
-  const airportField = form.elements.namedItem('airport');
   const button = form.querySelector('button[type="submit"]');
   const status = lookup.querySelector('.flight-lookup-status');
   const results = lookup.querySelector('.flight-lookup-results');
   let activeRequest = 0;
+  const dateLabel=lookup.querySelector('.flight-date-compact');
+  const compactDate=()=>{
+    const parts=dateField.value.split('-');
+    dateLabel.textContent=parts.length===3 ? `${Number(parts[1])}/${Number(parts[2])}` : '日付選択';
+  };
+  dateField.addEventListener('change',compactDate);
+  compactDate();
+  lookup.querySelector('.flight-lookup-date-field').addEventListener('click',()=>{
+    // Open the date picker from anywhere on the visible compact date field.
+    // Works even when the native input's date text is visually hidden.
+    if(typeof dateField.showPicker==='function'){
+      try {dateField.showPicker();}catch {dateField.focus();}
+    }else dateField.focus();
+  });
 
   const taiwanDay = offset => {
     const date = new Date(Date.now() + offset * 86400000);
@@ -2490,6 +2636,7 @@ loadData();
     dateField.min = taiwanDay(-1);
     dateField.max = taiwanDay(1);
     dateField.value = taiwanDay(0);
+    compactDate();
     lookup.querySelector('.flight-demo-pill')?.remove();
     lookup.querySelector('.flight-demo-notice')?.remove();
     lookup.querySelector('.flight-lookup-hint').textContent = '台湾時間の前日・当日・翌日が対象。運航情報は変更される場合があります。';
@@ -2526,8 +2673,8 @@ loadData();
   function terminalText(value) {
     const s=String(value || '').trim();
     if (!s) return '未発表';
-    const m=/^(?:terminal\s*|t\s*|第\s*)?([12])(?:\s*(?:ターミナル|航廈))?$/i.exec(s);
-    return m ? `第${m[1]}` : s;
+    const m=/^(?:terminal\s*|t\s*|第\s*)?(\d{1,2})(?:\s*(?:ターミナル|航廈))?$/i.exec(s);
+    return m ? m[1] : s;
   }
   const airportNames = {TPE:'桃園',TSA:'台北松山',NRT:'東京・成田',HND:'東京・羽田',KIX:'大阪・関西',NGO:'名古屋・中部',FUK:'福岡',CTS:'札幌・新千歳'};
   const place=code => airportNames[code] || code || '未発表';
@@ -2541,7 +2688,7 @@ loadData();
     const flights=Array.isArray(data.results)?data.results.slice(0,3):[];
     if(!data.found || !flights.length){
       results.hidden=true;
-      showMessage('該当する便が見つかりません。便名・日付・出発空港をご確認ください。');
+      showMessage('該当する便が見つかりません。便名・出発日をご確認ください。');
       return;
     }
     results.hidden=false;
@@ -2563,7 +2710,19 @@ loadData();
       const lineWrap=addText(row,'div','flight-lookup-line-wrap','');
       addText(lineWrap,'div','flight-lookup-line-meta',f.duration || 'FLIGHT');
       const line=addText(lineWrap,'div','flight-lookup-line','');
-      addText(line,'span','flight-lookup-plane','✈');
+      addText(line,'span','flight-lookup-track flight-lookup-track-before','');
+      const plane=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      // Symmetrical, top-view aircraft silhouette, rotated to face the arrival airport.
+      // Long, swept-back wings and a rounded forward fuselage at the right.
+      plane.setAttribute('viewBox','0 0 48 30');
+      plane.setAttribute('aria-hidden','true');
+      plane.setAttribute('class','flight-lookup-plane');
+      const body=document.createElementNS('http://www.w3.org/2000/svg','path');
+      body.setAttribute('d','M45 15c0-1.15-1.1-1.95-3.15-2.25L30 11.2 19.8 2.1C19.1 1.45 18.5 1 17.4 1H14l5.6 11.1H9.2L5.5 8.3H2l2.45 6.7L2 21.7h3.5l3.7-3.8h10.4L14 29h3.4c1.1 0 1.7-.45 2.4-1.1L30 18.8l11.85-1.55C43.9 16.95 45 16.15 45 15Z');
+      body.setAttribute('fill','currentColor');
+      plane.append(body);
+      line.append(plane);
+      addText(line,'span','flight-lookup-track flight-lookup-track-after','');
       const arrWrap=addText(row,'div','flight-lookup-code-wrap','');
       addText(arrWrap,'span','flight-lookup-code',arr);
       addText(arrWrap,'span','flight-lookup-code-label','到着');
@@ -2579,7 +2738,7 @@ loadData();
       addText(arrData,'div','flight-lookup-airport-title',`${place(arr)} · ${formatDay(f.arrivalDate || data.date)}`);
       const arrGrid=addText(arrData,'div','flight-lookup-detail-grid','');
       detailBlock(arrGrid,'到着予定',f.scheduledArrival?formatTime(f.scheduledArrival,'Asia/Tokyo'):'—',Boolean(f.scheduledArrival));
-      detailBlock(arrGrid,'ターミナル',f.arrivalTerminal || '—');
+      detailBlock(arrGrid,'ターミナル',f.arrivalTerminal ? terminalText(f.arrivalTerminal) : '—');
       detailBlock(arrGrid,'ゲート',f.arrivalGate || '—');
       const extras=[];
       if(f.estimatedDeparture) extras.push('出発見込み：'+formatTime(f.estimatedDeparture));
@@ -2606,15 +2765,14 @@ loadData();
     event.preventDefault();
     const flight=String(flightField.value).trim().toUpperCase().replace(/[\s-]/g,'');
     const date=dateField.value;
-    const airport=airportField.value;
     if(!/^[A-Z0-9]{2}\d{1,4}$/.test(flight)){
       showMessage('便名を確認してください（例：BR198）。','error');return;
     }
     const req=++activeRequest;
     results.hidden=true;results.replaceChildren();
     if(FLIGHT_LOOKUP_DEMO){
-      if(flight!=='BR198' || date!=='2026-10-15' || airport!=='TPE'){
-        showMessage('展示モードです。BR198・2026/10/15・桃園（TPE）を選んで検索してください。');
+      if(flight!=='BR198' || date!=='2026-10-15'){
+        showMessage('展示モードです。BR198・2026/10/15で検索してください。');
         return;
       }
       render({flight:'BR198',airport:'TPE',date:'2026-10-15',found:true,results:[{
@@ -2634,11 +2792,23 @@ loadData();
     button.disabled=true;button.textContent='検索中…';
     showMessage('TDXでフライト情報を確認しています…');
     try{
-      const query=new URLSearchParams({number:flight,date,airport});
-      const response=await fetch(WORKER_URL+'?'+query,{signal:controller.signal});
-      if(!response.ok) throw new Error('HTTP_'+response.status);
-      const data=await response.json();
-      if(req===activeRequest) render(data);
+      // The TDX endpoint requires an airport, so search both Taipei airports
+      // when live lookup is re-enabled. Do not infer an airport from a flight number.
+      const checks=await Promise.allSettled(['TPE','TSA'].map(async airport => {
+        const query=new URLSearchParams({number:flight,date,airport});
+        const response=await fetch(WORKER_URL+'?'+query,{signal:controller.signal});
+        if(!response.ok) throw new Error('HTTP_'+response.status);
+        return response.json();
+      }));
+      const successful=checks.filter(r=>r.status==='fulfilled').map(r=>r.value);
+      if(!successful.length) throw new Error('all_sources_failed');
+      const matches=successful.flatMap(payload=>Array.isArray(payload.results)?payload.results:[]);
+      if(req===activeRequest){
+        if(matches.length===0 && checks.some(r=>r.status==='rejected')){
+          throw new Error('partial_sources_failed');
+        }
+        render({flight,date,found:matches.length>0,results:matches});
+      }
     }catch(error){
       if(req===activeRequest) showMessage(error.name==='AbortError'?'通信がタイムアウトしました。もう一度お試しください。':'情報を取得できませんでした。時間をおいて再度お試しください。','error');
     }finally{
