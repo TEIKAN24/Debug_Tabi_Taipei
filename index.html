@@ -2091,7 +2091,108 @@ html, body,
   #guide .sights-day-trips .daytrip-mode-primary strong {font-size:12px;}
   #guide .sights-day-trips .daytrip-mode-detail {font-size:11.5px;}
 }
-</style></head><body>
+</style><style id="daytrip-route-modes-threads-20261015">
+/* Only Taiwan Railways icons in the day-trip transport-choice bubbles are inverted.
+   On dark (inactive) tabs: white. On white (selected) tabs: near-black. */
+#guide .sights-day-trips .destination-redesigned .tab-pill img[src$="taiwan-railways.webp"] {
+  filter: brightness(0) invert(1) !important;
+  opacity:.95;
+}
+#guide .sights-day-trips .destination-redesigned .tab-pill[aria-selected="true"] img[src$="taiwan-railways.webp"] {
+  filter: brightness(0) !important;
+  opacity:1;
+}
+/* A colored segment maps to each leg, rather than changing the whole timeline:
+   blue for Taiwan Railways / Pingxi, yellow for taxis, neutral gray for buses. */
+#guide .sights-day-trips .daytrip-timeline-leg { --travel-leg:#868686; }
+#guide .sights-day-trips .daytrip-timeline-leg--rail { --travel-leg:#4B99DE; }
+#guide .sights-day-trips .daytrip-timeline-leg--taxi { --travel-leg:#DBB74C; }
+#guide .sights-day-trips .daytrip-timeline-leg--bus { --travel-leg:#898989; }
+#guide .sights-day-trips .daytrip-timeline-leg::before {
+  content:"";position:absolute;
+  top:-22px;bottom:-22px;
+  left:calc(var(--dt-label) + var(--dt-gap) + var(--dt-axis) / 2);
+  transform:translateX(-50%);
+  width:3px; background:var(--travel-leg);
+  z-index:1;pointer-events:none;border-radius:2px;
+}
+/* Ensure the stops visually cover each colored leg endpoint. */
+#guide .sights-day-trips .daytrip-timeline-stop { z-index:2; }
+#guide .sights-day-trips .daytrip-timeline-node { z-index:3; }
+/* Make different routes in one bubble visibly separate without introducing nested fills. */
+#guide .sights-day-trips .daytrip-option--alternative {
+  --choice-accent:#888;
+  border:1px solid #4A4A4A!important;
+  border-left:3px solid var(--choice-accent)!important;
+  border-radius:12px;
+  padding:13px 12px 14px!important;
+  margin:10px 0 15px!important;
+  background:transparent!important;
+}
+#guide .sights-day-trips .daytrip-option--taxi-choice { --choice-accent:#DBB74C; }
+#guide .sights-day-trips .daytrip-option--bus-choice { --choice-accent:#939393; }
+#guide .sights-day-trips .daytrip-option--alternative:first-of-type { border-top:1px solid #4A4A4A!important; }
+#guide .sights-day-trips .daytrip-option--alternative .daytrip-option-heading {
+  gap:7px; margin-bottom:9px; flex-wrap:wrap; align-items:center;
+}
+#guide .sights-day-trips .daytrip-option--alternative .daytrip-option-heading h4 {
+  font-size:13.5px; line-height:1.5; font-weight:750;
+}
+#guide .sights-day-trips .daytrip-choice-emoji { font-size:17px;line-height:1.3;flex:0 0 auto; }
+#guide .sights-day-trips .daytrip-option--alternative .daytrip-timeline {margin-top:5px;}
+@media(max-width:355px) {
+  #guide .sights-day-trips .daytrip-option--alternative {padding:11px 9px 12px!important;}
+  #guide .sights-day-trips .daytrip-option--alternative .daytrip-option-heading h4 {font-size:12.5px;}
+}
+</style><style id="daytrip-gradients-major-heading-20261015">
+
+/* === 2026-10-15: graded transport choices + true chapter heading === */
+/* Major chapter: same h2 typographic hierarchy as 旅の準備・交通. */
+#guide .sights-day-trips {
+  margin-top:32px;
+  padding-top:17px;
+  border-top:1px solid #303030;
+}
+#guide .sights-day-trips > h2 {
+  font-size:19px;
+  line-height:1.5;
+  letter-spacing:-.025em;
+  font-weight:790;
+  color:var(--text-heading,#F7F7F7);
+  margin:0 0 13px;
+  scroll-margin-top:20px;
+}
+#guide .sights-day-trips > h2 strong {font-size:inherit;font-weight:inherit;color:inherit;}
+/* Transport option cards: muted top-down washes, NOT accent-colored left bars.
+   Route-specific blue (rail) and yellow (taxi) timeline lines remain unchanged. */
+#guide .sights-day-trips .daytrip-option--alternative {
+  border:1px solid #424242 !important;
+  border-left:1px solid #424242 !important;
+  border-radius:12px;
+  background:linear-gradient(180deg,
+    rgba(154,164,174,.24) 0px,
+    rgba(154,164,174,.11) 68px,
+    rgba(154,164,174,.025) 140px,
+    transparent 205px) !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+}
+#guide .sights-day-trips .daytrip-option--bus-choice {
+  background-image:linear-gradient(180deg,
+    rgba(154,164,174,.24) 0px,
+    rgba(154,164,174,.11) 68px,
+    rgba(154,164,174,.025) 140px,
+    transparent 205px) !important;
+}
+#guide .sights-day-trips .daytrip-option--taxi-choice {
+  background-image:linear-gradient(180deg,
+    rgba(219,183,76,.25) 0px,
+    rgba(219,183,76,.11) 68px,
+    rgba(219,183,76,.025) 140px,
+    transparent 205px) !important;
+}
+</style>
+</head><body>
 <header class="hero wrapper" id="top"><div class="eyebrow"><span class="ta">TA</span>BI / <span class="ta">TA</span>IPEI</div><h1><a aria-label="台湾グルメ検索へ" class="hero-title-link" data-target="food-search" href="#food-search">TAIPEI<br/><span>CITY GUIDE</span></a></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
 <a class="nav-button" data-target="travel" href="#travel"><span aria-hidden="true" class="nav-icon">✈️</span><span class="nav-copy"><span class="nav-title">旅の準備・交通</span><span class="nav-subtitle">入国・空港・注意事項</span></span></a>
 <a class="nav-button" data-target="food" href="#food"><span aria-hidden="true" class="nav-icon">🥢</span><span class="nav-copy"><span class="nav-title">おすすめグルメ</span><span class="nav-subtitle">地元目線でセレクト</span></span></a>
@@ -2150,12 +2251,12 @@ html, body,
 <section class="airport-mode-card airport-mode-rail"><div class="airport-mode-heading"><span aria-hidden="true" class="airport-mode-icon">🚆</span><span class="airport-mode-name">台北MRT（松山機場駅まで）</span><span class="airport-mode-recommended">おすすめ</span></div><div aria-label="台北駅から忠孝復興駅で乗り換えて松山機場駅へ。板南線と文湖線。" class="metro-route metro-route--transfer metro-route--return" role="img"><div class="metro-route-stops metro-transfer-stops"><span>台北駅</span><span>忠孝復興駅</span><span>松山機場駅</span></div>
 <div class="metro-transfer-service-labels"><span style="--service-color:#358AC5">BL 板南線</span><span style="--service-color:#B58A51">BR 文湖線</span></div>
 <div aria-hidden="true" class="metro-transfer-track"><span class="metro-transfer-leg" style="--service-color:#358AC5"></span><span class="metro-transfer-node"><svg fill="none" height="15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" viewbox="0 0 24 24" width="15"><path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4"></path></svg></span><span class="metro-transfer-leg" style="--service-color:#B58A51"></span></div>
-<div class="metro-route-key"><span class="metro-transfer-note">忠孝復興駅で乗り換え</span></div></div><div class="airport-single-fare"><span>$20〜</span><span>約20分（乗り換え1回）</span></div></section><div class="airport-mode-card airport-mode-compact airport-mode-bus"><span aria-hidden="true" class="airport-mode-icon">🚌</span><span class="airport-mode-name">路線バス（現地確認）</span></div><div class="airport-mode-card airport-mode-compact airport-mode-taxi"><span aria-hidden="true" class="airport-mode-icon">🚕</span><span class="airport-mode-name">タクシー（空港まで約20分）</span></div></div></div></div></div></div></details></div></div><div class="section-jump-row"><a aria-label="少し足を延ばしてへ移動" class="section-jump-button" data-target="day-trips" href="#day-trips"><span aria-hidden="true">🚋</span><span>少し足を延ばして…</span><span aria-hidden="true" class="section-jump-arrow">↘</span></a></div><section aria-labelledby="3f76bda0-4caa-8031-9c18-e63b9e9dcae1" class="sights-day-trips">
-<span class="jump-anchor" id="day-trips"></span><h3 class="" dir="auto" id="3f76bda0-4caa-8031-9c18-e63b9e9dcae1">🚋  <strong>少し足を延ばして…</strong></h3><p class="destination-lead">台北から、もう少し遠くへ。日帰りで出会える景色と街。</p><details class="destination-card block-color-gray_background toggle root-accordion destination-redesigned" data-group="root" data-notion-highlight="gray_background" dir="auto" id="3f76bda0-4caa-80fa-aac0-fa574c0df37f"><summary class="destination-summary"><span aria-hidden="true" class="destination-icon">🏮</span><span class="destination-copy"><span class="destination-title">九份へ</span><span class="destination-pr">赤い提灯が灯る、山あいのレトロな街</span></span></summary><div class="indented destination-body"><div class="tab" data-notion-tab-container="" dir="ltr" id="3f76bda0-4caa-80e8-b9e0-dce5ad235566"><div aria-label="カテゴリーを選択" class="tab-pills" role="tablist"><button aria-controls="3f76bda0-4caa-80b8-bc81-c08aeaa3f7c4" aria-selected="true" class="tab-pill" id="pill-3f76bda0-4caa-80b8-bc81-c08aeaa3f7c4" role="tab" tabindex="0" type="button"><span class="icon" data-emoji="🚌"></span>直通バス</button><button aria-controls="3f76bda0-4caa-8093-b2b8-d4abc374aa96" aria-selected="false" class="tab-pill" id="pill-3f76bda0-4caa-8093-b2b8-d4abc374aa96" role="tab" tabindex="-1" type="button"><img alt="" class="inline-category-icon" data-original-src="ROC_Taiwan_Railways_Administration_Logo.svg.png" decoding="async" height="30" loading="lazy" src="assets/icons/taiwan-railways.webp" width="30"/>台鉄（電車）＋乗換</button><button aria-controls="3f76bda0-4caa-8049-bf0f-dc083e84f335" aria-selected="false" class="tab-pill" id="pill-3f76bda0-4caa-8049-bf0f-dc083e84f335" role="tab" tabindex="-1" type="button"><span class="icon" data-emoji="🚕"></span>タクシー・貸切チャーター</button><button aria-controls="3f76bda0-4caa-8081-9546-ffd5124e4df0" aria-selected="false" class="tab-pill" id="pill-3f76bda0-4caa-8081-9546-ffd5124e4df0" role="tab" tabindex="-1" type="button"><span class="icon" data-emoji="🚩"></span>オプショナルツアー</button></div><div class="tab-panels"><div aria-labelledby="pill-3f76bda0-4caa-80b8-bc81-c08aeaa3f7c4" class="tab-panel" id="3f76bda0-4caa-80b8-bc81-c08aeaa3f7c4" role="tabpanel">
-<p class="daytrip-lead">乗り換えなしで行きたい人に。出発地に合わせて選べます。</p><section class="daytrip-option"><div class="daytrip-option-heading"><h4>西門駅・北門駅付近から</h4><span class="daytrip-soft-badge">シンプル</span></div><div aria-label="西門・北門から九份老街への経路" class="daytrip-timeline" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
+<div class="metro-route-key"><span class="metro-transfer-note">忠孝復興駅で乗り換え</span></div></div><div class="airport-single-fare"><span>$20〜</span><span>約20分（乗り換え1回）</span></div></section><div class="airport-mode-card airport-mode-compact airport-mode-bus"><span aria-hidden="true" class="airport-mode-icon">🚌</span><span class="airport-mode-name">路線バス（現地確認）</span></div><div class="airport-mode-card airport-mode-compact airport-mode-taxi"><span aria-hidden="true" class="airport-mode-icon">🚕</span><span class="airport-mode-name">タクシー（空港まで約20分）</span></div></div></div></div></div></div></details></div></div><section aria-labelledby="3f76bda0-4caa-8031-9c18-e63b9e9dcae1" class="sights-day-trips">
+<span class="jump-anchor" id="day-trips"></span><h2 class="" dir="auto" id="3f76bda0-4caa-8031-9c18-e63b9e9dcae1">🚋  <strong>少し足を延ばして…</strong></h2><p class="destination-lead">台北から、もう少し遠くへ。日帰りで出会える景色と街。</p><details class="destination-card block-color-gray_background toggle root-accordion destination-redesigned" data-group="root" data-notion-highlight="gray_background" dir="auto" id="3f76bda0-4caa-80fa-aac0-fa574c0df37f"><summary class="destination-summary"><span aria-hidden="true" class="destination-icon">🏮</span><span class="destination-copy"><span class="destination-title">九份へ</span><span class="destination-pr">赤い提灯が灯る、山あいのレトロな街</span></span></summary><div class="indented destination-body"><div class="tab" data-notion-tab-container="" dir="ltr" id="3f76bda0-4caa-80e8-b9e0-dce5ad235566"><div aria-label="カテゴリーを選択" class="tab-pills" role="tablist"><button aria-controls="3f76bda0-4caa-80b8-bc81-c08aeaa3f7c4" aria-selected="true" class="tab-pill" id="pill-3f76bda0-4caa-80b8-bc81-c08aeaa3f7c4" role="tab" tabindex="0" type="button"><span class="icon" data-emoji="🚌"></span>直通バス</button><button aria-controls="3f76bda0-4caa-8093-b2b8-d4abc374aa96" aria-selected="false" class="tab-pill" id="pill-3f76bda0-4caa-8093-b2b8-d4abc374aa96" role="tab" tabindex="-1" type="button"><img alt="" class="inline-category-icon" data-original-src="ROC_Taiwan_Railways_Administration_Logo.svg.png" decoding="async" height="30" loading="lazy" src="assets/icons/taiwan-railways.webp" width="30"/>台鉄（電車）＋乗換</button><button aria-controls="3f76bda0-4caa-8049-bf0f-dc083e84f335" aria-selected="false" class="tab-pill" id="pill-3f76bda0-4caa-8049-bf0f-dc083e84f335" role="tab" tabindex="-1" type="button"><span class="icon" data-emoji="🚕"></span>タクシー・貸切チャーター</button><button aria-controls="3f76bda0-4caa-8081-9546-ffd5124e4df0" aria-selected="false" class="tab-pill" id="pill-3f76bda0-4caa-8081-9546-ffd5124e4df0" role="tab" tabindex="-1" type="button"><span class="icon" data-emoji="🚩"></span>オプショナルツアー</button></div><div class="tab-panels"><div aria-labelledby="pill-3f76bda0-4caa-80b8-bc81-c08aeaa3f7c4" class="tab-panel" id="3f76bda0-4caa-80b8-bc81-c08aeaa3f7c4" role="tabpanel">
+<p class="daytrip-lead">乗り換えなしで行きたい人に。出発地に合わせて選べます。</p><section class="daytrip-option daytrip-option--alternative daytrip-option--bus-choice"><div class="daytrip-option-heading"><span aria-hidden="true" class="daytrip-choice-emoji">🚌</span><h4>西門駅・北門駅付近から</h4><span class="daytrip-soft-badge">965番</span></div><div aria-label="西門・北門から九份老街への経路" class="daytrip-timeline" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
 <span aria-hidden="true" class="daytrip-timeline-station">出発</span>
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>西門・北門</strong></div>
-</div><div class="daytrip-timeline-leg">
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--bus">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><span aria-hidden="true" class="daytrip-mode-icon">🚌</span>
 <div class="daytrip-mode-body">
@@ -2167,10 +2268,10 @@ html, body,
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>九份老街</strong></div>
 </div></div>
 <div class="daytrip-facts"><div class="daytrip-fact"><span class="daytrip-fact-label">所要時間</span><strong>約70〜80分</strong></div><div class="daytrip-fact"><span class="daytrip-fact-label">料金目安</span><strong>片道 NT$90</strong></div></div>
-<p class="daytrip-subnote">台北客運の直通バス。</p></section><section class="daytrip-option"><div class="daytrip-option-heading"><h4>忠孝復興駅 2番出口付近から</h4></div><div aria-label="忠孝復興から九份老街への経路" class="daytrip-timeline" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
+<p class="daytrip-subnote">台北客運の直通バス。</p></section><section class="daytrip-option daytrip-option--alternative daytrip-option--bus-choice"><div class="daytrip-option-heading"><span aria-hidden="true" class="daytrip-choice-emoji">🚌</span><h4>忠孝復興駅 2番出口付近から</h4><span class="daytrip-soft-badge">1062番</span></div><div aria-label="忠孝復興から九份老街への経路" class="daytrip-timeline" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
 <span aria-hidden="true" class="daytrip-timeline-station">出発</span>
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>忠孝復興</strong></div>
-</div><div class="daytrip-timeline-leg">
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--bus">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><span aria-hidden="true" class="daytrip-mode-icon">🚌</span>
 <div class="daytrip-mode-body">
@@ -2182,20 +2283,20 @@ html, body,
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>九份老街</strong></div>
 </div></div>
 <div class="daytrip-facts"><div class="daytrip-fact"><span class="daytrip-fact-label">所要時間</span><strong>約90分〜2時間</strong></div><div class="daytrip-fact"><span class="daytrip-fact-label">料金目安</span><strong>片道 NT$101前後</strong></div></div>
-<p class="daytrip-subnote">基隆客運の直通バス。</p></section></div><div aria-labelledby="pill-3f76bda0-4caa-8093-b2b8-d4abc374aa96" class="tab-panel" hidden="" id="3f76bda0-4caa-8093-b2b8-d4abc374aa96" role="tabpanel"><p class="daytrip-lead">台鉄で瑞芳駅まで行き、バスかタクシーに乗り換えます。</p><section class="daytrip-option"><div class="daytrip-option-heading"><h4>瑞芳駅からバスへ</h4><span class="daytrip-soft-badge">公共交通</span></div><div aria-label='台北駅などから&lt;a href="https://maps.app.goo.gl/hZC1Rur9dkaPJznd6" target="_blank" rel="noopener noreferrer"&gt;瑞芳駅&lt;/a&gt;で乗り換えて&lt;a href="https://maps.app.goo.gl/B7YCZQMV74b7kDwMA" target="_blank" rel="noopener noreferrer"&gt;九份老街&lt;/a&gt;へ' class="daytrip-timeline daytrip-timeline--transfer" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
+<p class="daytrip-subnote">基隆客運の直通バス。</p></section></div><div aria-labelledby="pill-3f76bda0-4caa-8093-b2b8-d4abc374aa96" class="tab-panel" hidden="" id="3f76bda0-4caa-8093-b2b8-d4abc374aa96" role="tabpanel"><p class="daytrip-lead">台鉄で瑞芳駅まで行き、バスかタクシーに乗り換えます。</p><section class="daytrip-option daytrip-option--alternative daytrip-option--bus-choice"><div class="daytrip-option-heading"><span aria-hidden="true" class="daytrip-choice-emoji">🚌</span><h4>瑞芳駅からバスへ</h4><span class="daytrip-soft-badge">公共交通</span></div><div aria-label='台北駅・松山駅などから&lt;a href="https://maps.app.goo.gl/hZC1Rur9dkaPJznd6" target="_blank" rel="noopener noreferrer"&gt;瑞芳駅&lt;/a&gt;で乗り換えて&lt;a href="https://maps.app.goo.gl/B7YCZQMV74b7kDwMA" target="_blank" rel="noopener noreferrer"&gt;九份老街&lt;/a&gt;へ' class="daytrip-timeline daytrip-timeline--transfer" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
 <span aria-hidden="true" class="daytrip-timeline-station">出発</span>
-<span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>台北駅など</strong></div>
-</div><div class="daytrip-timeline-leg">
+<span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>台北駅・松山駅など</strong></div>
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--rail">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><img alt="" aria-hidden="true" class="daytrip-mode-icon daytrip-mode-icon--tra" decoding="async" height="20" loading="lazy" src="assets/icons/taiwan-railways.webp" width="20"/>
 <div class="daytrip-mode-body">
 <div class="daytrip-mode-primary"><span class="daytrip-mode-badge">台鉄</span><strong>列車に乗車</strong></div>
-<span class="daytrip-mode-detail">瑞芳駅に停車する列車を確認</span>
+<span class="daytrip-mode-detail">宜蘭・花蓮方面など、瑞芳駅に停車する列車を確認</span>
 </div></div>
 </div><div class="daytrip-timeline-stop daytrip-timeline-stop--transfer">
 <span aria-label="乗換" class="daytrip-timeline-transfer-tag">乗換</span>
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong><a href="https://maps.app.goo.gl/hZC1Rur9dkaPJznd6" rel="noopener noreferrer" target="_blank">瑞芳駅</a></strong></div>
-</div><div class="daytrip-timeline-leg">
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--bus">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><span aria-hidden="true" class="daytrip-mode-icon">🚌</span>
 <div class="daytrip-mode-body">
@@ -2206,20 +2307,20 @@ html, body,
 <span aria-hidden="true" class="daytrip-timeline-station">到着</span>
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong><a href="https://maps.app.goo.gl/B7YCZQMV74b7kDwMA" rel="noopener noreferrer" target="_blank">九份老街</a></strong></div>
 </div></div>
-<p class="daytrip-subnote">瑞芳駅に停まる列車か確認。九份方面のバスに乗り、「九份老街」で下車。</p></section><section class="daytrip-option"><div class="daytrip-option-heading"><h4>瑞芳駅からタクシーへ</h4></div><div aria-label='台北駅などから&lt;a href="https://maps.app.goo.gl/hZC1Rur9dkaPJznd6" target="_blank" rel="noopener noreferrer"&gt;瑞芳駅&lt;/a&gt;で乗り換えて&lt;a href="https://maps.app.goo.gl/B7YCZQMV74b7kDwMA" target="_blank" rel="noopener noreferrer"&gt;九份老街&lt;/a&gt;へ' class="daytrip-timeline daytrip-timeline--transfer" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
+<p class="daytrip-subnote">瑞芳駅に停まる列車か確認。九份方面のバスに乗り、「九份老街」で下車。</p></section><section class="daytrip-option daytrip-option--alternative daytrip-option--taxi-choice"><div class="daytrip-option-heading"><span aria-hidden="true" class="daytrip-choice-emoji">🚕</span><h4>瑞芳駅からタクシーへ</h4><span class="daytrip-soft-badge">タクシー</span></div><div aria-label='台北駅・松山駅などから&lt;a href="https://maps.app.goo.gl/hZC1Rur9dkaPJznd6" target="_blank" rel="noopener noreferrer"&gt;瑞芳駅&lt;/a&gt;で乗り換えて&lt;a href="https://maps.app.goo.gl/B7YCZQMV74b7kDwMA" target="_blank" rel="noopener noreferrer"&gt;九份老街&lt;/a&gt;へ' class="daytrip-timeline daytrip-timeline--transfer" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
 <span aria-hidden="true" class="daytrip-timeline-station">出発</span>
-<span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>台北駅など</strong></div>
-</div><div class="daytrip-timeline-leg">
+<span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>台北駅・松山駅など</strong></div>
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--rail">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><img alt="" aria-hidden="true" class="daytrip-mode-icon daytrip-mode-icon--tra" decoding="async" height="20" loading="lazy" src="assets/icons/taiwan-railways.webp" width="20"/>
 <div class="daytrip-mode-body">
 <div class="daytrip-mode-primary"><span class="daytrip-mode-badge">台鉄</span><strong>列車に乗車</strong></div>
-<span class="daytrip-mode-detail">瑞芳駅に停車する列車を確認</span>
+<span class="daytrip-mode-detail">宜蘭・花蓮方面など、瑞芳駅に停車する列車を確認</span>
 </div></div>
 </div><div class="daytrip-timeline-stop daytrip-timeline-stop--transfer">
 <span aria-label="乗換" class="daytrip-timeline-transfer-tag">乗換</span>
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong><a href="https://maps.app.goo.gl/hZC1Rur9dkaPJznd6" rel="noopener noreferrer" target="_blank">瑞芳駅</a></strong></div>
-</div><div class="daytrip-timeline-leg">
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--taxi">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><span aria-hidden="true" class="daytrip-mode-icon">🚕</span>
 <div class="daytrip-mode-body">
@@ -2233,7 +2334,7 @@ html, body,
 <p class="daytrip-subnote">瑞芳駅からタクシー乗り場へ。九份老街までの通常料金は1台あたり NT$220。</p><p class="daytrip-note">運転手には「<a href="https://ja.forvo.com/word/%E4%B9%9D%E4%BB%BD%E8%80%81%E8%A1%97/" rel="noopener noreferrer" target="_blank">九份老街🔊</a>」と伝えるとスムーズです。</p></section></div><div aria-labelledby="pill-3f76bda0-4caa-8049-bf0f-dc083e84f335" class="tab-panel" hidden="" id="3f76bda0-4caa-8049-bf0f-dc083e84f335" role="tabpanel"><p class="daytrip-lead">荷物が多いときや、グループで移動するときに。</p><section class="daytrip-option"><div class="daytrip-option-heading"><h4>台北市内からタクシー</h4></div><div aria-label="台北市内から九份老街への経路" class="daytrip-timeline" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
 <span aria-hidden="true" class="daytrip-timeline-station">出発</span>
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>台北市内</strong></div>
-</div><div class="daytrip-timeline-leg">
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--taxi">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><span aria-hidden="true" class="daytrip-mode-icon">🚕</span>
 <div class="daytrip-mode-body">
@@ -2245,20 +2346,20 @@ html, body,
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>九份老街</strong></div>
 </div></div>
 <div class="daytrip-facts"><div class="daytrip-fact"><span class="daytrip-fact-label">所要時間</span><strong>約1時間</strong></div><div class="daytrip-fact"><span class="daytrip-fact-label">料金目安</span><strong>片道 NT$1,200前後</strong></div></div>
-</section><section class="daytrip-option"><div class="daytrip-option-heading"><h4>貸切チャーター</h4></div><p class="daytrip-note">十分や野柳など複数のスポットを、好きな順番で周遊したい場合に便利です。</p></section></div><div aria-labelledby="pill-3f76bda0-4caa-8081-9546-ffd5124e4df0" class="tab-panel" hidden="" id="3f76bda0-4caa-8081-9546-ffd5124e4df0" role="tabpanel"><p class="daytrip-lead">はじめての九份や、夜までゆっくり滞在したいときに。</p><section class="daytrip-option"><div class="daytrip-option-heading"><h4>日本語ガイド付きツアー</h4></div><p class="daytrip-note">十分でのランタン上げと九份を組み合わせたバスツアーなどが人気です。</p></section><p class="daytrip-note daytrip-note--important">夜の九份は帰りのバスやタクシーが大変混雑します。帰りの移動手段を確保したツアーなら安心です。</p></div></div></div></div></details><details class="destination-card block-color-gray_background toggle root-accordion destination-redesigned" data-group="root" data-notion-highlight="gray_background" dir="auto" id="3f76bda0-4caa-80cd-ad0a-d929a3835f6d"><summary class="destination-summary"><span aria-hidden="true" class="destination-icon"><img alt="" class="inline-category-icon sky-lantern-icon" decoding="async" height="25" loading="lazy" src="assets/icons/sky-lantern.webp" width="25"/></span><span class="destination-copy"><span class="destination-title">十分へ</span><span class="destination-pr">願いを込めて、天燈を空へ</span></span></summary><div class="indented destination-body"><div class="tab" data-notion-tab-container="" dir="ltr" id="3f76bda0-4caa-8002-800d-d5da753c8975"><div aria-label="カテゴリーを選択" class="tab-pills" role="tablist"><button aria-controls="3f76bda0-4caa-801b-b6eb-eb8671a42768" aria-selected="true" class="tab-pill" id="pill-3f76bda0-4caa-801b-b6eb-eb8671a42768" role="tab" tabindex="0" type="button"><img alt="" class="inline-category-icon" data-original-src="ROC_Taiwan_Railways_Administration_Logo.svg.png" decoding="async" height="30" loading="lazy" src="assets/icons/taiwan-railways.webp" width="30"/>台鉄（電車）</button><button aria-controls="3f76bda0-4caa-804f-a950-de261a9688dc" aria-selected="false" class="tab-pill" id="pill-3f76bda0-4caa-804f-a950-de261a9688dc" role="tab" tabindex="-1" type="button"><span class="icon" data-emoji="🚕"></span>タクシー・貸切チャーター</button><button aria-controls="3f76bda0-4caa-8069-a799-f01ffd83cd00" aria-selected="false" class="tab-pill" id="pill-3f76bda0-4caa-8069-a799-f01ffd83cd00" role="tab" tabindex="-1" type="button"><span class="icon" data-emoji="🚩"></span>オプショナルツアー</button></div><div class="tab-panels"><div aria-labelledby="pill-3f76bda0-4caa-801b-b6eb-eb8671a42768" class="tab-panel" id="3f76bda0-4caa-801b-b6eb-eb8671a42768" role="tabpanel"><p class="daytrip-lead">まず台鉄で瑞芳駅へ。平渓線に乗り換えて十分駅を目指します。</p><section class="daytrip-option"><div class="daytrip-option-heading"><h4>台鉄＋平渓線</h4><span class="daytrip-soft-badge">鉄道</span></div><div aria-label='台北駅などから&lt;a href="https://maps.app.goo.gl/hZC1Rur9dkaPJznd6" target="_blank" rel="noopener noreferrer"&gt;瑞芳駅&lt;/a&gt;で乗り換えて&lt;a href="https://maps.app.goo.gl/jmvqo1YKp4Zx3mBu5" target="_blank" rel="noopener noreferrer"&gt;十分駅&lt;/a&gt;へ' class="daytrip-timeline daytrip-timeline--transfer" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
+</section><section class="daytrip-option"><div class="daytrip-option-heading"><h4>貸切チャーター</h4></div><p class="daytrip-note">十分や野柳など複数のスポットを、好きな順番で周遊したい場合に便利です。</p></section></div><div aria-labelledby="pill-3f76bda0-4caa-8081-9546-ffd5124e4df0" class="tab-panel" hidden="" id="3f76bda0-4caa-8081-9546-ffd5124e4df0" role="tabpanel"><p class="daytrip-lead">はじめての九份や、夜までゆっくり滞在したいときに。</p><section class="daytrip-option"><div class="daytrip-option-heading"><h4>日本語ガイド付きツアー</h4></div><p class="daytrip-note">十分でのランタン上げと九份を組み合わせたバスツアーなどが人気です。</p></section><p class="daytrip-note daytrip-note--important">夜の九份は帰りのバスやタクシーが大変混雑します。帰りの移動手段を確保したツアーなら安心です。</p></div></div></div></div></details><details class="destination-card block-color-gray_background toggle root-accordion destination-redesigned" data-group="root" data-notion-highlight="gray_background" dir="auto" id="3f76bda0-4caa-80cd-ad0a-d929a3835f6d"><summary class="destination-summary"><span aria-hidden="true" class="destination-icon"><img alt="" class="inline-category-icon sky-lantern-icon" decoding="async" height="25" loading="lazy" src="assets/icons/sky-lantern.webp" width="25"/></span><span class="destination-copy"><span class="destination-title">十分へ</span><span class="destination-pr">願いを込めて、天燈を空へ</span></span></summary><div class="indented destination-body"><div class="tab" data-notion-tab-container="" dir="ltr" id="3f76bda0-4caa-8002-800d-d5da753c8975"><div aria-label="カテゴリーを選択" class="tab-pills" role="tablist"><button aria-controls="3f76bda0-4caa-801b-b6eb-eb8671a42768" aria-selected="true" class="tab-pill" id="pill-3f76bda0-4caa-801b-b6eb-eb8671a42768" role="tab" tabindex="0" type="button"><img alt="" class="inline-category-icon" data-original-src="ROC_Taiwan_Railways_Administration_Logo.svg.png" decoding="async" height="30" loading="lazy" src="assets/icons/taiwan-railways.webp" width="30"/>台鉄（電車）</button><button aria-controls="3f76bda0-4caa-804f-a950-de261a9688dc" aria-selected="false" class="tab-pill" id="pill-3f76bda0-4caa-804f-a950-de261a9688dc" role="tab" tabindex="-1" type="button"><span class="icon" data-emoji="🚕"></span>タクシー・貸切チャーター</button><button aria-controls="3f76bda0-4caa-8069-a799-f01ffd83cd00" aria-selected="false" class="tab-pill" id="pill-3f76bda0-4caa-8069-a799-f01ffd83cd00" role="tab" tabindex="-1" type="button"><span class="icon" data-emoji="🚩"></span>オプショナルツアー</button></div><div class="tab-panels"><div aria-labelledby="pill-3f76bda0-4caa-801b-b6eb-eb8671a42768" class="tab-panel" id="3f76bda0-4caa-801b-b6eb-eb8671a42768" role="tabpanel"><p class="daytrip-lead">まず台鉄で瑞芳駅へ。平渓線に乗り換えて十分駅を目指します。</p><section class="daytrip-option"><div class="daytrip-option-heading"><h4>台鉄＋平渓線</h4><span class="daytrip-soft-badge">鉄道</span></div><div aria-label='台北駅・松山駅などから&lt;a href="https://maps.app.goo.gl/hZC1Rur9dkaPJznd6" target="_blank" rel="noopener noreferrer"&gt;瑞芳駅&lt;/a&gt;で乗り換えて&lt;a href="https://maps.app.goo.gl/jmvqo1YKp4Zx3mBu5" target="_blank" rel="noopener noreferrer"&gt;十分駅&lt;/a&gt;へ' class="daytrip-timeline daytrip-timeline--transfer" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
 <span aria-hidden="true" class="daytrip-timeline-station">出発</span>
-<span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>台北駅など</strong></div>
-</div><div class="daytrip-timeline-leg">
+<span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>台北駅・松山駅など</strong></div>
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--rail">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><img alt="" aria-hidden="true" class="daytrip-mode-icon daytrip-mode-icon--tra" decoding="async" height="20" loading="lazy" src="assets/icons/taiwan-railways.webp" width="20"/>
 <div class="daytrip-mode-body">
 <div class="daytrip-mode-primary"><span class="daytrip-mode-badge">台鉄</span><strong>列車に乗車</strong></div>
-<span class="daytrip-mode-detail">瑞芳駅に停車する列車を確認</span>
+<span class="daytrip-mode-detail">宜蘭・花蓮方面など、瑞芳駅に停車する列車を確認</span>
 </div></div>
 </div><div class="daytrip-timeline-stop daytrip-timeline-stop--transfer">
 <span aria-label="乗換" class="daytrip-timeline-transfer-tag">乗換</span>
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong><a href="https://maps.app.goo.gl/hZC1Rur9dkaPJznd6" rel="noopener noreferrer" target="_blank">瑞芳駅</a></strong></div>
-</div><div class="daytrip-timeline-leg">
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--rail">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><img alt="" aria-hidden="true" class="daytrip-mode-icon daytrip-mode-icon--tra" decoding="async" height="20" loading="lazy" src="assets/icons/taiwan-railways.webp" width="20"/>
 <div class="daytrip-mode-body">
@@ -2272,7 +2373,7 @@ html, body,
 <p class="daytrip-subnote">瑞芳駅で平渓線のホームへ。平渓線は1時間に1本程度、瑞芳駅から十分駅までは約30〜35分です。</p></section><p class="daytrip-note">出発前に瑞芳駅への停車と、平渓線の時刻を確認してください。</p></div><div aria-labelledby="pill-3f76bda0-4caa-804f-a950-de261a9688dc" class="tab-panel" hidden="" id="3f76bda0-4caa-804f-a950-de261a9688dc" role="tabpanel"><p class="daytrip-lead">九份を訪れたあと、十分へ移動する場合。</p><section class="daytrip-option"><div class="daytrip-option-heading"><h4>九份からタクシー</h4></div><div aria-label="九份から十分への経路" class="daytrip-timeline" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
 <span aria-hidden="true" class="daytrip-timeline-station">出発</span>
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>九份</strong></div>
-</div><div class="daytrip-timeline-leg">
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--taxi">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><span aria-hidden="true" class="daytrip-mode-icon">🚕</span>
 <div class="daytrip-mode-body">
@@ -2284,15 +2385,15 @@ html, body,
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>十分</strong></div>
 </div></div>
 <div class="daytrip-facts"><div class="daytrip-fact"><span class="daytrip-fact-label">所要時間</span><strong>約35〜45分</strong></div><div class="daytrip-fact"><span class="daytrip-fact-label">料金目安</span><strong>片道 NT$630前後</strong></div></div>
-<p class="daytrip-subnote">九份派出所（交番）向かいのバス停付近から乗車。</p></section><section class="daytrip-option"><div class="daytrip-option-heading"><h4>貸切チャーター</h4></div><p class="daytrip-note">九份と十分を一緒に巡る場合に便利です。</p></section></div><div aria-labelledby="pill-3f76bda0-4caa-8069-a799-f01ffd83cd00" class="tab-panel" hidden="" id="3f76bda0-4caa-8069-a799-f01ffd83cd00" role="tabpanel"><p class="daytrip-lead">交通手段をまとめて手配したい人に。</p><section class="daytrip-option"><div class="daytrip-option-heading"><h4>ランタン上げ付きツアー</h4></div><p class="daytrip-note">十分での天燈上げと九份を組み合わせた、日本語ガイド付きバスツアーなどがあります。</p></section><p class="daytrip-note daytrip-note--important">九份にも夜まで滞在する場合、帰りのバス・タクシーは混雑しやすいため、復路の移動手段も確認しておきましょう。</p></div></div></div></div></details><details class="destination-card block-color-gray_background toggle root-accordion destination-redesigned" data-group="root" data-notion-highlight="gray_background" dir="auto" id="3f76bda0-4caa-80c4-b3e4-cd5674051401"><summary class="destination-summary"><span aria-hidden="true" class="destination-icon">⚓️</span><span class="destination-copy"><span class="destination-title">基隆港へ</span><span class="destination-pr">港町の夜景とローカルグルメ</span></span></summary><div class="indented destination-body"><h4 class="daytrip-section-label">アクセス</h4><div aria-label='台北駅などから&lt;a href="https://maps.app.goo.gl/jp4G6jU5CXpBtmgWA" target="_blank" rel="noopener noreferrer"&gt;基隆駅&lt;/a&gt;への経路' class="daytrip-timeline" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
+<p class="daytrip-subnote">九份派出所（交番）向かいのバス停付近から乗車。</p></section><section class="daytrip-option"><div class="daytrip-option-heading"><h4>貸切チャーター</h4></div><p class="daytrip-note">九份と十分を一緒に巡る場合に便利です。</p></section></div><div aria-labelledby="pill-3f76bda0-4caa-8069-a799-f01ffd83cd00" class="tab-panel" hidden="" id="3f76bda0-4caa-8069-a799-f01ffd83cd00" role="tabpanel"><p class="daytrip-lead">交通手段をまとめて手配したい人に。</p><section class="daytrip-option"><div class="daytrip-option-heading"><h4>ランタン上げ付きツアー</h4></div><p class="daytrip-note">十分での天燈上げと九份を組み合わせた、日本語ガイド付きバスツアーなどがあります。</p></section><p class="daytrip-note daytrip-note--important">九份にも夜まで滞在する場合、帰りのバス・タクシーは混雑しやすいため、復路の移動手段も確認しておきましょう。</p></div></div></div></div></details><details class="destination-card block-color-gray_background toggle root-accordion destination-redesigned" data-group="root" data-notion-highlight="gray_background" dir="auto" id="3f76bda0-4caa-80c4-b3e4-cd5674051401"><summary class="destination-summary"><span aria-hidden="true" class="destination-icon">⚓️</span><span class="destination-copy"><span class="destination-title">基隆港へ</span><span class="destination-pr">港町の夜景とローカルグルメ</span></span></summary><div class="indented destination-body"><h4 class="daytrip-section-label">アクセス</h4><div aria-label='台北駅・松山駅などから&lt;a href="https://maps.app.goo.gl/jp4G6jU5CXpBtmgWA" target="_blank" rel="noopener noreferrer"&gt;基隆駅&lt;/a&gt;への経路' class="daytrip-timeline" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
 <span aria-hidden="true" class="daytrip-timeline-station">出発</span>
-<span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>台北駅など</strong></div>
-</div><div class="daytrip-timeline-leg">
+<span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>台北駅・松山駅など</strong></div>
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--rail">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><img alt="" aria-hidden="true" class="daytrip-mode-icon daytrip-mode-icon--tra" decoding="async" height="20" loading="lazy" src="assets/icons/taiwan-railways.webp" width="20"/>
 <div class="daytrip-mode-body">
 <div class="daytrip-mode-primary"><span class="daytrip-mode-badge">台鉄</span><strong>列車に乗車</strong></div>
-<span class="daytrip-mode-detail">基隆駅で下車</span>
+<span class="daytrip-mode-detail">基隆行きの列車を確認・基隆駅で下車</span>
 </div></div>
 </div><div class="daytrip-timeline-stop daytrip-timeline-stop--end">
 <span aria-hidden="true" class="daytrip-timeline-station">到着</span>
@@ -2301,7 +2402,7 @@ html, body,
 <p class="daytrip-subnote">台鉄で基隆駅まで。基隆駅で下車。</p><section class="daytrip-place-group"><h4>見どころ</h4><ul class="daytrip-place-list"><li><a href="https://maps.app.goo.gl/xrD9bvDm6dvEMeMNA" rel="noopener noreferrer" target="_blank">基隆塔</a></li><li><a href="https://maps.app.goo.gl/AZRq7bKhZWk7nMQF8" rel="noopener noreferrer" target="_blank">海洋広場</a></li><li><a href="https://maps.app.goo.gl/fRKGYwE38P8zrp4fA" rel="noopener noreferrer" target="_blank">彩色屋</a></li><li><a href="https://maps.app.goo.gl/kFdNnEFCKET48jWL6" rel="noopener noreferrer" target="_blank">阿根納造船廠遺構</a></li></ul></section><section class="daytrip-place-group"><h4>市場・ローカルグルメ</h4><ul class="daytrip-place-list"><li><a href="https://maps.app.goo.gl/kPmushGka9MxiL486" rel="noopener noreferrer" target="_blank">仁愛市場</a></li><li><a href="https://maps.app.goo.gl/FasxHrd7GgTPYDKT7" rel="noopener noreferrer" target="_blank">基隆廟口夜市</a></li><li><a href="https://maps.app.goo.gl/nr8dcsvUbo18Xf2bA" rel="noopener noreferrer" target="_blank">三角窗麵攤</a></li><li><a href="https://maps.app.goo.gl/oE5pZWoZLLgPCpPc8" rel="noopener noreferrer" target="_blank">正老牌咖哩麵</a></li><li><a href="https://maps.app.goo.gl/uyjr6oJqY4pa94jt9" rel="noopener noreferrer" target="_blank">天天鮮排骨飯</a></li></ul></section></div></details><details class="destination-card block-color-gray_background toggle root-accordion destination-redesigned" data-group="root" data-notion-highlight="gray_background" dir="auto" id="3f76bda0-4caa-8025-9383-c51708916788"><summary class="destination-summary"><span aria-hidden="true" class="destination-icon">🌊</span><span class="destination-copy"><span class="destination-title">野柳へ</span><span class="destination-pr">海がつくり出した、不思議な奇岩群</span></span></summary><div class="indented destination-body"><h4 class="daytrip-section-label">アクセス</h4><section class="daytrip-option"><div class="daytrip-option-heading"><h4>台北駅から</h4></div><div aria-label="台北駅から野柳への経路" class="daytrip-timeline" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
 <span aria-hidden="true" class="daytrip-timeline-station">出発</span>
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>台北駅</strong></div>
-</div><div class="daytrip-timeline-leg">
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--bus">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><span aria-hidden="true" class="daytrip-mode-icon">🚌</span>
 <div class="daytrip-mode-body">
@@ -2315,7 +2416,7 @@ html, body,
 <p class="daytrip-subnote">金山青年活動中心行きに乗車。「<a href="https://maps.app.goo.gl/1Vyc8VWmWvEZuouY6" rel="noopener noreferrer" target="_blank">野柳</a>」で下車。</p></section><section class="daytrip-option"><div class="daytrip-option-heading"><h4>基隆駅から</h4></div><div aria-label="基隆駅から野柳への経路" class="daytrip-timeline" role="group"><div class="daytrip-timeline-stop daytrip-timeline-stop--start">
 <span aria-hidden="true" class="daytrip-timeline-station">出発</span>
 <span aria-hidden="true" class="daytrip-timeline-node"></span><div class="daytrip-timeline-name"><strong>基隆駅</strong></div>
-</div><div class="daytrip-timeline-leg">
+</div><div class="daytrip-timeline-leg daytrip-timeline-leg--bus">
 <span aria-hidden="true" class="daytrip-timeline-stem"></span>
 <div class="daytrip-timeline-leg-content"><span aria-hidden="true" class="daytrip-mode-icon">🚌</span>
 <div class="daytrip-mode-body">
