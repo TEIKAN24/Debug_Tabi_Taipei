@@ -3899,6 +3899,42 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
  #guide .airport-route-selector .airsel-station-ja{font-size:10px}
 }
 </style>
+<style id="airport-route-timeline-motion-v21">
+/* Airport route entrance: first reveal every station from top to bottom;
+   then draw each colored leg downward and reveal its boarding directions. */
+#guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-stop {
+  animation:airsel-station-appear 750ms cubic-bezier(.19,.8,.22,1) both;
+  animation-delay:var(--airsel-stop-delay,0ms);
+}
+#guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg::before {
+  animation:airsel-route-draw 720ms cubic-bezier(.18,.76,.2,1) both;
+  animation-delay:var(--airsel-leg-delay,0ms);
+  transform-origin:50% 0%;
+}
+#guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg .leg-content {
+  animation:airsel-leg-label-appear 490ms cubic-bezier(.19,.8,.22,1) both;
+  animation-delay:calc(var(--airsel-leg-delay,0ms) + 190ms);
+}
+@keyframes airsel-station-appear {
+  from {opacity:0;transform:translate3d(0,12px,0);}
+  to {opacity:1;transform:translate3d(0,0,0);}
+}
+@keyframes airsel-route-draw {
+  from {opacity:0.18;transform:translateX(-50%) scaleY(0);}
+  to {opacity:1;transform:translateX(-50%) scaleY(1);}
+}
+@keyframes airsel-leg-label-appear {
+  from {opacity:0;transform:translate3d(0,10px,0);}
+  to {opacity:1;transform:translate3d(0,0,0);}
+}
+@media (prefers-reduced-motion:reduce) {
+  #guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-stop,
+  #guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg::before,
+  #guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg .leg-content {
+    animation:none!important;
+  }
+}
+</style>
 </head><body><div class="food-drawer-backdrop" aria-hidden="true"></div>
 <header class="hero wrapper" id="top"><div class="eyebrow"><span class="ta">TA</span>BI / <span class="ta">TA</span>IPEI</div><h1><span class="hero-title-link">TAIPEI<br/><span>CITY GUIDE</span></span></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
 <a class="nav-button" data-target="travel" href="#travel"><span aria-hidden="true" class="nav-icon">✈️</span><span class="nav-copy"><span class="nav-title">旅の準備・交通</span><span class="nav-subtitle">入国・空港・注意事項</span></span></a>
@@ -5337,6 +5373,8 @@ loadData();
   function blockTarget(target){
     if(!(target instanceof Element))return false;
     if(target.closest('input,textarea,select,[contenteditable="true"],video,audio'))return true;
+    // Interactive links should always receive taps; opening the food drawer must not cancel them.
+    if(target.closest('a[href]'))return true;
     if(target.closest('#airsel-transport-tabs, #airport-route-selector .route-panel'))return true;
     /* Horizontal scrollers own their own gestures; never swipe the whole page instead. */
     let current=target;
@@ -5472,6 +5510,12 @@ function setResultsOpen(open){
  clip.classList.toggle('is-open',resultsOpen);
  clip.inert=!resultsOpen;
  if(resultsOpen)queueTimelineEntrance(210);
+ else {
+   const timeline=el('timeline');
+   window.clearTimeout(timeline._airselAnimTimer);
+   window.clearTimeout(timeline._airselCleanupTimer);
+   timeline.classList.remove('airsel-timeline-animating');
+ }
 }
 function queueTimelineEntrance(delay=0){
  const timeline=el('timeline');
@@ -5482,15 +5526,15 @@ function queueTimelineEntrance(delay=0){
  const stops=[...timeline.querySelectorAll('.timeline-stop')];
  const legs=[...timeline.querySelectorAll('.timeline-leg')];
  if((!stops.length&&!legs.length)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
- stops.forEach((node,index)=>node.style.setProperty('--airsel-stop-delay',`${index*130}ms`));
- const legStart=stops.length*130+70;
- legs.forEach((node,index)=>node.style.setProperty('--airsel-leg-delay',`${legStart+index*190}ms`));
+ stops.forEach((node,index)=>node.style.setProperty('--airsel-stop-delay',`${index*248}ms`));
+ const legStart=Math.max(0,stops.length-1)*248+750+160;
+ legs.forEach((node,index)=>node.style.setProperty('--airsel-leg-delay',`${legStart+index*780}ms`));
  timeline._airselAnimTimer=window.setTimeout(()=>{
    timeline.classList.remove('airsel-timeline-animating');
    void timeline.offsetWidth;
    timeline.classList.add('airsel-timeline-animating');
  },Math.max(0,delay));
- const total=delay+legStart+Math.max(legs.length-1,0)*190+860;
+ const total=delay+legStart+Math.max(legs.length-1,0)*780+1200;
  timeline._airselCleanupTimer=window.setTimeout(()=>{
    timeline.classList.remove('airsel-timeline-animating');
  },Math.max(0,total));
@@ -5772,6 +5816,21 @@ el('company-img').addEventListener('error',function(){this.dataset.ready='false'
 el('company-img').addEventListener('load',function(){this.dataset.ready=String(state.transport==='rail' && this.naturalWidth>0);});
 update();
 
+})();
+</script>
+<style id="mobile-map-native-link-fix-v22">
+/* Leave standard OS map-link behavior intact: no overlays, swipe interception or custom popups. */
+#guide a[href^="https://maps.app.goo.gl/"] { touch-action: manipulation; }
+</style>
+<script id="mobile-map-native-link-fix-v22">
+(()=>{
+  'use strict';
+  const isTouchDevice=window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints>0;
+  if(!isTouchDevice)return; // Desktop visitors continue to open Google Maps in a new tab.
+  // Mobile webviews frequently suppress new tabs. Use an ordinary navigation instead.
+  for(const a of document.querySelectorAll('#guide a[href^="https://maps.app.goo.gl/"]')){
+    a.target='_self';
+  }
 })();
 </script>
 </body></html>
