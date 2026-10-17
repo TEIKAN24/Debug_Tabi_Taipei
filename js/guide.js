@@ -1,0 +1,1876 @@
+/* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
+
+/* =================== JS 01: behavior-1 =================== */
+;
+(() => {
+  "use strict";
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const firstLevel={
+    food:'3f56bda0-4caa-80cb-846a-c054fc9eb79b',
+    sights:'3f56bda0-4caa-8046-a491-c25321b680c1',
+    areas:'3f66bda0-4caa-800d-95db-dea98f822273',
+    experiences:'3f76bda0-4caa-80d2-8841-c76e1f8f749a',
+    souvenirs:'3f66bda0-4caa-8038-8328-e8b12e95336f'
+  };
+  // One open accordion per sibling group, including area subcategories whose
+  // Notion-exported <details> do not carry the old .toggle class.
+  function closeBranch(detail) {
+    detail.querySelectorAll('details[open]').forEach(child => { child.open = false; });
+    detail.open = false;
+  }
+  function closePeerAccordions(detail) {
+    if (!detail?.parentElement) return;
+    for (const peer of detail.parentElement.children) {
+      if (peer !== detail && peer.tagName === 'DETAILS' && peer.open) {
+        closeBranch(peer);
+      }
+    }
+  }
+  function openAccordion(detail) {
+    if (!detail) return;
+    closePeerAccordions(detail);
+    detail.open = true;
+  }
+  // Keep the newly opened summary in view after the previous (possibly very
+  // long) sibling panel has collapsed. Only user-triggered opens scroll:
+  // programmatic initialisation and the homepage navigation keep their own logic.
+  function scrollOpenedSummaryIntoView(detail) {
+    const summary = detail.querySelector(':scope > summary');
+    if (!summary) return;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (!detail.open || summary.getClientRects().length === 0) return;
+      summary.scrollIntoView({
+        block: 'start',
+        inline: 'nearest',
+        behavior: reduceMotion.matches ? 'auto' : 'smooth'
+      });
+    }));
+  }
+  // The same inner-list focus now applies to area districts, drinks and night markets.
+  // Focus the selected accordion heading, not merely the enclosing category bubble.
+  // Its category list is a nested scroll container. Align within that list first,
+  // then check the heading's position in the visible phone viewport. Browser
+  // scroll anchoring is disabled for this section so opening one large row does
+  // not unexpectedly move the entire document.
+  let areaFocusSequence = 0;
+  function focusDirectoryCategory(summary) {
+    const panel = summary.closest('.area-directory-section .tab-panel, .venue-directory-section .tab-panel.guided-focus-panel');
+    const detail = summary.parentElement;
+    if (!panel || !detail) return;
+    const sequence = ++areaFocusSequence;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (sequence !== areaFocusSequence || !detail.open || !summary.getClientRects().length) return;
+      summary.focus({preventScroll:true});
+      const viewportHeight = window.visualViewport?.height || window.innerHeight;
+      const preferredY = Math.min(235, Math.max(165, viewportHeight * .29));
+      const panelBox = panel.getBoundingClientRect();
+      const rowBox = summary.getBoundingClientRect();
+      const maxPanelScroll = Math.max(0, panel.scrollHeight - panel.clientHeight);
+      const targetPanelScroll = Math.min(maxPanelScroll,
+        Math.max(0, panel.scrollTop + rowBox.top - panelBox.top - 12));
+      // An immediate alignment avoids racing the page's own smooth scrolling.
+      panel.scrollTop = targetPanelScroll;
+      requestAnimationFrame(() => {
+        if (sequence !== areaFocusSequence || !detail.open) return;
+        const row = summary.getBoundingClientRect();
+        const list = panel.getBoundingClientRect();
+        const topVisible = Math.max(76, list.top + 10);
+        const bottomVisible = Math.min(viewportHeight - 95, list.bottom - 25);
+        // Move the document only when the chosen heading is not in a comfortable
+        // reading position. Short categories near the end cannot always scroll
+        // to the top inside the list; a small page adjustment handles those.
+        if (row.top < topVisible || row.top > Math.min(preferredY + 65, bottomVisible)) {
+          const delta = row.top - preferredY;
+          // Never jump hundreds of pixels past the category heading on one tap.
+          const limit = Math.max(180, viewportHeight * .45);
+          const scrollDelta = Math.max(-limit, Math.min(limit, delta));
+          window.scrollTo({top: Math.max(0, window.scrollY + scrollDelta), behavior:'instant'});
+        }
+      });
+    }));
+  }
+  // Switching district, drinks or night-market bubbles resets only the newly
+  // selected list to its beginning. The horizontal tab strip stays untouched.
+  function prepareGuidedTab(panel) {
+    if (!panel) return;
+    panel.scrollTop = 0;
+  }
+  const siteContent = document.querySelector('.site-content');
+  siteContent?.addEventListener('click', event => {
+    const summary = event.target.closest('summary');
+    if (!summary || !siteContent.contains(summary)) return;
+    const detail = summary.parentElement;
+    if (detail?.tagName !== 'DETAILS') return;
+    // A link inside a summary must continue to work like a normal link.
+    if (event.target.closest('a, button')) return;
+    event.preventDefault(); // avoid a second native <details> toggle
+    const isAreaCategory = detail.parentElement?.classList.contains('area-category-list');
+    const guidedPanel = detail.closest('.venue-directory-section .tab-panel.guided-focus-panel');
+    const isFoodSubcategory = Boolean(guidedPanel && detail.parentElement === guidedPanel.querySelector(':scope > .indented'));
+    const isGuidedCategory = isAreaCategory || isFoodSubcategory;
+    // Stop a still-running homepage smooth jump before focusing a row.
+    // Otherwise that animation can pull the page away after the row opens.
+    if (isGuidedCategory) window.scrollTo({top:window.scrollY,behavior:'instant'});
+    if (detail.open) {
+      closeBranch(detail);
+    } else {
+      openAccordion(detail);
+      if (isGuidedCategory) focusDirectoryCategory(summary);
+      else scrollOpenedSummaryIntoView(detail);
+    }
+  });
+  // Also enforce sibling exclusivity if a detail is opened by other scripts.
+  document.querySelectorAll('.site-content details').forEach(detail => {
+    detail.addEventListener('toggle', () => {
+      if (detail.open) closePeerAccordions(detail);
+    });
+  });
+  function activateTab(tablist, index, moveFocus=false) {
+    if(!tablist) return;
+    const pills=Array.from(tablist.querySelectorAll(':scope > .tab-pill'));
+    const panels=tablist.nextElementSibling?.querySelectorAll(':scope > .tab-panel');
+    if(!panels||!pills.length)return;
+    index=(index+pills.length)%pills.length;
+    pills.forEach((pill,i)=>{
+      const on=i===index;
+      pill.setAttribute('aria-selected',String(on));
+      pill.tabIndex=on?0:-1;
+      // Returning to a bubble starts with its deeper options folded up.
+      if (!on) panels[i].querySelectorAll('details[open]').forEach(closeBranch);
+      panels[i].hidden=!on;
+    });
+    if(moveFocus) pills[index].focus({preventScroll:true});
+    // Anticipate the next category before the selected pill reaches the right edge.
+    // A mostly-visible pill stays put; a pill nearing the edge moves to the left
+    // fifth of the strip, leaving space to discover and tap the following pills.
+    const active=pills[index];
+    const maxScroll=Math.max(0,tablist.scrollWidth-tablist.clientWidth);
+    if(maxScroll<=2)return;
+    const strip=tablist.getBoundingClientRect();
+    const pill=active.getBoundingClientRect();
+    const rightThreshold=Math.min(104,Math.max(56,tablist.clientWidth*.24));
+    const leftMargin=12;
+    let nextScroll=null;
+    if(pill.right>strip.right-rightThreshold && maxScroll-tablist.scrollLeft>2){
+      const preferredLeft=Math.min(70,Math.max(30,tablist.clientWidth*.19));
+      nextScroll=tablist.scrollLeft+pill.left-strip.left-preferredLeft;
+      // Very wide labels must remain fully readable, even on narrow phones.
+      if(pill.width>tablist.clientWidth-preferredLeft-8)
+        nextScroll=tablist.scrollLeft+pill.right-strip.right+8;
+    }else if(pill.left<strip.left+leftMargin && tablist.scrollLeft>2){
+      nextScroll=tablist.scrollLeft+pill.left-strip.left-leftMargin;
+    }
+    if(nextScroll!==null){
+      const clamped=Math.max(0,Math.min(maxScroll,nextScroll));
+      if(Math.abs(clamped-tablist.scrollLeft)>2)
+        tablist.scrollTo({left:clamped,behavior:reduceMotion.matches?'auto':'smooth'});
+    }
+  }
+  document.querySelectorAll('.tab-pills').forEach(tablist=>{
+    const pills=Array.from(tablist.querySelectorAll(':scope > .tab-pill'));
+    pills.forEach((pill,index)=>{
+      const isAreaTablist = Boolean(tablist.closest('.area-directory-section'));
+      pill.addEventListener('click',()=>{
+        activateTab(tablist,index);
+        const panel=tablist.nextElementSibling?.children[index];
+        if (isAreaTablist || panel?.classList.contains('guided-focus-panel')) prepareGuidedTab(panel);
+      });
+      pill.addEventListener('keydown',e=>{
+        if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+        e.preventDefault();
+        const next=e.key==='Home'?0:e.key==='End'?pills.length-1:index+(e.key==='ArrowRight'?1:-1);
+        const normalized=(next+pills.length)%pills.length;
+        activateTab(tablist,next,true);
+        const panel=tablist.nextElementSibling?.children[normalized];
+        if (isAreaTablist || panel?.classList.contains('guided-focus-panel')) prepareGuidedTab(panel);
+      });
+    });
+  });
+  function revealNavFirstLayer(id){
+    const detail=document.getElementById(firstLevel[id]);
+    if(detail)openAccordion(detail);
+    // The first pill is the visible panel; don't open its nested accordions.
+  }
+  function showTarget(id){
+    const node=document.getElementById(id);
+    if(!node)return null;
+    if(firstLevel[id])revealNavFirstLayer(id);
+    // Deep links into a category select its bubble first, then reveal its parents.
+    const panel=node.closest('.tab-panel');
+    if(panel){
+      const tablist=panel.parentElement?.previousElementSibling;
+      const panels=Array.from(panel.parentElement.children);
+      activateTab(tablist,panels.indexOf(panel));
+    }
+    let parent=node.parentElement;
+    const parents=[];
+    while(parent){if(parent.tagName==='DETAILS')parents.unshift(parent);parent=parent.parentElement;}
+    parents.forEach(openAccordion);
+    return node;
+  }
+  document.querySelectorAll('.nav-button[data-target], .hero-title-link[data-target], .section-jump-button[data-target]').forEach(link=>{
+    link.addEventListener('click',event=>{
+      const id=link.dataset.target,anchor=document.getElementById(id);
+      if(!anchor)return;
+      event.preventDefault();
+      if (id === 'day-trips') showTarget(id);
+      else revealNavFirstLayer(id);
+      if (location.hash && location.protocol !== 'about:') history.replaceState(null,'',location.pathname+location.search);
+      requestAnimationFrame(()=>anchor.scrollIntoView({behavior:reduceMotion.matches?'auto':'smooth',block:'start'}));
+    });
+  });
+  function revealHash(){
+    const id=decodeURIComponent(location.hash.replace(/^#/,''));
+    if(!id)return;
+    const target=showTarget(id);
+    if(target)requestAnimationFrame(()=>target.scrollIntoView({behavior:'auto',block:'start'}));
+  }
+  window.addEventListener('hashchange',revealHash);
+  // Mobile browsers may restore scroll after the footer script has run.
+  // The HEAD bootstrap strips old hashes and disables scroll restoration before paint.
+  // During the initial rendering window keep scroll at the hero, but stop immediately
+  // as soon as the visitor touches, scrolls, clicks or types (so navigation still works).
+  let resetPending = true;
+  let resetTimer;
+  function stopInitialReset() {
+    if(!resetPending) return;
+    resetPending = false;
+    clearTimeout(resetTimer);
+    document.documentElement.style.removeProperty('scroll-behavior');
+  }
+  function resetInitialTop() {
+    if(!resetPending) return;
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+    document.documentElement.scrollTop = 0;
+    if(document.body) document.body.scrollTop = 0;
+  }
+  ['pointerdown','touchstart','wheel','keydown'].forEach(eventName =>
+    window.addEventListener(eventName, stopInitialReset, {once:true,passive:true}));
+  resetInitialTop();
+  requestAnimationFrame(resetInitialTop);
+  window.addEventListener('pageshow', () => {
+    resetInitialTop();
+    requestAnimationFrame(resetInitialTop);
+  });
+  window.addEventListener('load', () => {
+    resetInitialTop();
+    requestAnimationFrame(resetInitialTop);
+    // One final pass catches delayed layout and Safari scroll restoration.
+    resetTimer = setTimeout(() => {resetInitialTop();stopInitialReset();}, 600);
+  }, {once:true});
+  const back=document.querySelector('.back-top');
+  if(back){
+    let lastY=window.scrollY;
+    let hideTimer=null;
+    const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+    function showBack(visible){
+      back.classList.toggle('show',visible);
+      back.tabIndex=visible?0:-1;
+      back.setAttribute('aria-hidden',String(!visible));
+    }
+    function atBottom(){
+      const maxY=Math.max(0,(document.scrollingElement?.scrollHeight||document.documentElement.scrollHeight)-window.innerHeight);
+      return maxY>180 && window.scrollY>=maxY-4;
+    }
+    function clearHideTimer(){
+      if(hideTimer!==null){clearTimeout(hideTimer);hideTimer=null;}
+    }
+    function startFadeTimer(){
+      clearHideTimer();
+      if(atBottom()){showBack(true);return;}
+      // Each new scroll event resets the one-second idle countdown.
+      hideTimer=setTimeout(()=>{
+        hideTimer=null;
+        if(atBottom()) showBack(true);
+        else showBack(false);
+      },1000);
+    }
+    function onScroll(){
+      const y=window.scrollY;
+      const moved=Math.abs(y-lastY)>0.5;
+      lastY=y;
+      // At the top, always hide immediately. A click-triggered smooth scroll
+      // must not leave the arrow visible, even if it is still hovered.
+      if(y<=24){
+        clearHideTimer();
+        showBack(false);
+      }else if(atBottom()){
+        clearHideTimer();
+        showBack(true);
+      }else if(moved){
+        showBack(true);
+        startFadeTimer();
+      }
+    }
+    window.addEventListener('scroll',onScroll,{passive:true});
+    window.addEventListener('resize',()=>{
+      if(atBottom()){
+        clearHideTimer();showBack(true);
+      }else if(back.classList.contains('show'))startFadeTimer();
+    },{passive:true});
+    back.addEventListener('click',()=>{
+      clearHideTimer();
+      back.blur();
+      // Hide on click; if smooth scrolling triggers new scroll events,
+      // onScroll will hide it again as soon as the page reaches the top.
+      showBack(false);
+      window.scrollTo({top:0,behavior:reducedMotion.matches?'auto':'smooth'});
+      history.replaceState(null,'',location.pathname+location.search);
+    });
+    showBack(atBottom());
+  }
+})();
+
+/* =================== JS 02: venue-directory-script =================== */
+;
+
+/* Converts existing Notion-style entries into directory rows without changing the source list.
+   To add an entry, append an <li><a href="...">店名</a>（特徴、人気）</li>
+   to an existing category <ol>. Display numbers and tags are generated automatically. */
+(function () {
+  'use strict';
+
+  const containers = document.querySelectorAll('.site-content details.venue-directory-section');
+  for (const pane of document.querySelectorAll('.site-content .venue-directory-section .tab-panel')) { pane.tabIndex = 0; }
+  const HIGHLIGHT = /おすすめ|孤独のグルメ|ミシュラン|超行列|一番人気|高人気|ビブグルマン|人気老舗|人気店|行列店|エビ水餃|抹茶焼き氷|芝麻湯圓|鴨舌|水出し珈琲|目玉焼き魯肉飯/;
+  const CAUTION = /八角なし|治安|注意|⚠|臭い/;
+  const groupCounts = new Map();
+
+  for (const section of containers) {
+    // Both the standard .venue-list-item entries and the few legacy unclassed <li> entries.
+    const entries = section.querySelectorAll('ol > li');
+    for (const li of entries) {
+      // Never transform nested lists or text-only list items.
+      const firstLink = li.querySelector('a[href]');
+      if (!firstLink || li.querySelector('ul,ol')) continue;
+      if (li.classList.contains('venue-row')) continue;
+
+      const ol = li.closest('ol');
+      const nearestGroup = li.closest('details.nested-accordion, .tab-panel, details.root-accordion');
+      if (!ol || !nearestGroup) continue;
+
+      // Real subsection breaks (headings, notes, <hr>) reset numbering;
+      // copied Notion `start="..."` values never need to be edited.
+      const previous = ol.previousElementSibling;
+      const isNewSubsection = previous && !previous.matches('ol') &&
+        ol.firstElementChild === li &&
+        (previous.matches('hr,h2,h3,h4,p') || previous.classList.contains('section-note'));
+      const lastCount = groupCounts.get(nearestGroup) || 0;
+      const num = isNewSubsection ? 1 : lastCount + 1;
+      groupCounts.set(nearestGroup,num);
+
+      // Extract the extra description from a clone so all original hyperlinks stay intact.
+      const clone = li.cloneNode(true);
+      const clonedFirst = clone.querySelector('a[href]');
+      if (clonedFirst) clonedFirst.remove();
+      clone.querySelectorAll('a[href]').forEach(a => a.remove());
+      const hadLineBreak = !!li.querySelector('br');
+      let trailingText = clone.textContent.replace(/\s+/g,' ').trim();
+      trailingText = trailingText.replace(/🔗/g,'').replace(/^[\s、，,\/]+|[\s、，,\/]+$/g,'').trim();
+      const parenthetical = trailingText.match(/^[（(]([\s\S]*?)[）)]$/);
+      const candidate = parenthetical ? parenthetical[1] : (hadLineBreak ? trailingText : '');
+      const parts = candidate.split(/[、，,]/).map(v => v.replace(/^[\s、，,\/]+|[\s、，,\/]+$/g,'').trim()).filter(Boolean);
+      const tags = [];
+      const notes = [];
+      if (candidate) {
+        for (const part of parts) {
+          if (part.length <= 22 && !/[。！？\n]/.test(part)) tags.push(part);
+          else notes.push(part);
+        }
+      } else if (trailingText && !/^[（）()、，,\s]+$/.test(trailingText)) {
+        notes.push(trailingText);
+      }
+
+      const secondary = Array.from(li.querySelectorAll('a[href]')).filter(a => a !== firstLink);
+      const outOfBandLinks = secondary.filter(a => !/^https:\/\/maps\.app\.goo\.gl\//.test(a.href));
+      const otherMapLinks = secondary.filter(a => /^https:\/\/maps\.app\.goo\.gl\//.test(a.href));
+
+      const index = document.createElement('span');
+      index.className = 'venue-row-index';
+      index.setAttribute('aria-hidden', 'true');
+      index.textContent = String(num).padStart(2,'0');
+
+      const body = document.createElement('div');
+      body.className = 'venue-row-body';
+      const nameLine = document.createElement('div');
+      nameLine.className = 'venue-name-line';
+      const nameLinks = document.createElement('div');
+      nameLinks.className = 'venue-primary-links';
+      firstLink.classList.add('venue-main-link');
+      nameLinks.append(firstLink);
+      for (const secondaryMap of otherMapLinks) {
+        const join = document.createElement('span');
+        join.className = 'venue-name-separator';
+        join.textContent = '・';
+        nameLinks.append(join);
+        secondaryMap.classList.add('venue-main-link');
+        nameLinks.append(secondaryMap);
+      }
+      nameLine.append(nameLinks);
+      // Official-site and booking links sit on the far right of the shop name,
+      // not underneath its descriptive tags. The original href is retained.
+      if (outOfBandLinks.length) {
+        const moreLinks = document.createElement('div');
+        moreLinks.className = 'venue-secondary-links';
+        for (const link of outOfBandLinks) {
+          link.textContent = link.textContent.replace(/🔗/g, '').trim();
+          moreLinks.append(link);
+        }
+        nameLine.append(moreLinks);
+      }
+      body.append(nameLine);
+
+      // Evidence-backed venue labels supplied in data-curated-tags. Original remarks remain unchanged.
+      // Only fill up to three visible labels; avoid repeating the existing category or a same-name tag.
+      const curated = (li.dataset.curatedTags || '').split('、').map(s=>s.trim()).filter(Boolean);
+      for (const value of curated) {
+        if (tags.length >= 3) break;
+        if (!tags.includes(value)) tags.push(value);
+      }
+
+      if (tags.length) {
+        const tagList = document.createElement('div');
+        tagList.className = 'venue-tag-list';
+        for (const value of tags) {
+          const tag = document.createElement('span');
+          tag.className = 'venue-tag';
+          if (CAUTION.test(value)) tag.classList.add('venue-tag--caution');
+          else if (HIGHLIGHT.test(value)) tag.classList.add('venue-tag--featured');
+          tag.textContent = value;
+          tagList.append(tag);
+        }
+        body.append(tagList);
+      }
+      if (notes.length) {
+        const extraNote = document.createElement('div');
+        extraNote.className = 'venue-extra-note';
+        extraNote.textContent = notes.join('、');
+        body.append(extraNote);
+      }
+      li.replaceChildren(index, body);
+      li.classList.add('venue-row');
+      ol.classList.add('venue-directory-list');
+    }
+  }
+})();
+
+
+/* =================== JS 03: food-search-script =================== */
+;
+
+(function () {
+const foodExplorer=document.getElementById("food-explorer");
+if(!foodExplorer) return;
+
+"use strict";
+// The content is managed separately in foods.csv and synonyms.json.
+// Keep both files in the same folder as this index.html on GitHub Pages.
+// CSV row order is preserved within each category; categories remain in the fixed order below.
+let foods = [];
+let synonymGroups = [];
+let normalizedGroups = [];
+
+const cats = ["すべて", "🔰 初心者", "🏮 地元民", "⚔️ クセ強", "💀 限界突破"];
+const input = foodExplorer.querySelector("#search");
+const clear = foodExplorer.querySelector("#clear");
+const filters = foodExplorer.querySelector("#filters");
+const results = foodExplorer.querySelector("#results");
+const count = foodExplorer.querySelector("#result-count");
+const scrollTip = foodExplorer.querySelector("#scroll-tip");
+const scrollText = foodExplorer.querySelector("#scroll-text");
+const footerCount = foodExplorer.querySelector("#total-food-count");
+let selected = cats[0];
+
+const normalized = s => String(s).normalize("NFKC").toLocaleLowerCase();
+
+// Synonym groups are loaded from synonyms.json, then normalized for searching.
+function variantsFor(term) {
+  const group = normalizedGroups.find(group => group.includes(term));
+  return group || [term];
+}
+function searchTerms() {
+  return normalized(input.value.trim()).split(/\s+/).filter(Boolean);
+}
+
+function currentMatches() {
+  const terms = searchTerms();
+
+  return foods.filter(food => {
+    // The difficulty filter still applies to all searches.
+    if (selected !== cats[0] && food.category !== selected) return false;
+
+    // Include hidden tags so partial Japanese words and emoji can be searched.
+    const text = normalized(
+      `${food.name} ${food.description} ${food.category} ${(food.tags || []).join(" ")}`
+    );
+
+    return terms.every(term => {
+      // One pepper (or 辛い) finds all marked spicy dishes, including "maybe".
+      // Two/three peppers require at least that numerical spice level.
+      const peppers = term.match(/🌶️/gu) || [];
+      if (peppers.length && peppers.join("") === term) {
+        return peppers.length === 1
+          ? Boolean(food.spice)
+          : peppers.length <= 3 && Number(food.spice) >= peppers.length;
+      }
+      if (term === "辛い") return Boolean(food.spice);
+
+      // Preserve the existing traditional/simplified/Japanese synonym groups.
+      return variantsFor(term).some(alias => text.includes(alias));
+    });
+  });
+}
+
+function addHighlightedText(parent, value, terms) {
+  // Uses DOM text nodes, not HTML interpolation, to keep all inputs safe.
+  const original = String(value);
+  const normalizedValue = normalized(original);
+  let ranges = [];
+  for (const term of terms) {
+    if (!term) continue;
+    let start = 0;
+    while (start < normalizedValue.length) {
+      const index = normalizedValue.indexOf(term, start);
+      if (index < 0) break;
+      // NFKC generally preserves positions for these CJK terms; if not, skip highlighting safely.
+      if (original.slice(index, index + term.length) &&
+          normalized(original.slice(index, index + term.length)) === term) {
+        ranges.push([index, index + term.length]);
+      }
+      start = index + Math.max(term.length, 1);
+    }
+  }
+  ranges.sort((a, b) => a[0] - b[0]);
+  let last = 0;
+  for (const [start, end] of ranges) {
+    if (start < last) continue;
+    parent.append(document.createTextNode(original.slice(last, start)));
+    const mark = document.createElement("mark");
+    mark.textContent = original.slice(start, end);
+    parent.append(mark);
+    last = end;
+  }
+  parent.append(document.createTextNode(original.slice(last)));
+}
+function drawFilters() {
+  filters.replaceChildren();
+  for (const cat of cats) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `pill${selected === cat ? " active" : ""}`;
+    button.setAttribute("aria-pressed", String(selected === cat));
+    const label = document.createElement("span");
+    label.textContent = cat;
+    const n = document.createElement("span");
+    n.className = "pill-count";
+    n.textContent = ` ${cat === cats[0] ? foods.length : foods.filter(f => f.category === cat).length}`;
+    button.append(label, n);
+    button.addEventListener("click", () => {
+      selected = cat;
+      drawFilters();
+      drawResults();
+    });
+    filters.append(button);
+  }
+}
+function resizeResultViewport() {
+  const rows = [...results.querySelectorAll(".result")];
+  const mobile = window.matchMedia("(max-width: 600px)").matches;
+  // Give the food list more vertical room while keeping its own scroll area.
+  // Short phones show about 4.5 rows, regular phones 5.2, and tall phones 5.8.
+  const screenHeight = window.visualViewport?.height || window.innerHeight;
+  const visibleRows = mobile ? (screenHeight < 740 ? 4.5 : screenHeight > 900 ? 5.8 : 5.2) : 4.75;
+  const fullRows = Math.floor(visibleRows);
+  const needsScroll = rows.length > fullRows;
+  results.classList.toggle("scrolling", needsScroll);
+  scrollText.hidden = !needsScroll;
+  // Show the compact dashed-pepper explanation only when relevant.
+  scrollTip.hidden = !needsScroll;
+  if (!needsScroll) {
+    results.style.maxHeight = "none";
+    return;
+  }
+  // Measure actual rendered rows, including Japanese text wrapping.
+  // Use measured row heights so long Japanese descriptions fit naturally.
+  const fullHeight = rows.slice(0, fullRows).reduce((sum, row) => sum + row.getBoundingClientRect().height, 0);
+  const nextHeight = rows[fullRows]?.getBoundingClientRect().height ?? 0;
+  const fraction = visibleRows - fullRows;
+  results.style.maxHeight = `${Math.ceil(fullHeight + nextHeight * fraction)}px`;
+}
+
+// Approx. fifteen visible Japanese characters; leave a few extra characters for the fade.
+// Segment by grapheme so emoji and combining characters are not cut in half.
+function descriptionGraphemes(value) {
+  const str = String(value || "");
+  if (typeof Intl !== "undefined" && Intl.Segmenter) {
+    return [...new Intl.Segmenter("ja", {granularity:"grapheme"}).segment(str)].map(part => part.segment);
+  }
+  return Array.from(str);
+}
+
+// Add a deliberate break after at most 16 grapheme characters per line.
+// Kinsoku: avoid leaving 、。！？ and closing brackets at the beginning of a line,
+// or opening brackets at the end of the previous line. Keep the CSV text unchanged.
+function wrapFoodDescription(value, limit = 16) {
+  const chars = descriptionGraphemes(value);
+  const forbiddenAtStart = /^[、。，．,.！!？?：:；;）)］\]｝}」』】〉》％%…]/u;
+  const forbiddenAtEnd = /^[（(［\[｛{「『【〈《]/u;
+  const lines = [];
+  let start = 0;
+  while (start < chars.length) {
+    let end = Math.min(start + limit, chars.length);
+    if (end < chars.length) {
+      while (end > start + 1 && forbiddenAtStart.test(chars[end])) end--;
+      while (end > start + 1 && forbiddenAtEnd.test(chars[end - 1])) end--;
+    }
+    lines.push(chars.slice(start, end).join(""));
+    start = end;
+  }
+  return lines.join("\n");
+}
+
+function setFoodEntryExpanded(row, expanded) {
+  if (!row || !row.classList.contains("food-entry-expandable")) return;
+  const button = row.querySelector(".food-entry-toggle");
+  const preview = row.querySelector(".food-desc-preview");
+  const full = row.querySelector(".food-desc-full");
+  if (!button || !preview || !full) return;
+  row.classList.toggle("is-expanded", expanded);
+  button.setAttribute("aria-expanded", String(expanded));
+  button.setAttribute("aria-label", `${row.dataset.dishName}：${expanded ? "説明を閉じる" : "説明の続きを見る"}`);
+  preview.hidden = expanded;
+  full.hidden = !expanded;
+}
+
+// Collapse only once the ENTIRE entry has left the internal food-result scrollport.
+// When an entry above the viewport shrinks, compensate its height so reading position stays stable.
+let foodCollapseFrame = 0;
+function collapseFoodEntriesOutsideViewport() {
+  foodCollapseFrame = 0;
+  if (!results.classList.contains("scrolling")) return;
+  const viewport = results.getBoundingClientRect();
+  for (const row of results.querySelectorAll(".result.is-expanded")) {
+    const rect = row.getBoundingClientRect();
+    const above = rect.bottom <= viewport.top + 1;
+    const below = rect.top >= viewport.bottom - 1;
+    if (!above && !below) continue;
+    const beforeHeight = row.getBoundingClientRect().height;
+    const scrollBefore = results.scrollTop;
+    setFoodEntryExpanded(row, false);
+    if (above) results.scrollTop = Math.max(0, scrollBefore - (beforeHeight - row.getBoundingClientRect().height));
+  }
+}
+results.addEventListener("scroll", () => {
+  if (!foodCollapseFrame) foodCollapseFrame = requestAnimationFrame(collapseFoodEntriesOutsideViewport);
+}, {passive:true});
+
+function drawResults() {
+  const matched = currentMatches();
+  count.textContent = `${matched.length} 件`;
+  results.replaceChildren();
+  results.style.maxHeight = "none";
+  results.classList.toggle("scrolling", matched.length > (window.matchMedia("(max-width: 600px)").matches ? 2 : 3));
+  const terms = searchTerms();
+  // Include alternative spellings when highlighting an equivalent match.
+  const highlightTerms = [...new Set(terms.flatMap(variantsFor))];
+  if (!matched.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    const face = document.createElement("span");
+    face.className = "emoji";
+    face.textContent = "🔎";
+    const message = document.createElement("span");
+    message.textContent = "該当する料理が見つかりません。料理名・🍜・シーフードなどで検索してください。";
+    empty.append(face, message);
+    results.append(empty);
+  } else {
+    for (const food of matched) {
+      const row = document.createElement("article");
+      row.className = "result";
+      const left = document.createElement("div");
+      left.className = "food-entry-left";
+      const name = document.createElement("h3");
+      name.className = "dish";
+      const desc = document.createElement("p");
+      desc.className = "desc";
+      addHighlightedText(name, food.name, highlightTerms);
+      const graphemes = descriptionGraphemes(food.description);
+      const expandable = graphemes.length > 15;
+      if (expandable) {
+        const preview = document.createElement("span");
+        preview.className = "food-desc-preview";
+        // Display up to ~15 characters, with the last few fading out.
+        addHighlightedText(preview, graphemes.slice(0, 15).join(""), highlightTerms);
+        const full = document.createElement("span");
+        full.className = "food-desc-full";
+        full.hidden = true;
+        addHighlightedText(full, wrapFoodDescription(food.description, 16), highlightTerms);
+        desc.append(preview, full);
+      } else {
+        addHighlightedText(desc, food.description, highlightTerms);
+      }
+      left.append(name, desc);
+      
+const meta = document.createElement("div");
+meta.className = "result-meta";
+
+// 原本的等級分類
+const tag = document.createElement("span");
+tag.className = "tag";
+tag.textContent = food.category;
+meta.append(tag);
+
+// 辣度：沒有設定就不顯示
+if (food.spice) {
+  const spice = document.createElement("span");
+
+  const isMaybe = food.spice === "maybe";
+
+  spice.className = isMaybe
+    ? "spice maybe"
+    : "spice";
+
+  if (isMaybe) {
+    const icon = document.createElement("img");
+    icon.className = "spice-icon";
+    icon.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAA90lEQVR4nK2SoRYBQRSGv3WON1AkT6AoiqIomwmyLMveQJEVhapIiqCsoCgEb6AohF+5u2fOYO0uc849O3Nn7jf/3n8C8Z9R+qH2DsiiMGgAlIEA2ABKkAXiIpCgI1ARRU1gDlScdW4VE1NxsjmCSHDIA+kapOnlp8rZI1mRn28XAb3LDwUKMj7IHVAFam/2rsA2i5J+ippEKYKxYG3N9A9N7WD/A+RmriXEyL4SXJ25BK0PkPgSXFBsaSgYWTRSfmdmdQ0XFJPHGfrVcZTW3b3YtS6wMBf2wBI4Aw9zK7TA9nov3nk3hoKV4O716SgYpKnN+o6+jifwJgi73wNeVAAAAABJRU5ErkJggg==";
+    icon.alt = "";
+    icon.setAttribute("aria-hidden", "true");
+    spice.append(icon);
+  } else {
+    spice.textContent = "🌶️".repeat(Number(food.spice));
+  }
+
+  const label = isMaybe
+    ? "お店によって辛い場合があります"
+    : `辛さの目安：${food.spice} / 3`;
+
+  spice.setAttribute("aria-label", label);
+  spice.title = label;
+
+  meta.append(spice);
+}
+
+if (expandable) {
+  row.classList.add("food-entry-expandable");
+  row.dataset.dishName = food.name;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "food-entry-toggle";
+  button.setAttribute("aria-expanded", "false");
+  button.setAttribute("aria-label", `${food.name}：説明の続きを見る`);
+  button.append(left, meta);
+  button.addEventListener("click", () => {
+    const open = !row.classList.contains("is-expanded");
+    // Show one explanation at a time to keep the scroll list compact.
+    for (const other of results.querySelectorAll(".result.is-expanded")) {
+      if (other !== row) setFoodEntryExpanded(other, false);
+    }
+    setFoodEntryExpanded(row, open);
+  });
+  row.append(button);
+} else {
+  row.append(left, meta);
+}
+
+      results.append(row);
+    }
+  }
+  results.scrollTop = 0;
+  resizeResultViewport();
+}
+function onSearch() {
+  clear.classList.toggle("visible", input.value.length > 0);
+  drawResults();
+}
+input.addEventListener("input", onSearch);
+clear.addEventListener("click", () => { input.value = ""; onSearch(); input.blur(); });
+foodExplorer.querySelectorAll("[data-example]").forEach(button => {
+  button.addEventListener("click", () => {
+    input.value = button.dataset.example;
+    onSearch();
+    input.blur();
+  });
+});
+window.addEventListener("resize", () => requestAnimationFrame(resizeResultViewport));
+
+// Minimal CSV parser: supports UTF-8 BOM, quoted commas, quotes, and newlines.
+function parseCsv(text) {
+  const content = text.replace(/^\uFEFF/, "");
+  const rows = [];
+  let row = [], field = "", inQuotes = false;
+  for (let i = 0; i < content.length; i++) {
+    const char = content[i];
+    if (char === '"') {
+      if (inQuotes && content[i + 1] === '"') { field += '"'; i++; }
+      else { inQuotes = !inQuotes; }
+    } else if (char === "," && !inQuotes) {
+      row.push(field); field = "";
+    } else if ((char === "\n" || char === "\r") && !inQuotes) {
+      row.push(field); field = "";
+      if (row.some(v => v.trim() !== "")) rows.push(row);
+      row = [];
+      if (char === "\r" && content[i + 1] === "\n") i++;
+    } else {
+      field += char;
+    }
+  }
+  if (inQuotes) throw new Error("CSV の引用符が閉じていません。");
+  row.push(field);
+  if (row.some(v => v.trim() !== "")) rows.push(row);
+  if (!rows.length) throw new Error("foods.csv が空です。");
+  const headers = rows.shift().map(h => h.trim().toLowerCase());
+  for (const required of ["category", "name", "description"]) {
+    if (!headers.includes(required)) throw new Error("foods.csv に列がありません: " + required);
+  }
+  return rows.map((values, position) => {
+    const item = Object.fromEntries(headers.map((key, i) => [key, (values[i] || "").trim()]));
+    if (!item.name || !cats.includes(item.category)) {
+      throw new Error(`foods.csv の ${position + 2} 行目を確認してください。`);
+    }
+    return {
+  category: item.category,
+  name: item.name,
+  description: item.description,
+  
+tags: (item.tags || "")
+  .split("|")
+  .map(tag => tag.trim())
+  .filter(Boolean),
+
+spice: ["1", "2", "3", "maybe"].includes(item.spice)
+  ? item.spice
+  : ""
+
+};
+  }).sort((a, b) => cats.indexOf(a.category) - cats.indexOf(b.category));
+}
+
+async function loadData() {
+  try {
+    const [foodResponse, synonymResponse] = await Promise.all([
+      fetch("./food/foods.csv", { cache: "no-store" }),
+      fetch("./food/synonyms.json", { cache: "no-store" })
+    ]);
+    if (!foodResponse.ok || !synonymResponse.ok) {
+      throw new Error("foods.csv または synonyms.json が見つかりません。");
+    }
+    const [csvText, json] = await Promise.all([
+      foodResponse.text(), synonymResponse.json()
+    ]);
+    const loadedFoods = parseCsv(csvText);
+    if (!Array.isArray(json.groups) || !json.groups.every(group =>
+        Array.isArray(group) && group.every(word => typeof word === "string"))) {
+      throw new Error("synonyms.json の groups を確認してください。");
+    }
+    foods = loadedFoods;
+    synonymGroups = json.groups;
+    normalizedGroups = synonymGroups.map(group => [...new Set(group.map(normalized))]);
+    footerCount.textContent = String(foods.length);
+    input.disabled = false;
+    drawFilters();
+    onSearch();
+  } catch (error) {
+    console.error("TAIPEI CITY GUIDE: data load error", error);
+    filters.replaceChildren();
+    results.replaceChildren();
+    results.classList.remove("scrolling");
+    results.style.maxHeight = "none";
+    scrollTip.hidden = true;
+    count.textContent = "読み込みエラー";
+    const notice = document.createElement("div");
+    notice.className = "empty";
+    notice.textContent = "データを読み込めませんでした。GitHub Pages で開き、food/foods.csv・food/synonyms.json が指定のフォルダにあるか確認してください。";
+    results.append(notice);
+  }
+}
+loadData();
+
+})();
+
+
+/* =================== JS 04: guide-details-polish =================== */
+;
+
+/* Enhances the original exported content without rewriting store names, links, or travel instructions. */
+(function () {
+  const caution=document.querySelector('.travel-caution');
+  if(caution){
+    const wrapper=caution.querySelector(':scope > .indented');
+    const notice=wrapper?.querySelector(':scope > ul.bulleted-list');
+    if(notice){
+      const alert=document.createElement('div');
+      alert.className='travel-alert';
+      const label=document.createElement('span');
+      label.className='travel-alert-label';
+      label.textContent='持ち込み禁止';
+      alert.append(label);
+      notice.before(alert);
+      alert.append(notice);
+    }
+    const topics=[
+      ['🧳','アメニティは持参前に確認'],
+      ['🚻','場所によって利用ルールが異なる'],
+      ['🚰','飲む前にチェック'],
+      ['🚇','MRT・バス・歩行時のルール'],
+      ['💳','現金・カード・悠遊カード'],
+      ['🎟️','買い物後のレシートもチェック']
+    ];
+    [...wrapper.querySelectorAll(':scope > details.nested-accordion')].forEach((detail,i)=>{
+      detail.classList.add('travel-topic');
+      const summary=detail.querySelector(':scope > summary');
+      if(!summary)return;
+      const label=summary.textContent.trim();
+      const icon=document.createElement('span');
+      icon.className='travel-topic-icon';
+      icon.setAttribute('aria-hidden','true');
+      icon.textContent=(topics[i]||['💡',''])[0];
+      const copy=document.createElement('span');
+      copy.className='travel-topic-copy';
+      const name=document.createElement('span');
+      name.className='travel-topic-title';
+      name.textContent=label;
+      const note=document.createElement('span');
+      note.className='travel-topic-subtitle';
+      note.textContent=(topics[i]||['',''])[1];
+      copy.append(name,note);
+      summary.classList.add('travel-topic-summary');
+      summary.replaceChildren(icon,copy);
+      detail.querySelectorAll('aside.callout').forEach(a=>a.classList.add('travel-tip'));
+    });
+  }
+  document.querySelectorAll('details.destination-card').forEach(detail=>{
+    const body=detail.querySelector(':scope > .indented');
+    if(!body)return;
+    if(detail.classList.contains('destination-redesigned')) return;
+    body.classList.add('destination-body');
+    const tab=body.querySelector(':scope > .tab');
+    if(tab){
+      const label=document.createElement('p');
+      label.className='destination-guide-label';
+      label.textContent='交通手段を選ぶ';
+      body.prepend(label);
+      return;
+    }
+    // Keelung / Yehliu have direct text and Notion lists, so group only the
+    // display wrappers and keep each original paragraph, anchor and link intact.
+    const paras=[...body.children].filter(el=>el.matches('p'));
+    const lists=[...body.children].filter(el=>el.matches('ol.numbered-list'));
+    function group(elements, heading, cls){
+      if(!elements.length)return;
+      const group=document.createElement('section');
+      group.className='destination-info-group '+cls;
+      const title=document.createElement('h4');
+      title.className='destination-info-title';
+      title.textContent=heading;
+      group.append(title);
+      elements[0].before(group);
+      elements.forEach(el=>group.append(el));
+    }
+    group(paras,'アクセス','destination-access');
+    group(lists,'立ち寄りスポット','destination-spots');
+  });
+})();
+
+
+/* =================== JS 05: airport-direction-switcher-behavior =================== */
+;
+
+(() => {
+  'use strict';
+  const switcher = document.querySelector('.site-content .airport-direction-switcher');
+  if (!switcher) return;
+  const buttons = [...switcher.querySelectorAll('.airport-direction-button')];
+  const details = [...switcher.querySelectorAll('.airport-access')];
+  const sync = () => buttons.forEach(button => {
+    const detail = details.find(d => d.dataset.airportDirection === button.dataset.airportTarget);
+    button.setAttribute('aria-expanded', String(Boolean(detail?.open)));
+  });
+  // Both directions start folded: the two choices fit side by side, with one
+  // full-width route detail below only when a visitor selects a direction.
+  details.forEach(detail => {
+    detail.open = false;
+    detail.addEventListener('toggle', sync);
+  });
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let focusFrame = 0;
+  // Align the direction choices to the viewport after a panel has changed.
+  // This keeps the airport tabs and the start of its route visible together,
+  // even if an earlier long accordion collapses and changes the page height.
+  function keepAirportInView() {
+    cancelAnimationFrame(focusFrame);
+    focusFrame = requestAnimationFrame(() => {
+      focusFrame = requestAnimationFrame(() => {
+        const heading = switcher.previousElementSibling;
+        const anchor = heading?.classList.contains('airport-access-subheading') ? heading : switcher;
+        if (!anchor.getClientRects().length) return;
+        const top = Math.max(0, window.scrollY + anchor.getBoundingClientRect().top - 12);
+        window.scrollTo({top, behavior: reduceMotion.matches ? 'auto' : 'smooth'});
+      });
+    });
+  }
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      const selected = details.find(d => d.dataset.airportDirection === button.dataset.airportTarget);
+      if (!selected) return;
+      const shouldOpen = !selected.open;
+      details.forEach(d => { d.open = false; });
+      if (shouldOpen) {
+        // Maintain the existing one-at-a-time pattern of the travel section.
+        const pageBody = switcher.closest('.page-body');
+        for (const other of pageBody?.children || []) {
+          if (other.tagName === 'DETAILS' && other.open) other.open = false;
+        }
+        selected.open = true;
+        keepAirportInView();
+      }
+      sync();
+    });
+  });
+  // If any other top-level section opens, fold away airport route details.
+  const pageBody = switcher.closest('.page-body');
+  [...(pageBody?.children || [])].filter(node => node.tagName === 'DETAILS')
+    .forEach(detail => detail.addEventListener('toggle', () => {
+      if (detail.open) {
+        details.forEach(d => { d.open = false; });
+        sync();
+      }
+    }));
+  sync();
+})();
+
+
+/* =================== JS 06: daytrip-destination-button-switcher =================== */
+;
+
+/* One-of-four detail panels: default compact; clicking an active destination closes it. */
+(() => {
+  'use strict';
+  const section=document.querySelector('#guide .sights-day-trips');
+  if(!section)return;
+  const buttons=[...section.querySelectorAll('.daytrip-destination-buttons > button')];
+  const panels=buttons.map(b=>document.getElementById(b.getAttribute('aria-controls')));
+  if(buttons.length!==4 || panels.some(p=>!p))return;
+  function select(index,focus=false){
+    const opened=buttons[index].getAttribute('aria-expanded')==='true';
+    buttons.forEach((button,i)=>{
+      const active=i===index&&!opened;
+      button.setAttribute('aria-expanded',String(active));
+      button.setAttribute('aria-label',`${['九份','十分','基隆','野柳'][i]}の交通案内を${active?'閉じる':'開く'}`);
+      panels[i].hidden=!active;
+    });
+    if(focus)buttons[index].focus({preventScroll:true});
+    // Keep the button row at its current position; don't jump to the new content.
+  }
+  const lantern=section.querySelector('.daytrip-destination-button-icon img');
+  if(lantern){
+    const missing=()=>lantern.parentElement.classList.add('has-missing-icon');
+    lantern.addEventListener('error',missing,{once:true});
+    if(lantern.complete && !lantern.naturalWidth)missing();
+  }
+  buttons.forEach((button,i)=>{
+    button.addEventListener('click',()=>select(i));
+    button.addEventListener('keydown',e=>{
+      if(!['ArrowRight','ArrowLeft','Home','End'].includes(e.key))return;
+      e.preventDefault();
+      const next=e.key==='Home'?0:e.key==='End'?buttons.length-1:
+        (i+(e.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;
+      buttons[next].focus({preventScroll:true});
+    });
+  });
+})();
+
+
+/* =================== JS 07: adaptive-pill-edge-fade-script =================== */
+;
+
+(() => {
+  'use strict';
+  const strips = [...document.querySelectorAll('#guide .tab-pills')];
+  if (!strips.length) return;
+  function sync(strip) {
+    if (!strip.clientWidth) {strip.removeAttribute('data-scroll-fade');return;}
+    const remaining = strip.scrollWidth - strip.clientWidth;
+    if (remaining <= 3) {strip.removeAttribute('data-scroll-fade');return;}
+    const atStart = strip.scrollLeft <= 3;
+    const atEnd = strip.scrollLeft >= remaining - 3;
+    strip.dataset.scrollFade = atStart ? 'end' : (atEnd ? 'start' : 'both');
+  }
+  let queued = false;
+  function syncAll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {queued = false;strips.forEach(sync);});
+  }
+  strips.forEach(strip => strip.addEventListener('scroll', () => sync(strip), {passive:true}));
+  if ('ResizeObserver' in window) {
+    const observer = new ResizeObserver(syncAll);
+    strips.forEach(strip => observer.observe(strip));
+  }
+  window.addEventListener('resize',syncAll,{passive:true});
+  document.addEventListener('toggle',syncAll,true);
+  document.addEventListener('click',syncAll,true);
+  syncAll();
+})();
+
+
+/* =================== JS 08: food-drawer-swipe-controller-v2 =================== */
+;
+
+(() => {
+  'use strict';
+  const drawer=document.getElementById('food-search');
+  if (!drawer) return;
+  const backdrop=document.querySelector('.food-drawer-backdrop');
+  const body=document.body;
+  const html=document.documentElement;
+  let opened=false;
+  let savedY=0, savedStyle=null, previousFocus=null;
+  let drag=null, clickSuppressUntil=0;
+  let progress=0, raf=0;
+  let scheduledProgress=0;
+  const width=()=>Math.min(window.innerWidth,480);
+  const clamp=x=>Math.max(0,Math.min(1,x));
+  function draw(p,now=false){
+    scheduledProgress=clamp(p);
+    if(now){
+      cancelAnimationFrame(raf);raf=0;
+      commitDraw();
+    }else if(!raf) raf=requestAnimationFrame(commitDraw);
+  }
+  function commitDraw(){
+    raf=0;progress=scheduledProgress;
+    body.style.setProperty('--food-swipe-px',(width()*progress).toFixed(2)+'px');
+    body.style.setProperty('--food-swipe-progress',progress.toFixed(4));
+    body.style.setProperty('--food-main-shift',(-26*progress).toFixed(2)+'px');
+    body.style.setProperty('--food-main-scale',(1-.015*progress).toFixed(4));
+    body.style.setProperty('--food-main-brightness',(1-.12*progress).toFixed(4));
+  }
+  function lockPage(){
+    if(savedStyle)return;
+    savedY=window.scrollY;
+    savedStyle={position:body.style.position,top:body.style.top,width:body.style.width,overflow:body.style.overflow};
+    previousFocus=document.activeElement;
+    body.style.position='fixed';body.style.top=`-${savedY}px`;
+    body.style.width='100%';body.style.overflow='hidden';
+  }
+  function unlockPage(){
+    if(!savedStyle)return;
+    for(const [k,v] of Object.entries(savedStyle))body.style[k]=v;
+    savedStyle=null;
+    window.scrollTo({top:savedY,behavior:'instant'});
+  }
+  function settle(shouldOpen){
+    if(shouldOpen){
+      lockPage();
+      drawer.setAttribute('aria-hidden','false');
+      body.classList.add('food-drawer-open');
+      body.classList.add('food-swipe-active');
+      if(!opened)drawer.focus({preventScroll:true});
+      opened=true;
+      draw(1,true);
+    }else{
+      body.classList.remove('food-drawer-open');
+      drawer.setAttribute('aria-hidden','true');
+      opened=false;
+      draw(0,true);
+      if(drawer.contains(document.activeElement))document.activeElement.blur();
+      unlockPage();
+      if(previousFocus?.isConnected && previousFocus!==document.body)
+        previousFocus.focus({preventScroll:true});
+      /* Keep the drawer painted just until it finishes sliding out. */
+      const onEnd=event=>{
+        if(event.target===drawer && event.propertyName==='transform' && !opened && !drag){
+          body.classList.remove('food-swipe-active');
+          drawer.removeEventListener('transitionend',onEnd);
+        }
+      };
+      drawer.addEventListener('transitionend',onEnd);
+      window.setTimeout(()=>{if(!opened&&!drag)body.classList.remove('food-swipe-active');drawer.removeEventListener('transitionend',onEnd);},360);
+    }
+  }
+  function blockTarget(target){
+    if(!(target instanceof Element))return false;
+    if(target.closest('input,textarea,select,[contenteditable="true"],video,audio'))return true;
+    // Interactive links should always receive taps; opening the food drawer must not cancel them.
+    if(target.closest('a[href]'))return true;
+    if(target.closest('#airsel-transport-tabs, #airport-route-selector .route-panel'))return true;
+    /* Horizontal scrollers own their own gestures; never swipe the whole page instead. */
+    let current=target;
+    while(current && current!==document.body){
+      if(current.scrollWidth>current.clientWidth+5){
+        const style=getComputedStyle(current);
+        if(['auto','scroll','overlay'].includes(style.overflowX))return true;
+      }
+      current=current.parentElement;
+    }
+    return false;
+  }
+  function start(x,y,target,kind){
+    if(drag || !target)return;
+    if(blockTarget(target))return;
+    drag={x,y,prevX:x,prevT:performance.now(),velocity:0,p0:opened?1:0,
+      axis:'undecided',kind,activated:false};
+  }
+  function move(x,y,ev){
+    if(!drag)return;
+    const dx=x-drag.x,dy=y-drag.y;
+    if(drag.axis==='undecided'){
+      if(Math.hypot(dx,dy)<10)return;
+      if(Math.abs(dy)>Math.abs(dx)*1.10){drag=null;return;}
+      drag.axis='x';
+      /* Keep the gesture directional: left opens, right closes. */
+      if((!opened && dx>=0) || (opened && dx<=0)){drag=null;return;}
+      drag.activated=true;
+      body.classList.add('food-swipe-active','food-swipe-dragging');
+      drawer.setAttribute('aria-hidden','false');
+    }
+    if(drag.axis!=='x')return;
+    if(ev?.cancelable)ev.preventDefault();
+    const now=performance.now();
+    const dt=Math.max(1,now-drag.prevT);
+    drag.velocity=0.7*drag.velocity+0.3*((x-drag.prevX)/dt);
+    drag.prevX=x;drag.prevT=now;
+    draw(drag.p0-dx/width());
+  }
+  function finish(){
+    if(!drag)return;
+    const state=drag;
+    drag=null;
+    if(!state.activated)return;
+    draw(scheduledProgress,true);
+    body.classList.remove('food-swipe-dragging');
+    clickSuppressUntil=performance.now()+400;
+    const shouldOpen=progress>0.48 || (state.velocity<-.52 && progress>.12);
+    const shouldClose=progress<0.52 || (state.velocity>.52 && progress<.88);
+    settle(opened?!shouldClose:shouldOpen);
+  }
+  let touchId=null;
+  document.addEventListener('touchstart',event=>{
+    if(event.touches.length!==1 || drag)return;
+    const touch=event.touches[0];touchId=touch.identifier;
+    start(touch.clientX,touch.clientY,event.target,'touch');
+  },{passive:true,capture:true});
+  document.addEventListener('touchmove',event=>{
+    if(!drag||drag.kind!=='touch')return;
+    const touch=Array.from(event.changedTouches).find(t=>t.identifier===touchId);
+    if(touch)move(touch.clientX,touch.clientY,event);
+  },{passive:false,capture:true});
+  document.addEventListener('touchend',event=>{
+    if(!drag||drag.kind!=='touch')return;
+    if(Array.from(event.changedTouches).some(t=>t.identifier===touchId)){finish();touchId=null;}
+  },{passive:true,capture:true});
+  document.addEventListener('touchcancel',()=>{if(drag?.kind==='touch'){finish();touchId=null;}},{passive:true,capture:true});
+  /* Desktop: physically drag with the mouse; normal clicks remain unchanged. */
+  document.addEventListener('mousedown',event=>{
+    if(event.button!==0)return;
+    start(event.clientX,event.clientY,event.target,'mouse');
+  },true);
+  document.addEventListener('mousemove',event=>{
+    if(drag?.kind==='mouse')move(event.clientX,event.clientY,event);
+  },true);
+  document.addEventListener('mouseup',()=>{if(drag?.kind==='mouse')finish();},true);
+  window.addEventListener('blur',()=>{if(drag)finish();});
+  document.addEventListener('click',event=>{
+    if(performance.now()<clickSuppressUntil){event.preventDefault();event.stopPropagation();}
+  },true);
+  document.addEventListener('dragstart',event=>{if(drag?.kind==='mouse')event.preventDefault();},true);
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&opened){event.preventDefault();settle(false);return;}
+    if(!opened || event.key!=='Tab')return;
+    const elements=[...drawer.querySelectorAll('button:not([disabled]),input:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])')]
+      .filter(el=>el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden');
+    if(!elements.length)return;
+    const first=elements[0],last=elements[elements.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    else if(!drawer.contains(document.activeElement)){event.preventDefault();first.focus();}
+  });
+  window.addEventListener('resize',()=>draw(opened?1:0,true),{passive:true});
+  draw(0,true);
+})();
+
+
+/* =================== JS 09: airport-selector-controller =================== */
+;
+
+(()=>{
+'use strict';
+const points={T1:{label:'桃園国際空港・第1ターミナル',station:'機場第一航廈',code:'A12',kind:'taoyuan'},T2:{label:'桃園国際空港・第2ターミナル',station:'機場第二航廈',code:'A13',kind:'taoyuan'},SONG:{label:'台北松山空港',station:'松山機場',code:'BR13',kind:'songshan'},TP:{label:'台北駅',station:'台北車站',code:'A1 / BL12',kind:'city'}};
+let state={from:'',to:'',mode:'express',transport:'rail'};
+let resultsOpen=false;
+const root=document.getElementById('airport-route-selector');
+if(!root)return;
+const el=id=>root.querySelector('#airsel-'+id);
+const choices=['T1','T2','SONG','TP'];
+const pickerLabels={T1:'桃園空港 T1',T2:'桃園空港 T2',SONG:'台北松山空港',TP:'台北駅'};
+const esc=s=>String(s).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+function validRoute(){
+ return Boolean(state.from && state.to && (state.from==='TP') !== (state.to==='TP'));
+}
+function updateSelectors(){
+ const airports=['T1','T2','SONG'];
+ const origins=state.to==='TP'?airports:state.to?['TP']:choices;
+ const destinations=state.from==='TP'?airports:state.from?['TP']:choices;
+ if(state.from && !origins.includes(state.from))state.from='';
+ if(state.to && !destinations.includes(state.to))state.to='';
+ const fill=(id,ids,placeholder,selected)=>{
+   const select=el(id);
+   select.innerHTML=`<option value="">${placeholder}</option>`+ids.map(key=>`<option value="${key}" title="${esc(points[key].label)}">${esc(pickerLabels[key])}</option>`).join('');
+   select.value=selected;
+   select.closest('.selrow').classList.toggle('is-empty',!selected);
+ };
+ fill('origin',origins,'出発地を選択',state.from);
+ fill('destination',destinations,'目的地を選択',state.to);
+ el('swap').disabled=!(state.from||state.to);
+}
+function setResultsOpen(open){
+ resultsOpen=Boolean(open&&validRoute());
+ const disclosure=el('route-disclosure');
+ const clip=el('results-clip');
+ disclosure.setAttribute('aria-expanded',String(resultsOpen));
+ clip.classList.toggle('is-open',resultsOpen);
+ clip.inert=!resultsOpen;
+ if(resultsOpen)queueTimelineEntrance(210);
+ else {
+   const timeline=el('timeline');
+   window.clearTimeout(timeline._airselAnimTimer);
+   window.clearTimeout(timeline._airselCleanupTimer);
+   timeline.classList.remove('airsel-timeline-animating');
+ }
+}
+function queueTimelineEntrance(delay=0){
+ const timeline=el('timeline');
+ if(!timeline)return;
+ window.clearTimeout(timeline._airselAnimTimer);
+ window.clearTimeout(timeline._airselCleanupTimer);
+ timeline.classList.remove('airsel-timeline-animating');
+ const stops=[...timeline.querySelectorAll('.timeline-stop')];
+ const legs=[...timeline.querySelectorAll('.timeline-leg')];
+ if((!stops.length&&!legs.length)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ stops.forEach((node,index)=>node.style.setProperty('--airsel-stop-delay',`${index*248}ms`));
+ // Start route drawing slightly before the last station finishes appearing,
+ // creating a more continuous transition while preserving station timing.
+ const lastStationFinish=Math.max(0,stops.length-1)*248+750;
+ const legStart=Math.max(0,lastStationFinish-260);
+ legs.forEach((node,index)=>node.style.setProperty('--airsel-leg-delay',`${legStart+index*780}ms`));
+ timeline._airselAnimTimer=window.setTimeout(()=>{
+   timeline.classList.remove('airsel-timeline-animating');
+   void timeline.offsetWidth;
+   timeline.classList.add('airsel-timeline-animating');
+ },Math.max(0,delay));
+ const total=delay+legStart+Math.max(legs.length-1,0)*780+1200;
+ timeline._airselCleanupTimer=window.setTimeout(()=>{
+   timeline.classList.remove('airsel-timeline-animating');
+ },Math.max(0,total));
+}
+function refreshResultVisibility(){
+ const ready=validRoute();
+ el('route-disclosure').hidden=!ready;
+ el('results-clip').hidden=!ready;
+ if(!ready)setResultsOpen(false);
+}
+// In navigation results, prioritize the names travelers see on Taiwan's station signs.
+// Japanese remains an unobtrusive second line only where the names differ.
+const stopTranslations={
+ '機場第一航廈':{zh:'機場第一航廈',ja:'桃園空港 第1ターミナル'},
+ '機場第二航廈':{zh:'機場第二航廈',ja:'桃園空港 第2ターミナル'},
+ '松山機場':{zh:'松山機場',ja:'台北松山空港'},
+ '松山機場駅':{zh:'松山機場',ja:'台北松山空港'},
+ '台北車站':{zh:'台北車站',ja:'台北駅'},
+ '台北駅':{zh:'台北車站',ja:'台北駅'},
+ '忠孝復興':{zh:'忠孝復興',ja:''},
+ '台北駅周辺':{zh:'台北車站周邊',ja:'台北駅周辺'},
+ '台北松山空港':{zh:'松山機場',ja:'台北松山空港'},
+ '桃園国際空港・第1ターミナル':{zh:'桃園國際機場 第1航廈',ja:'桃園空港 第1ターミナル'},
+ '桃園国際空港・第2ターミナル':{zh:'桃園國際機場 第2航廈',ja:'桃園空港 第2ターミナル'}
+};
+function stationContent(name){
+ const item=stopTranslations[name]||{zh:name,ja:''};
+ return `<span class="airsel-station-label"><span class="stop-name" lang="zh-Hant">${esc(item.zh)}</span>${item.ja?`<span class="airsel-station-ja" lang="ja">${esc(item.ja)}</span>`:''}</span>`;
+}
+function stop(label,name,code,cls=''){
+ const codeColor=code.startsWith('BR')?'brown':code.startsWith('BL')?'blue':code.startsWith('A')?'purple':'';
+ return `<div class="timeline-stop ${cls}"><span class="timeline-status ${cls==='transfer'?'timeline-status--transfer':''}">${label}</span><span class="node" aria-hidden="true"></span><div class="stop-body">${stationContent(name)}${code?`<span class="code code--${codeColor}">${code}</span>`:''}</div></div>`;
+}
+function leg(line,number,direction,color,note=''){
+ return `<div class="timeline-leg" style="--travel-color:${color}"><div class="leg-content"><div class="leg-meta"><span class="line-name">${line}</span><span class="separator">·</span><span class="station-count">${number}駅</span></div><div class="direction">${direction}</div>${note?`<div class="direction-note">${note}</div>`:''}</div></div>`;
+}
+function facts(time,fare,transfers){el('facts').innerHTML=[['所要時間',time],['運賃',fare],['乗り換え',transfers]].map(([k,v])=>`<div class="fact"><span class="fact-label">${k}</span><strong class="fact-value">${v}</strong></div>`).join('');}
+
+function groundLeg(line,direction,color,note=''){
+ return `<div class="timeline-leg" style="--travel-color:${color}"><div class="leg-content"><div class="leg-meta"><span class="line-name">${line}</span></div><div class="direction">${direction}</div>${note?`<div class="direction-note">${note}</div>`:''}</div></div>`;
+}
+function groundMode(title,icon){
+ el('rail-head-name').textContent=title;
+ el('recommend-badge').hidden=true;
+ el('company-img').dataset.ready='false';
+ el('company-fallback').textContent=icon;
+ el('company-fallback').classList.add('airsel-ground-icon');
+}
+const fallbackAirport='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" aria-hidden="true"><rect x="3.1" y="3.1" width="17.8" height="17.8" rx="5" stroke="currentColor" stroke-width="1.35"/><path d="M8.2 7.5c4.7-.5 7.5 2.5 7.5 8.9M15.8 16.5c-4.7.5-7.5-2.5-7.5-8.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 12h8" stroke="currentColor" stroke-width="1.4"/></svg>';
+const fallbackTaipei='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.4"/><path d="M12 6 18 12 12 18 6 12z" stroke="currentColor" stroke-width="1.45"/><path d="M12 8.5v7M8.5 12h7" stroke="currentColor" stroke-width="1.25"/></svg>';
+function restoreRailLogo(song){
+ const companySrc=song
+   ? 'https://upload.wikimedia.org/wikipedia/en/e/ee/Taipei_Metro_Logo%28Logo_Only%29.svg'
+   : 'https://www.tymetro.com.tw/tymetro-new/tw/_images/about/a-logo1.png';
+ const img=el('company-img');
+ const fallback=el('company-fallback');
+ // Rebuild the fallback on EVERY rail selection, including when the image URL is unchanged.
+ fallback.classList.remove('airsel-ground-icon');
+ fallback.innerHTML=song?fallbackTaipei:fallbackAirport;
+ img.dataset.ready='false';
+ if(img.getAttribute('src')!==companySrc)img.src=companySrc;
+ // A cached image needs no new load event; don't leave the previous transport's emoji.
+ if(img.complete && img.naturalWidth>0)img.dataset.ready='true';
+}
+
+function groundUpdate(airport,toCity){
+ const song=airport==='SONG',bus=state.transport==='bus';
+ const city='台北車站',airportLabel=song?'松山機場':points[airport].label;
+ const from=toCity?airportLabel:city,to=toCity?city:airportLabel;
+ const lines=el('timeline'),details=el('ground-details');
+ details.hidden=true;details.innerHTML='';
+ if(bus && song){
+   groundMode('路線バス','🚌');
+   lines.innerHTML=`<p class="airsel-ground-message">台北松山空港と台北駅の間は、このガイドでは直通バスの経路を案内していません。路線や乗り場は現地の案内をご確認ください。</p>`;
+   facts('要確認','要確認','要確認');
+   el('footnote').textContent='乗り換えが少なくわかりやすいMRTも選択できます。';
+   return;
+ }
+ if(bus){
+   groundMode('国光客運｜路線バス','🚌');
+   lines.innerHTML=stop('出発',toCity?airportLabel:'台北駅周辺','', 'start')+
+      groundLeg('国光客運 1819／1819B',toCity?'台北車站周邊へ':'桃園國際機場へ','#AEB4BC',toCity?'台北轉運站 方面の路線。乗り場と運行方向を確認':'乗り場・運行便を事前に確認')+
+      stop('到着',toCity?'台北駅周辺':airportLabel,'','end');
+   if(toCity){
+     details.hidden=false;
+     details.innerHTML='<div class="airsel-ground-choice"><strong>1819</strong><span>約55分 · NT$133〜164</span></div><div class="airsel-ground-choice"><strong>1819B</strong><span>約75分 · NT$133〜164</span></div>';
+     facts('約55〜75分','NT$133〜164','なし');
+     el('footnote').textContent='時間・料金は旧ガイド掲載の参考値です。運行路線、停留所、料金は出発前に国光客運の最新案内をご確認ください。';
+   }else{
+     facts('要確認','要確認','なし');
+     el('footnote').textContent='空港方面の乗り場、便名、時刻と料金は事前に運行会社で確認してください。';
+   }
+ }else{
+   groundMode('タクシー','🚕');
+   lines.innerHTML=stop('出発',from,'','start')+
+     groundLeg('タクシー',to+'まで','#BFC1C5','空港の正規タクシー乗り場を利用。道路状況によって時間が変わります')+
+     stop('到着',to,'','end');
+   facts(song?'約20分':'約35分','メーター制','なし');
+   el('footnote').textContent='所要時間は従来のガイドに掲載した目安です。渋滞・深夜料金・乗降場所によって料金と時間が変動します。';
+ }
+}
+function update(){
+ updateSelectors();
+ refreshResultVisibility();
+ if(!validRoute())return;
+ const airport=state.from==='TP'?state.to:state.from;
+ const toCity=state.to==='TP';
+ const song=airport==='SONG';
+ for(const tab of el('transport-tabs').querySelectorAll('button')) tab.setAttribute('aria-selected',String(tab.dataset.transport===state.transport));
+ el('transport-tabs').style.setProperty('--active-index',String(['rail','bus','taxi'].indexOf(state.transport)));
+ const tabs=el('train-tabs');tabs.hidden=song||state.transport!=='rail';
+ el('train-select').value=state.mode;
+ el('ground-details').hidden=true;el('ground-details').innerHTML='';
+ if(state.transport!=='rail'){groundUpdate(airport,toCity);if(resultsOpen)queueTimelineEntrance(120);return;}
+ restoreRailLogo(song);
+ el('recommend-badge').hidden=song;
+ for(const tab of tabs.querySelectorAll('button'))tab.setAttribute('aria-selected',String(tab.dataset.mode===state.mode));
+ if(song){
+  el('rail-head-name').textContent=toCity?'文湖線 → 板南線':'板南線 → 文湖線';
+
+  const firstStop=toCity?stop('出発','松山機場','BR13','start'):stop('出発','台北車站','BL12','start');
+  const firstLeg=toCity?leg('文湖線','3','動物園 方面','#AE854E'):leg('板南線','3','南港展覧館 方面','#378BC7');
+  const transfer=`<div class="timeline-stop transfer"><span class="timeline-status timeline-status--transfer">乗換</span><span class="node"></span><div class="stop-body">${stationContent('忠孝復興')}<span class="code code--brown">BR10</span><span class="code code--blue">BL15</span></div></div>`;
+  const secondLeg=toCity?leg('板南線','3','頂埔・亞東醫院 方面','#378BC7'):leg('文湖線','3','南港展覧館 方面','#AE854E');
+  const lastStop=toCity?stop('到着','台北車站','BL12','end'):stop('到着','松山機場','BR13','end');
+  el('timeline').innerHTML=firstStop+firstLeg+transfer+secondLeg+lastStop;
+  facts('約20分','NT$25','1回');
+  el('footnote').textContent='所要時間は待ち時間を含む目安です。運賃は台北MRTの普通運賃。';
+ } else {
+  const code=points[airport].code;
+  const express=state.mode==='express';
+  const color=express?'#A978D5':'#478ED1';
+  el('rail-head-name').textContent='空港MRT';
+  const count=(airport==='T1'? (express?3:11):(express?4:12));
+  const from=toCity?stop('出発',points[airport].station,code,'start'):stop('出発','台北車站','A1','start');
+  const bound=toCity?'台北車站 方面':(express?'機場第二航廈・環北 方面':'機場第二航廈・老街溪 方面');
+  const line=express?'直達車（急行）':'普通車（各停）';
+  const note=toCity?'': '列車により運行方向が異なります';
+  const dest=toCity?stop('到着','台北車站','A1','end'):stop('到着',points[airport].station,code,'end');
+  el('timeline').innerHTML=from+leg(line,count,bound,color,note)+dest;
+  const t=airport==='T1'?(express?'約35〜39分':'約50分'):(express?'約39〜43分':'約53分');
+  facts(t,'NT$160','なし');
+  el('footnote').textContent='乗車駅数は選択した航廈・列車種別に応じて表示。運行便やダイヤは出発前に公式情報をご確認ください。';
+ }
+ if(resultsOpen)queueTimelineEntrance(120);
+}
+// Let the collapsed view paint once before expanding so that CSS grid expansion animates.
+let autoExpandVersion=0;
+function updateAndAutoExpand(){
+ const version=++autoExpandVersion;
+ setResultsOpen(false);
+ update();
+ if(!validRoute())return;
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   if(version===autoExpandVersion && validRoute())setResultsOpen(true);
+ }));
+}
+el('origin').addEventListener('change',e=>{
+ state.from=e.target.value;
+ if(state.from==='TP'&&state.to==='TP')state.to='';
+ if(state.from && state.from!=='TP' && state.to && state.to!=='TP')state.to='';
+ updateAndAutoExpand();
+});
+el('destination').addEventListener('change',e=>{
+ state.to=e.target.value;
+ if(state.to==='TP'&&state.from==='TP')state.from='';
+ if(state.to && state.to!=='TP' && state.from && state.from!=='TP')state.from='';
+ updateAndAutoExpand();
+});
+el('swap').addEventListener('click',()=>{
+ if(!state.from&&!state.to)return;
+ const {from,to}=state;
+ state.from=to;state.to=from;
+ updateAndAutoExpand();
+});
+el('route-disclosure').addEventListener('click',()=>{
+ setResultsOpen(!resultsOpen);
+});
+el('train-select').addEventListener('change',e=>{
+ state.mode=e.target.value;update();
+ const panel=root.querySelector('.route-panel');
+ if(resultsOpen&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  panel.animate([{opacity:.25,transform:'translate3d(0,22px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:510,easing:'cubic-bezier(.2,.8,.2,1)'});
+ }
+});
+const transportOrder=['rail','bus','taxi'];
+const swipePanel=root.querySelector('.route-panel');
+const swipeSurfaces=[el('transport-tabs'),swipePanel];
+let gesture=null,ignoreClickUntil=0,switching=false;
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+root.addEventListener('click',e=>{
+ if(performance.now()<ignoreClickUntil){e.preventDefault();e.stopImmediatePropagation();}
+},true);
+function resetDraggedPanel(){
+ swipePanel.style.transition='';swipePanel.style.transform='';swipePanel.style.opacity='';
+ root.style.userSelect='';
+}
+function changeTransport(mode,dragOffset=0){
+ if(mode===state.transport || !transportOrder.includes(mode) || !validRoute() || switching)return;
+ const direction=Math.sign(transportOrder.indexOf(mode)-transportOrder.indexOf(state.transport));
+ if(reducedMotion.matches || !resultsOpen){resetDraggedPanel();state.transport=mode;update();return;}
+ switching=true;
+ swipePanel.style.transition='none';
+ const startOffset=dragOffset||0;
+ const exit=swipePanel.animate([
+  {transform:`translate3d(${startOffset}px,0,0)`,opacity:dragOffset?Math.max(.64,1-Math.abs(dragOffset)*.006):1},
+  {transform:`translate3d(${-direction*140}px,0,0)`,opacity:0}
+ ],{duration:270,easing:'cubic-bezier(.55,.02,1,.48)',fill:'forwards'});
+ exit.finished.then(()=>{
+  exit.cancel();resetDraggedPanel();
+  state.transport=mode;update();
+  const enter=swipePanel.animate([
+   {transform:`translate3d(${direction*145}px,0,0)`,opacity:0},
+   {transform:'translate3d(0,0,0)',opacity:1}
+  ],{duration:560,easing:'cubic-bezier(.17,.92,.25,1)',fill:'both'});
+  enter.finished.then(()=>{enter.cancel();switching=false;}).catch(()=>{switching=false;});
+ }).catch(()=>{resetDraggedPanel();switching=false;});
+}
+for(const tab of root.querySelectorAll('[data-transport]')) tab.addEventListener('click',()=>changeTransport(tab.dataset.transport));
+function finishGesture(cancelled=false){
+ if(!gesture)return;
+ const g=gesture;gesture=null;
+ root.style.userSelect='';
+ if(g.axis!=='x')return;
+ const distance=g.lastX-g.x;
+ const offset=Math.max(-108,Math.min(108,distance*.65));
+ if(!cancelled && Math.abs(distance)>=50){
+  const change=distance<0?1:-1;
+  const next=transportOrder.indexOf(state.transport)+change;
+  if(next>=0&&next<transportOrder.length&&!switching){
+   ignoreClickUntil=performance.now()+320;
+   changeTransport(transportOrder[next],offset);
+   return;
+  }
+ }
+ const back=swipePanel.animate([
+  {transform:`translate3d(${offset}px,0,0)`,opacity:Math.max(.64,1-Math.abs(offset)*.006)},
+  {transform:'translate3d(0,0,0)',opacity:1}
+ ],{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});
+ back.finished.then(()=>{back.cancel();resetDraggedPanel();}).catch(resetDraggedPanel);
+}
+for(const surface of swipeSurfaces){
+ surface.addEventListener('pointerdown',event=>{
+  if(gesture||switching||!resultsOpen||!event.isPrimary||(event.pointerType==='mouse'&&event.button!==0))return;
+  if(event.target.closest('select,input,textarea,a,[contenteditable="true"]'))return;
+  gesture={id:event.pointerId,x:event.clientX,y:event.clientY,lastX:event.clientX,axis:'pending'};
+ });
+}
+window.addEventListener('pointermove',event=>{
+ if(!gesture||event.pointerId!==gesture.id)return;
+ const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
+ gesture.lastX=event.clientX;
+ if(gesture.axis==='pending'){
+  if(Math.hypot(dx,dy)<10)return;
+  if(Math.abs(dy)>=Math.abs(dx)*1.12){gesture=null;return;}
+  gesture.axis='x';root.style.userSelect='none';
+ }
+ if(gesture.axis!=='x')return;
+ if(event.cancelable)event.preventDefault();
+ const offset=Math.max(-108,Math.min(108,dx*.65));
+ swipePanel.style.transition='none';
+ swipePanel.style.transform=`translate3d(${offset}px,0,0)`;
+ swipePanel.style.opacity=String(Math.max(.64,1-Math.abs(offset)*.006));
+},{passive:false});
+window.addEventListener('pointerup',event=>{if(gesture&&event.pointerId===gesture.id)finishGesture();});
+window.addEventListener('pointercancel',event=>{if(gesture&&event.pointerId===gesture.id)finishGesture(true);});
+window.addEventListener('blur',()=>finishGesture(true));
+el('transport-tabs').addEventListener('keydown',event=>{
+ if(event.key!=='ArrowLeft'&&event.key!=='ArrowRight')return;
+ event.preventDefault();
+ const idx=transportOrder.indexOf(state.transport)+(event.key==='ArrowRight'?1:-1);
+ if(idx<0||idx>=transportOrder.length)return;
+ const mode=transportOrder[idx];changeTransport(mode);
+ const tab=el('transport-tabs').querySelector(`[data-transport="${mode}"]`);
+ if(tab)tab.focus({preventScroll:true});
+});
+
+el('company-img').addEventListener('error',function(){this.dataset.ready='false';});
+el('company-img').addEventListener('load',function(){this.dataset.ready=String(state.transport==='rail' && this.naturalWidth>0);});
+update();
+
+})();
+
+
+/* =================== JS 10: mobile-map-native-link-fix-v22 =================== */
+;
+
+(()=>{
+  'use strict';
+  const isTouchDevice=window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints>0;
+  if(!isTouchDevice)return; // Desktop visitors continue to open Google Maps in a new tab.
+  // Mobile webviews frequently suppress new tabs. Use an ordinary navigation instead.
+  for(const a of document.querySelectorAll('#guide a[href^="https://maps.app.goo.gl/"]')){
+    a.target='_self';
+  }
+})();
+
+
+/* =================== JS 11: daytrip-timeline-entrance-controller-v26 =================== */
+;
+
+(() => {
+  'use strict';
+  const section=document.querySelector('#guide .sights-day-trips');
+  if(!section)return;
+  const diagrams=[...section.querySelectorAll('.daytrip-timeline')];
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const timers=new WeakMap();
+  function visible(diagram){
+    if(diagram.closest('[hidden]'))return false;
+    return Boolean(diagram.getClientRects().length);
+  }
+  function reset(diagram){
+    const t=timers.get(diagram);
+    if(t){clearTimeout(t);timers.delete(diagram);}
+    diagram.classList.remove('daytrip-route-animating');
+    diagram.dataset.daytripPlayed='false';
+  }
+  function play(diagram){
+    if(reduceMotion.matches || !visible(diagram) || diagram.dataset.daytripPlayed==='true')return;
+    const stops=[...diagram.querySelectorAll(':scope > .daytrip-timeline-stop')];
+    const legs=[...diagram.querySelectorAll(':scope > .daytrip-timeline-leg')];
+    if(!stops.length || !legs.length)return;
+    diagram.dataset.daytripPlayed='true';
+    stops.forEach((stop,i)=>stop.style.setProperty('--trip-stop-delay',`${i*248}ms`));
+    // V25: colored line begins 260ms before final stop finishes its fade.
+    const legStart=Math.max(0,(stops.length-1)*248+750-260);
+    legs.forEach((leg,i)=>leg.style.setProperty('--trip-leg-delay',`${legStart+i*780}ms`));
+    void diagram.offsetWidth;
+    diagram.classList.add('daytrip-route-animating');
+    const total=legStart+Math.max(legs.length-1,0)*780+1250;
+    timers.set(diagram,setTimeout(()=>{
+      diagram.classList.remove('daytrip-route-animating');
+      timers.delete(diagram);
+    },total));
+  }
+  const observer=('IntersectionObserver' in window)
+    ? new IntersectionObserver(entries=>{
+        for(const entry of entries){
+          if(entry.isIntersecting)play(entry.target);
+        }
+      },{root:null,threshold:0.08,rootMargin:'0px 0px -4% 0px'})
+    : null;
+  diagrams.forEach(diagram=>{
+    diagram.dataset.daytripPlayed='false';
+    observer?.observe(diagram);
+  });
+  // Re-arm only the itinerary panels which have just been hidden. On reopening,
+  // IntersectionObserver fires when a route is really visible, not while off-screen.
+  const changes=new MutationObserver(records=>{
+    for(const record of records){
+      const panel=record.target;
+      if(panel.hasAttribute('hidden')){
+        panel.querySelectorAll('.daytrip-timeline').forEach(reset);
+      }else if(!observer){
+        panel.querySelectorAll('.daytrip-timeline').forEach(play);
+      }
+    }
+  });
+  section.querySelectorAll('.daytrip-destination-panel, .daytrip-destination-panel .tab-panel')
+    .forEach(panel=>changes.observe(panel,{attributes:true,attributeFilter:['hidden']}));
+  if(!observer){
+    section.addEventListener('click',()=>requestAnimationFrame(()=>diagrams.forEach(play)));
+  }
+})();
+
+
+/* =================== JS 12: guide-auto-fold-outside-viewport-v29 =================== */
+;
+
+/* Fold expanded blocks only after the entire visible block has left the viewport.
+   Preserve unvisited, newly opened offscreen panels; do not interfere with nested
+   directory scrollports or the food-search overlay. */
+(() => {
+  'use strict';
+  const guide=document.getElementById('guide');
+  if(!guide)return;
+  const detailBlocks=[...guide.querySelectorAll('details')];
+  const dayTripPanels=[...guide.querySelectorAll('.sights-day-trips .daytrip-destination-panel')];
+  const airportClip=guide.querySelector('#airsel-results-clip');
+  const tracked=new Map();
+
+  function expanded(element,kind){
+    if(!element.isConnected)return false;
+    if(kind==='details')return element.open && !element.closest('[hidden]');
+    if(kind==='daytrip')return !element.hidden && !element.closest('[hidden]');
+    return element===airportClip && element.classList.contains('is-open') && !element.hidden;
+  }
+  function intersectsVisibleArea(element){
+    if(element.closest('[hidden]'))return false;
+    const rect=element.getBoundingClientRect();
+    if(rect.width<=0||rect.height<=0)return false;
+    const viewport=window.visualViewport;
+    let top=viewport?.offsetTop||0;
+    let left=viewport?.offsetLeft||0;
+    let bottom=top+(viewport?.height||window.innerHeight);
+    let right=left+(viewport?.width||window.innerWidth);
+    // Observe real scroll clipping, including category lists nested within tabs.
+    for(let ancestor=element.parentElement;ancestor;ancestor=ancestor.parentElement){
+      if(ancestor.hasAttribute('hidden'))return false;
+      const css=getComputedStyle(ancestor);
+      if(css.display==='none'||css.visibility==='hidden')return false;
+      if(/auto|scroll|hidden|clip/.test(css.overflowY)){
+        const box=ancestor.getBoundingClientRect();
+        top=Math.max(top,box.top);
+        bottom=Math.min(bottom,box.bottom);
+      }
+      if(/auto|scroll|hidden|clip/.test(css.overflowX)){
+        const box=ancestor.getBoundingClientRect();
+        left=Math.max(left,box.left);
+        right=Math.min(right,box.right);
+      }
+    }
+    return rect.bottom>top+1 && rect.top<bottom-1 && rect.right>left+1 && rect.left<right-1;
+  }
+  const watcher=('IntersectionObserver' in window)?new IntersectionObserver(entries=>{
+    for(const entry of entries){
+      const info=tracked.get(entry.target);
+      if(!info)continue;
+      if(!expanded(entry.target,info.kind)){untrack(entry.target);continue;}
+      if(entry.isIntersecting && intersectsVisibleArea(entry.target)){
+        info.seen=true;
+      }else if(info.seen){
+        maybeFold(entry.target,info);
+      }
+    }
+  },{root:null,threshold:0}):null;
+
+  function track(element,kind){
+    if(!expanded(element,kind)||tracked.has(element))return;
+    const info={kind,seen:false};
+    tracked.set(element,info);
+    watcher?.observe(element);
+    // The content can be visible immediately when the visitor expands it.
+    requestAnimationFrame(()=>{
+      if(tracked.get(element)===info && expanded(element,kind) && intersectsVisibleArea(element))info.seen=true;
+    });
+  }
+  function untrack(element){
+    tracked.delete(element);
+    watcher?.unobserve(element);
+  }
+  function fold(element,kind){
+    if(kind==='details'){
+      // Keep parent/child accordion states consistent with the site's own behavior.
+      element.querySelectorAll('details[open]').forEach(child=>{child.open=false;});
+      element.open=false;
+    }else if(kind==='daytrip'){
+      const button=guide.querySelector('.daytrip-destination-buttons > button[aria-controls="'+CSS.escape(element.id)+'"]');
+      if(button){
+        button.setAttribute('aria-expanded','false');
+        const name=['九份','十分','基隆','野柳'][dayTripPanels.indexOf(element)];
+        if(name)button.setAttribute('aria-label',name+'の交通案内を開く');
+      }
+      element.hidden=true;
+    }else if(kind==='airport'){
+      const disclosure=guide.querySelector('#airsel-route-disclosure');
+      if(disclosure?.getAttribute('aria-expanded')==='true')disclosure.click();
+    }
+  }
+  function maybeFold(element,info){
+    requestAnimationFrame(()=>{
+      if(tracked.get(element)!==info||!info.seen)return;
+      if(!expanded(element,info.kind)){untrack(element);return;}
+      if(document.body.classList.contains('food-drawer-open'))return;
+      if(intersectsVisibleArea(element))return;
+      untrack(element);
+      fold(element,info.kind);
+    });
+  }
+
+  detailBlocks.forEach(detail=>{
+    detail.addEventListener('toggle',()=>{
+      if(detail.open)track(detail,'details');
+      else untrack(detail);
+    });
+    if(detail.open)track(detail,'details');
+  });
+  function syncPanel(panel,kind){
+    if(expanded(panel,kind))track(panel,kind);
+    else untrack(panel);
+  }
+  const changes=new MutationObserver(records=>{
+    for(const record of records){
+      const element=record.target;
+      syncPanel(element,element===airportClip?'airport':'daytrip');
+    }
+  });
+  dayTripPanels.forEach(panel=>{
+    changes.observe(panel,{attributes:true,attributeFilter:['hidden']});
+    syncPanel(panel,'daytrip');
+  });
+  if(airportClip){
+    changes.observe(airportClip,{attributes:true,attributeFilter:['class','hidden']});
+    syncPanel(airportClip,'airport');
+  }
+  // Fallback for old browsers without IntersectionObserver. The same test also
+  // catches changes caused by scrollbars inside directory/category panels.
+  if(!watcher){
+    let queued=false;
+    const inspect=()=>{
+      queued=false;
+      for(const [element,info] of tracked){
+        if(intersectsVisibleArea(element))info.seen=true;
+        else if(info.seen)maybeFold(element,info);
+      }
+    };
+    const enqueue=()=>{if(!queued){queued=true;requestAnimationFrame(inspect);}};
+    window.addEventListener('scroll',enqueue,{passive:true,capture:true});
+    window.addEventListener('resize',enqueue,{passive:true});
+    guide.addEventListener('scroll',enqueue,{passive:true,capture:true});
+  }
+})();
+
