@@ -5471,6 +5471,29 @@ function setResultsOpen(open){
  disclosure.setAttribute('aria-expanded',String(resultsOpen));
  clip.classList.toggle('is-open',resultsOpen);
  clip.inert=!resultsOpen;
+ if(resultsOpen)queueTimelineEntrance(210);
+}
+function queueTimelineEntrance(delay=0){
+ const timeline=el('timeline');
+ if(!timeline)return;
+ window.clearTimeout(timeline._airselAnimTimer);
+ window.clearTimeout(timeline._airselCleanupTimer);
+ timeline.classList.remove('airsel-timeline-animating');
+ const stops=[...timeline.querySelectorAll('.timeline-stop')];
+ const legs=[...timeline.querySelectorAll('.timeline-leg')];
+ if((!stops.length&&!legs.length)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ stops.forEach((node,index)=>node.style.setProperty('--airsel-stop-delay',`${index*130}ms`));
+ const legStart=stops.length*130+70;
+ legs.forEach((node,index)=>node.style.setProperty('--airsel-leg-delay',`${legStart+index*190}ms`));
+ timeline._airselAnimTimer=window.setTimeout(()=>{
+   timeline.classList.remove('airsel-timeline-animating');
+   void timeline.offsetWidth;
+   timeline.classList.add('airsel-timeline-animating');
+ },Math.max(0,delay));
+ const total=delay+legStart+Math.max(legs.length-1,0)*190+860;
+ timeline._airselCleanupTimer=window.setTimeout(()=>{
+   timeline.classList.remove('airsel-timeline-animating');
+ },Math.max(0,total));
 }
 function refreshResultVisibility(){
  const ready=validRoute();
@@ -5581,7 +5604,7 @@ function update(){
  const tabs=el('train-tabs');tabs.hidden=song||state.transport!=='rail';
  el('train-select').value=state.mode;
  el('ground-details').hidden=true;el('ground-details').innerHTML='';
- if(state.transport!=='rail'){groundUpdate(airport,toCity);return;}
+ if(state.transport!=='rail'){groundUpdate(airport,toCity);if(resultsOpen)queueTimelineEntrance(120);return;}
  restoreRailLogo(song);
  el('recommend-badge').hidden=song;
  for(const tab of tabs.querySelectorAll('button'))tab.setAttribute('aria-selected',String(tab.dataset.mode===state.mode));
@@ -5612,6 +5635,7 @@ function update(){
   facts(t,'NT$160','なし');
   el('footnote').textContent='乗車駅数は選択した航廈・列車種別に応じて表示。運行便やダイヤは出発前に公式情報をご確認ください。';
  }
+ if(resultsOpen)queueTimelineEntrance(120);
 }
 // Let the collapsed view paint once before expanding so that CSS grid expansion animates.
 let autoExpandVersion=0;
