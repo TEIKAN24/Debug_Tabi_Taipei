@@ -4493,3 +4493,11 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   #guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices .airsel-ground-choice{padding-inline:9px}
   #guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices span{font-size:10.5px}
 }
+
+/* v30.4: preserve layout during swipe animations, match Airport Access motion. */
+#guide .sights-day-trips .daytrip-destination-panel .tab-panels{overflow-x:clip;}
+#guide .sights-day-trips .daytrip-transport{touch-action:pan-y;}
+#guide .sights-day-trips .daytrip-destination-panel .tab-panel{touch-action:pan-y;}
+@media (prefers-reduced-motion: reduce){
+  #guide .sights-day-trips .daytrip-destination-panel .tab-panel{animation:none!important;}
+}

@@ -1433,9 +1433,22 @@ function groundUpdate(airport,toCity){
  details.hidden=true;details.innerHTML='';
  if(bus && song){
    groundMode('路線バス','🚌');
-   lines.innerHTML=`<p class="airsel-ground-message">台北松山空港と台北駅の間は、このガイドでは直通バスの経路を案内していません。路線や乗り場は現地の案内をご確認ください。</p>`;
-   facts('要確認','要確認','要確認');
-   el('footnote').textContent='乗り換えが少なくわかりやすいMRTも選択できます。';
+   // Taipei Main Station remains the endpoint for BOTH directions.
+   // 262區 travels via Songshan Airport then Taipei Main on the airport-to-city leg,
+   // but the reverse leg does not pass through Songshan Airport. Never label it a return direct bus.
+   if(toCity){
+     lines.innerHTML=stop('出発','松山機場','','start')+
+       groundLeg('262区 路線バス','台北車站（忠孝）方面へ','#AEB4BC','方面・停留所を確認して乗車')+
+       stop('到着','台北車站','','end');
+     facts('交通状況による','一般路線バス運賃','なし');
+     el('footnote').innerHTML='262区の松山機場→台北車站（忠孝）方向を案内しています。<a href="https://pda5284.gov.taipei/MQS/routeinfo.jsp?rid=10962" target="_blank" rel="noopener noreferrer">運行方向・時刻を確認</a>。';
+   }else{
+     lines.innerHTML=stop('出発','台北車站','','start')+
+       groundLeg('路線バス','松山機場方面は乗り換え・路線の確認が必要','#AEB4BC','262区は逆方向に空港を通りません')+
+       stop('到着','松山機場','','end');
+     facts('要確認','要確認','要確認');
+     el('footnote').innerHTML='台北駅から松山空港への直通バスは、このガイドでは確認できていません。バスの乗り換え経路は<a href="https://pda5284.gov.taipei/" target="_blank" rel="noopener noreferrer">台北市の公式バス検索</a>でご確認ください。MRT経由の移動もおすすめです。';
+   }
    return;
  }
  if(bus){
@@ -1907,3 +1920,90 @@ update();
   }
 })();
 
+
+
+/* =================== JS 13: daytrip-horizontal-mode-switch-v30.4 =================== */
+(()=>{
+  'use strict';
+  const section=document.querySelector('#guide .sights-day-trips');
+  if(!section)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  // Keep the existing, well-tested tab/ARIA controller authoritative.
+  // This adapter only wraps user-initiated switches with Airport Access-style
+  // exit/enter motion and supports a deliberate horizontal touch swipe.
+  section.querySelectorAll('.daytrip-transport').forEach(list=>{
+    const buttons=[...list.querySelectorAll(':scope > button.tab-pill')];
+    const panels=[...list.nextElementSibling?.querySelectorAll(':scope > .tab-panel')||[]];
+    if(buttons.length!==panels.length||buttons.length<2)return;
+    let bypass=false,busy=false,gesture=null,until=0;
+    const index=()=>Math.max(0,buttons.findIndex(b=>b.getAttribute('aria-selected')==='true'));
+    const offset=()=>Math.min(140,Math.max(85,list.clientWidth*.37));
+    function commit(i){
+      bypass=true;
+      try {buttons[i].click();} finally {bypass=false;}
+    }
+    function switchTo(i,drag=0){
+      const old=index();
+      if(busy||i===old||i<0||i>=buttons.length)return;
+      const dir=Math.sign(i-old);
+      const current=panels[old];
+      if(reduced.matches||!current.getClientRects().length||!current.animate){commit(i);return;}
+      busy=true;
+      const width=offset();
+      const exiting=current.animate([
+        {transform:`translate3d(${drag}px,0,0)`,opacity:1},
+        {transform:`translate3d(${-dir*width}px,0,0)`,opacity:0}
+      ],{duration:185,easing:'cubic-bezier(.55,.02,1,.48)',fill:'forwards'});
+      exiting.finished.then(()=>{
+        exiting.cancel();commit(i);
+        const next=panels[i];
+        // Do not allow visual animation to steal scroll/keyboard interaction.
+        const entering=next.animate([
+          {transform:`translate3d(${dir*width}px,0,0)`,opacity:0},
+          {transform:'translate3d(0,0,0)',opacity:1}
+        ],{duration:390,easing:'cubic-bezier(.17,.92,.25,1)',fill:'both'});
+        entering.finished.then(()=>{entering.cancel();busy=false;}).catch(()=>{entering.cancel();busy=false;});
+      }).catch(()=>{exiting.cancel();busy=false;});
+    }
+    // Capture only these transport tabs; other content uses original controller.
+    list.addEventListener('click',e=>{
+      if(bypass)return;
+      const button=e.target.closest('button.tab-pill');
+      if(!button||!list.contains(button))return;
+      if(performance.now()<until){e.preventDefault();e.stopImmediatePropagation();return;}
+      e.preventDefault();e.stopImmediatePropagation();
+      switchTo(buttons.indexOf(button));
+    },true);
+    function down(e){
+      if(busy||!e.isPrimary||(e.pointerType==='mouse'&&e.button!==0))return;
+      if(e.target.closest('a,input,textarea,select,button:not(.daytrip-transport-tab),[contenteditable="true"]'))return;
+      if(e.target.closest('.daytrip-airport-reuse a'))return;
+      gesture={id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,axis:'pending'};
+    }
+    list.addEventListener('pointerdown',down,{passive:true});
+    const container=list.nextElementSibling;
+    if(container)container.addEventListener('pointerdown',down,{passive:true});
+    window.addEventListener('pointermove',e=>{
+      if(!gesture||e.pointerId!==gesture.id)return;
+      const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;
+      gesture.lastX=e.clientX;
+      if(gesture.axis==='pending'){
+        if(Math.hypot(dx,dy)<12)return;
+        if(Math.abs(dy)>Math.abs(dx)*.85){gesture=null;return;}
+        gesture.axis='x';
+      }
+      if(gesture.axis==='x'&&e.cancelable)e.preventDefault();
+    },{passive:false});
+    window.addEventListener('pointerup',e=>{
+      if(!gesture||e.pointerId!==gesture.id)return;
+      const g=gesture;gesture=null;
+      if(g.axis!=='x')return;
+      const dist=g.lastX-g.x;
+      if(Math.abs(dist)>=58){
+        const target=index()+(dist<0?1:-1);
+        if(target>=0&&target<buttons.length){until=performance.now()+320;switchTo(target);}
+      }
+    });
+    window.addEventListener('pointercancel',e=>{if(gesture?.id===e.pointerId)gesture=null;});
+  });
+})();
