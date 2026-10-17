@@ -4165,3 +4165,175 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 /* Leave standard OS map-link behavior intact: no overlays, swipe interception or custom popups. */
 #guide a[href^="https://maps.app.goo.gl/"] { touch-action: manipulation; }
 
+
+
+/* =================== v30.1: day-trip routes share the airport route language =================== */
+/* Scoped exclusively to 近郊エリア; does not alter the original airport selector. */
+#guide .sights-day-trips.daytrip-airport-display{
+  --daytrip-panel-bg:#0D0D0D;
+  --daytrip-route-blue:#478ED1;
+  --daytrip-route-bus:#9DA7B2;
+  --daytrip-route-taxi:#D9B65F;
+}
+/* Airport access has simple route panels, rather than glass-effect route cards. */
+#guide .daytrip-airport-display .daytrip-option,
+#guide .daytrip-airport-display .daytrip-option--alternative{
+  --choice-rgb:154,164,174;
+  position:relative;
+  border:0!important;
+  border-top:1px solid #343434!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  isolation:auto;
+  overflow:visible;
+  margin:14px 0 0!important;
+  padding:15px 0 5px!important;
+}
+#guide .daytrip-airport-display .daytrip-option::before,
+#guide .daytrip-airport-display .daytrip-option::after{
+  content:none!important;display:none!important;
+}
+#guide .daytrip-airport-display .daytrip-option > *{position:relative;z-index:auto;}
+#guide .daytrip-airport-display .daytrip-option-heading{
+  display:flex;align-items:center;gap:8px;margin:0 0 9px!important;
+}
+#guide .daytrip-airport-display .daytrip-option-heading h4{
+  color:#F2F2F2;font-size:13px!important;line-height:1.5;font-weight:730;
+}
+#guide .daytrip-airport-display .daytrip-soft-badge{
+  border:1px solid #585858;background:transparent!important;
+  border-radius:5px;box-shadow:none!important;color:#E5E5E5;
+  font-size:11px;line-height:1.45;font-weight:740;
+}
+/* Same three-column timeline proportions, hollow stops and solid arrival point as 空港アクセス. */
+#guide .daytrip-airport-display .daytrip-airport-timeline{
+  --dt-label:38px;--dt-axis:16px;--dt-gap:9px;
+  display:flex;flex-direction:column;margin:7px 0 12px;padding:0;min-width:0;width:100%;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop,
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-leg{
+  display:grid!important;
+  grid-template-columns:var(--dt-label) var(--dt-axis) minmax(0,1fr)!important;
+  column-gap:var(--dt-gap)!important;align-items:center;min-width:0;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop{
+  min-height:49px;z-index:2;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-station{
+  font-size:10.5px;line-height:1.35;font-weight:700;color:#A7A7A7;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-transfer-tag{
+  width:100%;max-width:42px;height:25px;background:#F2F2F2;color:#141414!important;
+  border:0;border-radius:5px;font-size:10px!important;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-node{
+  width:11px;height:11px;border:2px solid #F3F3F3;border-radius:50%;
+  background:var(--daytrip-panel-bg);box-shadow:0 0 0 2px var(--daytrip-panel-bg);z-index:3;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop--transfer .daytrip-timeline-node{
+  width:15px;height:15px;border-width:3px;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop--end .daytrip-timeline-node{
+  background:#F5F5F5!important;border-color:#F5F5F5!important;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-name{
+  font-size:13px;line-height:1.5;font-weight:760;color:#F5F5F5;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-label{
+  display:flex;flex-direction:column;gap:1px;align-items:flex-start;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-zh{
+  font-size:13px!important;line-height:1.42;font-weight:760;color:#F5F5F5;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-ja{
+  font-size:10.5px!important;line-height:1.42;font-weight:500;color:#9E9E9E;
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-leg{
+  min-height:92px;
+  --travel-leg:var(--daytrip-route-bus);
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-leg--rail{
+  --travel-leg:var(--daytrip-route-blue);
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-leg--taxi{
+  --travel-leg:var(--daytrip-route-taxi);
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-leg::before{
+  top:-9px;bottom:-9px;width:3px;border-radius:3px;
+  background:var(--travel-leg);
+}
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-airport-leg-content{
+  grid-column:3;grid-row:1;display:flex;flex-direction:column;align-items:stretch;
+  gap:0;padding:12px 0!important;min-width:0;
+}
+#guide .daytrip-airport-display .daytrip-airport-leg-meta{
+  display:flex;align-items:center;flex-wrap:wrap;gap:5px 7px;
+  color:#B6B6B6;font-size:11px;line-height:1.5;
+}
+#guide .daytrip-airport-display .daytrip-airport-leg-meta .daytrip-mode-icon{
+  display:inline-flex;flex:0 0 auto;width:16px;height:17px;
+  font-size:13px;line-height:1.25;margin:0;opacity:.85;
+}
+#guide .daytrip-airport-display .daytrip-airport-leg-meta img.daytrip-mode-icon{
+  width:15px;height:15px;object-fit:contain;filter:brightness(0) invert(1);
+}
+#guide .daytrip-airport-display .daytrip-airport-leg-meta .daytrip-mode-primary{
+  display:flex;flex-wrap:wrap;gap:5px 7px;align-items:center;
+}
+#guide .daytrip-airport-display .daytrip-airport-leg-meta .daytrip-mode-badge{
+  padding:0;border:0!important;border-radius:0;background:transparent!important;
+  font-size:11px;font-weight:740;color:#DEDEDE;line-height:1.5;
+}
+#guide .daytrip-airport-display .daytrip-airport-leg-meta .daytrip-mode-primary strong{
+  color:#A9A9A9;font-size:11px;line-height:1.5;font-weight:520;
+}
+#guide .daytrip-airport-display .daytrip-airport-leg-direction{
+  color:#F3F3F3;font-size:14px;line-height:1.55;font-weight:730;
+  margin-top:4px;overflow-wrap:anywhere;
+}
+#guide .daytrip-airport-display .daytrip-airport-leg-direction .daytrip-mode-direction{
+  display:block;color:inherit;font-size:inherit;line-height:inherit;font-weight:inherit;
+}
+#guide .daytrip-airport-display .daytrip-airport-leg-note{
+  margin-top:3px;color:#989898;font-size:11px;line-height:1.5;
+}
+#guide .daytrip-airport-display .daytrip-airport-leg-note .daytrip-mode-detail{
+  display:block;color:inherit;font-size:inherit;line-height:inherit;
+}
+/* Airport-style compact fare/time tiles (two columns when two facts are present). */
+#guide .daytrip-airport-display .daytrip-facts{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+  border:0;margin:12px 0 0;padding:0;
+}
+#guide .daytrip-airport-display .daytrip-fact{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-width:0;gap:6px;border:1px solid #383838;border-radius:10px;
+  padding:11px 6px 10px;text-align:center;background:transparent;
+}
+#guide .daytrip-airport-display .daytrip-fact-label{
+  color:#A8A8A8;font-size:10px;font-weight:600;
+}
+#guide .daytrip-airport-display .daytrip-fact strong{
+  color:#F3F3F3;font-size:12.5px;font-weight:760;line-height:1.4;
+  overflow-wrap:anywhere;
+}
+/* The optional tour keeps its entire original text after the charter options. */
+#guide .daytrip-airport-display .daytrip-option--tour-combined{
+  margin-top:18px!important;padding-top:15px!important;
+}
+#guide .daytrip-airport-display .daytrip-tour-eyebrow{
+  font-size:10.5px;color:#AFAFAF;font-weight:700;letter-spacing:.035em;
+  margin:0 0 8px;
+}
+#guide .daytrip-airport-display .tab-panel > .daytrip-note--important{
+  margin:12px 0 6px;
+}
+@media(max-width:354px){
+  #guide .daytrip-airport-display .daytrip-airport-timeline{
+    --dt-label:34px;--dt-gap:7px;
+  }
+  #guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-zh{font-size:12px!important;}
+  #guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-ja{font-size:10px!important;}
+  #guide .daytrip-airport-display .daytrip-airport-leg-direction{font-size:13px;}
+}
