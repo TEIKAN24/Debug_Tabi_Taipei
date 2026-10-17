@@ -3935,6 +3935,41 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   }
 }
 </style>
+<style id="daytrip-timeline-entrance-v26">
+/* Reuse the airport V25 choreography while preserving the day-trip line palette. */
+#guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-stop{
+  animation:daytrip-station-appear-v26 750ms cubic-bezier(.19,.8,.22,1) both;
+  animation-delay:var(--trip-stop-delay,0ms);
+}
+#guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-leg::before{
+  animation:daytrip-route-draw-v26 720ms cubic-bezier(.18,.76,.2,1) both;
+  animation-delay:var(--trip-leg-delay,0ms);
+  transform-origin:50% 0%;
+}
+#guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-leg-content{
+  animation:daytrip-leg-label-v26 490ms cubic-bezier(.19,.8,.22,1) both;
+  animation-delay:calc(var(--trip-leg-delay,0ms) + 190ms);
+}
+@keyframes daytrip-station-appear-v26{
+  from{opacity:0;transform:translate3d(0,12px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes daytrip-route-draw-v26{
+  from{opacity:1;transform:translateX(-50%) scaleY(0)}
+  to{opacity:1;transform:translateX(-50%) scaleY(1)}
+}
+@keyframes daytrip-leg-label-v26{
+  from{opacity:0;transform:translate3d(0,10px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@media(prefers-reduced-motion:reduce){
+  #guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-stop,
+  #guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-leg::before,
+  #guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-leg-content{
+    animation:none!important;
+  }
+}
+</style>
 </head><body><div class="food-drawer-backdrop" aria-hidden="true"></div>
 <header class="hero wrapper" id="top"><div class="eyebrow"><span class="ta">TA</span>BI / <span class="ta">TA</span>IPEI</div><h1><span class="hero-title-link">TAIPEI<br/><span>CITY GUIDE</span></span></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
 <a class="nav-button" data-target="travel" href="#travel"><span aria-hidden="true" class="nav-icon">✈️</span><span class="nav-copy"><span class="nav-title">旅の準備・交通</span><span class="nav-subtitle">入国・空港・注意事項</span></span></a>
@@ -5833,6 +5868,72 @@ update();
   // Mobile webviews frequently suppress new tabs. Use an ordinary navigation instead.
   for(const a of document.querySelectorAll('#guide a[href^="https://maps.app.goo.gl/"]')){
     a.target='_self';
+  }
+})();
+</script>
+<script id="daytrip-timeline-entrance-controller-v26">
+(() => {
+  'use strict';
+  const section=document.querySelector('#guide .sights-day-trips');
+  if(!section)return;
+  const diagrams=[...section.querySelectorAll('.daytrip-timeline')];
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const timers=new WeakMap();
+  function visible(diagram){
+    if(diagram.closest('[hidden]'))return false;
+    return Boolean(diagram.getClientRects().length);
+  }
+  function reset(diagram){
+    const t=timers.get(diagram);
+    if(t){clearTimeout(t);timers.delete(diagram);}
+    diagram.classList.remove('daytrip-route-animating');
+    diagram.dataset.daytripPlayed='false';
+  }
+  function play(diagram){
+    if(reduceMotion.matches || !visible(diagram) || diagram.dataset.daytripPlayed==='true')return;
+    const stops=[...diagram.querySelectorAll(':scope > .daytrip-timeline-stop')];
+    const legs=[...diagram.querySelectorAll(':scope > .daytrip-timeline-leg')];
+    if(!stops.length || !legs.length)return;
+    diagram.dataset.daytripPlayed='true';
+    stops.forEach((stop,i)=>stop.style.setProperty('--trip-stop-delay',`${i*248}ms`));
+    // V25: colored line begins 260ms before final stop finishes its fade.
+    const legStart=Math.max(0,(stops.length-1)*248+750-260);
+    legs.forEach((leg,i)=>leg.style.setProperty('--trip-leg-delay',`${legStart+i*780}ms`));
+    void diagram.offsetWidth;
+    diagram.classList.add('daytrip-route-animating');
+    const total=legStart+Math.max(legs.length-1,0)*780+1250;
+    timers.set(diagram,setTimeout(()=>{
+      diagram.classList.remove('daytrip-route-animating');
+      timers.delete(diagram);
+    },total));
+  }
+  const observer=('IntersectionObserver' in window)
+    ? new IntersectionObserver(entries=>{
+        for(const entry of entries){
+          if(entry.isIntersecting)play(entry.target);
+        }
+      },{root:null,threshold:0.08,rootMargin:'0px 0px -4% 0px'})
+    : null;
+  diagrams.forEach(diagram=>{
+    diagram.dataset.daytripPlayed='false';
+    observer?.observe(diagram);
+  });
+  // Re-arm only the itinerary panels which have just been hidden. On reopening,
+  // IntersectionObserver fires when a route is really visible, not while off-screen.
+  const changes=new MutationObserver(records=>{
+    for(const record of records){
+      const panel=record.target;
+      if(panel.hasAttribute('hidden')){
+        panel.querySelectorAll('.daytrip-timeline').forEach(reset);
+      }else if(!observer){
+        panel.querySelectorAll('.daytrip-timeline').forEach(play);
+      }
+    }
+  });
+  section.querySelectorAll('.daytrip-destination-panel, .daytrip-destination-panel .tab-panel')
+    .forEach(panel=>changes.observe(panel,{attributes:true,attributeFilter:['hidden']}));
+  if(!observer){
+    section.addEventListener('click',()=>requestAnimationFrame(()=>diagrams.forEach(play)));
   }
 })();
 </script>
