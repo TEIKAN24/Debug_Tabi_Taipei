@@ -3920,7 +3920,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   to {opacity:1;transform:translate3d(0,0,0);}
 }
 @keyframes airsel-route-draw {
-  from {opacity:0.18;transform:translateX(-50%) scaleY(0);}
+  from {opacity:1;transform:translateX(-50%) scaleY(0);}
   to {opacity:1;transform:translateX(-50%) scaleY(1);}
 }
 @keyframes airsel-leg-label-appear {
@@ -5527,7 +5527,10 @@ function queueTimelineEntrance(delay=0){
  const legs=[...timeline.querySelectorAll('.timeline-leg')];
  if((!stops.length&&!legs.length)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
  stops.forEach((node,index)=>node.style.setProperty('--airsel-stop-delay',`${index*248}ms`));
- const legStart=Math.max(0,stops.length-1)*248+750+160;
+ // Begin drawing exactly when the last station finishes its fade-in.
+ // Delays share one animation start frame: no subsequent idle interval.
+ const lastStationFinish=Math.max(0,stops.length-1)*248+750;
+ const legStart=lastStationFinish;
  legs.forEach((node,index)=>node.style.setProperty('--airsel-leg-delay',`${legStart+index*780}ms`));
  timeline._airselAnimTimer=window.setTimeout(()=>{
    timeline.classList.remove('airsel-timeline-animating');
