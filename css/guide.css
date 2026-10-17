@@ -4389,3 +4389,107 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   #guide .sights-day-trips .daytrip-airport-reuse .rail-title{flex-wrap:wrap}
   #guide .sights-day-trips .daytrip-airport-reuse .daytrip-canonical-head-name{font-size:12px}
 }
+
+
+/* ========= v30.3 — Same underlined transport switch as Airport Access ========= */
+#guide .sights-day-trips .tab-pills.daytrip-transport{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:repeat(var(--daytrip-tab-count),minmax(0,1fr))!important;
+  align-items:stretch!important;
+  gap:0!important;
+  margin:13px 0 11px!important;
+  padding:0!important;
+  min-height:39px!important;
+  border:0!important;
+  border-bottom:1px solid #353535!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  scroll-snap-type:none!important;
+  white-space:normal!important;
+}
+#guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab{
+  position:relative!important;
+  min-height:39px!important;
+  min-width:0!important;
+  width:100%!important;
+  flex:none!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#9B9B9B!important;
+  font-size:12.5px!important;font-weight:670!important;line-height:1.45!important;font-family:inherit!important;
+  letter-spacing:.005em!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  padding:8px 2px 10px!important;
+  text-align:center!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  opacity:1!important;
+  transform:none!important;
+}
+#guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab[aria-selected="true"]{
+  color:#F5F5F5!important;font-weight:775!important;
+}
+#guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab::before,
+#guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab::after{
+  content:none!important;display:none!important;
+}
+#guide .sights-day-trips .daytrip-transport > .airsel-transport-ink{
+  display:block!important;
+  position:absolute;bottom:-1px;
+  left:calc(var(--active-index,0) * 100% / var(--daytrip-tab-count) + 15px);
+  width:calc(100% / var(--daytrip-tab-count) - 30px);
+  height:2px;border-radius:2px;background:#F1F1F1;
+  pointer-events:none;transition:left .6s cubic-bezier(.19,1,.22,1);z-index:3;
+}
+#guide .sights-day-trips .daytrip-transport[data-scroll-fade]::before,
+#guide .sights-day-trips .daytrip-transport[data-scroll-fade]::after{display:none!important}
+@media (max-width:354px){
+  #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab{font-size:11.5px!important;letter-spacing:-.01em!important}
+}
+@media (prefers-reduced-motion:reduce){
+  #guide .sights-day-trips .daytrip-transport > .airsel-transport-ink{transition:none!important}
+}
+
+/* ========= v30.3 — Airport Access ground-bus layout, Jiufen 965/1062 ========= */
+#guide .sights-day-trips .daytrip-bus-airport-style{
+  margin:0!important;
+  color:#F4F4F4;
+}
+#guide .sights-day-trips .daytrip-bus-combined{border-top:0!important;padding-top:0!important}
+#guide .sights-day-trips .daytrip-bus-airport-style .route-panel{margin:0!important}
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-head-name{
+  min-width:0;font-size:12.5px;color:#EDEDED;font-weight:730;
+  white-space:normal;overflow-wrap:anywhere;
+}
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route[hidden],
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-facts[hidden]{display:none!important}
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices{
+  display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0 9px;
+}
+#guide .sights-day-trips .daytrip-bus-airport-style button.airsel-ground-choice{
+  width:100%;text-align:left;cursor:pointer;background:transparent;
+  font-family:inherit;min-width:0;
+}
+#guide .sights-day-trips .daytrip-bus-airport-style button.airsel-ground-choice[aria-pressed="true"]{
+  border-color:#767676;background:rgba(255,255,255,.045);
+}
+#guide .sights-day-trips .daytrip-bus-airport-style button.airsel-ground-choice:focus-visible{
+  outline:2px solid #F2F2F2;outline-offset:2px;
+}
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices span{
+  text-align:right;font-size:11px;color:#D7D7D7;overflow-wrap:anywhere;
+}
+#guide .sights-day-trips .daytrip-bus-airport-style .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+#guide .sights-day-trips .daytrip-bus-airport-style .fact-value{font-size:clamp(11px,3.4vw,14px)}
+@media(max-width:354px){
+  #guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices .airsel-ground-choice{padding-inline:9px}
+  #guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices span{font-size:10.5px}
+}

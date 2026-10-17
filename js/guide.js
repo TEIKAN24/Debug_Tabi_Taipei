@@ -1658,74 +1658,107 @@ update();
 })();
 
 
-/* =================== JS 11: daytrip-shared-airport-timeline-motion-v30.2 =================== */
+/* =================== JS 11: daytrip-route-entrance-v30.3 =================== */
 ;
-
 (() => {
   'use strict';
   const section=document.querySelector('#guide .sights-day-trips');
   if(!section)return;
-  const diagrams=[...section.querySelectorAll('.daytrip-airport-reuse .timeline')];
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const timers=new WeakMap();
-  function visible(diagram){
-    if(diagram.closest('[hidden]'))return false;
-    return Boolean(diagram.getClientRects().length);
+  const timelines=[...section.querySelectorAll('.daytrip-airport-reuse .timeline')];
+  const activeTimers=new WeakMap();
+  function isDisplayed(el){
+    if(el.closest('[hidden]'))return false;
+    if(!el.getClientRects().length)return false;
+    const r=el.getBoundingClientRect();
+    return r.bottom>0&&r.top<window.innerHeight;
   }
-  function reset(diagram){
-    const t=timers.get(diagram);
-    if(t){clearTimeout(t);timers.delete(diagram);}
-    diagram.classList.remove('airsel-timeline-animating');
-    diagram.dataset.daytripPlayed='false';
+  function reset(el){
+    const t=activeTimers.get(el);if(t)clearTimeout(t);
+    activeTimers.delete(el);el.classList.remove('airsel-timeline-animating');
+    el.dataset.daytripPlayed='false';
   }
-  function play(diagram){
-    if(reduceMotion.matches || !visible(diagram) || diagram.dataset.daytripPlayed==='true')return;
-    const stops=[...diagram.querySelectorAll(':scope > .timeline-stop')];
-    const legs=[...diagram.querySelectorAll(':scope > .timeline-leg')];
-    if(!stops.length || !legs.length)return;
-    diagram.dataset.daytripPlayed='true';
-    stops.forEach((stop,i)=>stop.style.setProperty('--airsel-stop-delay',`${i*248}ms`));
-    // V25: colored line begins 260ms before final stop finishes its fade.
+  function play(el,force=false){
+    if(reduceMotion.matches||!isDisplayed(el))return;
+    if(!force && el.dataset.daytripPlayed==='true')return;
+    reset(el);
+    const stops=[...el.querySelectorAll(':scope > .timeline-stop')];
+    const legs=[...el.querySelectorAll(':scope > .timeline-leg')];
+    if(!stops.length||!legs.length)return;
+    stops.forEach((node,i)=>node.style.setProperty('--airsel-stop-delay',`${i*248}ms`));
     const legStart=Math.max(0,(stops.length-1)*248+750-260);
-    legs.forEach((leg,i)=>leg.style.setProperty('--airsel-leg-delay',`${legStart+i*780}ms`));
-    void diagram.offsetWidth;
-    diagram.classList.add('airsel-timeline-animating');
-    const total=legStart+Math.max(legs.length-1,0)*780+1250;
-    timers.set(diagram,setTimeout(()=>{
-      diagram.classList.remove('airsel-timeline-animating');
-      timers.delete(diagram);
-    },total));
+    legs.forEach((node,i)=>node.style.setProperty('--airsel-leg-delay',`${legStart+i*780}ms`));
+    void el.offsetWidth;
+    el.classList.add('airsel-timeline-animating');
+    el.dataset.daytripPlayed='true';
+    const duration=legStart+(legs.length-1)*780+1250;
+    activeTimers.set(el,setTimeout(()=>{
+      el.classList.remove('airsel-timeline-animating');activeTimers.delete(el);
+    },duration));
   }
-  const observer=('IntersectionObserver' in window)
-    ? new IntersectionObserver(entries=>{
-        for(const entry of entries){
-          if(entry.isIntersecting)play(entry.target);
-        }
-      },{root:null,threshold:0.08,rootMargin:'0px 0px -4% 0px'})
-    : null;
-  diagrams.forEach(diagram=>{
-    diagram.dataset.daytripPlayed='false';
-    observer?.observe(diagram);
-  });
-  // Re-arm only the itinerary panels which have just been hidden. On reopening,
-  // IntersectionObserver fires when a route is really visible, not while off-screen.
+  let scanTimer;
+  function scan(force=false){
+    clearTimeout(scanTimer);
+    scanTimer=setTimeout(()=>{
+      timelines.forEach(t=>{if(isDisplayed(t))play(t,force);});
+    },95);
+  }
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{if(entry.isIntersecting)play(entry.target);});
+    },{threshold:0.04,rootMargin:'0px 0px -2% 0px'});
+    timelines.forEach(t=>io.observe(t));
+  }
+  timelines.forEach(t=>t.dataset.daytripPlayed='false');
+  // Hidden tabs and destinations must restart the timeline when revisited.
   const changes=new MutationObserver(records=>{
     for(const record of records){
-      const panel=record.target;
-      if(panel.hasAttribute('hidden')){
-        panel.querySelectorAll('.daytrip-airport-reuse .timeline').forEach(reset);
-      }else if(!observer){
-        panel.querySelectorAll('.daytrip-airport-reuse .timeline').forEach(play);
+      if(record.attributeName==='hidden'){
+        const parent=record.target;
+        if(parent.hasAttribute('hidden'))parent.querySelectorAll('.daytrip-airport-reuse .timeline').forEach(reset);
       }
     }
+    scan();
   });
-  section.querySelectorAll('.daytrip-destination-panel, .daytrip-destination-panel .tab-panel')
-    .forEach(panel=>changes.observe(panel,{attributes:true,attributeFilter:['hidden']}));
-  if(!observer){
-    section.addEventListener('click',()=>requestAnimationFrame(()=>diagrams.forEach(play)));
+  section.querySelectorAll('.daytrip-destination-panel, .daytrip-destination-panel .tab-panel, .daytrip-bus-route')
+    .forEach(el=>changes.observe(el,{attributes:true,attributeFilter:['hidden']}));
+  section.addEventListener('click',e=>{
+    if(e.target.closest('.daytrip-destination-button,.daytrip-transport-tab,.daytrip-bus-route-choice')){
+      // Wait for the existing tab/destination controller to finish unhiding content.
+      scan(true);
+    }
+  });
+  window.addEventListener('scroll',()=>scan(),{passive:true});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)scan();});
+  // Replicate Airport Access' animated underline on each local transport tablist.
+  section.querySelectorAll('.daytrip-transport').forEach(list=>{
+    function update(){
+      const buttons=[...list.querySelectorAll(':scope > button.tab-pill')];
+      const idx=Math.max(0,buttons.findIndex(b=>b.getAttribute('aria-selected')==='true'));
+      list.style.setProperty('--active-index',String(idx));
+    }
+    update();
+    const watch=new MutationObserver(update);
+    list.querySelectorAll(':scope > button.tab-pill').forEach(btn=>watch.observe(btn,{attributes:true,attributeFilter:['aria-selected']}));
+  });
+  // Airport bus mode: one route-panel, with selectable 965 / 1062 summaries.
+  const bus=section.querySelector('.daytrip-bus-airport-style');
+  if(bus){
+    const buttons=[...bus.querySelectorAll('.daytrip-bus-route-choice')];
+    const routes=[...bus.querySelectorAll('.daytrip-bus-route')];
+    const facts=[...bus.querySelectorAll('.daytrip-bus-route-facts')];
+    const code=bus.querySelector('.daytrip-active-code');
+    function choose(id){
+      buttons.forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.route===id)));
+      routes.forEach(el=>{const on=el.dataset.route===id;el.hidden=!on;if(!on)el.querySelectorAll('.timeline').forEach(reset);});
+      facts.forEach(el=>{el.hidden=el.dataset.route!==id;});
+      if(code)code.textContent=id+'番';
+      scan(true);
+    }
+    buttons.forEach(btn=>btn.addEventListener('click',()=>choose(btn.dataset.route)));
   }
+  scan();
 })();
-
 
 /* =================== JS 12: guide-auto-fold-outside-viewport-v29 =================== */
 ;
