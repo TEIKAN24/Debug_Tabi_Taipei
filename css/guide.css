@@ -4540,3 +4540,15 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .sights-day-trips .daytrip-destination-panel .tab-pills.daytrip-transport{
   overscroll-behavior-x:contain;
 }
+
+
+/* v30.7 — Day-trip heading cleanup + guaranteed white outline icons.
+   TRA uses a self-contained inline emblem, not the Airport's image readiness gate. */
+#guide .sights-day-trips .daytrip-tra-mark .daytrip-tra-vector{
+  display:block!important;width:22px;height:22px;flex:none;
+  color:#F7F7F7;fill:currentColor;stroke:none;opacity:1;
+}
+#guide .sights-day-trips .daytrip-company-mark:not(.daytrip-tra-mark) svg{
+  color:#F7F7F7;stroke:#F7F7F7;fill:none;opacity:1;
+  display:block;width:20px;height:20px;
+}

@@ -1763,12 +1763,10 @@ update();
     const buttons=[...bus.querySelectorAll('.daytrip-bus-route-choice')];
     const routes=[...bus.querySelectorAll('.daytrip-bus-route')];
     const facts=[...bus.querySelectorAll('.daytrip-bus-route-facts')];
-    const code=bus.querySelector('.daytrip-active-code');
     function choose(id){
       buttons.forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.route===id)));
       routes.forEach(el=>{const on=el.dataset.route===id;el.hidden=!on;if(!on)el.querySelectorAll('.timeline').forEach(reset);});
       facts.forEach(el=>{el.hidden=el.dataset.route!==id;});
-      if(code)code.textContent=id+'番';
       scan(true);
     }
     buttons.forEach(btn=>btn.addEventListener('click',()=>choose(btn.dataset.route)));
