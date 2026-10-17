@@ -4501,3 +4501,29 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 @media (prefers-reduced-motion: reduce){
   #guide .sights-day-trips .daytrip-destination-panel .tab-panel{animation:none!important;}
 }
+
+/* v30.5 — Safari-friendly entrance animation for daytrip transport content. */
+@keyframes daytrip-slide-enter{
+ from{opacity:.14;transform:translate3d(var(--daytrip-enter-from,68px),0,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+#guide .sights-day-trips .daytrip-destination-panel .tab-panels > .tab-panel.daytrip-switch-enter{
+ animation:daytrip-slide-enter 520ms cubic-bezier(.17,.92,.25,1) both!important;
+ will-change:transform,opacity;
+}
+#guide .sights-day-trips .daytrip-tra-mark{
+ display:inline-flex;align-items:center;justify-content:center;flex:none;
+ width:23px;height:23px;
+}
+#guide .sights-day-trips .daytrip-tra-logo{width:21px;height:21px;object-fit:contain;display:block}
+#guide .sights-day-trips .daytrip-tra-fallback{display:none;font-size:9px;font-weight:800;letter-spacing:-.025em;color:#93B3FF}
+#guide .sights-day-trips .daytrip-tra-logo:not([src]),
+#guide .sights-day-trips .daytrip-tra-logo[src=""]{display:none}
+#guide .sights-day-trips .daytrip-tra-mark:has(.daytrip-tra-logo:not([src])) .daytrip-tra-fallback{display:block}
+@media(prefers-reduced-motion:reduce){
+ #guide .sights-day-trips .daytrip-destination-panel .tab-panels > .tab-panel.daytrip-switch-enter{animation:none!important;will-change:auto}
+}
+#guide .sights-day-trips .daytrip-tra-inline{display:inline-flex;align-items:center;gap:5px}
+#guide .sights-day-trips .daytrip-tra-inline img{display:inline-block;width:16px;height:16px;object-fit:contain;flex:none}
+#guide .sights-day-trips .daytrip-tra-mark.logo-unavailable .daytrip-tra-logo{display:none}
+#guide .sights-day-trips .daytrip-tra-mark.logo-unavailable .daytrip-tra-fallback{display:block}

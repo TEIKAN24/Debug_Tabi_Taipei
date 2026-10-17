@@ -1432,22 +1432,24 @@ function groundUpdate(airport,toCity){
  const lines=el('timeline'),details=el('ground-details');
  details.hidden=true;details.innerHTML='';
  if(bus && song){
-   groundMode('路線バス','🚌');
-   // Taipei Main Station remains the endpoint for BOTH directions.
-   // 262區 travels via Songshan Airport then Taipei Main on the airport-to-city leg,
-   // but the reverse leg does not pass through Songshan Airport. Never label it a return direct bus.
+   groundMode('路線バス｜台北駅 ⇄ 松山空港','🚌');
+   const official262='https://atis.taipei.gov.tw/aspx/businfomation/presentinfo.aspx?ddlName=262%E5%8D%80&lang=zh-Hant-TW';
+   const official913='https://ebus.gov.taipei/EBus/VsSimpleMap?gb=0&routeid=0400091300';
+   // IMPORTANT: 262 and 262區 serve the airport on their RETURN trip, not their OUTBOUND trip.
    if(toCity){
      lines.innerHTML=stop('出発','松山機場','','start')+
-       groundLeg('262区 路線バス','台北車站（忠孝）方面へ','#AEB4BC','方面・停留所を確認して乗車')+
+       groundLeg('262・262区','台北車站（忠孝）方面','#AEB4BC','「返程」／臺北車站（忠孝）行きを確認')+
        stop('到着','台北車站','','end');
-     facts('交通状況による','一般路線バス運賃','なし');
-     el('footnote').innerHTML='262区の松山機場→台北車站（忠孝）方向を案内しています。<a href="https://pda5284.gov.taipei/MQS/routeinfo.jsp?rid=10962" target="_blank" rel="noopener noreferrer">運行方向・時刻を確認</a>。';
+     facts('交通状況による','二段票制（区間による）','なし');
+     el('footnote').innerHTML='松山機場の停留所から262・262区の「返程」に乗り、臺北車站（忠孝）で下車。<a href="'+official262+'" target="_blank" rel="noopener noreferrer">262区の停留所・運行状況</a>を確認してください。';
    }else{
      lines.innerHTML=stop('出発','台北車站','','start')+
-       groundLeg('路線バス','松山機場方面は乗り換え・路線の確認が必要','#AEB4BC','262区は逆方向に空港を通りません')+
+       groundLeg('262・262区','民生社区方面','#AEB4BC','「去程」／臺北小巨蛋で下車')+
+       stop('乗換','臺北小巨蛋','','transfer')+
+       groundLeg('913 路線バス','松山機場方面','#AEB4BC','松山機場まで乗車')+
        stop('到着','松山機場','','end');
-     facts('要確認','要確認','要確認');
-     el('footnote').innerHTML='台北駅から松山空港への直通バスは、このガイドでは確認できていません。バスの乗り換え経路は<a href="https://pda5284.gov.taipei/" target="_blank" rel="noopener noreferrer">台北市の公式バス検索</a>でご確認ください。MRT経由の移動もおすすめです。';
+     facts('運行状況による','区間・乗車回数による','1回');
+     el('footnote').innerHTML='台北駅から松山空港までの262・262区の直通運行はありません。臺北小巨蛋で空港方面の913に乗り換える例です。<a href="'+official262+'" target="_blank" rel="noopener noreferrer">262区</a>・<a href="'+official913+'" target="_blank" rel="noopener noreferrer">913</a>の運行方向と停留所をご確認ください。乗換が少ないMRTがおすすめです。';
    }
    return;
  }
@@ -1922,88 +1924,68 @@ update();
 
 
 
-/* =================== JS 13: daytrip-horizontal-mode-switch-v30.4 =================== */
+
+/* =================== JS 13: daytrip-mobile-transitions-v30.5 =================== */
 (()=>{
   'use strict';
   const section=document.querySelector('#guide .sights-day-trips');
   if(!section)return;
-  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
-  // Keep the existing, well-tested tab/ARIA controller authoritative.
-  // This adapter only wraps user-initiated switches with Airport Access-style
-  // exit/enter motion and supports a deliberate horizontal touch swipe.
+  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   section.querySelectorAll('.daytrip-transport').forEach(list=>{
-    const buttons=[...list.querySelectorAll(':scope > button.tab-pill')];
-    const panels=[...list.nextElementSibling?.querySelectorAll(':scope > .tab-panel')||[]];
-    if(buttons.length!==panels.length||buttons.length<2)return;
-    let bypass=false,busy=false,gesture=null,until=0;
-    const index=()=>Math.max(0,buttons.findIndex(b=>b.getAttribute('aria-selected')==='true'));
-    const offset=()=>Math.min(140,Math.max(85,list.clientWidth*.37));
-    function commit(i){
-      bypass=true;
-      try {buttons[i].click();} finally {bypass=false;}
+    const tabs=[...list.querySelectorAll(':scope > button.tab-pill')];
+    const content=list.nextElementSibling;
+    if(!content?.classList.contains('tab-panels'))return;
+    const panels=[...content.querySelectorAll(':scope > .tab-panel')];
+    if(tabs.length!==panels.length||tabs.length<2)return;
+    let prior=Math.max(0,tabs.findIndex(t=>t.getAttribute('aria-selected')==='true'));
+    let frame=0,gesture=null;
+    function sync(){
+      const now=Math.max(0,tabs.findIndex(t=>t.getAttribute('aria-selected')==='true'));
+      if(now===prior)return;
+      const from=prior; prior=now;
+      const panel=panels[now];
+      if(reducedMotion.matches||panel.hidden||!list.getClientRects().length)return;
+      panel.classList.remove('daytrip-switch-enter');
+      panel.style.setProperty('--daytrip-enter-from',now>from?'68px':'-68px');
+      if(frame)cancelAnimationFrame(frame);
+      // Two frames ensure the destination has a rendered box on iOS Safari.
+      frame=requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        if(panel.hidden)return;
+        void panel.offsetWidth;
+        panel.classList.add('daytrip-switch-enter');
+      }));
     }
-    function switchTo(i,drag=0){
-      const old=index();
-      if(busy||i===old||i<0||i>=buttons.length)return;
-      const dir=Math.sign(i-old);
-      const current=panels[old];
-      if(reduced.matches||!current.getClientRects().length||!current.animate){commit(i);return;}
-      busy=true;
-      const width=offset();
-      const exiting=current.animate([
-        {transform:`translate3d(${drag}px,0,0)`,opacity:1},
-        {transform:`translate3d(${-dir*width}px,0,0)`,opacity:0}
-      ],{duration:185,easing:'cubic-bezier(.55,.02,1,.48)',fill:'forwards'});
-      exiting.finished.then(()=>{
-        exiting.cancel();commit(i);
-        const next=panels[i];
-        // Do not allow visual animation to steal scroll/keyboard interaction.
-        const entering=next.animate([
-          {transform:`translate3d(${dir*width}px,0,0)`,opacity:0},
-          {transform:'translate3d(0,0,0)',opacity:1}
-        ],{duration:390,easing:'cubic-bezier(.17,.92,.25,1)',fill:'both'});
-        entering.finished.then(()=>{entering.cancel();busy=false;}).catch(()=>{entering.cancel();busy=false;});
-      }).catch(()=>{exiting.cancel();busy=false;});
+    const watch=new MutationObserver(sync);
+    tabs.forEach(tab=>watch.observe(tab,{attributes:true,attributeFilter:['aria-selected']}));
+    // Never intercept clicks: the original tab and accessibility controller switches
+    // synchronously, while CSS animation runs on the now-visible panel.
+    panels.forEach(panel=>panel.addEventListener('animationend',e=>{
+      if(e.target===panel&&e.animationName==='daytrip-slide-enter')panel.classList.remove('daytrip-switch-enter');
+    }));
+    function start(touch,e){
+      if(e.target.closest('a,button,select,input,textarea,[contenteditable="true"]'))return;
+      gesture={id:touch.identifier,x:touch.clientX,y:touch.clientY};
     }
-    // Capture only these transport tabs; other content uses original controller.
-    list.addEventListener('click',e=>{
-      if(bypass)return;
-      const button=e.target.closest('button.tab-pill');
-      if(!button||!list.contains(button))return;
-      if(performance.now()<until){e.preventDefault();e.stopImmediatePropagation();return;}
-      e.preventDefault();e.stopImmediatePropagation();
-      switchTo(buttons.indexOf(button));
-    },true);
-    function down(e){
-      if(busy||!e.isPrimary||(e.pointerType==='mouse'&&e.button!==0))return;
-      if(e.target.closest('a,input,textarea,select,button:not(.daytrip-transport-tab),[contenteditable="true"]'))return;
-      if(e.target.closest('.daytrip-airport-reuse a'))return;
-      gesture={id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,axis:'pending'};
+    const surfaces=[list,content];
+    for(const surface of surfaces){
+      surface.addEventListener('touchstart',e=>{
+        if(e.touches.length!==1)return;
+        start(e.touches[0],e);
+      },{passive:true});
+      surface.addEventListener('touchend',e=>{
+        if(!gesture)return;
+        const touch=[...e.changedTouches].find(t=>t.identifier===gesture.id);
+        if(!touch)return;
+        const dx=touch.clientX-gesture.x,dy=touch.clientY-gesture.y;
+        gesture=null;
+        if(Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.45)return;
+        const now=Math.max(0,tabs.findIndex(t=>t.getAttribute('aria-selected')==='true'));
+        const next=now+(dx<0?1:-1);
+        if(next<0||next>=tabs.length)return;
+        // Browser-supported synthetic click applies the original tab state/ARIA.
+        tabs[next].click();
+      },{passive:true});
+      surface.addEventListener('touchcancel',()=>{gesture=null;},{passive:true});
     }
-    list.addEventListener('pointerdown',down,{passive:true});
-    const container=list.nextElementSibling;
-    if(container)container.addEventListener('pointerdown',down,{passive:true});
-    window.addEventListener('pointermove',e=>{
-      if(!gesture||e.pointerId!==gesture.id)return;
-      const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;
-      gesture.lastX=e.clientX;
-      if(gesture.axis==='pending'){
-        if(Math.hypot(dx,dy)<12)return;
-        if(Math.abs(dy)>Math.abs(dx)*.85){gesture=null;return;}
-        gesture.axis='x';
-      }
-      if(gesture.axis==='x'&&e.cancelable)e.preventDefault();
-    },{passive:false});
-    window.addEventListener('pointerup',e=>{
-      if(!gesture||e.pointerId!==gesture.id)return;
-      const g=gesture;gesture=null;
-      if(g.axis!=='x')return;
-      const dist=g.lastX-g.x;
-      if(Math.abs(dist)>=58){
-        const target=index()+(dist<0?1:-1);
-        if(target>=0&&target<buttons.length){until=performance.now()+320;switchTo(target);}
-      }
-    });
-    window.addEventListener('pointercancel',e=>{if(gesture?.id===e.pointerId)gesture=null;});
   });
 })();
