@@ -6048,4 +6048,149 @@ update();
   }
 })();
 </script>
+<script id="guide-auto-fold-outside-viewport-v29">
+/* Fold expanded blocks only after the entire visible block has left the viewport.
+   Preserve unvisited, newly opened offscreen panels; do not interfere with nested
+   directory scrollports or the food-search overlay. */
+(() => {
+  'use strict';
+  const guide=document.getElementById('guide');
+  if(!guide)return;
+  const detailBlocks=[...guide.querySelectorAll('details')];
+  const dayTripPanels=[...guide.querySelectorAll('.sights-day-trips .daytrip-destination-panel')];
+  const airportClip=guide.querySelector('#airsel-results-clip');
+  const tracked=new Map();
+
+  function expanded(element,kind){
+    if(!element.isConnected)return false;
+    if(kind==='details')return element.open && !element.closest('[hidden]');
+    if(kind==='daytrip')return !element.hidden && !element.closest('[hidden]');
+    return element===airportClip && element.classList.contains('is-open') && !element.hidden;
+  }
+  function intersectsVisibleArea(element){
+    if(element.closest('[hidden]'))return false;
+    const rect=element.getBoundingClientRect();
+    if(rect.width<=0||rect.height<=0)return false;
+    const viewport=window.visualViewport;
+    let top=viewport?.offsetTop||0;
+    let left=viewport?.offsetLeft||0;
+    let bottom=top+(viewport?.height||window.innerHeight);
+    let right=left+(viewport?.width||window.innerWidth);
+    // Observe real scroll clipping, including category lists nested within tabs.
+    for(let ancestor=element.parentElement;ancestor;ancestor=ancestor.parentElement){
+      if(ancestor.hasAttribute('hidden'))return false;
+      const css=getComputedStyle(ancestor);
+      if(css.display==='none'||css.visibility==='hidden')return false;
+      if(/auto|scroll|hidden|clip/.test(css.overflowY)){
+        const box=ancestor.getBoundingClientRect();
+        top=Math.max(top,box.top);
+        bottom=Math.min(bottom,box.bottom);
+      }
+      if(/auto|scroll|hidden|clip/.test(css.overflowX)){
+        const box=ancestor.getBoundingClientRect();
+        left=Math.max(left,box.left);
+        right=Math.min(right,box.right);
+      }
+    }
+    return rect.bottom>top+1 && rect.top<bottom-1 && rect.right>left+1 && rect.left<right-1;
+  }
+  const watcher=('IntersectionObserver' in window)?new IntersectionObserver(entries=>{
+    for(const entry of entries){
+      const info=tracked.get(entry.target);
+      if(!info)continue;
+      if(!expanded(entry.target,info.kind)){untrack(entry.target);continue;}
+      if(entry.isIntersecting && intersectsVisibleArea(entry.target)){
+        info.seen=true;
+      }else if(info.seen){
+        maybeFold(entry.target,info);
+      }
+    }
+  },{root:null,threshold:0}):null;
+
+  function track(element,kind){
+    if(!expanded(element,kind)||tracked.has(element))return;
+    const info={kind,seen:false};
+    tracked.set(element,info);
+    watcher?.observe(element);
+    // The content can be visible immediately when the visitor expands it.
+    requestAnimationFrame(()=>{
+      if(tracked.get(element)===info && expanded(element,kind) && intersectsVisibleArea(element))info.seen=true;
+    });
+  }
+  function untrack(element){
+    tracked.delete(element);
+    watcher?.unobserve(element);
+  }
+  function fold(element,kind){
+    if(kind==='details'){
+      // Keep parent/child accordion states consistent with the site's own behavior.
+      element.querySelectorAll('details[open]').forEach(child=>{child.open=false;});
+      element.open=false;
+    }else if(kind==='daytrip'){
+      const button=guide.querySelector('.daytrip-destination-buttons > button[aria-controls="'+CSS.escape(element.id)+'"]');
+      if(button){
+        button.setAttribute('aria-expanded','false');
+        const name=['九份','十分','基隆','野柳'][dayTripPanels.indexOf(element)];
+        if(name)button.setAttribute('aria-label',name+'の交通案内を開く');
+      }
+      element.hidden=true;
+    }else if(kind==='airport'){
+      const disclosure=guide.querySelector('#airsel-route-disclosure');
+      if(disclosure?.getAttribute('aria-expanded')==='true')disclosure.click();
+    }
+  }
+  function maybeFold(element,info){
+    requestAnimationFrame(()=>{
+      if(tracked.get(element)!==info||!info.seen)return;
+      if(!expanded(element,info.kind)){untrack(element);return;}
+      if(document.body.classList.contains('food-drawer-open'))return;
+      if(intersectsVisibleArea(element))return;
+      untrack(element);
+      fold(element,info.kind);
+    });
+  }
+
+  detailBlocks.forEach(detail=>{
+    detail.addEventListener('toggle',()=>{
+      if(detail.open)track(detail,'details');
+      else untrack(detail);
+    });
+    if(detail.open)track(detail,'details');
+  });
+  function syncPanel(panel,kind){
+    if(expanded(panel,kind))track(panel,kind);
+    else untrack(panel);
+  }
+  const changes=new MutationObserver(records=>{
+    for(const record of records){
+      const element=record.target;
+      syncPanel(element,element===airportClip?'airport':'daytrip');
+    }
+  });
+  dayTripPanels.forEach(panel=>{
+    changes.observe(panel,{attributes:true,attributeFilter:['hidden']});
+    syncPanel(panel,'daytrip');
+  });
+  if(airportClip){
+    changes.observe(airportClip,{attributes:true,attributeFilter:['class','hidden']});
+    syncPanel(airportClip,'airport');
+  }
+  // Fallback for old browsers without IntersectionObserver. The same test also
+  // catches changes caused by scrollbars inside directory/category panels.
+  if(!watcher){
+    let queued=false;
+    const inspect=()=>{
+      queued=false;
+      for(const [element,info] of tracked){
+        if(intersectsVisibleArea(element))info.seen=true;
+        else if(info.seen)maybeFold(element,info);
+      }
+    };
+    const enqueue=()=>{if(!queued){queued=true;requestAnimationFrame(inspect);}};
+    window.addEventListener('scroll',enqueue,{passive:true,capture:true});
+    window.addEventListener('resize',enqueue,{passive:true});
+    guide.addEventListener('scroll',enqueue,{passive:true,capture:true});
+  }
+})();
+</script>
 </body></html>
