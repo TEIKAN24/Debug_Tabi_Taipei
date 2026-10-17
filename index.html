@@ -5527,10 +5527,10 @@ function queueTimelineEntrance(delay=0){
  const legs=[...timeline.querySelectorAll('.timeline-leg')];
  if((!stops.length&&!legs.length)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
  stops.forEach((node,index)=>node.style.setProperty('--airsel-stop-delay',`${index*248}ms`));
- // Begin drawing exactly when the last station finishes its fade-in.
- // Delays share one animation start frame: no subsequent idle interval.
+ // Start route drawing slightly before the last station finishes appearing,
+ // creating a more continuous transition while preserving station timing.
  const lastStationFinish=Math.max(0,stops.length-1)*248+750;
- const legStart=lastStationFinish;
+ const legStart=Math.max(0,lastStationFinish-260);
  legs.forEach((node,index)=>node.style.setProperty('--airsel-leg-delay',`${legStart+index*780}ms`));
  timeline._airselAnimTimer=window.setTimeout(()=>{
    timeline.classList.remove('airsel-timeline-animating');
