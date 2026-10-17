@@ -4337,3 +4337,55 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   #guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-ja{font-size:10px!important;}
   #guide .daytrip-airport-display .daytrip-airport-leg-direction{font-size:13px;}
 }
+
+
+/* ================ v30.2: EXACT reuse of Airport Access visual DOM + CSS ================ */
+/* Each day-trip route contains the same .airport-route-selector/.route-panel/
+   .timeline/.timeline-stop/.timeline-leg/.facts class hierarchy as Airport Access.
+   This small scoped layer adjusts only positioning in the surrounding section. */
+#guide .sights-day-trips .daytrip-option:has(> .daytrip-airport-reuse){
+  margin-top:10px!important;
+  padding-top:0!important;
+  border-top:0!important;
+}
+#guide .sights-day-trips .daytrip-airport-reuse{
+  margin:0!important;
+  color:#F4F4F4;
+}
+#guide .sights-day-trips .daytrip-airport-reuse .route-panel{
+  margin:0;
+}
+#guide .sights-day-trips .daytrip-airport-reuse .daytrip-canonical-head-name{
+  min-width:0;
+  overflow-wrap:anywhere;
+  flex:0 1 auto;
+}
+#guide .sights-day-trips .daytrip-airport-reuse .daytrip-company-mark svg{
+  display:block;
+  width:20px;
+  height:20px;
+}
+#guide .sights-day-trips .daytrip-airport-reuse .daytrip-canonical-code{
+  flex:0 0 auto;
+  margin-left:auto;
+}
+#guide .sights-day-trips .daytrip-airport-reuse .timeline-stop a{
+  color:inherit;
+  text-decoration:none;
+  border-bottom:1px dotted #5B5B5B;
+}
+#guide .sights-day-trips .daytrip-airport-reuse .facts{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+#guide .sights-day-trips .daytrip-airport-reuse .fact-value{
+  font-size:clamp(11px,3.5vw,14px);
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+/* No double styling from v30.1 route cards; Airport Access classes are authoritative. */
+#guide .sights-day-trips .daytrip-option:has(> .daytrip-airport-reuse)::before,
+#guide .sights-day-trips .daytrip-option:has(> .daytrip-airport-reuse)::after{display:none!important}
+@media(max-width:354px){
+  #guide .sights-day-trips .daytrip-airport-reuse .rail-title{flex-wrap:wrap}
+  #guide .sights-day-trips .daytrip-airport-reuse .daytrip-canonical-head-name{font-size:12px}
+}

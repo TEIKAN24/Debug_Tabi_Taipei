@@ -1658,14 +1658,14 @@ update();
 })();
 
 
-/* =================== JS 11: daytrip-timeline-entrance-controller-v26 =================== */
+/* =================== JS 11: daytrip-shared-airport-timeline-motion-v30.2 =================== */
 ;
 
 (() => {
   'use strict';
   const section=document.querySelector('#guide .sights-day-trips');
   if(!section)return;
-  const diagrams=[...section.querySelectorAll('.daytrip-timeline')];
+  const diagrams=[...section.querySelectorAll('.daytrip-airport-reuse .timeline')];
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const timers=new WeakMap();
   function visible(diagram){
@@ -1675,24 +1675,24 @@ update();
   function reset(diagram){
     const t=timers.get(diagram);
     if(t){clearTimeout(t);timers.delete(diagram);}
-    diagram.classList.remove('daytrip-route-animating');
+    diagram.classList.remove('airsel-timeline-animating');
     diagram.dataset.daytripPlayed='false';
   }
   function play(diagram){
     if(reduceMotion.matches || !visible(diagram) || diagram.dataset.daytripPlayed==='true')return;
-    const stops=[...diagram.querySelectorAll(':scope > .daytrip-timeline-stop')];
-    const legs=[...diagram.querySelectorAll(':scope > .daytrip-timeline-leg')];
+    const stops=[...diagram.querySelectorAll(':scope > .timeline-stop')];
+    const legs=[...diagram.querySelectorAll(':scope > .timeline-leg')];
     if(!stops.length || !legs.length)return;
     diagram.dataset.daytripPlayed='true';
-    stops.forEach((stop,i)=>stop.style.setProperty('--trip-stop-delay',`${i*248}ms`));
+    stops.forEach((stop,i)=>stop.style.setProperty('--airsel-stop-delay',`${i*248}ms`));
     // V25: colored line begins 260ms before final stop finishes its fade.
     const legStart=Math.max(0,(stops.length-1)*248+750-260);
-    legs.forEach((leg,i)=>leg.style.setProperty('--trip-leg-delay',`${legStart+i*780}ms`));
+    legs.forEach((leg,i)=>leg.style.setProperty('--airsel-leg-delay',`${legStart+i*780}ms`));
     void diagram.offsetWidth;
-    diagram.classList.add('daytrip-route-animating');
+    diagram.classList.add('airsel-timeline-animating');
     const total=legStart+Math.max(legs.length-1,0)*780+1250;
     timers.set(diagram,setTimeout(()=>{
-      diagram.classList.remove('daytrip-route-animating');
+      diagram.classList.remove('airsel-timeline-animating');
       timers.delete(diagram);
     },total));
   }
@@ -1713,9 +1713,9 @@ update();
     for(const record of records){
       const panel=record.target;
       if(panel.hasAttribute('hidden')){
-        panel.querySelectorAll('.daytrip-timeline').forEach(reset);
+        panel.querySelectorAll('.daytrip-airport-reuse .timeline').forEach(reset);
       }else if(!observer){
-        panel.querySelectorAll('.daytrip-timeline').forEach(play);
+        panel.querySelectorAll('.daytrip-airport-reuse .timeline').forEach(play);
       }
     }
   });
