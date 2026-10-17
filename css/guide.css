@@ -4527,3 +4527,16 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .sights-day-trips .daytrip-tra-inline img{display:inline-block;width:16px;height:16px;object-fit:contain;flex:none}
 #guide .sights-day-trips .daytrip-tra-mark.logo-unavailable .daytrip-tra-logo{display:none}
 #guide .sights-day-trips .daytrip-tra-mark.logo-unavailable .daytrip-tra-fallback{display:block}
+
+/* v30.6 — single, monochrome TRA mark at route-heading level. */
+#guide .sights-day-trips .daytrip-tra-mark .daytrip-tra-logo{
+  filter:grayscale(1) brightness(0) invert(1);
+  -webkit-filter:grayscale(1) brightness(0) invert(1);
+}
+#guide .sights-day-trips .daytrip-destination-panel .tab-panels{
+  touch-action:pan-y;
+  overscroll-behavior-x:contain;
+}
+#guide .sights-day-trips .daytrip-destination-panel .tab-pills.daytrip-transport{
+  overscroll-behavior-x:contain;
+}

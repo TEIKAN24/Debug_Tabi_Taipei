@@ -1195,6 +1195,7 @@ loadData();
     // Interactive links should always receive taps; opening the food drawer must not cancel them.
     if(target.closest('a[href]'))return true;
     if(target.closest('#airsel-transport-tabs, #airport-route-selector .route-panel'))return true;
+    if(target.closest('#guide .sights-day-trips .daytrip-destination-panel'))return true; // Daytrip owns this gesture.
     /* Horizontal scrollers own their own gestures; never swipe the whole page instead. */
     let current=target;
     while(current && current!==document.body){
@@ -1432,7 +1433,7 @@ function groundUpdate(airport,toCity){
  const lines=el('timeline'),details=el('ground-details');
  details.hidden=true;details.innerHTML='';
  if(bus && song){
-   groundMode('路線バス｜台北駅 ⇄ 松山空港','🚌');
+   groundMode(toCity?'路線バス｜松山空港 → 台北駅':'路線バス｜台北駅 → 松山空港','🚌');
    const official262='https://atis.taipei.gov.tw/aspx/businfomation/presentinfo.aspx?ddlName=262%E5%8D%80&lang=zh-Hant-TW';
    const official913='https://ebus.gov.taipei/EBus/VsSimpleMap?gb=0&routeid=0400091300';
    // IMPORTANT: 262 and 262區 serve the airport on their RETURN trip, not their OUTBOUND trip.
@@ -1925,67 +1926,94 @@ update();
 
 
 
-/* =================== JS 13: daytrip-mobile-transitions-v30.5 =================== */
+
+/* =================== JS 13: daytrip-mobile-transitions-v30.6 =================== */
 (()=>{
   'use strict';
   const section=document.querySelector('#guide .sights-day-trips');
   if(!section)return;
-  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   section.querySelectorAll('.daytrip-transport').forEach(list=>{
     const tabs=[...list.querySelectorAll(':scope > button.tab-pill')];
     const content=list.nextElementSibling;
-    if(!content?.classList.contains('tab-panels'))return;
+    if(!content || !content.classList.contains('tab-panels'))return;
     const panels=[...content.querySelectorAll(':scope > .tab-panel')];
-    if(tabs.length!==panels.length||tabs.length<2)return;
-    let prior=Math.max(0,tabs.findIndex(t=>t.getAttribute('aria-selected')==='true'));
-    let frame=0,gesture=null;
-    function sync(){
-      const now=Math.max(0,tabs.findIndex(t=>t.getAttribute('aria-selected')==='true'));
+    if(tabs.length<2||panels.length!==tabs.length)return;
+    let prior=Math.max(0,tabs.findIndex(x=>x.getAttribute('aria-selected')==='true'));
+    let enterFrame=0,gesture=null,blockNativeClickUntil=0;
+    function selected(){return Math.max(0,tabs.findIndex(x=>x.getAttribute('aria-selected')==='true'));}
+    function animateSelection(){
+      const now=selected();
       if(now===prior)return;
-      const from=prior; prior=now;
+      const old=prior;prior=now;
       const panel=panels[now];
-      if(reducedMotion.matches||panel.hidden||!list.getClientRects().length)return;
-      panel.classList.remove('daytrip-switch-enter');
-      panel.style.setProperty('--daytrip-enter-from',now>from?'68px':'-68px');
-      if(frame)cancelAnimationFrame(frame);
-      // Two frames ensure the destination has a rendered box on iOS Safari.
-      frame=requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      cancelAnimationFrame(enterFrame);
+      panels.forEach(p=>p.classList.remove('daytrip-switch-enter'));
+      if(reduceMotion.matches||panel.hidden||!list.getClientRects().length)return;
+      panel.style.setProperty('--daytrip-enter-from',now>old?'68px':'-68px');
+      // Newly unhidden panels must be painted once before entrance begins on iOS.
+      enterFrame=requestAnimationFrame(()=>{
         if(panel.hidden)return;
         void panel.offsetWidth;
         panel.classList.add('daytrip-switch-enter');
-      }));
+      });
     }
-    const watch=new MutationObserver(sync);
-    tabs.forEach(tab=>watch.observe(tab,{attributes:true,attributeFilter:['aria-selected']}));
-    // Never intercept clicks: the original tab and accessibility controller switches
-    // synchronously, while CSS animation runs on the now-visible panel.
-    panels.forEach(panel=>panel.addEventListener('animationend',e=>{
-      if(e.target===panel&&e.animationName==='daytrip-slide-enter')panel.classList.remove('daytrip-switch-enter');
+    const observer=new MutationObserver(animateSelection);
+    tabs.forEach(t=>observer.observe(t,{attributes:true,attributeFilter:['aria-selected']}));
+    panels.forEach(p=>p.addEventListener('animationend',e=>{
+      if(e.target===p && e.animationName==='daytrip-slide-enter')p.classList.remove('daytrip-switch-enter');
     }));
-    function start(touch,e){
-      if(e.target.closest('a,button,select,input,textarea,[contenteditable="true"]'))return;
-      gesture={id:touch.identifier,x:touch.clientX,y:touch.clientY};
+    function switchBy(delta){
+      const next=selected()+delta;
+      if(next<0||next>=tabs.length)return false;
+      // Reuse site's original controller: ARIA, panel visibility and tab underline stay in sync.
+      tabs[next].click();
+      return true;
     }
-    const surfaces=[list,content];
-    for(const surface of surfaces){
-      surface.addEventListener('touchstart',e=>{
-        if(e.touches.length!==1)return;
-        start(e.touches[0],e);
-      },{passive:true});
-      surface.addEventListener('touchend',e=>{
-        if(!gesture)return;
-        const touch=[...e.changedTouches].find(t=>t.identifier===gesture.id);
-        if(!touch)return;
-        const dx=touch.clientX-gesture.x,dy=touch.clientY-gesture.y;
-        gesture=null;
-        if(Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.45)return;
-        const now=Math.max(0,tabs.findIndex(t=>t.getAttribute('aria-selected')==='true'));
-        const next=now+(dx<0?1:-1);
-        if(next<0||next>=tabs.length)return;
-        // Browser-supported synthetic click applies the original tab state/ARIA.
-        tabs[next].click();
-      },{passive:true});
-      surface.addEventListener('touchcancel',()=>{gesture=null;},{passive:true});
+    function onStart(e){
+      if(e.touches.length!==1){gesture=null;return;}
+      const t=e.touches[0];
+      gesture={id:t.identifier,x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,
+        horizontal:false,vertical:false};
+    }
+    function onMove(e){
+      if(!gesture)return;
+      const t=[...e.changedTouches].find(x=>x.identifier===gesture.id);
+      if(!t)return;
+      const dx=t.clientX-gesture.x,dy=t.clientY-gesture.y;
+      gesture.lastX=t.clientX;gesture.lastY=t.clientY;
+      if(gesture.vertical)return;
+      if(!gesture.horizontal&&Math.hypot(dx,dy)>10){
+        if(Math.abs(dy)>Math.abs(dx)*1.12){gesture.vertical=true;return;}
+        if(Math.abs(dx)>Math.abs(dy)*1.15)gesture.horizontal=true;
+      }
+      // Claim horizontal drags early instead of waiting until Safari cancels touchend.
+      if(gesture.horizontal&&e.cancelable)e.preventDefault();
+    }
+    function onEnd(e){
+      if(!gesture)return;
+      const t=[...e.changedTouches].find(x=>x.identifier===gesture.id);
+      if(!t)return;
+      const current=gesture;gesture=null;
+      const dx=t.clientX-current.x,dy=t.clientY-current.y;
+      if(current.vertical || Math.abs(dx)<44 || Math.abs(dx)<Math.abs(dy)*1.2)return;
+      const changed=switchBy(dx<0?1:-1);
+      if(changed)blockNativeClickUntil=performance.now()+500;
+    }
+    function onCancel(){gesture=null;}
+    // Both tab bar and route content allow direct horizontal gestures. Using touchmove
+    // with passive:false prevents browser back-swipe and horizontal overflow conflicts.
+    for(const surface of [list,content]){
+      surface.addEventListener('touchstart',onStart,{passive:true});
+      surface.addEventListener('touchmove',onMove,{passive:false});
+      surface.addEventListener('touchend',onEnd,{passive:true});
+      surface.addEventListener('touchcancel',onCancel,{passive:true});
+      // A gesture beginning on a link/button must not activate it on touch release.
+      surface.addEventListener('click',e=>{
+        if(e.isTrusted && performance.now()<blockNativeClickUntil){
+          e.preventDefault();e.stopImmediatePropagation();
+        }
+      },true);
     }
   });
 })();
