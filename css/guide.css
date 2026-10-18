@@ -5274,3 +5274,97 @@ html[data-theme="light"] .quick-nav > .nav-button:nth-child(n):hover{
 @media(max-width:355px){
  #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{font-size:9.6px;letter-spacing:-.02em;}
 }
+
+
+/* v30.9.30: Light-theme route pictograms and accessible enlarged cost/time */
+html[data-theme="light"] #guide .sights-day-trips .daytrip-company-mark:not(.daytrip-tra-mark) svg{
+  color:#253940!important;stroke:#253940!important;fill:none!important;opacity:1!important;
+}
+/* Same outline icons are used in Airport Access bus/taxi results. */
+html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback.airsel-ground-icon{
+  filter:none!important;-webkit-filter:none!important;
+  color:#253940!important;
+}
+#guide #airport-route-selector .airsel-company-fallback.airsel-ground-icon svg{
+  display:block;width:20px;height:20px;color:inherit;stroke:currentColor;fill:none;
+}
+#guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{
+  font-size:15.75px;line-height:1.23;letter-spacing:-.025em;gap:3px;
+}
+#guide .sights-day-trips .route-panel .rail-title{align-items:flex-start;}
+#guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{
+  max-width:min(48%,165px);white-space:normal;overflow-wrap:break-word;
+}
+@media(max-width:355px){
+  #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{
+    font-size:14.4px;letter-spacing:-.035em;
+  }
+}
+
+
+/* v30.9.31 — compact secondary daytrip disclosures and light hero wordmark */
+#guide .sights-day-trips .daytrip-fold-section{
+  padding:0!important;margin:0!important;border-top:1px solid #333!important;
+}
+#guide .sights-day-trips .daytrip-place-group.daytrip-fold-section{
+  padding:0!important;margin:0!important;border-top:1px solid #333!important;
+}
+#guide .sights-day-trips .daytrip-option--tour-combined.daytrip-fold-section{
+  padding:0!important;margin:0!important;border-top:1px solid #333!important;
+}
+#guide .sights-day-trips .daytrip-inline-accordion{
+  margin:0!important;padding:0!important;border:0!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+#guide .sights-day-trips .daytrip-inline-accordion > summary{
+  display:block;list-style:none;position:relative;cursor:pointer;
+  margin:0!important;padding:14px 30px 14px 1px!important;
+  background:transparent!important;border:0!important;
+  color:#E8E8E8!important;font-size:13px!important;font-weight:700!important;line-height:1.5!important;
+  min-height:46px;
+}
+#guide .sights-day-trips .daytrip-inline-accordion > summary::-webkit-details-marker{display:none!important;}
+#guide .sights-day-trips .daytrip-inline-accordion > summary::after{
+  content:''!important;position:absolute!important;right:9px!important;top:50%!important;
+  display:block;width:8px;height:8px;border-right:1.6px solid currentColor;
+  border-bottom:1.6px solid currentColor;color:#B7C1C5;
+  transform:translateY(-65%) rotate(45deg)!important;
+  transition:transform .25s ease!important;font-size:0!important;
+}
+#guide .sights-day-trips .daytrip-inline-accordion[open] > summary::after{
+  transform:translateY(-25%) rotate(225deg)!important;
+}
+#guide .sights-day-trips .daytrip-inline-accordion > summary:focus-visible{
+  outline:2px solid #83B5D0;outline-offset:-2px;border-radius:3px;
+}
+#guide .sights-day-trips .daytrip-inline-accordion > .daytrip-inline-accordion-body{
+  margin:0!important;padding:0 2px 14px!important;
+}
+#guide .sights-day-trips .daytrip-inline-accordion .daytrip-note{
+  margin:0!important;padding:0!important;
+}
+#guide .sights-day-trips .daytrip-inline-accordion .daytrip-place-list{
+  margin:0!important;padding:0!important;
+}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-fold-section{
+  border-top-color:#D7DFE2!important;
+}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-inline-accordion > summary{
+  color:#24383F!important;-webkit-text-fill-color:#24383F!important;
+  background:transparent!important;
+}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-inline-accordion > summary::after{
+  color:#536F7B!important;
+}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-inline-accordion .daytrip-place-list li{
+  border-bottom-color:#E0E5E7!important;
+}
+html[data-theme="light"] .hero .eyebrow{
+  color:#425D66!important;-webkit-text-fill-color:#425D66!important;
+}
+html[data-theme="light"] .hero .eyebrow .ta{
+  color:#167354!important;-webkit-text-fill-color:#167354!important;
+}
+@media (prefers-reduced-motion:reduce){
+ #guide .sights-day-trips .daytrip-inline-accordion > summary::after{transition:none!important;}
+}

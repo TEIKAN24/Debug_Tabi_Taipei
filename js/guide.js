@@ -116,7 +116,7 @@
     } else {
       openAccordion(detail);
       if (isGuidedCategory) focusDirectoryCategory(summary);
-      else scrollOpenedSummaryIntoView(detail);
+      else if (!detail.classList.contains('daytrip-inline-accordion')) scrollOpenedSummaryIntoView(detail);
     }
   });
   // Also enforce sibling exclusivity if a detail is opened by other scripts.
@@ -1424,7 +1424,9 @@ function groundMode(title,icon){
  el('rail-head-name').textContent=title;
  el('recommend-badge').hidden=true;
  el('company-img').dataset.ready='false';
- el('company-fallback').textContent=icon;
+ const busSvg='<svg aria-hidden="true" fill="none" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="15" rx="2.6"></rect><path d="M5 10h14M8 14h.01M16 14h.01M7.5 18v2M16.5 18v2"></path></svg>';
+ const taxiSvg='<svg aria-hidden="true" fill="none" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 11 1.8-5h10.4L19 11M4 11h16v7H4zM7 18v2M17 18v2M7 14h.01M17 14h.01M10 6V4h4v2"></path></svg>';
+ el('company-fallback').innerHTML=state.transport==='taxi'?taxiSvg:busSvg;
  el('company-fallback').classList.add('airsel-ground-icon');
 }
 const fallbackAirport='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" aria-hidden="true"><rect x="3.1" y="3.1" width="17.8" height="17.8" rx="5" stroke="currentColor" stroke-width="1.35"/><path d="M8.2 7.5c4.7-.5 7.5 2.5 7.5 8.9M15.8 16.5c-4.7.5-7.5-2.5-7.5-8.9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 12h8" stroke="currentColor" stroke-width="1.4"/></svg>';
