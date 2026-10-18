@@ -1307,6 +1307,35 @@ const el=id=>root.querySelector('#airsel-'+id);
 const choices=['T1','T2','SONG','TP'];
 const pickerLabels={T1:'桃園空港 T1',T2:'桃園空港 T2',SONG:'台北松山空港',TP:'台北駅'};
 const esc=s=>String(s).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+const focusReduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+let airportFocusTimer=0,airportFocusFrame=0,airportFocusCorrect=0,airportFocusVersion=0;
+// Never override a user's subsequent manual scroll with the delayed correction.
+window.addEventListener('touchstart',()=>clearTimeout(airportFocusCorrect),{passive:true});
+window.addEventListener('wheel',()=>clearTimeout(airportFocusCorrect),{passive:true});
+function focusAirportResult(preferTabs=false){
+  clearTimeout(airportFocusTimer);
+  clearTimeout(airportFocusCorrect);
+  cancelAnimationFrame(airportFocusFrame);
+  const version=++airportFocusVersion;
+  airportFocusTimer=window.setTimeout(()=>{
+    airportFocusFrame=requestAnimationFrame(()=>{
+      if(!resultsOpen||!validRoute()||!root.getClientRects().length)return;
+      const tabs=el('transport-tabs');
+      const target=preferTabs&&tabs?.getClientRects().length?tabs:el('route-disclosure');
+      if(!target||!target.getClientRects().length)return;
+      const desiredTop=preferTabs?118:91;
+      const align=(behavior)=>{
+        if(version!==airportFocusVersion||!resultsOpen||!target.getClientRects().length)return;
+        const top=Math.max(0,window.scrollY+target.getBoundingClientRect().top-desiredTop);
+        if(Math.abs(top-window.scrollY)>24)window.scrollTo({top,behavior});
+      };
+      align(focusReduceMotion.matches?'auto':'smooth');
+      // Previous expanded sections may auto-fold during the smooth scroll,
+      // shifting this target upward. Correct only after that reflow settles.
+      airportFocusCorrect=window.setTimeout(()=>align('auto'),950);
+    });
+  },preferTabs?55:185);
+}
 function validRoute(){
  return Boolean(state.from && state.to && (state.from==='TP') !== (state.to==='TP'));
 }
@@ -1333,8 +1362,15 @@ function setResultsOpen(open){
  disclosure.setAttribute('aria-expanded',String(resultsOpen));
  clip.classList.toggle('is-open',resultsOpen);
  clip.inert=!resultsOpen;
- if(resultsOpen)queueTimelineEntrance(210);
- else {
+ if(resultsOpen){
+   // Wait for the expanding results panel and its viewport focus to settle.
+   queueTimelineEntrance(650);
+   focusAirportResult(false);
+ }else {
+   clearTimeout(airportFocusTimer);
+   clearTimeout(airportFocusCorrect);
+   ++airportFocusVersion;
+   cancelAnimationFrame(airportFocusFrame);
    const timeline=el('timeline');
    window.clearTimeout(timeline._airselAnimTimer);
    window.clearTimeout(timeline._airselCleanupTimer);
@@ -1563,6 +1599,7 @@ el('route-disclosure').addEventListener('click',()=>{
 });
 el('train-select').addEventListener('change',e=>{
  state.mode=e.target.value;update();
+ if(resultsOpen)focusAirportResult(true);
  const panel=root.querySelector('.route-panel');
  if(resultsOpen&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   panel.animate([{opacity:.25,transform:'translate3d(0,22px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:510,easing:'cubic-bezier(.2,.8,.2,1)'});
@@ -1591,7 +1628,9 @@ function changeTransport(mode,dragOffset=0){
  const direction=Math.sign(transportOrder.indexOf(mode)-transportOrder.indexOf(state.transport));
  clearAirportRouteAnimation();
  if(reducedMotion.matches || !resultsOpen){
-  resetDraggedPanel();state.transport=mode;update();return;
+  resetDraggedPanel();state.transport=mode;update();
+  if(resultsOpen)focusAirportResult(true);
+  return;
  }
  switching=true;
  airportRouteSwitching=true;
@@ -1608,6 +1647,12 @@ function changeTransport(mode,dragOffset=0){
   airportRouteSwitching=false;
   root.classList.remove('is-transport-switching');
   switching=false;
+  if(resultsOpen){
+    // Transport switches previously suppressed animation without replaying it.
+    // Wait for the crossfade to finish so no completed old line can bleed through.
+    queueTimelineEntrance(60);
+    focusAirportResult(true);
+  }
  };
  exit.finished.then(()=>{
   // Replacing the DOM while invisible prevents any old completed route from crossing over the new one.
@@ -2094,6 +2139,62 @@ update();
           e.preventDefault();e.stopImmediatePropagation();
         }
       },true);
+    }
+  });
+})();
+
+
+/* =================== JS 14: airport-and-daytrip-result-focus-v30.9.4 =================== */
+(() => {
+  'use strict';
+  const section=document.querySelector('#guide .sights-day-trips');
+  if(!section)return;
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let focusFrame=0,focusTimer=0,focusCorrection=0,focusVersion=0;
+  const cancelCorrection=()=>{clearTimeout(focusCorrection);};
+  window.addEventListener('touchstart',cancelCorrection,{passive:true});
+  window.addEventListener('wheel',cancelCorrection,{passive:true});
+  function focusAt(target,top=100){
+    clearTimeout(focusTimer);
+    cancelCorrection();
+    cancelAnimationFrame(focusFrame);
+    const version=++focusVersion;
+    focusTimer=window.setTimeout(()=>{
+      focusFrame=requestAnimationFrame(()=>{
+        if(!target||!target.isConnected||!target.getClientRects().length||target.closest('[hidden]'))return;
+        const align=(behavior)=>{
+          if(version!==focusVersion||!target.getClientRects().length||target.closest('[hidden]'))return;
+          const destination=Math.max(0,window.scrollY+target.getBoundingClientRect().top-top);
+          if(Math.abs(destination-window.scrollY)>24)window.scrollTo({top:destination,behavior});
+        };
+        align(reduceMotion.matches?'auto':'smooth');
+        // Auto-folding an earlier (large) accordion changes document height.
+        // Re-align once, without a second smooth-motion sweep.
+        focusCorrection=window.setTimeout(()=>align('auto'),960);
+      });
+    },80);
+  }
+  section.addEventListener('click',event=>{
+    const destination=event.target.closest('.daytrip-destination-button');
+    if(destination){
+      // The destination row remains visible for switching between all four places.
+      // Do not jump on closing an already open panel.
+      if(destination.getAttribute('aria-expanded')==='true')
+        focusAt(section.querySelector('.daytrip-destination-buttons'),100);
+      return;
+    }
+    const mode=event.target.closest('.daytrip-transport-tab');
+    if(mode){
+      const panel=mode.closest('.daytrip-destination-panel');
+      focusAt(panel?.querySelector('.daytrip-destination-panel-heading'),94);
+      return;
+    }
+    const route=event.target.closest('.daytrip-bus-route-choice');
+    if(route){
+      // The route choices are below their diagram. Bring the newly selected
+      // itinerary into view, not the top of the entire website.
+      const wrap=route.closest('.daytrip-bus-airport-style');
+      focusAt(wrap?.querySelector('.rail-title'),118);
     }
   });
 })();
