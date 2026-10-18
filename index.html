@@ -7,7 +7,26 @@
 <title>TAIPEI CITY GUIDE — 台北へようこそ！</title>
 <script>/* Preserve the visitor's position on browser Back/Forward (e.g. after Maps). */
 try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } catch (_) {}
-</script><link rel="stylesheet" href="css/guide.css?v=30.9.22"/>
+</script><script>/* Temporary manual appearance switch: default remains dark. */
+(function(){
+ var value='dark';
+ try {if(localStorage.getItem('taipei-guide-theme-preview')==='light')value='light';}catch(e){}
+ document.documentElement.setAttribute('data-theme',value);
+ document.documentElement.style.colorScheme=value;
+ function updateMeta(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=value==='light'?'#F7F8F7':'#111417';}
+ function refreshButton(){var b=document.getElementById('theme-preview-toggle');if(!b)return;
+  b.textContent=value==='light'?'☾ ダーク':'☀ 明るい';
+  b.setAttribute('aria-pressed',value==='light'?'true':'false');
+  b.setAttribute('aria-label',value==='light'?'ダークモードに切り替える（テスト）':'明るいモードに切り替える（テスト）');
+ }
+ document.addEventListener('DOMContentLoaded',function(){updateMeta();refreshButton();
+  var b=document.getElementById('theme-preview-toggle');if(b)b.addEventListener('click',function(){
+   value=value==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',value);
+   document.documentElement.style.colorScheme=value;try{localStorage.setItem('taipei-guide-theme-preview',value);}catch(e){}
+   updateMeta();refreshButton();
+  });
+ });
+})();</script><link rel="stylesheet" href="css/guide.css?v=30.9.26"/>
 
 
 
@@ -81,7 +100,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
 
 
 
-</head><body><div class="food-drawer-backdrop" aria-hidden="true"></div>
+</head><body><button type="button" id="theme-preview-toggle" class="theme-preview-toggle" aria-pressed="false" aria-label="明るいモードに切り替える（テスト）" title="明暗モード・テスト用">☀ 明るい</button><div class="food-drawer-backdrop" aria-hidden="true"></div>
 <header class="hero wrapper" id="top"><div class="eyebrow"><span class="ta">TA</span>BI / <span class="ta">TA</span>IPEI</div><h1><span class="hero-title-link">TAIPEI<br/><span>CITY GUIDE</span></span></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
 <a class="nav-button" data-target="travel" href="#travel"><span aria-hidden="true" class="nav-icon">✈️</span><span class="nav-copy"><span class="nav-title">旅の準備・交通</span><span class="nav-subtitle">入国・注意事項・空港アクセス</span></span></a>
 <a class="nav-button" data-target="food" href="#food"><span aria-hidden="true" class="nav-icon">🥢</span><span class="nav-copy"><span class="nav-title">おすすめグルメ</span><span class="nav-subtitle">地元目線でセレクト</span></span></a>

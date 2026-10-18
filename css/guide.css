@@ -4879,3 +4879,239 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 @media(max-width:360px){
   #guide .travel-passes > .travel-passes-body {padding-left:11px;padding-right:11px;}
 }
+
+
+/* ================= v30.9.26: opt-in LIGHT PREVIEW palette =================
+   Only neutral surfaces, text, strokes, and selection contrast change.
+   Keep transport colors, photography, tags/illustrations and all layout/motion. */
+html[data-theme="light"]{
+ color-scheme:light;
+ --bg:#F7F8F7;--paper:#FFFFFF;--ink:#20292C;--muted:#697579;
+ --line:#DDE2E3;--accent:#155F92;--shadow:none;
+ --text-heading:#172329;--text-body:#263136;--text-secondary:#626E73;
+ --text-caption:#778187;--link:#135E96;--link-hover:#09446E;
+ --mono-main:#172329;--mono-body:#263136;--mono-sub:#657076;
+ --mono-muted:#79848A;--mono-line:#D6DCDF;
+ --outline-white:#CBD2D6;--outline-divider:#E1E5E7;
+ --outline-strong:#26353B;
+ --daytrip-panel-bg:#F7F8F7;
+}
+html[data-theme="light"], html[data-theme="light"] body{
+ background:#F7F8F7!important;color:#263136!important;
+}
+html[data-theme="light"] body,html[data-theme="light"] #guide{
+ scrollbar-color:#BAC5C9 #F0F3F3;
+}
+html[data-theme="light"] :is(.hero h1,.hero h1 span,.hero .welcome,.site-content h2,.site-content h3,.site-content h4),
+html[data-theme="light"] #guide :is(.airport-access-subheading,.travel-topic-title,.venue-name-line,.destination-title,.daytrip-destination-panel-title,.rail-title){color:#172329!important;}
+html[data-theme="light"] :is(.hero .tagline,.below-nav,footer),
+html[data-theme="light"] #guide :is(.section-note,.destination-lead,.destination-pr,.destination-guide-label,.venue-extra-note,.area-intro-description,.metro-transfer-note,.airport-fare-time,.airport-fare-label,.daytrip-destination-panel-desc){color:#66737A!important;}
+html[data-theme="light"] #guide :is(p,li,td,th,summary):not(#food-explorer *):not(.travel-caution *):not(.travel-twac *){
+ color:#2E393E;
+}
+html[data-theme="light"] #guide a:not(#food-explorer a):not(.travel-twac a):not(.venue-tag){
+ color:#155F92!important;text-decoration-color:rgba(21,95,146,.34)!important;
+}
+html[data-theme="light"] #guide a:not(#food-explorer a):not(.travel-twac a):hover{color:#084772!important;}
+html[data-theme="light"] #guide :is(.divider,hr),
+html[data-theme="light"] footer{border-color:#DDE2E3!important;}
+html[data-theme="light"] #guide .sights-day-trips{border-top-color:#DDE2E3!important;}
+/* Pastel gradients of the six entry bubbles remain, now on white paper. */
+html[data-theme="light"] .quick-nav > .nav-button:nth-child(n){
+ background:linear-gradient(180deg,rgba(var(--nav-rgb),.23) 0%,rgba(var(--nav-rgb),.085) 46%,rgba(var(--nav-rgb),0) 95%),#FFFFFF!important;
+ border:1px solid #D7DDE0!important;border-top:2px solid var(--nav-accent)!important;
+ box-shadow:0 2px 12px rgba(32,45,54,.035)!important;
+}
+html[data-theme="light"] .quick-nav > .nav-button:nth-child(n):hover{
+ background:linear-gradient(180deg,rgba(var(--nav-rgb),.29) 0%,rgba(var(--nav-rgb),.12) 55%,rgba(var(--nav-rgb),0) 95%),#FFFFFF!important;
+ border-color:#BFC9CE!important;border-top-color:var(--nav-accent)!important;
+}
+html[data-theme="light"] .quick-nav :is(.nav-title){color:#213038!important;}
+html[data-theme="light"] .quick-nav :is(.nav-subtitle,.nav-arrow){color:#66737A!important;}
+/* Outline accordions and the area / venue directories: white page, cool gray rules. */
+html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac),
+html[data-theme="light"] #guide .destination-card,
+html[data-theme="light"] #guide .area-directory-section .tab-panel > .area-category-list,
+html[data-theme="light"] #guide :is(.airport-mode-card,.airport-direction-button,.airport-check-tools,.airport-check-links a,.destination-info-group){
+ background:transparent!important;background-image:none!important;border-color:#CDD5D9!important;box-shadow:none!important;
+}
+html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac) > summary,
+html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac)[open] > summary,
+html[data-theme="light"] #guide :is(.destination-info-group,.venue-row,.destination-card .tab-panel,.venue-list-item),
+html[data-theme="light"] #guide .area-directory-section :is(.area-category-list,.area-directory-group){border-color:#DDE2E3!important;}
+html[data-theme="light"] #guide :is(.travel-key-title,.travel-topic-title,.area-intro-title,.venue-name,.venue-main-link){color:#213038!important;}
+html[data-theme="light"] #guide :is(.travel-key-subtitle,.travel-topic-desc,.venue-row-index,.destination-guide-label,.destination-pr,.venue-extra-note,.area-intro-description){color:#66737A!important;}
+html[data-theme="light"] #guide .selected-value{color:#506169!important;background:#F0F2F2!important;border-color:#CBD4D9!important;}
+/* Accessibility: dark-selected pill on white, unchanged selected/inactive geometry. */
+html[data-theme="light"] #guide :is(.tab-pill,.destination-card .tab-pill)[aria-selected="false"]{
+ color:#526168!important;border-color:#C5CED2!important;background:transparent!important;
+}
+html[data-theme="light"] #guide :is(.tab-pill,.destination-card .tab-pill)[aria-selected="true"],
+html[data-theme="light"] #guide :is(.tab-pill,.destination-card .tab-pill)[aria-selected="true"]:hover{
+ background:#202F36!important;border-color:#202F36!important;color:#FFFFFF!important;
+}
+html[data-theme="light"] #guide :is(.tab-pill,.destination-card .tab-pill)[aria-selected="true"] :is(strong,b,small,em,span){
+ color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+}
+html[data-theme="light"] #guide .tab-pill:focus-visible,
+html[data-theme="light"] #guide .daytrip-destination-button:focus-visible{outline-color:#12639B!important;}
+html[data-theme="light"] #guide .daytrip-destination-button{
+ background:#FFFFFF!important;border-color:#CAD3D7!important;color:#314149!important;
+}
+html[data-theme="light"] #guide .daytrip-destination-button:hover{border-color:#72838C!important;color:#172A32!important;}
+html[data-theme="light"] #guide .daytrip-destination-button[aria-expanded="true"]{
+ background:#202F36!important;border-color:#202F36!important;color:#FFFFFF!important;
+}
+html[data-theme="light"] #guide .daytrip-destination-button[aria-expanded="true"] .daytrip-destination-button-name{color:#FFFFFF!important;}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-destination-panel,
+html[data-theme="light"] #guide .sights-day-trips .daytrip-destination-panel-heading{
+ border-color:#D6DEE0!important;
+}
+/* Bus/train/taxi timeline: leave their route-line hues intact. */
+html[data-theme="light"] #guide :is(.rail-title,.daytrip-canonical-head-name,.daytrip-bus-head-name,.airsel-route-title,.airsel-station-label,.stop-name,.airsel-station-zh,.airsel-station-ja,.line-name,.direction,.fact-value,.daytrip-canonical-facts strong){color:#26353B!important;}
+html[data-theme="light"] #guide :is(.timeline-status,.station-count,.fact-label,.airsel-route-subtitle,.stop-description,.leg-note,.footnote,.daytrip-note,.station-label,.airsel-station-ja,.leg-meta .separator){color:#69777D!important;}
+html[data-theme="light"] #guide :is(.timeline-stop .node,.daytrip-timeline-node){border-color:#35454D;}
+html[data-theme="light"] #guide .timeline-stop.start .node{background:#F7F8F7!important;}
+html[data-theme="light"] #guide .timeline-stop.end .node{background:#35454D!important;}
+html[data-theme="light"] #guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark > .daytrip-tra-official-logo{
+ filter:grayscale(1) brightness(0)!important;-webkit-filter:grayscale(1) brightness(0)!important;
+}
+html[data-theme="light"] #guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark > .daytrip-tra-fallback{color:#293B42!important;}
+html[data-theme="light"] #guide .sights-day-trips .airport-route-selector :is(.airsel-ground-choice,.daytrip-bus-route-choice),
+html[data-theme="light"] #guide #airport-route-selector .airsel-ground-choice{
+ color:#405158!important;border-color:#CAD3D7!important;background:transparent!important;
+}
+html[data-theme="light"] #guide :is(.airsel-ground-choice,.daytrip-bus-route-choice)[aria-pressed="true"]{
+ color:#FFFFFF!important;background:#202F36!important;border-color:#202F36!important;
+}
+html[data-theme="light"] #guide :is(.airsel-ground-choice,.daytrip-bus-route-choice)[aria-pressed="true"] :is(strong,span){color:#FFFFFF!important;}
+html[data-theme="light"] #guide :is(.facts .fact,.daytrip-facts .daytrip-fact,.daytrip-canonical-facts .fact){
+ background:#FFFFFF!important;border-color:#D8E0E3!important;
+}
+html[data-theme="light"] #guide .facts :is(.fact-label,.fact-value){color:#34464D!important;}
+/* Airport input bubbles / interchange button: preserve all positions and motion. */
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields{
+ background:linear-gradient(155deg,#FFFFFF,#F3F6F6 76%)!important;border-color:#D0D8DC!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields::before{background:#91A0A7!important;}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .selrow--origin::after{background:#D7DFE1!important;}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-value,
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-value option{
+ color:#1E3038!important;background:#FFFFFF!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-label{color:#65757C!important;}
+html[data-theme="light"] #guide .airport-route-selector .sel-route-node{
+ border-color:#344750!important;background:#FFFFFF!important;box-shadow:0 0 0 3px #FFFFFF!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .selrow--destination .sel-route-node{background:#344750!important;}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .swap{
+ background:#FFFFFF!important;border-color:#B9C6CC!important;color:#253C47!important;
+ box-shadow:0 0 0 5px #F8FAFA!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .swap:hover{background:#EEF3F5!important;}
+html[data-theme="light"] #guide #airport-route-selector :is(.airsel-ground-details,.route-panel,.airsel-results-inner,.airsel-switcher){border-color:#DAE0E3!important;}
+html[data-theme="light"] #guide :is(.airsel-company-mark,.daytrip-company-mark,.airsel-transport-icon,.rail-title svg,.daytrip-mode-icon){color:#293E48!important;}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-airport-leg-meta img.daytrip-mode-icon{filter:brightness(0)!important;}
+/* Results disclosure and service label were hardcoded white in the dark edition. */
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-disclosure{
+ color:#314249!important;border-top-color:#D4DCDF!important;background:transparent!important;
+}
+html[data-theme="light"] #guide #airport-route-selector .airsel-disclosure-copy strong,
+html[data-theme="light"] #guide #airport-route-selector #airsel-rail-head-name{
+ color:#263941!important;-webkit-text-fill-color:#263941!important;
+}
+html[data-theme="light"] #guide #airport-route-selector .airsel-disclosure-chevron{color:#50636C!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback{color:#293F48!important;}
+/* Sub-route choices: keep contrast in both pressed and ordinary states.
+   Airport/nearby 965/1062, 788/827/taxi and 1815/790 share this element. */
+html[data-theme="light"] #guide .airport-route-selector button.airsel-ground-choice,
+html[data-theme="light"] #guide .sights-day-trips button.daytrip-bus-route-choice{
+  background:#FFFFFF!important;color:#43535B!important;border-color:#CCD5D9!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .airsel-ground-choice :is(strong,span),
+html[data-theme="light"] #guide .sights-day-trips .airsel-ground-choice :is(strong,span){
+  color:#43535B!important;-webkit-text-fill-color:#43535B!important;
+}
+html[data-theme="light"] #guide .sights-day-trips button.airsel-ground-choice[aria-pressed="true"],
+html[data-theme="light"] #guide .airport-route-selector button.airsel-ground-choice[aria-pressed="true"]{
+  background:#E6EFF2!important;color:#243D48!important;border-color:#91A8B2!important;
+}
+html[data-theme="light"] #guide .sights-day-trips button.airsel-ground-choice[aria-pressed="true"] :is(strong,span),
+html[data-theme="light"] #guide .airport-route-selector button.airsel-ground-choice[aria-pressed="true"] :is(strong,span){
+  color:#243D48!important;-webkit-text-fill-color:#243D48!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .airsel-ground-notice{color:#586A72!important;border-color:#D0DADE!important;}
+html[data-theme="light"] #guide .airport-route-selector .airsel-ground-message{color:#586A72!important;}
+html[data-theme="light"] #guide .airport-route-selector .airsel-transport-tab[aria-selected="false"]{
+ color:#526269!important;border-color:#C8D2D7!important;background:transparent!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .airsel-transport-tab[aria-selected="true"]{
+ color:#FFFFFF!important;border-color:#202F36!important;background:#202F36!important;
+}
+/* Keep role of pass, TWAC, caution, venue highlight and blue action links. */
+html[data-theme="light"] #guide details.travel-caution{background:#FFF8E8!important;border-color:#E8D5A7!important;}
+html[data-theme="light"] #guide details.travel-twac{background:#ECF7F1!important;border-color:#BBD8C7!important;}
+html[data-theme="light"] #guide .travel-caution .travel-key-icon{background:#FCEBCB!important;}
+html[data-theme="light"] #guide .travel-twac .travel-key-icon{background:#DBEEE2!important;}
+html[data-theme="light"] #guide :is(.travel-caution,.travel-twac) :is(summary,strong,p,small,span){color:#334447!important;}
+html[data-theme="light"] #guide details.travel-passes{border-color:#CDD5D9!important;background:transparent!important;}
+html[data-theme="light"] #guide .travel-passes > summary .travel-key-icon{background:#EEF2F2!important;}
+html[data-theme="light"] #guide .travel-passes :is(.travel-key-title,.pass-simple-heading h4){color:#243138!important;}
+html[data-theme="light"] #guide .travel-passes :is(.travel-key-subtitle,.pass-simple-item p){color:#69777D!important;}
+html[data-theme="light"] #guide .travel-passes .pass-simple-item{border-color:#DDE2E3!important;}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now,
+html[data-theme="light"] #guide a.external-action-link,
+html[data-theme="light"] #guide .venue-secondary-links a{
+ background:#EAF3FB!important;color:#195E91!important;border-color:#B7D2E8!important;
+}
+html[data-theme="light"] #guide .site-content .venue-tag--featured,
+html[data-theme="light"] #guide .venue-directory-section .venue-tag--featured{
+ color:#815A1B!important;background:#F8EEDB!important;border-color:#DDC79E!important;
+}
+html[data-theme="light"] #guide .venue-directory-section .venue-tag--caution{color:#A94338!important;border-color:#DBB7B3!important;background:#FFF1EF!important;}
+html[data-theme="light"] #guide .venue-directory-section .venue-tag:not(.venue-tag--featured):not(.venue-tag--caution){color:#52636C!important;border-color:#CCD6DA!important;}
+/* Food dictionary drawer follows theme; original green selection remains green. */
+html[data-theme="light"] .food-drawer-trigger{
+ color:#23414A!important;background:#FFFFFF!important;border-color:#CBD4D7!important;
+ box-shadow:0 3px 13px rgba(26,42,52,.12)!important;
+}
+html[data-theme="light"] .food-drawer-trigger::before{opacity:.22;}
+html[data-theme="light"] #guide #food-search.food-drawer{
+ background:#F7F8F7!important;color:#25343A!important;border-left-color:#CBD5D9!important;
+}
+html[data-theme="light"] #guide #food-search .food-drawer-toolbar{
+ background:#F7F8F7!important;border-bottom-color:#DCE2E3!important;
+}
+html[data-theme="light"] #guide #food-search .food-drawer-toolbar-title{color:#5D6D74!important;}
+html[data-theme="light"] #guide #food-search .food-drawer-close{
+ background:#FFFFFF!important;color:#233A44!important;border-color:#CFD9DD!important;
+}
+html[data-theme="light"] #guide #food-search #food-explorer,
+html[data-theme="light"] #guide #food-explorer{
+ color-scheme:light;
+ --page:#F7F8F7;--surface:#FFFFFF;--text:#27363C;
+ --muted:#65757A;--border:#DCE3E2;--soft:#F1F5F3;
+ --accent:#186C53;--accent-faint:#E4F3EC;--focus:#459A7D;
+}
+html[data-theme="light"] #guide #food-explorer mark{background:#CDE8D8!important;color:#16452F!important;}
+html[data-theme="light"] #guide #food-explorer :is(.pill.active,.filter.active){color:#175A45!important;}
+/* The subtle global fixed back-to-top and experimental switch. */
+html[data-theme="light"] .back-top{background:#FFFFFF!important;color:#263A43!important;border:1px solid #C9D4D7!important;box-shadow:0 4px 15px rgba(30,45,50,.10)!important;}
+.theme-preview-toggle{
+ position:fixed;top:calc(14px + env(safe-area-inset-top));right:71px;z-index:121;
+ display:inline-flex;align-items:center;justify-content:center;gap:5px;
+ min-width:77px;min-height:41px;padding:7px 10px;
+ font:700 11px/1.2 -apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;
+ background:rgba(29,31,32,.95);color:#F2F2F2;border:1px solid #535A5D;border-radius:999px;
+ box-shadow:0 3px 12px rgba(0,0,0,.18);cursor:pointer;white-space:nowrap;
+ -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.theme-preview-toggle:hover{filter:brightness(1.08)}
+.theme-preview-toggle:focus-visible{outline:2px solid #398AC0;outline-offset:2px;}
+html[data-theme="light"] .theme-preview-toggle{
+ background:#FFFFFF;color:#253B44;border-color:#C3CED3;
+ box-shadow:0 3px 12px rgba(20,40,50,.10);
+}
+body.food-drawer-open .theme-preview-toggle{opacity:0;pointer-events:none;}
+@media(max-width:355px){.theme-preview-toggle{min-width:71px;right:69px;padding:7px 8px;font-size:10.5px;}}
+@media(prefers-reduced-motion:reduce){.theme-preview-toggle{transition:none;}}
