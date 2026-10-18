@@ -4705,3 +4705,96 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 22px,#000 calc(100% - 30px),transparent 100%);
   mask-image:linear-gradient(to right,transparent 0%,#000 22px,#000 calc(100% - 30px),transparent 100%);
 }
+
+
+/* =================== v30.9.10 — responsive, animated four-destination bar =================== */
+/* Keep the original information hierarchy. Reduce the nonessential gaps above
+   transport and let the four destination bubbles become a compact toolbar while
+   the visitor is consulting a route. No DOM replacements or hidden labels. */
+#guide .sights-day-trips .daytrip-destination-panel {
+  margin-top:8px!important; /* originally 12px */
+}
+#guide .sights-day-trips .daytrip-destination-panel-heading {
+  padding-top:10px!important;padding-bottom:8px!important;
+}
+#guide .sights-day-trips .daytrip-destination-panel > .destination-body {
+  padding-top:7px!important;
+}
+#guide .sights-day-trips .tab-pills.daytrip-transport {
+  margin-top:9px!important;margin-bottom:9px!important;
+}
+/* Use absolute placement for icon and label in both states so their position
+   can be smoothly interpolated without a sudden flex-direction jump. */
+#guide .sights-day-trips .daytrip-destination-button {
+  position:relative!important;
+  height:75px;min-height:75px;
+  overflow:hidden;
+  transition:height .38s cubic-bezier(.22,.8,.23,1),
+             min-height .38s cubic-bezier(.22,.8,.23,1),
+             padding .38s cubic-bezier(.22,.8,.23,1),
+             border-radius .38s cubic-bezier(.22,.8,.23,1),
+             background .16s ease,color .16s ease,border-color .16s ease!important;
+}
+#guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon {
+  position:absolute!important;top:36%;left:50%;
+  transform:translate(-50%,-50%);
+  width:27px;height:27px;flex:none;
+  transition:top .38s cubic-bezier(.22,.8,.23,1),
+             left .38s cubic-bezier(.22,.8,.23,1),
+             width .38s cubic-bezier(.22,.8,.23,1),
+             height .38s cubic-bezier(.22,.8,.23,1),
+             font-size .38s cubic-bezier(.22,.8,.23,1)!important;
+}
+#guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon img {
+  width:26px;height:26px;
+  transition:width .38s cubic-bezier(.22,.8,.23,1),
+             height .38s cubic-bezier(.22,.8,.23,1)!important;
+}
+#guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-name {
+  position:absolute!important;top:74%;left:50%;
+  transform:translate(-50%,-50%);white-space:nowrap;
+  transition:top .38s cubic-bezier(.22,.8,.23,1),
+             left .38s cubic-bezier(.22,.8,.23,1),
+             font-size .38s cubic-bezier(.22,.8,.23,1)!important;
+}
+/* The compact state is intentionally mobile-only: large desktop destination
+   cards retain their established layout. */
+@media(max-width:600px){
+/* The compact row is about half the expanded 75px height. */
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button {
+  height:39px!important;min-height:39px!important;
+  padding:0 1px!important;border-radius:10px!important;
+}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-icon {
+  top:50%;left:23%;width:19px;height:19px;font-size:18px;
+}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-icon img {
+  width:19px!important;height:19px!important;
+}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-name {
+  top:50%;left:67%;font-size:11px!important;
+}
+}
+@media(max-width:365px){
+  #guide .sights-day-trips .daytrip-destination-button {height:70px;min-height:70px;}
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button {
+    height:38px!important;min-height:38px!important;
+  }
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-icon {
+    left:22%;width:17px;height:17px;font-size:16px;
+  }
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-icon img {
+    width:17px!important;height:17px!important;
+  }
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-name {
+    left:66%;font-size:10.5px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #guide .sights-day-trips .daytrip-destination-button,
+  #guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon,
+  #guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon img,
+  #guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-name {
+    transition:none!important;
+  }
+}

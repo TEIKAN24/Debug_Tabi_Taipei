@@ -2229,3 +2229,51 @@ update();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restore,{once:true});
   else restore();
 })();
+
+
+/* =================== JS 16: daytrip-compact-destination-toolbar-v30.9.10 =================== */
+(()=>{
+  'use strict';
+  const section=document.querySelector('#guide .sights-day-trips');
+  if(!section)return;
+  const compact=()=>section.classList.add('daytrip-mode-compact');
+  const expand=()=>section.classList.remove('daytrip-mode-compact');
+  // Capture destination clicks before the existing one-of-four controller runs.
+  // Works for pointer and keyboard activation, including closing an open card.
+  section.addEventListener('click',e=>{
+    if(e.target.closest('.daytrip-destination-buttons > .daytrip-destination-button')){
+      expand();return;
+    }
+    // Selecting a mode or route is deliberate transport interaction.
+    if(e.target.closest('.daytrip-transport-tab, .daytrip-bus-route-choice, .daytrip-railbus-choice, .daytrip-bus-rail-choice, .daytrip-railbus-route-choice')){
+      compact();
+    }
+  },true);
+  // On mobile, route panels also support horizontal swipe navigation.
+  // Compact only after an actual horizontal gesture; ordinary vertical
+  // scrolling through the timetable must not trigger a layout change.
+  let gesture=null;
+  section.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1 || !e.target.closest('.daytrip-destination-panel .tab-panels')){
+      gesture=null;return;
+    }
+    gesture={x:e.touches[0].clientX,y:e.touches[0].clientY};
+  },{passive:true});
+  section.addEventListener('touchmove',e=>{
+    if(!gesture||e.touches.length!==1)return;
+    const dx=e.touches[0].clientX-gesture.x;
+    const dy=e.touches[0].clientY-gesture.y;
+    if(Math.abs(dx)>24&&Math.abs(dx)>Math.abs(dy)*1.3){
+      compact();gesture=null;
+    }else if(Math.abs(dy)>24&&Math.abs(dy)>Math.abs(dx))gesture=null;
+  },{passive:true});
+  section.addEventListener('touchend',()=>{gesture=null;},{passive:true});
+  section.addEventListener('touchcancel',()=>{gesture=null;},{passive:true});
+  // Transport selectors can also be changed by keyboard or programmatically.
+  // Observe selected state rather than assuming only click changes are possible.
+  const selectorButtons=section.querySelectorAll('.daytrip-transport > button[role="tab"]');
+  const selectedObserver=new MutationObserver(records=>{
+    if(records.some(r=>r.target.getAttribute('aria-selected')==='true'))compact();
+  });
+  selectorButtons.forEach(btn=>selectedObserver.observe(btn,{attributes:true,attributeFilter:['aria-selected']}));
+})();
