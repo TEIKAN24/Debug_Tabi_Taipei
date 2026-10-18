@@ -5115,3 +5115,126 @@ html[data-theme="light"] .theme-preview-toggle{
 body.food-drawer-open .theme-preview-toggle{opacity:0;pointer-events:none;}
 @media(max-width:355px){.theme-preview-toggle{min-width:71px;right:69px;padding:7px 8px;font-size:10.5px;}}
 @media(prefers-reduced-motion:reduce){.theme-preview-toggle{transition:none;}}
+
+
+/* ========== v30.9.27 Light-mode polish: five requested details ========== */
+/* Travel caution: remove inner dark warning strip without losing priority. */
+html[data-theme="light"] #guide .travel-caution > .indented > .bulleted-list:first-child{
+  background:#FFF1D5!important;color:#674E25!important;
+}
+html[data-theme="light"] #guide .travel-caution > .indented > .bulleted-list:first-child li{
+  color:#674E25!important;
+}
+/* TWAC: required badge and explanation use light-mode green, not dark-mode surfaces. */
+html[data-theme="light"] #guide .travel-twac .travel-required{
+  background:#D5ECDD!important;border-color:#A8C9B4!important;
+  color:#285C43!important;-webkit-text-fill-color:#285C43!important;
+}
+html[data-theme="light"] #guide .travel-twac .bulleted-list em{
+  background:#DEEFE6!important;color:#315746!important;
+  border:1px solid #CAE3D5!important;
+}
+html[data-theme="light"] #guide .travel-twac .bulleted-list em mark{
+  color:#315746!important;-webkit-text-fill-color:#315746!important;
+  background:transparent!important;box-shadow:none!important;
+}
+/* Airport: no large rectangular fill behind the two round endpoint pickers. */
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields{
+  background:transparent!important;background-image:none!important;
+  border:0!important;box-shadow:none!important;
+}
+/* Nearby destination transport tabs: text + underline only, no selected rectangle. */
+html[data-theme="light"] #guide .sights-day-trips .tab-pills.daytrip-transport{
+  background:transparent!important;border:0!important;
+  border-bottom:1px solid #8F9DA5!important;box-shadow:none!important;
+}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab,
+html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab[aria-selected="false"]{
+  background:transparent!important;color:#69777F!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab[aria-selected="true"],
+html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab[aria-selected="true"]:hover{
+  background:transparent!important;color:#21343E!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab[aria-selected="true"] :is(span,strong,b,small,em){
+  color:#21343E!important;-webkit-text-fill-color:#21343E!important;
+}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .airsel-transport-ink{
+  background:#21343E!important;
+}
+/* Emergency cards: visible outline and readable numbers, labels and action icons. */
+html[data-theme="light"] #guide .emergency-intro{color:#66757C!important;}
+html[data-theme="light"] #guide a.emergency-contact-card,
+html[data-theme="light"] #guide a.emergency-contact-card--support{
+  background:#FFFFFF!important;border:1px solid #C8D3D8!important;
+  color:#263941!important;box-shadow:none!important;
+}
+html[data-theme="light"] #guide a.emergency-contact-card:hover,
+html[data-theme="light"] #guide a.emergency-contact-card:focus-visible{
+  background:#F1F6F8!important;border-color:#819BA8!important;
+}
+html[data-theme="light"] #guide a.emergency-contact-card:focus-visible{outline:2px solid #347B9F!important;}
+html[data-theme="light"] #guide .emergency-card-name,
+html[data-theme="light"] #guide .emergency-phone-number{color:#23363D!important;}
+html[data-theme="light"] #guide .emergency-card-reason,
+html[data-theme="light"] #guide .emergency-support-desc,
+html[data-theme="light"] #guide .emergency-external-icon{color:#64777F!important;}
+html[data-theme="light"] #guide .emergency-card-action,
+html[data-theme="light"] #guide .emergency-support-action{color:#235D79!important;}
+
+
+/* ================= v30.9.28 Light mode finish =================
+   Override ONLY light mode. Keep default dark interface untouched. */
+/* The caution warning is wrapped dynamically by JS into .travel-alert. */
+html[data-theme="light"] #guide .travel-caution .travel-alert{
+  background:#FFF1D8!important;border-color:#DFC696!important;
+  color:#5B4328!important;
+}
+html[data-theme="light"] #guide .travel-caution .travel-alert-label{
+  color:#745126!important;-webkit-text-fill-color:#745126!important;
+}
+html[data-theme="light"] #guide .travel-caution .travel-alert .bulleted-list,
+html[data-theme="light"] #guide .travel-caution .travel-alert li{
+  background:transparent!important;color:#5B4328!important;
+  -webkit-text-fill-color:#5B4328!important;
+}
+/* Airport rail operator marks: original files are grayscale-white on dark.
+   Both the Taipei Metro and Taoyuan Airport MRT marks are charcoal on light. */
+html[data-theme="light"] #guide #airport-route-selector .airsel-company-mark img[data-ready="true"]{
+  filter:grayscale(1) brightness(0)!important;
+  -webkit-filter:grayscale(1) brightness(0)!important;
+  opacity:.88!important;
+}
+/* Airport bus/taxi pictograms use the same pictogram-first vocabulary as
+   the 4 nearby destination buttons. Make the glyph itself monochrome black. */
+html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback.airsel-ground-icon{
+  color:#1F2D34!important;
+  filter:grayscale(1) brightness(0)!important;
+  -webkit-filter:grayscale(1) brightness(0)!important;
+  font-size:23px!important;line-height:1!important;
+}
+/* Keep the airport mode navigation free of light mode's filled active card;
+   the dark typographic highlight and indicator line show the selection. */
+html[data-theme="light"] #guide #airport-route-selector .airsel-transport{
+  background:transparent!important;border-bottom:1px solid #93A1A8!important;
+  box-shadow:none!important;
+}
+html[data-theme="light"] #guide #airport-route-selector .airsel-transport-tab,
+html[data-theme="light"] #guide #airport-route-selector .airsel-transport-tab[aria-selected="false"]{
+  color:#69777F!important;background:transparent!important;
+  border:0!important;box-shadow:none!important;
+}
+html[data-theme="light"] #guide #airport-route-selector .airsel-transport-tab[aria-selected="true"]{
+  color:#21343E!important;background:transparent!important;
+  border:0!important;box-shadow:none!important;
+}
+html[data-theme="light"] #guide #airport-route-selector .airsel-transport-ink{
+  background:#21343E!important;
+}
+/* Airport's input block has no enclosing rectangular background in light. */
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields{
+  background:none!important;background-image:none!important;
+  border:0!important;box-shadow:none!important;
+}
