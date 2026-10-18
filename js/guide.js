@@ -1471,7 +1471,7 @@ function groundUpdate(airport,toCity){
  }else{
    groundMode('タクシー','🚕');
    lines.innerHTML=stop('出発',from,'','start')+
-     groundLeg('タクシー',to+'まで','#BFC1C5','空港の正規タクシー乗り場を利用。道路状況によって時間が変わります')+
+     groundLeg('タクシー',to+'まで','#D9B65F','空港の正規タクシー乗り場を利用。道路状況によって時間が変わります')+
      stop('到着',to,'','end');
    facts(song?'約20分':'約35分','メーター制','なし');
    el('footnote').textContent='所要時間は従来のガイドに掲載した目安です。渋滞・深夜料金・乗降場所によって料金と時間が変動します。';

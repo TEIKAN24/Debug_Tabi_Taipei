@@ -4618,3 +4618,12 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark.logo-unavailable > .daytrip-tra-fallback {
   display:block!important;
 }
+
+/* v30.9 — airport bus fare can wrap inside the three compact fact columns. */
+#guide #airport-route-selector .facts .fact-value,
+#guide .airport-route-selector:not(.daytrip-airport-reuse) .facts .fact-value{
+ white-space:normal!important;overflow-wrap:anywhere;word-break:normal;line-height:1.45;min-width:0;
+}
+/* Same gold route hue for taxi across Airport Access / Jiufen / day trips. */
+#guide{--taipei-taxi-route:#D9B65F;}
+#guide .sights-day-trips .daytrip-bus-route[data-route="taxi"] .timeline-leg[style*="D9B65F"]::before{background:var(--taipei-taxi-route)!important;}
