@@ -4837,3 +4837,79 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
     padding-top:1px!important;
   }
 }
+
+
+/* v30.9.21 — travel pass comparison: compact, K95 monochrome design. */
+#guide details.travel-passes {
+  margin:10px 0 18px; border-radius:12px; overflow:hidden;
+  border:1px solid #454545!important;background:transparent!important;
+}
+#guide details.travel-passes > summary.travel-key-summary {
+  display:flex;align-items:center;gap:11px;min-height:68px;
+  padding:12px 38px 12px 13px;cursor:pointer;
+}
+#guide .travel-passes > summary .travel-key-icon {
+  background:#242424!important;display:grid;place-items:center;
+  width:38px;height:38px;flex:0 0 38px;border-radius:10px;font-size:20px;
+}
+#guide .travel-passes .travel-key-title {color:#f4f4f4!important;}
+#guide .travel-passes .travel-key-subtitle {color:#aaa!important;}
+#guide .travel-passes > .travel-passes-body {padding:2px 14px 16px;margin:0;}
+#guide .travel-passes .pass-intro,
+#guide .travel-passes .pass-caution,
+#guide .travel-passes .pass-updated,
+#guide .travel-passes .pass-featured p,
+#guide .travel-passes .pass-other-funpass p,
+#guide .travel-passes .pass-intercity-copy p {
+  font-size:12px;line-height:1.75;letter-spacing:0;margin:0;color:#cfcfcf!important;
+}
+#guide .travel-passes .pass-intro {margin:5px 0 14px!important;}
+#guide .travel-passes .pass-featured {border-top:1px solid #4a4a4a;padding:13px 0 16px;}
+#guide .travel-passes .pass-type {
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 6px;
+  color:#bcbcbc;font-size:10.5px;font-weight:600;line-height:1.5;
+}
+#guide .travel-passes .pass-emphasis {
+  font-size:10px;border:1px solid #777;color:#efefef;border-radius:99px;
+  line-height:1.5;padding:1px 7px;
+}
+#guide .travel-passes :is(h4,h5) {margin:0;color:#fafafa!important;letter-spacing:0;}
+#guide .travel-passes .pass-featured h4 {font-size:16px;line-height:1.4;margin-bottom:8px;font-weight:750;}
+#guide .travel-passes .pass-featured h4 span {font-size:12px;font-weight:520;color:#c6c6c6;white-space:nowrap;}
+#guide .travel-passes .pass-price-grid {
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0 10px;
+}
+#guide .travel-passes .pass-price-item {
+  min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:58px;padding:8px 3px;gap:4px;
+  border-radius:8px;border:1px solid #414141;
+}
+#guide .travel-passes .pass-price-item span {font-size:10px;color:#aaa;}
+#guide .travel-passes .pass-price-item strong {font-size:clamp(10px,2.8vw,13px);line-height:1.2;font-weight:720;color:#f4f4f4;white-space:nowrap;}
+#guide .travel-passes .pass-caution {font-size:11px!important;color:#aaa!important;margin:0 0 10px!important;}
+#guide .travel-passes a.pass-official-link {font-size:11px!important;min-height:30px;white-space:normal;}
+#guide .travel-passes .pass-other-funpass {
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 12px;align-items:center;
+  border-top:1px solid #313131;border-bottom:1px solid #404040;
+  padding:12px 0;
+}
+#guide .travel-passes .pass-other-funpass > div {flex:1 1 165px;min-width:0;}
+#guide .travel-passes .pass-other-funpass strong {font-size:12px;color:#eee;}
+#guide .travel-passes .pass-other-funpass p {margin-top:4px!important;}
+#guide .travel-passes .pass-intercity {padding:14px 0 0;}
+#guide .travel-passes .pass-intercity > h4 {font-size:13px;font-weight:720;margin-bottom:3px;}
+#guide .travel-passes .pass-intercity-item {
+  display:flex;align-items:flex-start;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;
+  padding:11px 0;border-bottom:1px solid #303030;
+}
+#guide .travel-passes .pass-intercity-copy {flex:1 1 210px;min-width:0;}
+#guide .travel-passes .pass-intercity-copy h5 {font-size:13px;font-weight:730;margin-bottom:5px;}
+#guide .travel-passes .pass-updated {font-size:10.5px!important;color:#999!important;margin-top:11px!important;}
+@media(max-width:360px){
+  #guide .travel-passes > .travel-passes-body {padding-left:11px;padding-right:11px;}
+  #guide .travel-passes .pass-price-grid {gap:4px;}
+  #guide .travel-passes .pass-price-item strong {font-size:10.5px;}
+}
+@media(prefers-reduced-motion:reduce){
+  #guide .travel-passes * {scroll-behavior:auto;}
+}
