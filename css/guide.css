@@ -4812,3 +4812,28 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
     margin-top:5px!important;margin-bottom:6px!important;
   }
 }
+
+
+/* =================== v30.9.17 — route-heading gap reduction (mobile) =================== */
+/* Reduce the unused vertical space above the four destinations' route headings
+   by about 60%. Keep station/timeline spacing and touch target heights intact. */
+@media(max-width:600px){
+  /* Jiufen/Shifen: reduce the full tab-to-title gap from about 31px to 12px. */
+  #guide .sights-day-trips .daytrip-destination-panel .daytrip-transport + .tab-panels > .tab-panel {
+    padding-top:3px!important;
+  }
+  #guide .sights-day-trips .daytrip-destination-panel .tab-pills.daytrip-transport {
+    margin-bottom:4px!important;
+  }
+  /* Applies equally to direct routes in Yehliu and tabbed Jiufen/Shifen. */
+  #guide .sights-day-trips .daytrip-destination-panel .daytrip-option:has(> .daytrip-airport-reuse){
+    margin-top:3px!important;
+  }
+  #guide .sights-day-trips .daytrip-airport-reuse .route-panel {
+    padding-top:2px!important;
+  }
+  /* Keelung has no tab or option wrapper; Yehliu starts directly after heading. */
+  #guide .sights-day-trips .daytrip-destination-panel > .destination-body {
+    padding-top:1px!important;
+  }
+}

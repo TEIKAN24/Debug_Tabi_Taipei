@@ -2244,41 +2244,85 @@ update();
 })();
 
 
-/* =================== JS 16: daytrip-compact-destination-toolbar-v30.9.10 =================== */
+/* =================== JS 16: daytrip-compact-destination-toolbar-v30.9.17 =================== */
 (()=>{
   'use strict';
   const section=document.querySelector('#guide .sights-day-trips');
   if(!section)return;
   const destinationRow=section.querySelector('.daytrip-destination-buttons');
   if(!destinationRow)return;
-  const compact=()=>section.classList.add('daytrip-mode-compact');
-  const expand=()=>section.classList.remove('daytrip-mode-compact');
-  // Keep compact height when switching destinations. Reset only once
-  // the entire four-choice row has left the visible viewport.
-  let visibilityFrame=0;
-  const resetAfterLeavingViewport=()=>{
+  const panels=[...section.querySelectorAll('.daytrip-destination-panel')];
+  const activePanel=()=>panels.find(p=>!p.hidden&&!p.closest('[hidden]'))||null;
+  const visible=panel=>{
+    if(!panel||panel.hidden||panel.closest('[hidden]'))return false;
+    const rect=panel.getBoundingClientRect();
+    return rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<window.innerHeight;
+  };
+  let trackedPanel=null,hasBeenVisible=false,visibilityFrame=0;
+  const expand=()=>{
+    section.classList.remove('daytrip-mode-compact');
+    trackedPanel=null;hasBeenVisible=false;
+  };
+  const syncPanel=()=>{
+    const panel=activePanel();
+    if(panel!==trackedPanel){
+      trackedPanel=panel;
+      hasBeenVisible=visible(panel);
+    }else if(visible(panel)){
+      hasBeenVisible=true;
+    }
+    return panel;
+  };
+  const compact=()=>{
+    section.classList.add('daytrip-mode-compact');
+    syncPanel();
+  };
+  // The route content, not the destination toolbar, determines when the
+  // compact state ends. Keep the toolbar compact while changing destinations.
+  const checkRouteViewport=()=>{
     visibilityFrame=0;
     if(!section.classList.contains('daytrip-mode-compact'))return;
-    const rect=destinationRow.getBoundingClientRect();
-    if(rect.bottom<=0||rect.top>=window.innerHeight||!rect.width||!rect.height)expand();
+    const panel=syncPanel();
+    if(!panel){
+      // A route was folded by the site's outside-viewport controller.
+      expand();return;
+    }
+    if(hasBeenVisible&&!visible(panel))expand();
   };
-  const scheduleVisibilityCheck=()=>{
-    if(!visibilityFrame)visibilityFrame=requestAnimationFrame(resetAfterLeavingViewport);
+  const scheduleCheck=()=>{
+    if(!visibilityFrame)visibilityFrame=requestAnimationFrame(checkRouteViewport);
   };
-  window.addEventListener('scroll',scheduleVisibilityCheck,{passive:true});
-  window.addEventListener('resize',scheduleVisibilityCheck,{passive:true});
-  window.addEventListener('pageshow',scheduleVisibilityCheck);
+  window.addEventListener('scroll',scheduleCheck,{passive:true});
+  window.addEventListener('resize',scheduleCheck,{passive:true});
+  window.addEventListener('pageshow',scheduleCheck);
+  // The automatic fold controller hides panels after they leave the viewport.
+  // Observe that event too, in case no further scroll event occurs.
+  const panelObserver=new MutationObserver(scheduleCheck);
+  panels.forEach(p=>panelObserver.observe(p,{attributes:true,attributeFilter:['hidden']}));
+
   section.addEventListener('click',e=>{
+    const destination=e.target.closest('.daytrip-destination-buttons > .daytrip-destination-button');
+    if(destination){
+      // Clicking the already-selected destination closes it: expand now.
+      // Choosing a different destination must NOT expand the toolbar.
+      if(destination.getAttribute('aria-expanded')==='true')expand();
+      else if(section.classList.contains('daytrip-mode-compact')){
+        // The destination switch handler runs after this capturing listener.
+        // Rebind our viewport observation to the newly opened panel.
+        queueMicrotask(()=>{syncPanel();scheduleCheck();});
+      }
+      return;
+    }
     if(e.target.closest('.daytrip-transport-tab, .daytrip-bus-route-choice, .daytrip-railbus-choice, .daytrip-bus-rail-choice, .daytrip-railbus-route-choice')){
       compact();
     }
   },true);
+
   // On mobile, route panels also support horizontal swipe navigation.
-  // Compact only after an actual horizontal gesture; ordinary vertical
-  // scrolling through the timetable must not trigger a layout change.
+  // Do not compact on an ordinary vertical page scroll.
   let gesture=null;
   section.addEventListener('touchstart',e=>{
-    if(e.touches.length!==1 || !e.target.closest('.daytrip-destination-panel .tab-panels')){
+    if(e.touches.length!==1||!e.target.closest('.daytrip-destination-panel .tab-panels')){
       gesture=null;return;
     }
     gesture={x:e.touches[0].clientX,y:e.touches[0].clientY};
@@ -2293,8 +2337,7 @@ update();
   },{passive:true});
   section.addEventListener('touchend',()=>{gesture=null;},{passive:true});
   section.addEventListener('touchcancel',()=>{gesture=null;},{passive:true});
-  // Transport selectors can also be changed by keyboard or programmatically.
-  // Observe selected state rather than assuming only click changes are possible.
+  // Maintain the established keyboard/programmatic tab-switch behavior.
   const selectorButtons=section.querySelectorAll('.daytrip-transport > button[role="tab"]');
   const selectedObserver=new MutationObserver(records=>{
     if(records.some(r=>r.target.getAttribute('aria-selected')==='true'))compact();
