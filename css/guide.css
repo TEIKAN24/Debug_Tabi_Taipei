@@ -5289,7 +5289,7 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback
   display:block;width:20px;height:20px;color:inherit;stroke:currentColor;fill:none;
 }
 #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{
-  font-size:15.75px;line-height:1.23;letter-spacing:-.025em;gap:3px;
+  font-size:14.175px;line-height:1.23;letter-spacing:-.025em;gap:3px;
 }
 #guide .sights-day-trips .route-panel .rail-title{align-items:flex-start;}
 #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{
@@ -5297,7 +5297,7 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback
 }
 @media(max-width:355px){
   #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{
-    font-size:14.4px;letter-spacing:-.035em;
+    font-size:12.96px;letter-spacing:-.035em;
   }
 }
 
@@ -5360,7 +5360,7 @@ html[data-theme="light"] #guide .sights-day-trips .daytrip-inline-accordion .day
   border-bottom-color:#E0E5E7!important;
 }
 html[data-theme="light"] .hero .eyebrow{
-  color:#425D66!important;-webkit-text-fill-color:#425D66!important;
+  color:#B3B3B3!important;-webkit-text-fill-color:#B3B3B3!important;
 }
 html[data-theme="light"] .hero .eyebrow .ta{
   color:#167354!important;-webkit-text-fill-color:#167354!important;

@@ -2453,3 +2453,69 @@ update();
     tabs.forEach(tab=>observer.observe(tab,{attributes:true,attributeFilter:['aria-selected']}));
   });
 })();
+
+
+/* =================== JS 18: daytrip-supplement-exclusive-reset-v30.9.33 =================== */
+(()=>{
+  'use strict';
+  const section=document.querySelector('#guide .sights-day-trips');
+  if(!section)return;
+  const folds=[...section.querySelectorAll('details.daytrip-inline-accordion')];
+  const panels=[...section.querySelectorAll('.daytrip-destination-panel')];
+  if(!folds.length||!panels.length)return;
+  const closeFolds=scope=>{
+    if(!scope)return;
+    scope.querySelectorAll('details.daytrip-inline-accordion[open]').forEach(detail=>{
+      detail.open=false;
+    });
+  };
+  const closeOtherFolds=detail=>{
+    const panel=detail.closest('.daytrip-destination-panel');
+    if(!panel)return;
+    panel.querySelectorAll('details.daytrip-inline-accordion[open]').forEach(other=>{
+      if(other!==detail)other.open=false;
+    });
+  };
+  // The two supplements reside in separate <section> wrappers, so the
+  // default direct-sibling <details> rule does not make them exclusive.
+  // Close the sibling before opening to avoid a height/scroll jump.
+  section.addEventListener('click',event=>{
+    const summary=event.target.closest('details.daytrip-inline-accordion > summary');
+    if(summary && !summary.parentElement.open){
+      closeOtherFolds(summary.parentElement);
+    }
+    // A new destination or transit tab is a new page, not the continuation
+    // of the earlier supplemental text. Re-enter with every group folded.
+    if(event.target.closest('.daytrip-destination-buttons > .daytrip-destination-button, .daytrip-transport > .daytrip-transport-tab')){
+      closeFolds(section);
+    }
+  },true);
+  // Keep the rule for keyboard, script-driven or restored <details> opening.
+  folds.forEach(detail=>detail.addEventListener('toggle',()=>{
+    if(detail.open)closeOtherFolds(detail);
+  }));
+  // Also close when the site changes destinations or primary tabs without
+  // a mouse/touch click (swipe, keyboard and existing programmatic switches).
+  const observer=new MutationObserver(records=>{
+    for(const record of records){
+      if(record.attributeName==='hidden' && record.target.hidden){
+        closeFolds(record.target);
+      }else if(record.attributeName==='aria-selected' && record.target.getAttribute('aria-selected')==='true'){
+        closeFolds(record.target.closest('.daytrip-destination-panel'));
+      }
+    }
+  });
+  section.querySelectorAll('.daytrip-destination-panel, .daytrip-destination-panel .tab-panel').forEach(panel=>
+    observer.observe(panel,{attributes:true,attributeFilter:['hidden']})
+  );
+  section.querySelectorAll('.daytrip-transport > .daytrip-transport-tab').forEach(tab=>
+    observer.observe(tab,{attributes:true,attributeFilter:['aria-selected']})
+  );
+  // Leaving the main category (or using a home navigation bubble) folds the
+  // supplements so they are never unexpectedly open when visitors return.
+  document.addEventListener('click',event=>{
+    if(event.target.closest('.quick-nav > .nav-button, #guide .root-accordion > summary')){
+      closeFolds(section);
+    }
+  },true);
+})();
