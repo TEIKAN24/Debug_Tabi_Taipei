@@ -1669,6 +1669,13 @@ update();
   if(!isTouchDevice)return; // Desktop visitors continue to open Google Maps in a new tab.
   // Mobile webviews frequently suppress new tabs. Use an ordinary navigation instead.
   for(const a of document.querySelectorAll('#guide a[href^="https://maps.app.goo.gl/"]')){
+    const original=a.getAttribute('href');
+    const place=(a.textContent||'').replace(/\s+/g,' ').trim();
+    // Google Maps URLs without short-link redirects work better inside mobile browsers.
+    // Retain the original pinpoint short link for desktop and future reference.
+    if(!place)continue;
+    a.dataset.originalMapsUrl=original;
+    a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(place+' 台湾');
     a.target='_self';
   }
 })();
