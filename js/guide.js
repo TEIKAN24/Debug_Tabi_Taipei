@@ -1764,20 +1764,25 @@ update();
     const watch=new MutationObserver(update);
     list.querySelectorAll(':scope > button.tab-pill').forEach(btn=>watch.observe(btn,{attributes:true,attributeFilter:['aria-selected']}));
   });
-  // Airport bus mode: one route-panel, with selectable 965 / 1062 summaries.
-  const bus=section.querySelector('.daytrip-bus-airport-style');
-  if(bus){
+  // Reuse the Jiufen 965/1062 selector for each multi-route segment.
+  // Scope every selector independently: Jiufen direct bus, Jiufen rail+bus, Yehliu bus.
+  section.querySelectorAll('.daytrip-bus-airport-style').forEach(bus=>{
     const buttons=[...bus.querySelectorAll('.daytrip-bus-route-choice')];
     const routes=[...bus.querySelectorAll('.daytrip-bus-route')];
     const facts=[...bus.querySelectorAll('.daytrip-bus-route-facts')];
+    if(buttons.length<2 || routes.length<2)return;
     function choose(id){
       buttons.forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.route===id)));
-      routes.forEach(el=>{const on=el.dataset.route===id;el.hidden=!on;if(!on)el.querySelectorAll('.timeline').forEach(reset);});
+      routes.forEach(el=>{
+        const on=el.dataset.route===id;
+        el.hidden=!on;
+        if(!on)el.querySelectorAll('.timeline').forEach(reset);
+      });
       facts.forEach(el=>{el.hidden=el.dataset.route!==id;});
       scan(true);
     }
     buttons.forEach(btn=>btn.addEventListener('click',()=>choose(btn.dataset.route)));
-  }
+  });
   scan();
 })();
 
