@@ -1846,6 +1846,9 @@ update();
         if(!on)el.querySelectorAll('.timeline').forEach(reset);
       });
       facts.forEach(el=>{el.hidden=el.dataset.route!==id;});
+      bus.querySelectorAll('.rail-title .daytrip-route-head-meta[data-route]').forEach(el=>{
+        el.hidden=el.dataset.route!==id;
+      });
       scan(true);
     }
     buttons.forEach(btn=>btn.addEventListener('click',()=>choose(btn.dataset.route)));

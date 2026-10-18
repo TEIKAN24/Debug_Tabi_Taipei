@@ -5238,3 +5238,39 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields{
   background:none!important;background-image:none!important;
   border:0!important;box-shadow:none!important;
 }
+
+
+/* ========== v30.9.29: Light-mode surface fixes & daytrip route hierarchy ========== */
+/* Airport selector: the selects themselves were still opaque white; the bubbles stay outline-only. */
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields :is(.sel-choice-bubble,.sel-value){
+ background:transparent!important;background-image:none!important;box-shadow:none!important;
+}
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .sel-choice-bubble{border-color:#BECAD0!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .sel-choice-bubble:focus-within{background:#EDF3F4!important;border-color:#566F7B!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .sel-value{color:#233941!important;-webkit-text-fill-color:#233941!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .selrow.is-empty .sel-value{color:#667981!important;-webkit-text-fill-color:#667981!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .chev{border-color:#536770!important;}
+/* Food & drink / night market nested category headings need dark text on the unfilled card. */
+html[data-theme="light"] #guide .venue-directory-section:not(.area-directory-section) .tab-panel details.nested-accordion > summary,
+html[data-theme="light"] #guide .venue-directory-section:not(.area-directory-section) .tab-panel details.nested-accordion > summary :is(span,strong,b,small,em,h4){
+ color:#263941!important;-webkit-text-fill-color:#263941!important;
+}
+html[data-theme="light"] #guide .venue-directory-section:not(.area-directory-section) .tab-panel details.nested-accordion > summary :is(.venue-row-index,.night-market-note,.venue-tag){color:#667981!important;}
+/* Subroute travel costs / time share the upper-right title baseline, rather than being repeated below the map. */
+#guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{
+ margin-left:auto;align-self:flex-start;flex:0 0 auto;min-width:0;
+ display:flex;flex-direction:column;align-items:flex-end;gap:2px;
+ font-size:10.5px;font-weight:670;line-height:1.3;text-align:right;
+ color:#D4D4D4;white-space:nowrap;
+}
+#guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta[hidden]{display:none!important;}
+#guide .sights-day-trips .route-panel .rail-title :is(.daytrip-bus-head-name,.daytrip-canonical-head-name){min-width:0;flex:1 1 auto;}
+html[data-theme="light"] #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{color:#4E636D!important;}
+/* Six primary navigation buttons: keep delicate color wash but remove solid top accent bar. */
+html[data-theme="light"] .quick-nav > .nav-button:nth-child(n),
+html[data-theme="light"] .quick-nav > .nav-button:nth-child(n):hover{
+ border-top:1px solid #D7DDE0!important;
+}
+@media(max-width:355px){
+ #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{font-size:9.6px;letter-spacing:-.02em;}
+}
