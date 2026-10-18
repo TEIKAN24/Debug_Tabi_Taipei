@@ -5368,3 +5368,56 @@ html[data-theme="light"] .hero .eyebrow .ta{
 @media (prefers-reduced-motion:reduce){
  #guide .sights-day-trips .daytrip-inline-accordion > summary::after{transition:none!important;}
 }
+
+/* ===================== v30.9.34: Food drawer light-theme contrast and Safari viewport ===================== */
+/* Restore the original mint accent while retaining the visitor-approved K30 neutral text. */
+html[data-theme="light"] .hero .eyebrow .ta{
+  color:#83D3B0!important;-webkit-text-fill-color:#83D3B0!important;
+}
+/* Preserve a distinct outline for the search, search chips, difficulty/category tabs,
+   list separators, and food-result controls without reintroducing heavy cards. */
+html[data-theme="light"] #guide #food-search #food-explorer .search-shell{
+  background:#FFFFFF!important;border:1.5px solid #B6C5C6!important;
+  box-shadow:none!important;
+}
+html[data-theme="light"] #guide #food-search #food-explorer .search-shell:focus-within{
+  border-color:#3D9373!important;
+  box-shadow:0 0 0 2px rgba(42,141,103,.13)!important;
+}
+html[data-theme="light"] #guide #food-search #food-explorer .quick button{
+  border:1px solid #B9C7C9!important;background:#FBFCFB!important;
+  color:#4A6066!important;
+}
+html[data-theme="light"] #guide #food-search #food-explorer .quick button:focus-visible{
+  border-color:#4D997D!important;
+}
+html[data-theme="light"] #guide #food-search #food-explorer .filters .pill{
+  border:1px solid #B9C8C9!important;background:#FAFBFA!important;
+  color:#40575D!important;
+}
+html[data-theme="light"] #guide #food-search #food-explorer .filters .pill.active{
+  background:#E1F2E9!important;border-color:#9AD8BD!important;color:#195B43!important;
+}
+html[data-theme="light"] #guide #food-search #food-explorer .results-head{
+  border-bottom:1px solid #BDC9CA!important;
+}
+html[data-theme="light"] #guide #food-search #food-explorer .result{
+  border-bottom:1px solid #D2DCDD!important;
+}
+/* On iOS, a dark fixed viewport backdrop can tint both Safari browser bars.
+   Keep the off-canvas left page muted *on its own layer* instead, so the
+   appearance of the top and bottom chrome stays consistent with the drawer. */
+@media(max-width:599px){
+  html[data-theme="light"] body.food-drawer-open .food-drawer-backdrop{
+    background:transparent!important;
+  }
+  html[data-theme="light"] body.food-drawer-open > .hero,
+  html[data-theme="light"] body.food-drawer-open #guide > .divider,
+  html[data-theme="light"] body.food-drawer-open #guide > .page-body,
+  html[data-theme="light"] body.food-drawer-open > footer{
+    filter:brightness(.78)!important;
+  }
+  html[data-theme="light"] body.food-drawer-open #guide #food-search.food-drawer{
+    background:#F7F8F7!important;
+  }
+}

@@ -2519,3 +2519,95 @@ update();
     }
   },true);
 })();
+
+/* =================== JS 19: user-gesture-major-section-near-snap-v30.9.34 =================== */
+(()=>{
+  'use strict';
+  // Snap near top-level guide headings after *manual* viewport scrolling only.
+  // Never snap scrollable drawers, inner results, tabs, or programmatic navigation.
+  const selectors=[
+    '#top',
+    '#guide .page-body > h2:not(.emergency-section-title)',
+    '#guide .page-body > .airport-access-subheading',
+    '#guide .page-body > details.venue-directory-section > summary .accordion-category-heading',
+    '#guide .page-body > .sights-day-trips > h3'
+  ].join(',');
+  const getHeadings=()=>[...document.querySelectorAll(selectors)]
+    .filter(el=>el.getClientRects().length && !el.closest('[hidden]'));
+  const hasNestedScroller=target=>{
+    let node=target instanceof Element?target:null;
+    while(node && node!==document.body){
+      if(node.matches('#food-search, #results, .tab-panel, .area-category-list')){
+        const cs=getComputedStyle(node);
+        if(node.scrollHeight>node.clientHeight+12 && /(auto|scroll)/.test(cs.overflowY))return true;
+      }
+      node=node.parentElement;
+    }
+    return false;
+  };
+  let armed=false,touching=false,moving=false,scrollTimer=0,lastGesture=0;
+  let snapBusyUntil=0;
+  const stop=()=>{armed=false;moving=false;clearTimeout(scrollTimer);};
+  const blocked=target=>{
+    if(document.body.classList.contains('food-drawer-open') ||
+       document.body.classList.contains('food-swipe-active'))return true;
+    const el=target instanceof Element?target:null;
+    return !!(el && (el.closest('a, button, summary, input, textarea, select, [role="tab"], [contenteditable="true"]') || hasNestedScroller(el)));
+  };
+  function snap(){
+    if(!armed || touching || performance.now()<snapBusyUntil || blocked(null))return;
+    stop();
+    const emergency=document.querySelector('#guide .emergency-section-title');
+    const er=emergency?.getBoundingClientRect();
+    if(er && er.top<innerHeight*.7 && er.bottom>=0)return;
+    if(document.documentElement.scrollHeight-scrollY-innerHeight<130)return;
+    const targetY=22;
+    const candidates=getHeadings().map(el=>({el,rect:el.getBoundingClientRect()}))
+      .filter(x=>x.rect.height>0 && x.rect.bottom>=-8 && x.rect.top<=innerHeight*.58);
+    if(!candidates.length)return;
+    const nearest=candidates.reduce((a,b)=>Math.abs(a.rect.top-targetY)<=Math.abs(b.rect.top-targetY)?a:b);
+    // A long route or open directory is not a slide: don't jump several screens
+    // back to a heading that the visitor has already finished reading.
+    if(Math.abs(nearest.rect.top-targetY)>Math.min(290,Math.max(130,innerHeight*.43)))return;
+    const destination=Math.max(0,scrollY+nearest.rect.top-targetY);
+    if(Math.abs(destination-scrollY)<6)return;
+    snapBusyUntil=performance.now()+480;
+    scrollTo({top:destination,behavior:'instant'});
+  }
+  function schedule(){
+    clearTimeout(scrollTimer);
+    if(!armed || touching)return;
+    scrollTimer=setTimeout(snap,185); // Safari fallback when scrollend is unavailable.
+  }
+  function enable(){
+    if(performance.now()<snapBusyUntil)return;
+    armed=true;moving=false;lastGesture=performance.now();
+  }
+  document.addEventListener('touchstart',event=>{
+    if(event.touches.length!==1 || blocked(event.target))return;
+    touching=true;enable();
+  },{passive:true,capture:true});
+  document.addEventListener('touchend',()=>{
+    if(!touching)return;
+    touching=false;
+    if(armed && moving)schedule();else stop();
+  },{passive:true,capture:true});
+  document.addEventListener('touchcancel',()=>{touching=false;stop();},{passive:true,capture:true});
+  window.addEventListener('wheel',event=>{
+    if(Math.abs(event.deltaY)<Math.abs(event.deltaX)*1.2 || blocked(event.target))return;
+    enable();
+  },{passive:true});
+  window.addEventListener('scroll',()=>{
+    if(!armed)return;
+    moving=true;
+    if(!touching)schedule();
+  },{passive:true});
+  window.addEventListener('scrollend',()=>{
+    if(armed && !touching && moving){clearTimeout(scrollTimer);snap();}
+  },{passive:true});
+  // A direct interaction or route animation invalidates pending manual snapping.
+  document.addEventListener('click',event=>{
+    if(event.target.closest('a, button, summary, [role="tab"]'))stop();
+  },true);
+  window.addEventListener('pagehide',stop);
+})();
