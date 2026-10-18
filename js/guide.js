@@ -1952,9 +1952,39 @@ update();
       if(now===prior)return;
       const old=prior;prior=now;
       const panel=panels[now];
+      const previous=panels[old];
       cancelAnimationFrame(enterFrame);
       panels.forEach(p=>p.classList.remove('daytrip-switch-enter'));
-      if(reduceMotion.matches||panel.hidden||!list.getClientRects().length)return;
+      const canAnimate=!reduceMotion.matches&&!panel.hidden&&!!list.getClientRects().length;
+      if(!canAnimate)return;
+      const wrap=content;
+      const oldGhost=wrap.querySelector(':scope > .daytrip-switch-ghost');
+      if(oldGhost)oldGhost.remove();
+      const oldHeight=(previous&&previous.scrollHeight)||0;
+      const newHeight=panel.scrollHeight||0;
+      if(oldHeight||newHeight)wrap.style.minHeight=Math.max(oldHeight,newHeight)+'px';
+      if(previous){
+        const ghost=previous.cloneNode(true);
+        ghost.removeAttribute('id');
+        ghost.removeAttribute('hidden');
+        ghost.removeAttribute('aria-labelledby');
+        ghost.removeAttribute('role');
+        ghost.setAttribute('aria-hidden','true');
+        ghost.classList.remove('daytrip-switch-enter');
+        ghost.classList.add('daytrip-switch-ghost');
+        ghost.style.setProperty('--daytrip-exit-to',now>old?'-56px':'56px');
+        wrap.classList.add('is-switching');
+        wrap.appendChild(ghost);
+        const clearGhost=()=>{
+          ghost.remove();
+          if(!wrap.querySelector('.daytrip-switch-ghost')){
+            wrap.classList.remove('is-switching');
+            wrap.style.minHeight='';
+          }
+        };
+        ghost.addEventListener('animationend',clearGhost,{once:true});
+        window.setTimeout(clearGhost,420);
+      }
       panel.style.setProperty('--daytrip-enter-from',now>old?'68px':'-68px');
       // Newly unhidden panels must be painted once before entrance begins on iOS.
       enterFrame=requestAnimationFrame(()=>{
@@ -1962,6 +1992,15 @@ update();
         void panel.offsetWidth;
         panel.classList.add('daytrip-switch-enter');
       });
+      const clearMinHeight=(e)=>{
+        if(e.target!==panel||e.animationName!=='daytrip-slide-enter')return;
+        panel.removeEventListener('animationend',clearMinHeight);
+        if(!wrap.querySelector('.daytrip-switch-ghost'))wrap.style.minHeight='';
+      };
+      panel.addEventListener('animationend',clearMinHeight);
+      window.setTimeout(()=>{
+        if(!wrap.querySelector('.daytrip-switch-ghost'))wrap.style.minHeight='';
+      },560);
     }
     const observer=new MutationObserver(animateSelection);
     tabs.forEach(t=>observer.observe(t,{attributes:true,attributeFilter:['aria-selected']}));

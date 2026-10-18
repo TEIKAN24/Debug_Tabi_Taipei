@@ -4553,6 +4553,25 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   display:block;width:20px;height:20px;
 }
 
+#guide .sights-day-trips .daytrip-tra-mark{overflow:visible;width:22px;height:22px;}
+#guide .sights-day-trips .daytrip-tra-mark .daytrip-tra-vector{display:block!important;width:20px;height:20px;aspect-ratio:1/1;shape-rendering:geometricPrecision;transform:none!important;}
+#guide .daytrip-destination-button-icon .yehliu-icon{display:block;width:26px;height:26px;object-fit:contain;filter:none!important;}
+
+@keyframes daytrip-slide-exit{
+ from{opacity:.9;transform:translate3d(0,0,0)}
+ to{opacity:0;transform:translate3d(var(--daytrip-exit-to,-56px),0,0)}
+}
+#guide .sights-day-trips .daytrip-destination-panel .tab-panels{position:relative;overflow:hidden;}
+#guide .sights-day-trips .daytrip-destination-panel .tab-panels.is-switching > .tab-panel{position:relative;z-index:1;}
+#guide .sights-day-trips .daytrip-destination-panel .tab-panels > .tab-panel.daytrip-switch-ghost{
+ position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;
+ animation:daytrip-slide-exit 360ms cubic-bezier(.25,.74,.22,1) both!important;
+ will-change:transform,opacity;
+}
+@media(prefers-reduced-motion:reduce){
+ #guide .sights-day-trips .daytrip-destination-panel .tab-panels > .tab-panel.daytrip-switch-ghost{animation:none!important;will-change:auto;}
+}
+
 /* v30.7 — consistent outbound reservation / official-link pill */
 #guide a.external-action-link,
 #guide .venue-secondary-links a {
