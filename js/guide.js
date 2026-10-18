@@ -2127,7 +2127,7 @@ update();
 })();
 
 
-/* =================== JS 14: airport-and-daytrip-result-focus-v30.9.4 =================== */
+/* =================== JS 14: airport-and-daytrip-result-focus-v30.9.18 =================== */
 (() => {
   'use strict';
   const section=document.querySelector('#guide .sights-day-trips');
@@ -2157,13 +2157,31 @@ update();
       });
     },80);
   }
+  const cancelPendingFocus=()=>{
+    clearTimeout(focusTimer);
+    cancelCorrection();
+    cancelAnimationFrame(focusFrame);
+    ++focusVersion;
+  };
+  // Capture BEFORE the destination switcher changes aria-expanded. Previously
+  // this handler ran on bubble, mistook the newly opened panel for an initial
+  // opening, and scrolled the reader back to the four-place toolbar on EVERY
+  // destination switch. The scroll correction could even fire 960ms later.
   section.addEventListener('click',event=>{
-    const destination=event.target.closest('.daytrip-destination-button');
+    const destination=event.target.closest('.daytrip-destination-buttons > .daytrip-destination-button');
     if(destination){
-      // The destination row remains visible for switching between all four places.
-      // Do not jump on closing an already open panel.
-      if(destination.getAttribute('aria-expanded')==='true')
+      const alreadyOpen=!!section.querySelector('.daytrip-destination-buttons > .daytrip-destination-button[aria-expanded="true"]');
+      if(alreadyOpen){
+        // Switch to a different place, or fold the current one: keep the
+        // current viewport, and cancel a previous smooth/delayed alignment.
+        cancelPendingFocus();
+        // Stop any in-flight smooth scroll at its current position without
+        // initiating a new scrolling animation.
+        window.scrollTo({top:window.scrollY,behavior:'instant'});
+      }else{
+        // Preserve the established focus only for the FIRST route opening.
         focusAt(section.querySelector('.daytrip-destination-buttons'),100);
+      }
       return;
     }
     const mode=event.target.closest('.daytrip-transport-tab');
@@ -2183,7 +2201,7 @@ update();
       ++focusVersion;
       return;
     }
-  });
+  },true);
 })();
 
 
