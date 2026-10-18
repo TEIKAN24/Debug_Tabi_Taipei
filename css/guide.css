@@ -5421,3 +5421,55 @@ html[data-theme="light"] #guide #food-search #food-explorer .result{
     background:#F7F8F7!important;
   }
 }
+
+/* =================== CSS 46: v30.9.35 Safari search + travel light refinements =================== */
+/* The TWAC application instruction is ordinary text following the official-site link.
+   It inherited a very light dark-theme text color from the original Notion li. */
+html[data-theme="light"] #guide .travel-twac .bulleted-list > li {
+  color:#304840!important;
+  -webkit-text-fill-color:#304840!important;
+}
+html[data-theme="light"] #guide .travel-twac .travel-twac-link {
+  background:#DDEEE4!important;border-color:#A9CEBB!important;
+  color:#19583E!important;-webkit-text-fill-color:#19583E!important;
+}
+/* Topic illustration squares in '旅行前に知っておきたいこと' should not remain
+   dark charcoal in the light theme. */
+html[data-theme="light"] #guide .travel-caution .travel-topic-icon {
+  background:#E9EEE9!important;
+  border:1px solid #D7E0DB!important;
+  color:#293C3D!important;
+}
+/* A fixed/filtered root surface can be sampled by iOS Safari's translucent
+   browser chrome, producing gray bands above and below the light dictionary.
+   In light mode keep both the page underneath and the drawer light, and use
+   spatial motion + the narrow drawer shadow for separation instead of dimming. */
+@media (max-width:599px) {
+  html[data-theme="light"]:has(body.food-drawer-open),
+  html[data-theme="light"]:has(body.food-swipe-active){
+    background:#F7F8F7!important;color-scheme:light!important;
+  }
+  html[data-theme="light"] body.food-drawer-open,
+  html[data-theme="light"] body.food-swipe-active {
+    background:#F7F8F7!important;color-scheme:light!important;
+  }
+  html[data-theme="light"] body.food-drawer-open .food-drawer-backdrop,
+  html[data-theme="light"] body.food-swipe-active .food-drawer-backdrop {
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  html[data-theme="light"] body.food-drawer-open > .hero,
+  html[data-theme="light"] body.food-drawer-open #guide > .divider,
+  html[data-theme="light"] body.food-drawer-open #guide > .page-body,
+  html[data-theme="light"] body.food-drawer-open > footer,
+  html[data-theme="light"] body.food-swipe-active > .hero,
+  html[data-theme="light"] body.food-swipe-active #guide > .divider,
+  html[data-theme="light"] body.food-swipe-active #guide > .page-body,
+  html[data-theme="light"] body.food-swipe-active > footer {
+    filter:none!important;
+  }
+  html[data-theme="light"] body.food-drawer-open #guide #food-search.food-drawer,
+  html[data-theme="light"] body.food-swipe-active #guide #food-search.food-drawer {
+    background:#F7F8F7!important;
+  }
+}

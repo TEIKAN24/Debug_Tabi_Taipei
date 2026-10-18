@@ -1119,6 +1119,10 @@ loadData();
   }
   function lockPage(){
     if(savedStyle)return;
+    // iOS Safari samples the page surface for its top/bottom browser chrome.
+    // The search view is bright when light mode is selected.
+    const theme=document.querySelector('meta[name="theme-color"]');
+    if(theme && html.dataset.theme==='light')theme.setAttribute('content','#F7F8F7');
     savedY=window.scrollY;
     savedStyle={position:body.style.position,top:body.style.top,width:body.style.width,overflow:body.style.overflow};
     previousFocus=document.activeElement;
@@ -2520,7 +2524,7 @@ update();
   },true);
 })();
 
-/* =================== JS 19: user-gesture-major-section-near-snap-v30.9.34 =================== */
+/* =================== JS 19: user-gesture-major-section-near-snap-v30.9.35 =================== */
 (()=>{
   'use strict';
   // Snap near top-level guide headings after *manual* viewport scrolling only.
@@ -2571,8 +2575,11 @@ update();
     if(Math.abs(nearest.rect.top-targetY)>Math.min(290,Math.max(130,innerHeight*.43)))return;
     const destination=Math.max(0,scrollY+nearest.rect.top-targetY);
     if(Math.abs(destination-scrollY)<6)return;
-    snapBusyUntil=performance.now()+480;
-    scrollTo({top:destination,behavior:'instant'});
+    // Animate the short snap rather than jumping to the heading. Block
+    // scroll-driven retriggers throughout the native smooth-scroll period.
+    const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    snapBusyUntil=performance.now()+(reduceMotion?300:1050);
+    scrollTo({top:destination,behavior:reduceMotion?'instant':'smooth'});
   }
   function schedule(){
     clearTimeout(scrollTimer);
