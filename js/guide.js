@@ -1545,6 +1545,9 @@ let autoExpandVersion=0;
 function updateAndAutoExpand(){
  const version=++autoExpandVersion;
  setResultsOpen(false);
+ // Each new airport route (including reversing direction) opens at its default.
+ state.transport='rail';
+ state.mode='express';
  update();
  if(!validRoute())return;
  requestAnimationFrame(()=>requestAnimationFrame(()=>{
@@ -1600,6 +1603,9 @@ function clearAirportRouteAnimation(){
 }
 function changeTransport(mode,dragOffset=0){
  if(mode===state.transport || !transportOrder.includes(mode) || !validRoute() || switching)return;
+ // Returning to the MRT column always starts with its default: express train.
+ // This is shared by tap, keyboard, and horizontal-swipe navigation.
+ state.mode='express';
  const direction=Math.sign(transportOrder.indexOf(mode)-transportOrder.indexOf(state.transport));
  clearAirportRouteAnimation();
  if(reducedMotion.matches || !resultsOpen){
@@ -1826,6 +1832,8 @@ update();
     const routes=[...bus.querySelectorAll('.daytrip-bus-route')];
     const facts=[...bus.querySelectorAll('.daytrip-bus-route-facts')];
     if(buttons.length<2 || routes.length<2)return;
+    // The default is read from the initial markup (965 / Ruifang bus / 1815).
+    const defaultRoute=(buttons.find(btn=>btn.getAttribute('aria-pressed')==='true')||buttons[0]).dataset.route;
     // Only the Ruifang transfer panel uses a transport-specific heading.
     const ruifangTitle=bus.classList.contains('daytrip-railbus-switch')
       ? bus.querySelector('.rail-title .daytrip-canonical-head-name') : null;
@@ -1841,6 +1849,10 @@ update();
       scan(true);
     }
     buttons.forEach(btn=>btn.addEventListener('click',()=>choose(btn.dataset.route)));
+    bus.addEventListener('daytrip-reset-subroute',()=>{
+      if(buttons.find(btn=>btn.getAttribute('aria-pressed')==='true')?.dataset.route!==defaultRoute)
+        choose(defaultRoute);
+    });
   });
   scan();
 })();
@@ -2019,7 +2031,9 @@ update();
       const previous=panels[old];
       cancelAnimationFrame(enterFrame);
       panels.forEach(p=>p.classList.remove('daytrip-switch-enter'));
-      const canAnimate=!reduceMotion.matches&&!panel.hidden&&!!list.getClientRects().length;
+      const silentReset=list.dataset.daytripSilentReset==='true';
+      delete list.dataset.daytripSilentReset;
+      const canAnimate=!silentReset&&!reduceMotion.matches&&!panel.hidden&&!!list.getClientRects().length;
       if(!canAnimate)return;
       const wrap=content;
       const oldGhost=wrap.querySelector(':scope > .daytrip-switch-ghost');
@@ -2361,4 +2375,76 @@ update();
     if(records.some(r=>r.target.getAttribute('aria-selected')==='true'))compact();
   });
   selectorButtons.forEach(btn=>selectedObserver.observe(btn,{attributes:true,attributeFilter:['aria-selected']}));
+})();
+
+
+/* =================== JS 17: default-route-per-column-v30.9.25 =================== */
+(()=>{
+  'use strict';
+  const section=document.querySelector('#guide .sights-day-trips');
+  if(!section)return;
+  const resetSubroutes=scope=>{
+    scope.querySelectorAll('.daytrip-bus-airport-style').forEach(bus=>
+      bus.dispatchEvent(new Event('daytrip-reset-subroute'))
+    );
+  };
+  // Reset a destination's primary tab to the original first/default column.
+  // Do not call .click(): a synthetic click would also invoke the focus handler.
+  function resetDestination(panel){
+    if(!panel)return;
+    const list=panel.querySelector('.daytrip-transport');
+    if(list){
+      const tabs=[...list.querySelectorAll(':scope > button.tab-pill')];
+      const container=list.nextElementSibling;
+      const pages=container?.classList.contains('tab-panels')
+        ? [...container.children].filter(child=>child.classList.contains('tab-panel')&&!child.classList.contains('daytrip-switch-ghost')) : [];
+      if(tabs.length && tabs.length===pages.length){
+        if(tabs[0].getAttribute('aria-selected')!=='true')
+          list.dataset.daytripSilentReset='true';
+        // Drop any in-flight clone of the old route before the destination is shown.
+        container.querySelectorAll(':scope > .daytrip-switch-ghost').forEach(ghost=>ghost.remove());
+        container.classList.remove('is-switching');
+        container.style.minHeight='';
+        pages.forEach(page=>page.classList.remove('daytrip-switch-enter'));
+        tabs.forEach((tab,i)=>{
+          const selected=i===0;
+          tab.setAttribute('aria-selected',String(selected));
+          tab.tabIndex=selected?0:-1;
+          pages[i].hidden=!selected;
+        });
+        list.style.setProperty('--active-index','0');
+      }
+    }
+    resetSubroutes(panel);
+  }
+  // Capture before the built-in destination/transport handlers update visibility.
+  section.addEventListener('click',event=>{
+    const destination=event.target.closest('.daytrip-destination-buttons > .daytrip-destination-button');
+    if(destination){
+      if(destination.getAttribute('aria-expanded')!=='true')
+        resetDestination(document.getElementById(destination.getAttribute('aria-controls')));
+      return;
+    }
+    const tab=event.target.closest('.daytrip-transport > .daytrip-transport-tab');
+    if(tab){
+      const panel=document.getElementById(tab.getAttribute('aria-controls'));
+      if(panel)resetSubroutes(panel);
+    }
+  },true);
+  // Keyboard arrows can activate a tab without a click. This also covers
+  // externally activated tabs, while staying independent of animation timing.
+  section.querySelectorAll('.daytrip-transport').forEach(list=>{
+    const tabs=[...list.querySelectorAll(':scope > .daytrip-transport-tab')];
+    const panels=[...list.nextElementSibling?.querySelectorAll(':scope > .tab-panel')||[]];
+    if(tabs.length!==panels.length)return;
+    const observer=new MutationObserver(records=>{
+      for(const record of records){
+        if(record.target.getAttribute('aria-selected')==='true'){
+          const panel=panels[tabs.indexOf(record.target)];
+          if(panel)resetSubroutes(panel);
+        }
+      }
+    });
+    tabs.forEach(tab=>observer.observe(tab,{attributes:true,attributeFilter:['aria-selected']}));
+  });
 })();
