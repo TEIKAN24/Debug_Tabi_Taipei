@@ -1826,7 +1826,11 @@ update();
     const routes=[...bus.querySelectorAll('.daytrip-bus-route')];
     const facts=[...bus.querySelectorAll('.daytrip-bus-route-facts')];
     if(buttons.length<2 || routes.length<2)return;
+    // Only the Ruifang transfer panel uses a transport-specific heading.
+    const ruifangTitle=bus.classList.contains('daytrip-railbus-switch')
+      ? bus.querySelector('.rail-title .daytrip-canonical-head-name') : null;
     function choose(id){
+      if(ruifangTitle)ruifangTitle.textContent=id==='taxi'?'瑞芳駅からタクシーへ':'瑞芳駅からバスへ';
       buttons.forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.route===id)));
       routes.forEach(el=>{
         const on=el.dataset.route===id;
@@ -2245,15 +2249,26 @@ update();
   'use strict';
   const section=document.querySelector('#guide .sights-day-trips');
   if(!section)return;
+  const destinationRow=section.querySelector('.daytrip-destination-buttons');
+  if(!destinationRow)return;
   const compact=()=>section.classList.add('daytrip-mode-compact');
   const expand=()=>section.classList.remove('daytrip-mode-compact');
-  // Capture destination clicks before the existing one-of-four controller runs.
-  // Works for pointer and keyboard activation, including closing an open card.
+  // Keep compact height when switching destinations. Reset only once
+  // the entire four-choice row has left the visible viewport.
+  let visibilityFrame=0;
+  const resetAfterLeavingViewport=()=>{
+    visibilityFrame=0;
+    if(!section.classList.contains('daytrip-mode-compact'))return;
+    const rect=destinationRow.getBoundingClientRect();
+    if(rect.bottom<=0||rect.top>=window.innerHeight||!rect.width||!rect.height)expand();
+  };
+  const scheduleVisibilityCheck=()=>{
+    if(!visibilityFrame)visibilityFrame=requestAnimationFrame(resetAfterLeavingViewport);
+  };
+  window.addEventListener('scroll',scheduleVisibilityCheck,{passive:true});
+  window.addEventListener('resize',scheduleVisibilityCheck,{passive:true});
+  window.addEventListener('pageshow',scheduleVisibilityCheck);
   section.addEventListener('click',e=>{
-    if(e.target.closest('.daytrip-destination-buttons > .daytrip-destination-button')){
-      expand();return;
-    }
-    // Selecting a mode or route is deliberate transport interaction.
     if(e.target.closest('.daytrip-transport-tab, .daytrip-bus-route-choice, .daytrip-railbus-choice, .daytrip-bus-rail-choice, .daytrip-railbus-route-choice')){
       compact();
     }
