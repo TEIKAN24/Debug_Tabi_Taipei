@@ -4628,37 +4628,45 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide{--taipei-taxi-route:#D9B65F;}
 #guide .sights-day-trips .daytrip-bus-route[data-route="taxi"] .timeline-leg[style*="D9B65F"]::before{background:var(--taipei-taxi-route)!important;}
 
-/* v30.9.3 — location links at every itinerary stop, including dynamic Airport Access */
-#guide .airport-route-selector .timeline-stop a.route-stop-map-link{
-  color:inherit!important;text-decoration:none!important;
-  border-bottom:1px dotted rgba(121,185,255,.58);cursor:pointer;
-  overflow-wrap:anywhere;
+
+/* v30.9.3 — start navigation to each of the four day-trip destinations. */
+#guide .sights-day-trips .daytrip-destination-panel-heading{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;column-gap:9px;row-gap:3px;
 }
-#guide .airport-route-selector .timeline-stop a.route-stop-map-link::after{
-  content:'↗'!important;display:inline!important;font-size:10px;font-weight:650;
-  margin-inline-start:4px;color:#79B9FF;white-space:nowrap;
+#guide .sights-day-trips .daytrip-destination-panel-heading .daytrip-destination-panel-title{
+  grid-column:1;grid-row:1;min-width:0;
 }
-#guide .airport-route-selector .timeline-stop a.route-stop-map-link:hover,
-#guide .airport-route-selector .timeline-stop a.route-stop-map-link:focus-visible{
-  color:#9BCFFF!important;border-bottom-color:#9BCFFF;
+#guide .sights-day-trips .daytrip-destination-panel-heading .daytrip-destination-panel-desc{
+  grid-column:1 / -1;grid-row:2;min-width:0;
 }
-#guide .airport-route-selector .timeline-stop a.airsel-station-label{
-  display:inline-flex;flex-direction:column;align-items:flex-start;
-  gap:1px;width:max-content;max-width:100%;min-width:0;
-  position:relative;padding-right:14px;
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now{
+  grid-column:2;grid-row:1;justify-self:end;align-self:center;
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:30px;padding:5px 10px;border-radius:100px;
+  border:1px solid rgba(82,153,245,.60);background:rgba(47,116,207,.14);
+  color:#88C4FF!important;font:700 11px/1.3 -apple-system,BlinkMacSystemFont,
+  'Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;
+  white-space:nowrap;text-decoration:none!important;letter-spacing:.01em;
+  transition:background .16s ease,border-color .16s ease;
 }
-#guide .airport-route-selector .timeline-stop a.airsel-station-label::after{
-  content:'↗'!important;display:block!important;position:absolute;right:0;top:2px;
-  font-size:10px;color:#79B9FF;line-height:1;margin-inline-start:0;
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now::before,
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now::after{content:none!important;}
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now:hover{
+  background:rgba(47,116,207,.26);border-color:#88C4FF;
 }
-/* Avoid painting an older route over a newer route on mobile Safari. */
-#guide #airport-route-selector.is-transport-switching .timeline.airsel-timeline-animating .timeline-stop,
-#guide #airport-route-selector.is-transport-switching .timeline.airsel-timeline-animating .timeline-leg::before,
-#guide #airport-route-selector.is-transport-switching .timeline.airsel-timeline-animating .leg-content{
-  animation:none!important;
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now:focus-visible{
+  outline:2px solid #88C4FF;outline-offset:3px;
 }
+@media(max-width:350px){
+ #guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now{
+  min-height:29px;padding:5px 8px;font-size:10.5px;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now{transition:none;}
+}
+
+/* Airport transport changes render one route at a time, with no old-route ghost. */
 #guide #airport-route-selector .airsel-results-inner{isolation:isolate;}
-/* Yehliu direction names can wrap without overflowing a narrow phone. */
-#guide .sights-day-trips .daytrip-yehliu-switch .daytrip-bus-route-choices span{
-  white-space:normal;overflow-wrap:anywhere;line-height:1.45;
-}
+#guide #airport-route-selector.is-transport-switching .route-panel{pointer-events:none;}

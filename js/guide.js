@@ -1300,7 +1300,7 @@ loadData();
 const points={T1:{label:'桃園国際空港・第1ターミナル',station:'機場第一航廈',code:'A12',kind:'taoyuan'},T2:{label:'桃園国際空港・第2ターミナル',station:'機場第二航廈',code:'A13',kind:'taoyuan'},SONG:{label:'台北松山空港',station:'松山機場',code:'BR13',kind:'songshan'},TP:{label:'台北駅',station:'台北車站',code:'A1 / BL12',kind:'city'}};
 let state={from:'',to:'',mode:'express',transport:'rail'};
 let resultsOpen=false;
-let airportRouteSwitching=false; // prevent overlapping route draw and panel transitions
+let airportRouteSwitching=false; // suppress timeline animation while transport switches
 const root=document.getElementById('airport-route-selector');
 if(!root)return;
 const el=id=>root.querySelector('#airsel-'+id);
@@ -1344,7 +1344,7 @@ function setResultsOpen(open){
 function queueTimelineEntrance(delay=0){
  const timeline=el('timeline');
  if(!timeline)return;
- if(airportRouteSwitching){ // old/new route must never draw simultaneously during transport switch
+ if(airportRouteSwitching){
    window.clearTimeout(timeline._airselAnimTimer);
    window.clearTimeout(timeline._airselCleanupTimer);
    timeline.classList.remove('airsel-timeline-animating');
@@ -1395,24 +1395,7 @@ const stopTranslations={
 };
 function stationContent(name){
  const item=stopTranslations[name]||{zh:name,ja:''};
- const mapNames={
-  '機場第一航廈':'桃園機場捷運 A12 機場第一航廈站',
-  '機場第二航廈':'桃園機場捷運 A13 機場第二航廈站',
-  '松山機場':'台北松山機場 捷運站',
-  '松山機場駅':'台北松山機場 捷運站',
-  '台北車站':'台北車站 捷運 台鐵',
-  '台北駅':'台北車站 捷運 台鐵',
-  '忠孝復興':'捷運忠孝復興站 台北',
-  '台北駅周辺':'台北車站 台北市',
-  '台北松山空港':'台北松山機場',
-  '桃園国際空港・第1ターミナル':'桃園國際機場 第一航廈',
-  '桃園国際空港・第2ターミナル':'桃園國際機場 第二航廈'
- };
- const place=mapNames[name]||item.zh;
- const url='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(place);
- const mobile=window.matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0;
- const target=mobile?'_self':'_blank';
- return `<a class="route-stop-map-link airsel-station-label" href="${esc(url)}" target="${target}" rel="noopener noreferrer" aria-label="${esc(item.ja||item.zh)}：Google マップで位置を確認"><span class="stop-name" lang="zh-Hant">${esc(item.zh)}</span>${item.ja?`<span class="airsel-station-ja" lang="ja">${esc(item.ja)}</span>`:''}</a>`;
+ return `<span class="airsel-station-label"><span class="stop-name" lang="zh-Hant">${esc(item.zh)}</span>${item.ja?`<span class="airsel-station-ja" lang="ja">${esc(item.ja)}</span>`:''}</span>`;
 }
 function stop(label,name,code,cls=''){
  const codeColor=code.startsWith('BR')?'brown':code.startsWith('BL')?'blue':code.startsWith('A')?'purple':'';
@@ -1597,7 +1580,7 @@ function resetDraggedPanel(){
  swipePanel.style.transition='';swipePanel.style.transform='';swipePanel.style.opacity='';
  root.style.userSelect='';
 }
-function clearAirportEntrance(){
+function clearAirportRouteAnimation(){
  const timeline=el('timeline');
  window.clearTimeout(timeline._airselAnimTimer);
  window.clearTimeout(timeline._airselCleanupTimer);
@@ -1606,7 +1589,7 @@ function clearAirportEntrance(){
 function changeTransport(mode,dragOffset=0){
  if(mode===state.transport || !transportOrder.includes(mode) || !validRoute() || switching)return;
  const direction=Math.sign(transportOrder.indexOf(mode)-transportOrder.indexOf(state.transport));
- clearAirportEntrance();
+ clearAirportRouteAnimation();
  if(reducedMotion.matches || !resultsOpen){
   resetDraggedPanel();state.transport=mode;update();return;
  }
@@ -1614,11 +1597,11 @@ function changeTransport(mode,dragOffset=0){
  airportRouteSwitching=true;
  root.classList.add('is-transport-switching');
  swipePanel.style.transition='none';
- const startOffset=dragOffset||0;
- const oldExit=swipePanel.animate([
-  {transform:`translate3d(${startOffset}px,0,0)`,opacity:1},
-  {transform:`translate3d(${-direction*38}px,0,0)`,opacity:0}
- ],{duration:180,easing:'ease-in',fill:'forwards'});
+ const startingOpacity=dragOffset?Math.max(.64,1-Math.abs(dragOffset)*.006):1;
+ const exit=swipePanel.animate([
+  {opacity:startingOpacity,transform:'translate3d(0,0,0)'},
+  {opacity:0,transform:'translate3d(0,0,0)'}
+ ],{duration:150,easing:'ease-in',fill:'forwards'});
  const finish=()=>{
   swipePanel.getAnimations().forEach(anim=>anim.cancel());
   resetDraggedPanel();
@@ -1626,17 +1609,17 @@ function changeTransport(mode,dragOffset=0){
   root.classList.remove('is-transport-switching');
   switching=false;
  };
- oldExit.finished.then(()=>{
-  // Keep the outgoing route fully invisible while replacing the DOM.
+ exit.finished.then(()=>{
+  // Replacing the DOM while invisible prevents any old completed route from crossing over the new one.
   swipePanel.style.opacity='0';
-  oldExit.cancel();
+  exit.cancel();
   swipePanel.style.transform='';
   state.transport=mode;
-  update(); // queueTimelineEntrance is suppressed while switching.
+  update(); // New route is fully rendered, without starting a second drawing animation.
   const enter=swipePanel.animate([
-   {transform:`translate3d(${direction*38}px,0,0)`,opacity:0},
-   {transform:'translate3d(0,0,0)',opacity:1}
-  ],{duration:320,easing:'cubic-bezier(.2,.75,.25,1)',fill:'forwards'});
+   {opacity:0,transform:'translate3d(0,0,0)'},
+   {opacity:1,transform:'translate3d(0,0,0)'}
+  ],{duration:240,easing:'ease-out',fill:'forwards'});
   enter.finished.then(finish).catch(finish);
  }).catch(finish);
 }
@@ -1713,7 +1696,8 @@ update();
   'use strict';
   const isTouchDevice=window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints>0;
   if(!isTouchDevice)return; // Desktop visitors continue to open Google Maps in a new tab.
-  for(const a of document.querySelectorAll('#guide a.route-stop-map-link'))a.target='_self';
+  // Day-trip directions should not rely on a pop-up being permitted in mobile browsers.
+  for(const a of document.querySelectorAll('#guide .daytrip-depart-now'))a.target='_self';
   // Mobile webviews frequently suppress new tabs. Use an ordinary navigation instead.
   for(const a of document.querySelectorAll('#guide a[href^="https://maps.app.goo.gl/"]')){
     const original=a.getAttribute('href');
