@@ -4627,3 +4627,38 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 /* Same gold route hue for taxi across Airport Access / Jiufen / day trips. */
 #guide{--taipei-taxi-route:#D9B65F;}
 #guide .sights-day-trips .daytrip-bus-route[data-route="taxi"] .timeline-leg[style*="D9B65F"]::before{background:var(--taipei-taxi-route)!important;}
+
+/* v30.9.3 — location links at every itinerary stop, including dynamic Airport Access */
+#guide .airport-route-selector .timeline-stop a.route-stop-map-link{
+  color:inherit!important;text-decoration:none!important;
+  border-bottom:1px dotted rgba(121,185,255,.58);cursor:pointer;
+  overflow-wrap:anywhere;
+}
+#guide .airport-route-selector .timeline-stop a.route-stop-map-link::after{
+  content:'↗'!important;display:inline!important;font-size:10px;font-weight:650;
+  margin-inline-start:4px;color:#79B9FF;white-space:nowrap;
+}
+#guide .airport-route-selector .timeline-stop a.route-stop-map-link:hover,
+#guide .airport-route-selector .timeline-stop a.route-stop-map-link:focus-visible{
+  color:#9BCFFF!important;border-bottom-color:#9BCFFF;
+}
+#guide .airport-route-selector .timeline-stop a.airsel-station-label{
+  display:inline-flex;flex-direction:column;align-items:flex-start;
+  gap:1px;width:max-content;max-width:100%;min-width:0;
+  position:relative;padding-right:14px;
+}
+#guide .airport-route-selector .timeline-stop a.airsel-station-label::after{
+  content:'↗'!important;display:block!important;position:absolute;right:0;top:2px;
+  font-size:10px;color:#79B9FF;line-height:1;margin-inline-start:0;
+}
+/* Avoid painting an older route over a newer route on mobile Safari. */
+#guide #airport-route-selector.is-transport-switching .timeline.airsel-timeline-animating .timeline-stop,
+#guide #airport-route-selector.is-transport-switching .timeline.airsel-timeline-animating .timeline-leg::before,
+#guide #airport-route-selector.is-transport-switching .timeline.airsel-timeline-animating .leg-content{
+  animation:none!important;
+}
+#guide #airport-route-selector .airsel-results-inner{isolation:isolate;}
+/* Yehliu direction names can wrap without overflowing a narrow phone. */
+#guide .sights-day-trips .daytrip-yehliu-switch .daytrip-bus-route-choices span{
+  white-space:normal;overflow-wrap:anywhere;line-height:1.45;
+}
