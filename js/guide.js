@@ -1725,7 +1725,12 @@ update();
     // Retain the original pinpoint short link for desktop and future reference.
     if(!place)continue;
     a.dataset.originalMapsUrl=original;
-    a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(place+' 台湾');
+    // Chain stores intentionally have no single branch selected: search in
+    // Taipei instead of all of Taiwan. Keep every other location's query as is.
+    const item=a.closest('li');
+    const tags=(item?.getAttribute('data-curated-tags')||'')+' '+(item?.textContent||'');
+    const searchArea=/チェーン店/.test(tags)?'台北':'台湾';
+    a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(place+' '+searchArea);
     a.target='_self';
   }
 })();
@@ -2165,10 +2170,14 @@ update();
     }
     const route=event.target.closest('.daytrip-bus-route-choice');
     if(route){
-      // The route choices are below their diagram. Bring the newly selected
-      // itinerary into view, not the top of the entire website.
-      const wrap=route.closest('.daytrip-bus-airport-style');
-      focusAt(wrap?.querySelector('.rail-title'),118);
+      // v30.9.11: lower route switches must NOT pull the reader back to the
+      // heading. Also cancel any delayed correction from a preceding mode
+      // switch, which could otherwise scroll a moment after route selection.
+      clearTimeout(focusTimer);
+      cancelCorrection();
+      cancelAnimationFrame(focusFrame);
+      ++focusVersion;
+      return;
     }
   });
 })();

@@ -4798,3 +4798,17 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
     transition:none!important;
   }
 }
+
+/* v30.9.11 — tighter spacing ABOVE nearby transport, mobile only.
+   Keep station spacing and the two-tier tab hierarchy untouched. */
+@media (max-width:600px){
+  #guide .sights-day-trips > .destination-lead {margin-bottom:9px!important;}
+  #guide .sights-day-trips .daytrip-destination-panel {margin-top:4px!important;}
+  #guide .sights-day-trips .daytrip-destination-panel-heading {
+    padding-top:7px!important;padding-bottom:6px!important;
+  }
+  #guide .sights-day-trips .daytrip-destination-panel > .destination-body {padding-top:5px!important;}
+  #guide .sights-day-trips .tab-pills.daytrip-transport {
+    margin-top:5px!important;margin-bottom:6px!important;
+  }
+}
