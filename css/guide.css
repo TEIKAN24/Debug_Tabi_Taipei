@@ -4552,3 +4552,22 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   color:#F7F7F7;stroke:#F7F7F7;fill:none;opacity:1;
   display:block;width:20px;height:20px;
 }
+
+/* v30.7 — consistent outbound reservation / official-link pill */
+#guide a.external-action-link,
+#guide .venue-secondary-links a {
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  width:max-content;max-width:100%;padding:3px 9px;
+  border:1px solid rgba(82,153,245,.56);border-radius:999px;
+  color:#79b9ff!important;background:rgba(47,116,207,.14);
+  font-size:.8em;font-weight:650;line-height:1.55;
+  text-decoration:none!important;white-space:nowrap;
+}
+#guide a.external-action-link::after,
+#guide .venue-secondary-links a::after {
+  content:'↗';font-size:.95em;line-height:1;
+}
+#guide a.external-action-link:hover,
+#guide .venue-secondary-links a:hover {background:rgba(47,116,207,.27);}
+#guide a.external-action-link:focus-visible,
+#guide .venue-secondary-links a:focus-visible {outline:2px solid #79b9ff;outline-offset:2px;}
