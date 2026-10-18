@@ -4590,3 +4590,31 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .venue-secondary-links a:hover {background:rgba(47,116,207,.27);}
 #guide a.external-action-link:focus-visible,
 #guide .venue-secondary-links a:focus-visible {outline:2px solid #79b9ff;outline-offset:2px;}
+
+
+/* v30.7 TRA logo redo — use Taiwan Railway original emblem instead of hand-drawn approximation.
+   Keep aspect ratio unchanged, independent of the generic airport company image reset. */
+#guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark {
+  width:23px!important; height:23px!important; flex:0 0 23px!important;
+  display:inline-flex!important; align-items:center; justify-content:center;
+  overflow:visible!important;
+}
+#guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark > .daytrip-tra-official-logo {
+  display:block!important; width:21px!important; height:21px!important;
+  min-width:21px!important; min-height:21px!important;
+  max-width:21px!important; max-height:21px!important;
+  object-fit:contain!important; aspect-ratio:512/511!important;
+  transform:none!important;
+  filter:grayscale(1) brightness(0) invert(1)!important;
+  -webkit-filter:grayscale(1) brightness(0) invert(1)!important;
+  opacity:1!important;
+}
+#guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark > .daytrip-tra-fallback {
+  display:none!important; color:#F7F7F7!important; font-size:9px; font-weight:700;
+}
+#guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark.logo-unavailable > .daytrip-tra-official-logo {
+  display:none!important;
+}
+#guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark.logo-unavailable > .daytrip-tra-fallback {
+  display:block!important;
+}
