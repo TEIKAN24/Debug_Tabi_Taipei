@@ -4688,3 +4688,20 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .sights-day-trips .daytrip-destination-panel .daytrip-transport + .tab-panels > .tab-panel {
   border-top:0!important;
 }
+
+
+/* v30.9.7 — area-only swipe affordance.
+   Reuse the existing adaptive data-scroll-fade state: fade only when the
+   strip still has off-screen tabs; no extra arrow or scrolling behavior. */
+#guide .area-directory-section .tab-pills[data-scroll-fade="end"] {
+  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 30px),transparent 100%);
+  mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 30px),transparent 100%);
+}
+#guide .area-directory-section .tab-pills[data-scroll-fade="start"] {
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 22px,#000 100%);
+  mask-image:linear-gradient(to right,transparent 0%,#000 22px,#000 100%);
+}
+#guide .area-directory-section .tab-pills[data-scroll-fade="both"] {
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 22px,#000 calc(100% - 30px),transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0%,#000 22px,#000 calc(100% - 30px),transparent 100%);
+}

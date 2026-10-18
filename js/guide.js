@@ -1488,16 +1488,16 @@ function groundUpdate(airport,toCity){
      lines.innerHTML=stop('出発','松山機場','','start')+
        groundLeg('262・262区','台北車站（忠孝）方面','#AEB4BC','「返程」／臺北車站（忠孝）行きを確認')+
        stop('到着','台北車站','','end');
-     facts('交通状況による','二段票制（区間による）','なし');
-     el('footnote').innerHTML='松山機場の停留所から262・262区の「返程」に乗り、臺北車站（忠孝）で下車。<a href="'+official262+'" target="_blank" rel="noopener noreferrer">262区の停留所・運行状況</a>を確認してください。';
+     facts('交通状況による','二段票制','なし');
+     el('footnote').innerHTML='松山機場の停留所から262・262区の「返程」に乗り、臺北車站（忠孝）で下車。<a href="'+official262+'" target="_blank" rel="noopener noreferrer">262区の停留所・運行状況</a>を確認してください。運賃は乗車区間によって異なります。';
    }else{
      lines.innerHTML=stop('出発','台北車站','','start')+
        groundLeg('262・262区','民生社区方面','#AEB4BC','「去程」／臺北小巨蛋で下車')+
        stop('乗換','臺北小巨蛋','','transfer')+
        groundLeg('913 路線バス','松山機場方面','#AEB4BC','松山機場まで乗車')+
        stop('到着','松山機場','','end');
-     facts('運行状況による','区間・乗車回数による','1回');
-     el('footnote').innerHTML='台北駅から松山空港までの262・262区の直通運行はありません。臺北小巨蛋で空港方面の913に乗り換える例です。<a href="'+official262+'" target="_blank" rel="noopener noreferrer">262区</a>・<a href="'+official913+'" target="_blank" rel="noopener noreferrer">913</a>の運行方向と停留所をご確認ください。乗換が少ないMRTがおすすめです。';
+     facts('運行状況による','区間別','1回');
+     el('footnote').innerHTML='台北駅から松山空港までの262・262区の直通運行はありません。臺北小巨蛋で空港方面の913に乗り換える例です。<a href="'+official262+'" target="_blank" rel="noopener noreferrer">262区</a>・<a href="'+official913+'" target="_blank" rel="noopener noreferrer">913</a>の運行方向と停留所をご確認ください。運賃は乗車区間・乗車回数によって異なります。乗換が少ないMRTがおすすめです。';
    }
    return;
  }
