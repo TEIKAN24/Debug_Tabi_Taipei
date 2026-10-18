@@ -4682,3 +4682,9 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
  #guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg .leg-content,
  #guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before{opacity:1!important;}
 }
+
+/* v30.9.6: avoid a duplicate separator below the day-trip transport tabs.
+   Keep the transport underline and all panel spacing/animations intact. */
+#guide .sights-day-trips .daytrip-destination-panel .daytrip-transport + .tab-panels > .tab-panel {
+  border-top:0!important;
+}
