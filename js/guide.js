@@ -1374,7 +1374,7 @@ function setResultsOpen(open){
    const timeline=el('timeline');
    window.clearTimeout(timeline._airselAnimTimer);
    window.clearTimeout(timeline._airselCleanupTimer);
-   timeline.classList.remove('airsel-timeline-animating');
+   timeline.classList.remove('airsel-timeline-animating','airsel-timeline-pending');
  }
 }
 function queueTimelineEntrance(delay=0){
@@ -1383,15 +1383,18 @@ function queueTimelineEntrance(delay=0){
  if(airportRouteSwitching){
    window.clearTimeout(timeline._airselAnimTimer);
    window.clearTimeout(timeline._airselCleanupTimer);
-   timeline.classList.remove('airsel-timeline-animating');
+   timeline.classList.remove('airsel-timeline-animating','airsel-timeline-pending');
    return;
  }
  window.clearTimeout(timeline._airselAnimTimer);
  window.clearTimeout(timeline._airselCleanupTimer);
  timeline.classList.remove('airsel-timeline-animating');
+ // Hide the fully-built route immediately, before the delayed drawing begins.
+ // Without this pending state the completed line flashes during crossfades.
+ timeline.classList.add('airsel-timeline-pending');
  const stops=[...timeline.querySelectorAll('.timeline-stop')];
  const legs=[...timeline.querySelectorAll('.timeline-leg')];
- if((!stops.length&&!legs.length)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ if((!stops.length&&!legs.length)||window.matchMedia('(prefers-reduced-motion: reduce)').matches){timeline.classList.remove('airsel-timeline-pending');return;}
  stops.forEach((node,index)=>node.style.setProperty('--airsel-stop-delay',`${index*248}ms`));
  // Start route drawing slightly before the last station finishes appearing,
  // creating a more continuous transition while preserving station timing.
@@ -1402,10 +1405,11 @@ function queueTimelineEntrance(delay=0){
    timeline.classList.remove('airsel-timeline-animating');
    void timeline.offsetWidth;
    timeline.classList.add('airsel-timeline-animating');
+   timeline.classList.remove('airsel-timeline-pending');
  },Math.max(0,delay));
  const total=delay+legStart+Math.max(legs.length-1,0)*780+1200;
  timeline._airselCleanupTimer=window.setTimeout(()=>{
-   timeline.classList.remove('airsel-timeline-animating');
+   timeline.classList.remove('airsel-timeline-animating','airsel-timeline-pending');
  },Math.max(0,total));
 }
 function refreshResultVisibility(){
@@ -1621,7 +1625,7 @@ function clearAirportRouteAnimation(){
  const timeline=el('timeline');
  window.clearTimeout(timeline._airselAnimTimer);
  window.clearTimeout(timeline._airselCleanupTimer);
- timeline.classList.remove('airsel-timeline-animating');
+ timeline.classList.remove('airsel-timeline-animating','airsel-timeline-pending');
 }
 function changeTransport(mode,dragOffset=0){
  if(mode===state.transport || !transportOrder.includes(mode) || !validRoute() || switching)return;
@@ -1647,12 +1651,7 @@ function changeTransport(mode,dragOffset=0){
   airportRouteSwitching=false;
   root.classList.remove('is-transport-switching');
   switching=false;
-  if(resultsOpen){
-    // Transport switches previously suppressed animation without replaying it.
-    // Wait for the crossfade to finish so no completed old line can bleed through.
-    queueTimelineEntrance(60);
-    focusAirportResult(true);
-  }
+  if(resultsOpen)focusAirportResult(true);
  };
  exit.finished.then(()=>{
   // Replacing the DOM while invisible prevents any old completed route from crossing over the new one.
@@ -1660,7 +1659,11 @@ function changeTransport(mode,dragOffset=0){
   exit.cancel();
   swipePanel.style.transform='';
   state.transport=mode;
-  update(); // New route is fully rendered, without starting a second drawing animation.
+  update(); // Route is built while the panel is invisible.
+  airportRouteSwitching=false;
+  // Set the hidden pre-animation state BEFORE starting the panel fade-in.
+  // A route must never appear complete between DOM update and animation start.
+  if(resultsOpen)queueTimelineEntrance(60);
   const enter=swipePanel.animate([
    {opacity:0,transform:'translate3d(0,0,0)'},
    {opacity:1,transform:'translate3d(0,0,0)'}

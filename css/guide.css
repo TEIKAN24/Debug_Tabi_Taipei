@@ -4670,3 +4670,15 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 /* Airport transport changes render one route at a time, with no old-route ghost. */
 #guide #airport-route-selector .airsel-results-inner{isolation:isolate;}
 #guide #airport-route-selector.is-transport-switching .route-panel{pointer-events:none;}
+
+/* v30.9.5 — prevent completed airport routes from flashing before drawing begins. */
+#guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-stop,
+#guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg .leg-content{opacity:0!important;}
+#guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before{
+ opacity:0!important;transform:translateX(-50%) scaleY(0)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ #guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-stop,
+ #guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg .leg-content,
+ #guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before{opacity:1!important;}
+}
