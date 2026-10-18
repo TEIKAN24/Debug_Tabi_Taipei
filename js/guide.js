@@ -226,38 +226,9 @@
     if(target)requestAnimationFrame(()=>target.scrollIntoView({behavior:'auto',block:'start'}));
   }
   window.addEventListener('hashchange',revealHash);
-  // Mobile browsers may restore scroll after the footer script has run.
-  // The HEAD bootstrap strips old hashes and disables scroll restoration before paint.
-  // During the initial rendering window keep scroll at the hero, but stop immediately
-  // as soon as the visitor touches, scrolls, clicks or types (so navigation still works).
-  let resetPending = true;
-  let resetTimer;
-  function stopInitialReset() {
-    if(!resetPending) return;
-    resetPending = false;
-    clearTimeout(resetTimer);
-    document.documentElement.style.removeProperty('scroll-behavior');
-  }
-  function resetInitialTop() {
-    if(!resetPending) return;
-    window.scrollTo({top:0,left:0,behavior:'auto'});
-    document.documentElement.scrollTop = 0;
-    if(document.body) document.body.scrollTop = 0;
-  }
-  ['pointerdown','touchstart','wheel','keydown'].forEach(eventName =>
-    window.addEventListener(eventName, stopInitialReset, {once:true,passive:true}));
-  resetInitialTop();
-  requestAnimationFrame(resetInitialTop);
-  window.addEventListener('pageshow', () => {
-    resetInitialTop();
-    requestAnimationFrame(resetInitialTop);
-  });
-  window.addEventListener('load', () => {
-    resetInitialTop();
-    requestAnimationFrame(resetInitialTop);
-    // One final pass catches delayed layout and Safari scroll restoration.
-    resetTimer = setTimeout(() => {resetInitialTop();stopInitialReset();}, 600);
-  }, {once:true});
+  // The browser manages history restoration; don't reset scrolling on page load,
+  // pageshow or when returning from an external map. Initial deep links remain usable.
+  if (location.hash) requestAnimationFrame(revealHash);
   const back=document.querySelector('.back-top');
   if(back){
     let lastY=window.scrollY;
@@ -2200,4 +2171,61 @@ update();
       focusAt(wrap?.querySelector('.rail-title'),118);
     }
   });
+})();
+
+
+/* v30.9.8 — browser back/forward restore for Maps round-trips. */
+(()=>{
+  'use strict';
+  const key='taipei-city-guide:reading-state:v30.9.8';
+  const read=()=>{try{return JSON.parse(sessionStorage.getItem(key)||'null');}catch(_){return null;}};
+  const save=()=>{
+    try{
+      sessionStorage.setItem(key,JSON.stringify({
+        at:Date.now(),
+        y:window.scrollY,
+        details:[...document.querySelectorAll('#guide details[open][id]')].map(e=>e.id),
+        panels:[...document.querySelectorAll('#guide .tab-pills')].map(list=>{
+          const selected=list.querySelector(':scope > button[aria-selected="true"]');
+          return selected?selected.id:null;
+        }).filter(Boolean),
+        daytrip:document.querySelector('#guide .daytrip-destination-button[aria-expanded="true"]')?.id||null
+      }));
+    }catch(_){}
+  };
+  window.addEventListener('pagehide',save);
+  // Clicks that launch Maps are saved immediately (even when the OS launches
+  // the native app without issuing a reliable pagehide event).
+  document.querySelectorAll('#guide a[href*="google.com/maps"],#guide a[href*="maps.app.goo.gl"]').forEach(a=>{
+    a.addEventListener('click',save,{capture:true});
+  });
+  const navigation=performance.getEntriesByType('navigation')[0];
+  if(navigation?.type!=='back_forward')return;
+  const saved=read();
+  if(!saved||Date.now()-saved.at>3600000)return;
+  // Reopen the same category before native scrolling is restored. Existing
+  // controllers remain responsible for ARIA/tab state and animations.
+  // Only restore panels that differ from the saved selection.
+  const restore=()=>{
+    (saved.details||[]).forEach(id=>{
+      const d=document.getElementById(id);
+      if(d?.tagName==='DETAILS')d.open=true;
+    });
+    (saved.panels||[]).forEach(id=>{
+      const tab=document.getElementById(id);
+      if(tab && tab.getAttribute('aria-selected')!=='true')tab.click();
+    });
+    if(saved.daytrip){
+      const button=document.getElementById(saved.daytrip);
+      if(button&&button.getAttribute('aria-expanded')!=='true')button.click();
+    }
+    // The website's guided-focus controllers may schedule their own scroll
+    // after a tab click. Settle on the actual saved reading position at the end.
+    if(Number.isFinite(saved.y)&&saved.y>0){
+      requestAnimationFrame(()=>window.scrollTo({top:saved.y,behavior:'instant'}));
+      window.setTimeout(()=>window.scrollTo({top:saved.y,behavior:'instant'}),280);
+    }
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restore,{once:true});
+  else restore();
 })();
