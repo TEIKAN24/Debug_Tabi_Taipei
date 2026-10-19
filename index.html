@@ -5,27 +5,8 @@
 <meta content="#111417" name="theme-color"/>
 <meta content="台北のおすすめグルメ・街歩き・交通・お土産をまとめたローカルガイド。" name="description"/>
 <title>TAIPEI CITY GUIDE — 台北へようこそ！</title>
-<script>/* v30.9.40: reload starts at the top; browser Back/Forward keeps its position. */
-(function () {
-  var navigation = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-  var isReload = navigation && navigation.type === 'reload';
-  try { if ('scrollRestoration' in history) history.scrollRestoration = isReload ? 'manual' : 'auto'; } catch (_) {}
-  if (!isReload) return;
-  var goTop = function () { window.scrollTo(0, 0); };
-  goTop();
-  document.addEventListener('DOMContentLoaded', goTop, {once:true});
-  window.addEventListener('pageshow', function () {
-    goTop();
-    // Wait until late-rendered route panels settle, then allow normal Back/Forward restoring.
-    requestAnimationFrame(function () {
-      goTop();
-      requestAnimationFrame(function () {
-        goTop();
-        try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } catch (_) {}
-      });
-    });
-  }, {once:true});
-})();
+<script>/* Preserve the visitor's position on browser Back/Forward (e.g. after Maps). */
+try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } catch (_) {}
 </script><script>/* Temporary manual appearance switch: default remains dark. */
 (function(){
  var value='dark';
@@ -45,7 +26,7 @@
    updateMeta();refreshButton();
   });
  });
-})();</script><link rel="stylesheet" href="css/guide.css?v=30.9.40"/>
+})();</script><link rel="stylesheet" href="css/guide.css?v=30.9.39"/>
 
 
 
@@ -222,7 +203,7 @@
 </div>
 </div>
 </section>
-</main><footer class="wrapper"><strong>2026 TAIPEI CITY GUIDE</strong> · By TEIKAN_YOH<br/>情報・店舗の最新状況は訪問前にご確認ください。</footer><button aria-label="ページの先頭に戻る" class="back-top" title="ページの先頭に戻る" type="button">↑</button><script src="js/guide.js?v=30.9.40"></script>
+</main><footer class="wrapper"><strong>2026 TAIPEI CITY GUIDE</strong> · By TEIKAN_YOH<br/>情報・店舗の最新状況は訪問前にご確認ください。</footer><button aria-label="ページの先頭に戻る" class="back-top" title="ページの先頭に戻る" type="button">↑</button><script src="js/guide.js?v=30.9.38"></script>
 
 
 

@@ -228,7 +228,7 @@
   window.addEventListener('hashchange',revealHash);
   // The browser manages history restoration; don't reset scrolling on page load,
   // pageshow or when returning from an external map. Initial deep links remain usable.
-  if (location.hash && performance.getEntriesByType('navigation')[0]?.type !== 'reload') requestAnimationFrame(revealHash);
+  if (location.hash) requestAnimationFrame(revealHash);
   const back=document.querySelector('.back-top');
   if(back){
     let lastY=window.scrollY;
@@ -1489,8 +1489,8 @@ function groundUpdate(airport,toCity){
      facts('約55〜75分','NT$133〜164','なし');
      el('footnote').textContent='時間・料金は旧ガイド掲載の参考値です。運行路線、停留所、料金は出発前に国光客運の最新案内をご確認ください。';
    }else{
-     facts('約50〜80分','NT$133〜164','なし');
-     el('footnote').textContent='1819Bは南崁経由のため、1819より時間がかかる場合があります。運賃は車両の座席配置によって異なります。所要時間は道路状況によって変わるため、運行時刻・乗り場・最新運賃は出発前にご確認ください。';
+     facts('要確認','要確認','なし');
+     el('footnote').textContent='空港方面の乗り場、便名、時刻と料金は事前に運行会社で確認してください。';
    }
  }else{
    groundMode('タクシー','🚕');
