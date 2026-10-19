@@ -6167,3 +6167,46 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
   overflow-y:auto!important;
   overscroll-behavior-y:contain;
 }
+
+
+/* ================= v30.9.50 — Safari-safe compact food rows =================
+   A zero-sized CSS Grid track can still allow its content to affect row
+   sizing in WebKit. Use true max-height:0 for the collapsed text instead.
+   JS measures each full description and sets --food-full-height in pixels,
+   making the expansion genuinely animated without reserving blank space. */
+#guide #food-explorer .food-entry-toggle .desc,
+#guide #food-explorer .result.is-expanded .food-entry-toggle .desc {
+  display:block!important;
+  grid-template-rows:none!important;
+  line-height:1.7!important;
+}
+#guide #food-explorer .food-entry-toggle .food-desc-preview {
+  display:block!important;
+  height:auto!important;
+  max-height:2em!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  transition:max-height .34s cubic-bezier(.22,1,.36,1),
+             opacity .24s ease, transform .3s cubic-bezier(.22,1,.36,1)!important;
+}
+#guide #food-explorer .food-entry-toggle .food-desc-full {
+  display:block!important;
+  height:auto!important;
+  max-height:0!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  transition:max-height .34s cubic-bezier(.22,1,.36,1),
+             opacity .24s ease, transform .3s cubic-bezier(.22,1,.36,1)!important;
+}
+#guide #food-explorer .result.is-expanded .food-entry-toggle .food-desc-preview {
+  max-height:0!important;
+}
+#guide #food-explorer .result.is-expanded .food-entry-toggle .food-desc-full {
+  max-height:var(--food-full-height,0px)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  #guide #food-explorer .food-entry-toggle .food-desc-preview,
+  #guide #food-explorer .food-entry-toggle .food-desc-full {
+    transition:none!important;
+  }
+}
