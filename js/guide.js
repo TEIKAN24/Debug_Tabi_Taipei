@@ -558,10 +558,10 @@ function drawFilters() {
 function resizeResultViewport() {
   const rows = [...results.querySelectorAll(".result")];
   const mobile = window.matchMedia("(max-width: 600px)").matches;
-  // Give the food list more vertical room while keeping its own scroll area.
-  // Short phones show about 4.5 rows, regular phones 5.2, and tall phones 5.8.
+  // Keep the dictionary compact: about four full rows with part of a fifth
+  // visible as a scroll affordance. Fit shorter and taller phone viewports.
   const screenHeight = window.visualViewport?.height || window.innerHeight;
-  const visibleRows = mobile ? (screenHeight < 740 ? 4.5 : screenHeight > 900 ? 5.8 : 5.2) : 4.75;
+  const visibleRows = mobile ? (screenHeight < 740 ? 4.2 : screenHeight > 900 ? 4.75 : 4.5) : 4.75;
   const fullRows = Math.floor(visibleRows);
   const needsScroll = rows.length > fullRows;
   results.classList.toggle("scrolling", needsScroll);
