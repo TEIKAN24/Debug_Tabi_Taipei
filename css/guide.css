@@ -5496,3 +5496,44 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge{
   color:#936100!important;
   -webkit-text-fill-color:#936100!important;
 }
+
+/* =================== v30.9.40: airport LIGHT text colors ===================
+   Color-only adjustment; preserves dark mode and route functionality. */
+/* Airport MRT station codes: saturated line colors on light surfaces. */
+html[data-theme="light"] #guide .airport-route-selector .code.code--brown {
+  color:#945A20!important;
+  -webkit-text-fill-color:#945A20!important;
+  border-color:#945A20!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .code.code--blue {
+  color:#176DA9!important;
+  -webkit-text-fill-color:#176DA9!important;
+  border-color:#176DA9!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .code.code--purple {
+  color:#8042B3!important;
+  -webkit-text-fill-color:#8042B3!important;
+  border-color:#8042B3!important;
+}
+/* Express / local train menu needs legible charcoal text in light mode. */
+html[data-theme="light"] #guide #airport-route-selector .airsel-train-select {
+  color:#263E49!important;
+  -webkit-text-fill-color:#263E49!important;
+  border-bottom-color:#80939A!important;
+}
+html[data-theme="light"] #guide #airport-route-selector .airsel-train-select option {
+  background:#FFFFFF!important;
+  color:#263E49!important;
+  -webkit-text-fill-color:#263E49!important;
+}
+html[data-theme="light"] #guide #airport-route-selector .airsel-train-chevron {
+  border-right-color:#3D5660!important;
+  border-bottom-color:#3D5660!important;
+}
+/* Brighter, warm-gold recommendation text without losing tiny-label contrast. */
+html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge {
+  color:#A26600!important;
+  -webkit-text-fill-color:#A26600!important;
+  background:#FFFDF7!important;
+  border-color:#D6AE65!important;
+}
