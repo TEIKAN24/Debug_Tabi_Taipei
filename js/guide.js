@@ -46,49 +46,8 @@
       });
     }));
   }
-  // Keep the guided inner-list focus for area districts only.
-  // Drinks and night-market rows now open in place without pulling focus.
-  // Its category list is a nested scroll container. Align within that list first,
-  // then check the heading's position in the visible phone viewport. Browser
-  // scroll anchoring is disabled for this section so opening one large row does
-  // not unexpectedly move the entire document.
-  let areaFocusSequence = 0;
-  function focusDirectoryCategory(summary) {
-    const panel = summary.closest('.area-directory-section .tab-panel, .venue-directory-section .tab-panel.guided-focus-panel');
-    const detail = summary.parentElement;
-    if (!panel || !detail) return;
-    const sequence = ++areaFocusSequence;
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      if (sequence !== areaFocusSequence || !detail.open || !summary.getClientRects().length) return;
-      summary.focus({preventScroll:true});
-      const viewportHeight = window.visualViewport?.height || window.innerHeight;
-      const preferredY = Math.min(235, Math.max(165, viewportHeight * .29));
-      const panelBox = panel.getBoundingClientRect();
-      const rowBox = summary.getBoundingClientRect();
-      const maxPanelScroll = Math.max(0, panel.scrollHeight - panel.clientHeight);
-      const targetPanelScroll = Math.min(maxPanelScroll,
-        Math.max(0, panel.scrollTop + rowBox.top - panelBox.top - 12));
-      // An immediate alignment avoids racing the page's own smooth scrolling.
-      panel.scrollTop = targetPanelScroll;
-      requestAnimationFrame(() => {
-        if (sequence !== areaFocusSequence || !detail.open) return;
-        const row = summary.getBoundingClientRect();
-        const list = panel.getBoundingClientRect();
-        const topVisible = Math.max(76, list.top + 10);
-        const bottomVisible = Math.min(viewportHeight - 95, list.bottom - 25);
-        // Move the document only when the chosen heading is not in a comfortable
-        // reading position. Short categories near the end cannot always scroll
-        // to the top inside the list; a small page adjustment handles those.
-        if (row.top < topVisible || row.top > Math.min(preferredY + 65, bottomVisible)) {
-          const delta = row.top - preferredY;
-          // Never jump hundreds of pixels past the category heading on one tap.
-          const limit = Math.max(180, viewportHeight * .45);
-          const scrollDelta = Math.max(-limit, Math.min(limit, delta));
-          window.scrollTo({top: Math.max(0, window.scrollY + scrollDelta), behavior:'instant'});
-        }
-      });
-    }));
-  }
+  // District, drink and night-market subcategory details open in place.
+  // In particular, area rows must not steal keyboard focus or auto-scroll.
   // Switching district, drinks or night-market bubbles resets only the newly
   // selected list to its beginning. The horizontal tab strip stays untouched.
   function prepareGuidedTab(panel) {
@@ -107,15 +66,15 @@
     const isAreaCategory = detail.parentElement?.classList.contains('area-category-list');
     const guidedPanel = detail.closest('.venue-directory-section .tab-panel.guided-focus-panel');
     const isFoodSubcategory = Boolean(guidedPanel && detail.parentElement === guidedPanel.querySelector(':scope > .indented'));
-    // Stop a still-running homepage smooth jump before focusing an area row.
-    // Drinks and night-market rows should simply expand where they are.
-    if (isAreaCategory) window.scrollTo({top:window.scrollY,behavior:'instant'});
+    // Within the three four-row directories, never refocus or move the page
+    // just because a nested heading expands. Other accordion types keep their
+    // existing scroll-to-open behavior.
     if (detail.open) {
       closeBranch(detail);
     } else {
       openAccordion(detail);
-      if (isAreaCategory) focusDirectoryCategory(summary);
-      else if (!isFoodSubcategory && !detail.classList.contains('daytrip-inline-accordion')) scrollOpenedSummaryIntoView(detail);
+      if (!isAreaCategory && !isFoodSubcategory && !detail.classList.contains('daytrip-inline-accordion'))
+        scrollOpenedSummaryIntoView(detail);
     }
   });
   // Also enforce sibling exclusivity if a detail is opened by other scripts.
@@ -139,6 +98,8 @@
       panels[i].hidden=!on;
     });
     if(moveFocus) pills[index].focus({preventScroll:true});
+    // Recommendation pills get their own controlled position below.
+    if(tablist.closest('.venue-directory-section:not(.area-directory-section)')) return;
     // Anticipate the next category before the selected pill reaches the right edge.
     // A mostly-visible pill stays put; a pill nearing the edge moves to the left
     // fifth of the strip, leaving space to discover and tap the following pills.
@@ -165,17 +126,28 @@
         tablist.scrollTo({left:clamped,behavior:reduceMotion.matches?'auto':'smooth'});
     }
   }
-  // Recommendation tabs use the same left-edge auto-scroll movement as the
-  // district tabs. Keep the active choice fully visible, with the next choice
-  // discoverable. Never force the whole document to scroll for a bubble tap.
-  function alignRecommendationPill(strip, selected){
+  // For the recommended-list strip, place the selected bubble in the
+  // second visual slot. A half-visible preceding bubble remains at the left,
+  // with the left-hand gradient indicating that the strip is scrollable.
+  function alignRecommendationPill(strip,selected){
     if(!strip||!selected)return;
+    const pills=[...strip.querySelectorAll(':scope > .tab-pill')];
+    const index=pills.indexOf(selected);
+    if(index<0)return;
+    const previous=pills[index-1];
+    const gap=parseFloat(getComputedStyle(strip).columnGap)||0;
+    const leftSpace=previous ? Math.round(previous.offsetWidth/2+gap+2) : 2;
+    const last=pills[pills.length-1];
+    const followingWidth=(last.offsetLeft+last.offsetWidth)-(selected.offsetLeft+selected.offsetWidth);
+    // Just enough invisible end-space for the last (or penultimate) pill to
+    // sit in the second slot, rather than sticking against the right edge.
+    const trailing=Math.max(0,Math.ceil(strip.clientWidth-leftSpace-selected.offsetWidth-followingWidth-12));
+    strip.style.setProperty('--recommendation-tail-space',trailing+'px');
     requestAnimationFrame(()=>{
       const max=Math.max(0,strip.scrollWidth-strip.clientWidth);
-      if(max<2)return;
-      const wanted=selected.offsetLeft-strip.offsetLeft-12;
+      const wanted=selected.offsetLeft-strip.offsetLeft-leftSpace;
       const destination=Math.max(0,Math.min(max,wanted));
-      if(Math.abs(destination-strip.scrollLeft)>5)
+      if(Math.abs(destination-strip.scrollLeft)>2)
         strip.scrollTo({left:destination,behavior:reduceMotion.matches?'auto':'smooth'});
     });
   }
@@ -2735,43 +2707,53 @@ update();
 })();
 
 
-/* =================== JS 21: four-row directory teaser v30.9.45 =================== */
+/* =================== JS 21: fixed-heading four-row directory teaser v30.9.46 =================== */
 (()=>{
   'use strict';
   const root=document.querySelector('#guide');if(!root)return;
   const lists=[...root.querySelectorAll('.venue-directory-section:not(.area-directory-section) .tab-panel.guided-focus-panel, .area-directory-section .tab-panel')];
+  const getBody=panel=>panel.querySelector(':scope > .indented');
   function sync(panel){
     if(panel.hidden||!panel.getClientRects().length)return;
-    const body=panel.querySelector(':scope > .indented');
+    const body=getBody(panel);
     const rows=body?[...body.children].filter(el=>el.matches('details')):[];
+    // Remove old panel constraints unconditionally. The header/intro must
+    // remain outside the scrolling list, while short lists remain unmasked.
+    panel.style.removeProperty('max-height');
+    panel.classList.remove('teaser-can-scroll');
+    panel.removeAttribute('data-teaser-end');
+    if(!body)return;
     if(rows.length<5){
-      panel.style.removeProperty('max-height');
-      panel.classList.remove('four-row-teaser','teaser-can-scroll');
-      panel.removeAttribute('data-teaser-end');return;
+      panel.classList.remove('four-row-teaser');
+      body.classList.remove('teaser-scroll-body','teaser-can-scroll');
+      body.style.removeProperty('max-height');
+      body.removeAttribute('data-teaser-end');
+      return;
     }
-    const intro=panel.querySelector(':scope > .area-intro');
-    const introHeight=intro?intro.getBoundingClientRect().height+parseFloat(getComputedStyle(intro).marginBottom||'0'):0;
-    const gap=body ? parseFloat(getComputedStyle(body).rowGap||'0')||0:0;
+    const gap=parseFloat(getComputedStyle(body).rowGap)||0;
     const rowHeight=el=>{
-      const summary=el.querySelector(':scope > summary');
-      if(!summary)return 0;
+      const summary=el.querySelector(':scope > summary');if(!summary)return 0;
       const css=getComputedStyle(el);
       return summary.getBoundingClientRect().height+(parseFloat(css.marginTop)||0)+(parseFloat(css.marginBottom)||0)+gap;
     };
-    const heights=rows.slice(0,4).map(rowHeight);
-    const natural=heights[0]+heights[1]+heights[2]+heights[3]*.68+introHeight+20;
-    const cap=Math.max(192, Math.min(window.innerHeight*.62, 425));
-    panel.style.setProperty('max-height',Math.round(Math.min(cap,natural))+'px','important');
+    const h=rows.slice(0,4).map(rowHeight);
+    const natural=h[0]+h[1]+h[2]+h[3]*.68+16;
+    const cap=Math.max(192,Math.min(window.innerHeight*.62,425));
+    // The first three complete items and a faded fourth occupy the scroller.
+    const max=Math.round(Math.min(cap,natural));
     panel.classList.add('four-row-teaser');
-    updateFade(panel);
+    body.classList.add('teaser-scroll-body');
+    if(body.style.maxHeight!==max+'px')body.style.setProperty('max-height',max+'px','important');
+    updateFade(body);
   }
-  function updateFade(panel){
-    const canScroll=panel.scrollHeight>panel.clientHeight+5;
-    panel.classList.toggle('teaser-can-scroll',canScroll);
-    panel.dataset.teaserEnd=canScroll && panel.scrollTop+panel.clientHeight>=panel.scrollHeight-8 ? 'true':'false';
+  function updateFade(body){
+    const canScroll=body.scrollHeight>body.clientHeight+5;
+    body.classList.toggle('teaser-can-scroll',canScroll);
+    body.dataset.teaserEnd=canScroll && body.scrollTop+body.clientHeight>=body.scrollHeight-8 ? 'true':'false';
   }
   lists.forEach(panel=>{
-    panel.addEventListener('scroll',()=>updateFade(panel),{passive:true});
+    const body=getBody(panel);
+    body?.addEventListener('scroll',()=>updateFade(body),{passive:true});
     panel.addEventListener('toggle',()=>requestAnimationFrame(()=>sync(panel)),true);
   });
   const observer=new MutationObserver(()=>requestAnimationFrame(()=>lists.forEach(sync)));

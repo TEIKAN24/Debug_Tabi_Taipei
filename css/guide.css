@@ -5946,3 +5946,66 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-mark img
   border-top:1px solid color-mix(in srgb,var(--muted) 28%,transparent);
   white-space:normal;line-height:1.7;
 }
+
+
+/* =================== v30.9.46 — pinned directory headings & scroll hints =================== */
+/* The region's title and the selected bubble bar live outside the scrolling
+   rows: only the results themselves scroll, not the entire tab panel. */
+#guide .venue-directory-section .tab-panel.four-row-teaser{
+  max-height:none!important;
+  overflow:visible!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{
+  min-height:0;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior-y:contain;
+  overflow-anchor:none;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:#646464 transparent;
+  scroll-padding-top:0;
+}
+/* Mask only the rows (never the region title) until the actual scroll-end. */
+#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body.teaser-can-scroll:not([data-teaser-end="true"]){
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 73%,transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,#000 0%,#000 73%,transparent 100%)!important;
+}
+#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body[data-teaser-end="true"]{
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+/* Recommendation-list active pills settle in the second slot, leaving half
+   the preceding bubble visible through a subtle left-edge fade. */
+#guide .venue-directory-section:not(.area-directory-section) .tab-pills::after{
+  content:"";
+  display:block;
+  flex:0 0 var(--recommendation-tail-space,0px);
+  height:1px;
+  pointer-events:none;
+}
+#guide .venue-directory-section:not(.area-directory-section) .tab-pills[data-scroll-fade="start"]{
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 100%);
+  mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 100%);
+}
+#guide .venue-directory-section:not(.area-directory-section) .tab-pills[data-scroll-fade="both"]{
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
+}
+/* Give the swap arrow comfortable breathing room between the two airport
+   endpoint bubbles; keep their outer edges and labels aligned. */
+#guide #airport-route-selector .airsel-route-fields{
+  column-gap:clamp(48px,12vw,56px)!important;
+}
+
+/* Disable native pill snapping only for recommendation categories, otherwise
+   the browser pulls the prior bubble fully into view after our half-bubble
+   alignment and defeats the intended second-slot position. */
+#guide .venue-directory-section:not(.area-directory-section) .tab-pills{
+  scroll-snap-type:none!important;
+}
+#guide .venue-directory-section:not(.area-directory-section) .tab-pills > .tab-pill{
+  scroll-snap-align:none!important;
+}
