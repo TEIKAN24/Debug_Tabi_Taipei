@@ -614,6 +614,13 @@ function wrapFoodDescription(value, limit = 16) {
 // Persist the chosen dish while the food-search page is active, including
 // when typing a query or changing category filters.
 let expandedDishName = null;
+// Measure the real Japanese description height even while max-height is zero.
+// This avoids hidden full text occupying extra space in iOS Safari.
+function measureFoodDescription(row) {
+  const full = row?.querySelector('.food-desc-full');
+  if (!full) return;
+  full.style.setProperty('--food-full-height', `${Math.ceil(full.scrollHeight + 2)}px`);
+}
 function setFoodEntryExpanded(row, expanded) {
   if (!row || !row.classList.contains("food-entry-expandable")) return;
   const button = row.querySelector(".food-entry-toggle");
@@ -836,6 +843,9 @@ if (expandable) {
       if (expandable && food.name === expandedDishName) setFoodEntryExpanded(row, true);
     }
   }
+  // Sizes are known only after the rows join the document and wrap at the
+  // current screen width. Collapsed previews now take exactly one line.
+  results.querySelectorAll('.food-entry-expandable').forEach(measureFoodDescription);
   results.scrollTop = 0;
   resizeResultViewport();
 }
@@ -852,7 +862,10 @@ foodExplorer.querySelectorAll("[data-example]").forEach(button => {
     input.blur();
   });
 });
-window.addEventListener("resize", () => requestAnimationFrame(resizeResultViewport));
+window.addEventListener("resize", () => requestAnimationFrame(() => {
+  results.querySelectorAll('.food-entry-expandable').forEach(measureFoodDescription);
+  resizeResultViewport();
+}));
 
 // Minimal CSV parser: supports UTF-8 BOM, quoted commas, quotes, and newlines.
 function parseCsv(text) {
