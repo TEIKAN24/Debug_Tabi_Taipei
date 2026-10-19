@@ -165,14 +165,30 @@
         tablist.scrollTo({left:clamped,behavior:reduceMotion.matches?'auto':'smooth'});
     }
   }
+  // Recommendation tabs use the same left-edge auto-scroll movement as the
+  // district tabs. Keep the active choice fully visible, with the next choice
+  // discoverable. Never force the whole document to scroll for a bubble tap.
+  function alignRecommendationPill(strip, selected){
+    if(!strip||!selected)return;
+    requestAnimationFrame(()=>{
+      const max=Math.max(0,strip.scrollWidth-strip.clientWidth);
+      if(max<2)return;
+      const wanted=selected.offsetLeft-strip.offsetLeft-12;
+      const destination=Math.max(0,Math.min(max,wanted));
+      if(Math.abs(destination-strip.scrollLeft)>5)
+        strip.scrollTo({left:destination,behavior:reduceMotion.matches?'auto':'smooth'});
+    });
+  }
   document.querySelectorAll('.tab-pills').forEach(tablist=>{
     const pills=Array.from(tablist.querySelectorAll(':scope > .tab-pill'));
     pills.forEach((pill,index)=>{
       const isAreaTablist = Boolean(tablist.closest('.area-directory-section'));
+      const isRecommendedTablist = Boolean(tablist.closest('.venue-directory-section:not(.area-directory-section)'));
       pill.addEventListener('click',()=>{
         activateTab(tablist,index);
         const panel=tablist.nextElementSibling?.children[index];
-        if (isAreaTablist || panel?.classList.contains('guided-focus-panel')) prepareGuidedTab(panel);
+        if (isAreaTablist || isRecommendedTablist || panel?.classList.contains('guided-focus-panel')) prepareGuidedTab(panel);
+        if (isRecommendedTablist) alignRecommendationPill(tablist, pill);
       });
       pill.addEventListener('keydown',e=>{
         if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
@@ -181,7 +197,8 @@
         const normalized=(next+pills.length)%pills.length;
         activateTab(tablist,next,true);
         const panel=tablist.nextElementSibling?.children[normalized];
-        if (isAreaTablist || panel?.classList.contains('guided-focus-panel')) prepareGuidedTab(panel);
+        if (isAreaTablist || isRecommendedTablist || panel?.classList.contains('guided-focus-panel')) prepareGuidedTab(panel);
+        if (isRecommendedTablist) alignRecommendationPill(tablist, pills[normalized]);
       });
     });
   });
@@ -405,7 +422,7 @@
           const tag = document.createElement('span');
           tag.className = 'venue-tag';
           if (CAUTION.test(value)) tag.classList.add('venue-tag--caution');
-          else if (HIGHLIGHT.test(value)) tag.classList.add('venue-tag--featured');
+          else if (HIGHLIGHT.test(value) || (firstLink.textContent.trim()==='甜満' && value==='人気急上昇中')) tag.classList.add('venue-tag--featured');
           tag.textContent = value;
           tagList.append(tag);
         }
@@ -665,7 +682,7 @@ function drawResults() {
       desc.className = "desc";
       addHighlightedText(name, food.name, highlightTerms);
       const graphemes = descriptionGraphemes(food.description);
-      const expandable = graphemes.length > 15;
+      const expandable = graphemes.length > 15 || Boolean(food.detail);
       if (expandable) {
         const preview = document.createElement("span");
         preview.className = "food-desc-preview";
@@ -675,6 +692,12 @@ function drawResults() {
         full.className = "food-desc-full";
         full.hidden = true;
         addHighlightedText(full, wrapFoodDescription(food.description, 16), highlightTerms);
+        if (food.detail) {
+          const addition = document.createElement('span');
+          addition.className = 'food-desc-addition';
+          addHighlightedText(addition, food.detail, highlightTerms);
+          full.append(addition);
+        }
         desc.append(preview, full);
       } else {
         addHighlightedText(desc, food.description, highlightTerms);
@@ -802,6 +825,7 @@ function parseCsv(text) {
   category: item.category,
   name: item.name,
   description: item.description,
+  detail: item.detail || '',
   
 tags: (item.tags || "")
   .split("|")
@@ -1875,12 +1899,14 @@ update();
   'use strict';
   const guide=document.getElementById('guide');
   if(!guide)return;
-  // Recommendation lists may remain open after scrolling away. Other
-  // accordions retain their existing auto-fold behaviour.
+  // Only the travel-preparation accordions auto-fold when leaving the
+  // viewport. Airport access, all dining/area/experience sections and nearby
+  // destinations remain open until an actual user selection closes them.
+  const foodRoot=guide.querySelector('details.venue-directory-section:not(.area-directory-section)');
   const detailBlocks=[...guide.querySelectorAll('details')]
-    .filter(detail=>!detail.closest('.venue-directory-section'));
-  const dayTripPanels=[...guide.querySelectorAll('.sights-day-trips .daytrip-destination-panel')];
-  const airportClip=guide.querySelector('#airsel-results-clip');
+    .filter(detail=>foodRoot && !!(detail.compareDocumentPosition(foodRoot) & Node.DOCUMENT_POSITION_FOLLOWING));
+  const dayTripPanels=[];
+  const airportClip=null;
   const tracked=new Map();
 
   function expanded(element,kind){
@@ -2706,4 +2732,51 @@ update();
       ],{duration:360,easing:'cubic-bezier(.22,1,.36,1)'});
     });
   }
+})();
+
+
+/* =================== JS 21: four-row directory teaser v30.9.45 =================== */
+(()=>{
+  'use strict';
+  const root=document.querySelector('#guide');if(!root)return;
+  const lists=[...root.querySelectorAll('.venue-directory-section:not(.area-directory-section) .tab-panel.guided-focus-panel, .area-directory-section .tab-panel')];
+  function sync(panel){
+    if(panel.hidden||!panel.getClientRects().length)return;
+    const body=panel.querySelector(':scope > .indented');
+    const rows=body?[...body.children].filter(el=>el.matches('details')):[];
+    if(rows.length<5){
+      panel.style.removeProperty('max-height');
+      panel.classList.remove('four-row-teaser','teaser-can-scroll');
+      panel.removeAttribute('data-teaser-end');return;
+    }
+    const intro=panel.querySelector(':scope > .area-intro');
+    const introHeight=intro?intro.getBoundingClientRect().height+parseFloat(getComputedStyle(intro).marginBottom||'0'):0;
+    const gap=body ? parseFloat(getComputedStyle(body).rowGap||'0')||0:0;
+    const rowHeight=el=>{
+      const summary=el.querySelector(':scope > summary');
+      if(!summary)return 0;
+      const css=getComputedStyle(el);
+      return summary.getBoundingClientRect().height+(parseFloat(css.marginTop)||0)+(parseFloat(css.marginBottom)||0)+gap;
+    };
+    const heights=rows.slice(0,4).map(rowHeight);
+    const natural=heights[0]+heights[1]+heights[2]+heights[3]*.68+introHeight+20;
+    const cap=Math.max(192, Math.min(window.innerHeight*.62, 425));
+    panel.style.setProperty('max-height',Math.round(Math.min(cap,natural))+'px','important');
+    panel.classList.add('four-row-teaser');
+    updateFade(panel);
+  }
+  function updateFade(panel){
+    const canScroll=panel.scrollHeight>panel.clientHeight+5;
+    panel.classList.toggle('teaser-can-scroll',canScroll);
+    panel.dataset.teaserEnd=canScroll && panel.scrollTop+panel.clientHeight>=panel.scrollHeight-8 ? 'true':'false';
+  }
+  lists.forEach(panel=>{
+    panel.addEventListener('scroll',()=>updateFade(panel),{passive:true});
+    panel.addEventListener('toggle',()=>requestAnimationFrame(()=>sync(panel)),true);
+  });
+  const observer=new MutationObserver(()=>requestAnimationFrame(()=>lists.forEach(sync)));
+  root.querySelectorAll('.venue-directory-section .tab-pills button.tab-pill').forEach(tab=>observer.observe(tab,{attributes:true,attributeFilter:['aria-selected']}));
+  window.addEventListener('resize',()=>lists.forEach(sync),{passive:true});
+  window.addEventListener('load',()=>lists.forEach(sync),{once:true});
+  requestAnimationFrame(()=>lists.forEach(sync));
 })();

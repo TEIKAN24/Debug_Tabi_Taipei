@@ -5881,3 +5881,68 @@ html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeli
     letter-spacing:.07em!important;
   }
 }
+
+
+/* =================== v30.9.45: quieter controls, header spacing and transit labels =================== */
+/* About +200% white space, i.e. three times the prior 17px gap. */
+.hero h1.hero-masthead{margin-bottom:51px!important;}
+/* Quiet appearance switch without sacrificing the tap target. */
+.hero.wrapper .theme-preview-toggle{
+  min-width:40px!important;min-height:40px!important;
+  width:40px!important;height:40px!important;
+  background:transparent!important;border-color:transparent!important;
+  box-shadow:none!important;opacity:.42!important;
+}
+.hero.wrapper .theme-preview-toggle svg{width:14px!important;height:14px!important;}
+.hero.wrapper .theme-preview-toggle:hover,
+.hero.wrapper .theme-preview-toggle:focus-visible{opacity:.83!important;}
+html[data-theme="light"] .hero.wrapper .theme-preview-toggle{
+  background:transparent!important;border-color:transparent!important;
+  color:#77838A!important;
+}
+/* Display original full-color transit operator artwork in light mode only. */
+html[data-theme="light"] #guide #airport-route-selector .airsel-company-mark img[data-ready="true"]{
+  filter:none!important;-webkit-filter:none!important;opacity:1!important;
+}
+/* Aligned edge-to-edge endpoint bubbles, with captions sharing bubble left edge. */
+#guide #airport-route-selector .airsel-route-fields{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:clamp(32px,7vw,42px)!important;
+  padding:0!important;
+  margin-inline:0!important;
+}
+#guide #airport-route-selector .airsel-route-fields .selrow{min-width:0!important;}
+#guide #airport-route-selector .airsel-route-fields .sel-field{min-width:0!important;align-items:stretch!important;}
+#guide #airport-route-selector .airsel-route-fields .sel-choice-bubble{
+  width:100%!important;max-width:none!important;
+  margin:0!important;box-sizing:border-box!important;
+}
+#guide #airport-route-selector .airsel-route-fields .sel-label{
+  align-self:flex-start!important;margin:0!important;
+  padding:0!important;text-align:left!important;
+}
+@media(max-width:355px){
+  #guide #airport-route-selector .airsel-route-fields{
+    gap:32px!important;
+  }
+}
+/* Short scrollports: first three complete options plus part of a fourth.
+   Gradient is only present while there is more content below. */
+#guide .venue-directory-section .tab-panel.four-row-teaser{
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+}
+#guide .venue-directory-section .tab-panel.four-row-teaser.teaser-can-scroll:not([data-teaser-end="true"]){
+  -webkit-mask-image:linear-gradient(to bottom, #000 0%,#000 73%,transparent 100%)!important;
+  mask-image:linear-gradient(to bottom, #000 0%,#000 73%,transparent 100%)!important;
+}
+#guide .venue-directory-section .tab-panel.four-row-teaser[data-teaser-end="true"]{
+  -webkit-mask-image:none!important;mask-image:none!important;
+}
+/* Expanded dish descriptions retain the original sentence, with an explicit new
+   second paragraph containing up to 50 Japanese characters of added context. */
+#guide #food-explorer .food-desc-addition{
+  display:block;margin-top:5px;padding-top:5px;
+  border-top:1px solid color-mix(in srgb,var(--muted) 28%,transparent);
+  white-space:normal;line-height:1.7;
+}
