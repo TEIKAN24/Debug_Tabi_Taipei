@@ -6039,3 +6039,119 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:focus-visible{
 @media(prefers-reduced-motion:reduce){
   #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{scroll-behavior:auto!important;}
 }
+
+
+/* ================= v30.9.48: pinned directory heading and animated food detail ================= */
+/* Expanded heading lives OUTSIDE the inner list scrollport, beneath the pills
+   and any region intro. Only the content below it scrolls or fades. */
+#guide .venue-directory-section .tab-panel > .guided-fixed-heading{
+  position:relative;z-index:2;
+  margin:0;
+  padding:0;
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+  transform:translateY(7px);
+  transition:opacity .27s ease,transform .32s cubic-bezier(.22,1,.36,1),
+    max-height .32s ease,margin .32s ease;
+}
+#guide .venue-directory-section .tab-panel > .guided-fixed-heading.is-active{
+  opacity:1;transform:translateY(0);
+  max-height:80px;
+  margin:7px 0 2px;
+}
+#guide .venue-directory-section .tab-panel > .guided-fixed-heading > button{
+  width:100%;box-sizing:border-box;display:flex;align-items:center;
+  min-height:41px;padding:10px 28px 10px 12px;
+  border:1px solid var(--line,#414141);border-radius:9px;
+  color:var(--ink,#f6f6f6);background:var(--paper,#202020);
+  font:700 13px/1.45 inherit;text-align:left;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#guide .area-directory-section .tab-panel > .guided-fixed-heading > button{
+  font-size:14px;font-weight:700;
+}
+#guide .venue-directory-section .tab-panel > .guided-fixed-heading > button::after{
+  content:'−';position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  color:var(--muted,#a0a0a0);font-size:18px;font-weight:400;
+}
+#guide .venue-directory-section .tab-panel > .guided-fixed-heading > button:focus-visible{
+  outline:2px solid var(--accent,#83d3b0);outline-offset:2px;
+}
+#guide .venue-directory-section .tab-panel .teaser-scroll-body > details.guided-title-pinned > summary{
+  visibility:hidden;
+}
+html[data-theme="light"] #guide .venue-directory-section .tab-panel > .guided-fixed-heading > button{
+  color:#27363C!important;background:#F7F8F7!important;border-color:#D7DFE1!important;
+}
+/* Keep the faded fourth row below the fixed heading, never fade the heading. */
+#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{
+  scroll-padding-top:0!important;
+}
+#guide #food-explorer .food-entry-toggle .desc{
+  display:grid;
+  grid-template-rows:minmax(0,1fr) minmax(0,0fr);
+  align-items:start;
+  transition:grid-template-rows .34s cubic-bezier(.22,1,.36,1);
+}
+#guide #food-explorer .result.is-expanded .food-entry-toggle .desc{
+  grid-template-rows:minmax(0,0fr) minmax(0,1fr);
+}
+#guide #food-explorer .food-desc-preview,
+#guide #food-explorer .food-desc-full{
+  min-height:0;overflow:hidden!important;
+  transition:opacity .25s ease,transform .3s cubic-bezier(.22,1,.36,1);
+}
+#guide #food-explorer .food-desc-preview{opacity:1;transform:translateY(0)}
+#guide #food-explorer .food-desc-full{opacity:0;transform:translateY(-5px)}
+#guide #food-explorer .result.is-expanded .food-desc-preview{
+  opacity:0;transform:translateY(-4px);
+}
+#guide #food-explorer .result.is-expanded .food-desc-full{
+  opacity:1;transform:translateY(0);
+}
+/* Grid animation cannot work if the legacy `[hidden]` display:none is set;
+   JavaScript now uses aria-hidden while keeping both elements mounted. */
+@media(prefers-reduced-motion:reduce){
+  #guide .venue-directory-section .tab-panel > .guided-fixed-heading,
+  #guide #food-explorer .food-entry-toggle .desc,
+  #guide #food-explorer .food-desc-preview,
+  #guide #food-explorer .food-desc-full{transition:none!important;}
+}
+
+/* ================= v30.9.48 — appearance icon: state-neutral and top-aligned =================
+   Match the SVG's top (not the centre of its 40px touch target) to the
+   TAIPEI CITY GUIDE overline. Theme changes are the only source of color changes. */
+.hero.wrapper .theme-preview-toggle,
+.hero.wrapper .theme-preview-toggle:is(:hover,:active,:focus,:focus-visible){
+  top:calc(clamp(28px,6vw,44px) - 13px)!important;
+  right:0!important;
+  width:40px!important;height:40px!important;
+  min-width:40px!important;min-height:40px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  outline:none!important;
+  color:#88949B!important;
+  opacity:.42!important;
+  filter:none!important;
+  transform:none!important;
+  transition:color .18s ease!important;
+  -webkit-tap-highlight-color:transparent;
+}
+html[data-theme="light"] .hero.wrapper .theme-preview-toggle,
+html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:focus,:focus-visible){
+  color:#77838A!important;
+}
+.hero.wrapper .theme-preview-toggle svg,
+.hero.wrapper .theme-preview-toggle:is(:hover,:active,:focus,:focus-visible) svg{
+  display:block!important;
+  width:14px!important;height:14px!important;
+  opacity:1!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .hero.wrapper .theme-preview-toggle{transition:none!important;}
+}

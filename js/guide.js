@@ -69,7 +69,7 @@
       if(!scrollable)return;
       const current=summary.getBoundingClientRect();
       const viewport=body.getBoundingClientRect();
-      const wanted=Math.max(0,body.scrollTop+current.top-viewport.top-3);
+      const wanted=Math.max(0,body.scrollTop+current.bottom-viewport.top-3);
       body.scrollTo({top:wanted,behavior:reduceMotion.matches?'instant':'smooth'});
     }));
   }
@@ -611,6 +611,9 @@ function wrapFoodDescription(value, limit = 16) {
   return lines.join("\n");
 }
 
+// Persist the chosen dish while the food-search page is active, including
+// when typing a query or changing category filters.
+let expandedDishName = null;
 function setFoodEntryExpanded(row, expanded) {
   if (!row || !row.classList.contains("food-entry-expandable")) return;
   const button = row.querySelector(".food-entry-toggle");
@@ -618,33 +621,94 @@ function setFoodEntryExpanded(row, expanded) {
   const full = row.querySelector(".food-desc-full");
   if (!button || !preview || !full) return;
   row.classList.toggle("is-expanded", expanded);
+  if (expanded) expandedDishName = row.dataset.dishName;
+  else if (expandedDishName === row.dataset.dishName) expandedDishName = null;
   button.setAttribute("aria-expanded", String(expanded));
   button.setAttribute("aria-label", `${row.dataset.dishName}：${expanded ? "説明を閉じる" : "説明の続きを見る"}`);
-  preview.hidden = expanded;
-  full.hidden = !expanded;
+  // CSS grid interpolates both rows; hiding nodes immediately would snap.
+  preview.setAttribute('aria-hidden',String(expanded));
+  full.setAttribute('aria-hidden',String(!expanded));
 }
 
-// Collapse only once the ENTIRE entry has left the internal food-result scrollport.
-// When an entry above the viewport shrinks, compensate its height so reading position stays stable.
-let foodCollapseFrame = 0;
-function collapseFoodEntriesOutsideViewport() {
-  foodCollapseFrame = 0;
-  if (!results.classList.contains("scrolling")) return;
-  const viewport = results.getBoundingClientRect();
-  for (const row of results.querySelectorAll(".result.is-expanded")) {
-    const rect = row.getBoundingClientRect();
-    const above = rect.bottom <= viewport.top + 1;
-    const below = rect.top >= viewport.bottom - 1;
-    if (!above && !below) continue;
-    const beforeHeight = row.getBoundingClientRect().height;
-    const scrollBefore = results.scrollTop;
-    setFoodEntryExpanded(row, false);
-    if (above) results.scrollTop = Math.max(0, scrollBefore - (beforeHeight - row.getBoundingClientRect().height));
-  }
+// Keep the next tapped dish at the same visible position while an earlier
+// expanded dish above it shrinks. The browser's normal scroll anchoring is
+// disabled for this scrollport, so compensate during the height transition.
+let foodAnchorSequence = 0;
+function stabilizeDishWhileSwitching(row) {
+  const seq = ++foodAnchorSequence;
+  const initialTop = row.getBoundingClientRect().top;
+  const began = performance.now();
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // User scrolling takes precedence over automated anchoring.
+  const stop = () => { if(seq === foodAnchorSequence) ++foodAnchorSequence; };
+  results.addEventListener('wheel', stop, {once:true, passive:true});
+  results.addEventListener('touchstart', stop, {once:true, passive:true});
+  const correct = () => {
+    if(seq !== foodAnchorSequence || !row.isConnected || !results.isConnected) return;
+    const difference = row.getBoundingClientRect().top - initialTop;
+    if(Math.abs(difference) > 0.45) {
+      const maxScroll = Math.max(0, results.scrollHeight - results.clientHeight);
+      results.scrollTop = Math.min(maxScroll, Math.max(0, results.scrollTop + difference));
+    }
+    if(performance.now() - began < (reducedMotion ? 120 : 470)) requestAnimationFrame(correct);
+  };
+  requestAnimationFrame(correct);
 }
-results.addEventListener("scroll", () => {
-  if (!foodCollapseFrame) foodCollapseFrame = requestAnimationFrame(collapseFoodEntriesOutsideViewport);
-}, {passive:true});
+
+// For a change of selection, animate the collapsing row's *measured height*.
+// The two-grid-row description alone can hold its full height and then snap
+// closed at the end of the transition. A measured outer-row height prevents
+// that jump (including when the result list is already at scrollTop=0,
+// where scroll-position compensation cannot move above the first row).
+function collapsePreviousDishSmoothly(row) {
+  if (!row?.isConnected || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setFoodEntryExpanded(row, false);
+    return;
+  }
+  const desc = row.querySelector('.food-entry-toggle .desc');
+  const before = row.getBoundingClientRect().height;
+  if (desc) desc.style.transition = 'none';
+  setFoodEntryExpanded(row, false);
+  const after = row.getBoundingClientRect().height;
+  if (Math.abs(before - after) < 1) {
+    if (desc) desc.style.removeProperty('transition');
+    return;
+  }
+  row.style.height = `${before}px`;
+  row.style.overflow = 'hidden';
+  row.style.transition = 'none';
+  row.getBoundingClientRect(); // Commit initial height before animating.
+  let finished = false;
+  const cleanup = () => {
+    if (finished) return;
+    finished = true;
+    row.style.removeProperty('height');
+    row.style.removeProperty('overflow');
+    row.style.removeProperty('transition');
+    if (desc) desc.style.removeProperty('transition');
+    row.removeEventListener('transitionend', onEnd);
+  };
+  function onEnd(event) {
+    if (event.target === row && event.propertyName === 'height') cleanup();
+  }
+  row.addEventListener('transitionend', onEnd);
+  requestAnimationFrame(() => {
+    if (!row.isConnected) {cleanup();return;}
+    row.style.transition = 'height .34s ease-in-out';
+    row.style.height = `${after}px`;
+  });
+}
+
+// A description no longer closes on scroll or when it leaves the viewport.
+// It remains open until another dish is selected, the same dish is manually
+// closed, or the user exits the food search drawer.
+const foodDrawer = document.getElementById('food-search');
+foodDrawer?.addEventListener('food-search-closed', () => {
+  expandedDishName = null;
+  for (const row of results.querySelectorAll('.result.is-expanded')) {
+    setFoodEntryExpanded(row, false);
+  }
+});
 
 function drawResults() {
   const matched = currentMatches();
@@ -685,7 +749,7 @@ function drawResults() {
         addHighlightedText(preview, graphemes.slice(0, 15).join(""), highlightTerms);
         const full = document.createElement("span");
         full.className = "food-desc-full";
-        full.hidden = true;
+        full.setAttribute('aria-hidden','true');
         addHighlightedText(full, wrapFoodDescription(food.description, 16), highlightTerms);
         if (food.detail) {
           const addition = document.createElement('span');
@@ -750,10 +814,15 @@ if (expandable) {
   button.append(left, meta);
   button.addEventListener("click", () => {
     const open = !row.classList.contains("is-expanded");
-    // Show one explanation at a time to keep the scroll list compact.
-    for (const other of results.querySelectorAll(".result.is-expanded")) {
-      if (other !== row) setFoodEntryExpanded(other, false);
-    }
+    const existing = [...results.querySelectorAll(".result.is-expanded")]
+      .filter(other => other !== row);
+    // If the currently open explanation is above the one we just tapped,
+    // collapsing it must not drag the new heading away under the user's finger.
+    const collapsingAbove = open && existing.some(other =>
+      Boolean(other.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_FOLLOWING));
+    if (collapsingAbove) stabilizeDishWhileSwitching(row);
+    else ++foodAnchorSequence;
+    for (const other of existing) collapsePreviousDishSmoothly(other);
     setFoodEntryExpanded(row, open);
   });
   row.append(button);
@@ -762,6 +831,9 @@ if (expandable) {
 }
 
       results.append(row);
+      // Keep this dish expanded when filtering or searching without leaving
+      // the food screen. If filtered out, restore it when it reappears.
+      if (expandable && food.name === expandedDishName) setFoodEntryExpanded(row, true);
     }
   }
   results.scrollTop = 0;
@@ -1163,6 +1235,8 @@ loadData();
       opened=true;
       draw(1,true);
     }else{
+      // Exiting this independent page resets its open description.
+      if(opened) drawer.dispatchEvent(new Event('food-search-closed'));
       body.classList.remove('food-drawer-open');
       drawer.setAttribute('aria-hidden','true');
       opened=false;
@@ -2771,6 +2845,30 @@ update();
     if(element.closest('#guide .sights-day-trips'))return daytrip;
     return null;
   };
+  const foodOwner=roots.find(root=>root.id==='3f56bda0-4caa-80cb-846a-c054fc9eb79b');
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let anchorVersion=0;
+  for(const kind of ['wheel','touchstart','pointerdown']){
+    window.addEventListener(kind,()=>{++anchorVersion;},{passive:true,capture:true});
+  }
+  function stabilizeFoodAfterAirportFold(owner,target){
+    if(owner!==foodOwner || target.closest('.quick-nav') || !airport)return;
+    const disclosure=airport.querySelector('#airsel-route-disclosure');
+    if(disclosure?.getAttribute('aria-expanded')!=='true')return;
+    const anchor=target.closest('.tab-pills, summary')||foodOwner.querySelector(':scope > summary');
+    if(!anchor || !anchor.getClientRects().length)return;
+    const top=anchor.getBoundingClientRect().top;
+    const version=++anchorVersion;
+    const start=performance.now();
+    const maintain=()=>{
+      if(version!==anchorVersion || !anchor.isConnected)return;
+      const difference=anchor.getBoundingClientRect().top-top;
+      if(Math.abs(difference)>1 && Math.abs(difference)<1000)
+        window.scrollTo({top:Math.max(0,window.scrollY+difference),behavior:'instant'});
+      if(performance.now()-start<(reduced.matches?130:540))requestAnimationFrame(maintain);
+    };
+    requestAnimationFrame(maintain);
+  }
   function foldOtherBlocks(owner){
     roots.forEach(root=>{
       if(root===owner || !root.open)return;
@@ -2800,6 +2898,97 @@ update();
     // Do not mistake a tap on a non-interactive paragraph for a new selection.
     if(!event.target.closest('button, summary, a, input, select, [role="tab"]'))return;
     folding=true;
-    try{foldOtherBlocks(owner);}finally{folding=false;}
+    try{
+      stabilizeFoodAfterAirportFold(owner,event.target);
+      foldOtherBlocks(owner);
+    }finally{folding=false;}
   },true);
+})();
+
+
+/* ================= JS 23: pinned expanded directory heading v30.9.48 ================= */
+(()=>{
+  'use strict';
+  const guide=document.getElementById('guide');
+  if(!guide)return;
+  const panels=[...guide.querySelectorAll(
+    '.venue-directory-section:not(.area-directory-section) .tab-panel.guided-focus-panel, '+
+    '.area-directory-section .tab-panel')];
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const owned=new WeakMap();
+  function bodyOf(panel){return panel.querySelector(':scope > .indented');}
+  function getOpenRow(body){
+    return [...body.children].find(child=>child.matches('details[open]'))||null;
+  }
+  function sync(panel,move=false){
+    const body=bodyOf(panel);
+    if(!body)return;
+    let holder=owned.get(panel);
+    const row=getOpenRow(body);
+    if(!row){
+      if(holder){
+        body.querySelectorAll('details.guided-title-pinned').forEach(el=>el.classList.remove('guided-title-pinned'));
+        holder.classList.remove('is-active');
+        clearTimeout(holder._hideTimer);
+        // Fade and collapse the pinned title in sync with the detail closing.
+        holder._hideTimer=setTimeout(()=>{
+          if(!getOpenRow(body) && owned.get(panel)===holder){
+            holder.remove();owned.delete(panel);
+          }
+        },330);
+      }
+      return;
+    }
+    if(holder){
+      clearTimeout(holder._hideTimer);
+      holder._hideTimer=null;
+    }
+    if(!holder){
+      holder=document.createElement('div');
+      holder.className='guided-fixed-heading';
+      const control=document.createElement('button');
+      control.type='button';
+      control.className='guided-fixed-heading-button';
+      control.setAttribute('aria-expanded','true');
+      holder.append(control);
+      // The introductory neighborhood text stays above this heading,
+      // and only the directory rows themselves are scrollable.
+      panel.insertBefore(holder,body);
+      owned.set(panel,holder);
+      control.addEventListener('click',()=>{
+        const active=body.querySelector('details.guided-title-pinned[open] > summary');
+        active?.click();
+      });
+    }
+    for(const other of body.querySelectorAll('details.guided-title-pinned')){
+      if(other!==row)other.classList.remove('guided-title-pinned');
+    }
+    const summary=row.querySelector(':scope > summary');
+    holder.querySelector('button').textContent=summary?.textContent.trim()||'';
+    holder.dataset.area=String(panel.closest('.area-directory-section')!==null);
+    row.classList.add('guided-title-pinned');
+    // A pinned heading appears while the chosen option glides into position.
+    if(!holder.classList.contains('is-active')){
+      requestAnimationFrame(()=>{
+        if(holder?.isConnected && getOpenRow(body)) holder.classList.add('is-active');
+      });
+    }
+  }
+  panels.forEach(panel=>{
+    panel.addEventListener('toggle',()=>requestAnimationFrame(()=>sync(panel)),true);
+  });
+  // Bubble switching closes old details programmatically; synchronize both
+  // old and new panes without forcing document focus or scroll.
+  guide.querySelectorAll('.venue-directory-section .tab-pills button.tab-pill').forEach(button=>{
+    button.addEventListener('click',()=>requestAnimationFrame(()=>panels.forEach(p=>sync(p))));
+  });
+  guide.addEventListener('click',event=>{
+    if(!event.target.closest('.venue-directory-section .tab-panel details > summary'))return;
+    requestAnimationFrame(()=>{
+      panels.forEach(panel=>{
+        if(panel.getClientRects().length && !panel.hidden)sync(panel,true);
+      });
+    });
+  });
+  panels.forEach(panel=>sync(panel));
 })();
