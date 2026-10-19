@@ -1876,7 +1876,10 @@ update();
   'use strict';
   const guide=document.getElementById('guide');
   if(!guide)return;
-  const detailBlocks=[...guide.querySelectorAll('details')];
+  // Recommendation lists may remain open after scrolling away. Other
+  // accordions retain their existing auto-fold behaviour.
+  const detailBlocks=[...guide.querySelectorAll('details')]
+    .filter(detail=>!detail.closest('.venue-directory-section'));
   const dayTripPanels=[...guide.querySelectorAll('.sights-day-trips .daytrip-destination-panel')];
   const airportClip=guide.querySelector('#airsel-results-clip');
   const tracked=new Map();
@@ -2347,9 +2350,11 @@ update();
       // Clicking the already-selected destination closes it: expand now.
       // Choosing a different destination must NOT expand the toolbar.
       if(destination.getAttribute('aria-expanded')==='true')expand();
-      else if(section.classList.contains('daytrip-mode-compact')){
-        // The destination switch handler runs after this capturing listener.
-        // Rebind our viewport observation to the newly opened panel.
+      else{
+        // All four destinations, including Keelung and Yehliu, compact the
+        // buttons while showing their itinerary. Existing route switching
+        // must not expand them again.
+        compact();
         queueMicrotask(()=>{syncPanel();scheduleCheck();});
       }
       return;
@@ -2617,4 +2622,89 @@ update();
     if(event.target.closest('a, button, summary, [role="tab"]'))stop();
   },true);
   window.addEventListener('pagehide',stop);
+})();
+
+
+/* =================== JS 20: guided-accordion-motion-v30.9.41 =================== */
+(()=>{
+  'use strict';
+  const root=document.getElementById('guide');
+  if(!root)return;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const current=new WeakMap();
+  const before=new WeakMap();
+  const selector=[
+    '.venue-directory-section details.nested-accordion',
+    '.area-directory-section .area-category-list > details',
+    '.sights-day-trips details.daytrip-inline-accordion'
+  ].join(',');
+  const selected=e=>{
+    const summary=e.target.closest?.('summary');
+    if(!summary)return null;
+    const detail=summary.parentElement;
+    return detail?.matches(selector)?detail:null;
+  };
+  function stop(detail){
+    const old=current.get(detail);
+    if(old){old.cancel();current.delete(detail);}
+    detail.style.removeProperty('overflow');
+  }
+  function animate(detail,from,to,done){
+    stop(detail);
+    if(reduce.matches||Math.abs(from-to)<2||!detail.animate){done?.();return;}
+    detail.style.overflow='hidden';
+    const animation=detail.animate([
+      {height:from+'px'}, {height:to+'px'}
+    ],{duration:300,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'});
+    current.set(detail,animation);
+    const finish=()=>{
+      if(current.get(detail)!==animation)return;
+      current.delete(detail);
+      done?.();
+      detail.style.removeProperty('overflow');
+      animation.cancel();
+    };
+    animation.finished.then(finish,finish);
+  }
+  // Intercept only closing interactions; the original site's detail handler
+  // handles opening, sibling exclusivity and guided list positioning.
+  document.addEventListener('click',e=>{
+    const detail=selected(e);
+    if(!detail||e.target.closest('a,button'))return;
+    if(detail.open){
+      e.preventDefault();e.stopPropagation();
+      const from=detail.getBoundingClientRect().height;
+      const summary=detail.querySelector(':scope > summary');
+      const to=summary?.getBoundingClientRect().height||0;
+      animate(detail,from,to,()=>{
+        detail.querySelectorAll('details[open]').forEach(child=>{child.open=false;});
+        detail.open=false;
+      });
+    }else{
+      before.set(detail,detail.getBoundingClientRect().height);
+    }
+  },true);
+  document.addEventListener('click',e=>{
+    const detail=selected(e);
+    if(!detail||!before.has(detail))return;
+    const from=before.get(detail);before.delete(detail);
+    if(detail.open)animate(detail,from,detail.getBoundingClientRect().height);
+  });
+  // When changing destinations, give the newly revealed itinerary a short
+  // downward reveal. Does not scroll the viewport or affect transit animations.
+  const trip=root.querySelector('.sights-day-trips');
+  if(trip){
+    const buttons=trip.querySelectorAll('.daytrip-destination-buttons > .daytrip-destination-button');
+    trip.addEventListener('click',e=>{
+      if(!e.target.closest('.daytrip-destination-buttons > .daytrip-destination-button'))return;
+      if(reduce.matches)return;
+      const visible=trip.querySelector('.daytrip-destination-panel:not([hidden])');
+      if(!visible)return;
+      visible.getAnimations().filter(a=>a.effect?.getTiming?.().duration===360).forEach(a=>a.cancel());
+      visible.animate([
+        {opacity:0,transform:'translate3d(0,-8px,0)'},
+        {opacity:1,transform:'translate3d(0,0,0)'}
+      ],{duration:360,easing:'cubic-bezier(.22,1,.36,1)'});
+    });
+  }
 })();

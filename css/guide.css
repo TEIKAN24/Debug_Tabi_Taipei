@@ -5537,3 +5537,19 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge 
   background:#FFFDF7!important;
   border-color:#D6AE65!important;
 }
+
+/* v30.9.41 — temporary appearance control aligned with the masthead. */
+.hero.wrapper{position:relative;}
+.hero.wrapper .theme-preview-toggle{
+  position:absolute!important;z-index:15!important;
+  top:clamp(30px,8vw,60px)!important;right:0!important;
+  min-width:40px!important;min-height:40px!important;
+  width:40px!important;height:40px!important;
+  padding:0!important;gap:0!important;line-height:1!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  border-radius:50%!important;
+  transition:background .2s,color .2s,border-color .2s,box-shadow .2s!important;
+}
+.hero.wrapper .theme-preview-toggle svg{width:20px;height:20px;flex:none;display:block;}
+@media(max-width:600px){.hero.wrapper .theme-preview-toggle{top:32px!important;right:0!important;}}
+@media(prefers-reduced-motion:reduce){.hero.wrapper .theme-preview-toggle{transition:none!important;}}
