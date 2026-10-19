@@ -6009,3 +6009,33 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-mark img
 #guide .venue-directory-section:not(.area-directory-section) .tab-pills > .tab-pill{
   scroll-snap-align:none!important;
 }
+
+
+/* =================== v30.9.47 — list heading transition and frameless theme toggle =================== */
+#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{
+  scroll-padding-top:3px;
+  scroll-behavior:smooth;
+}
+/* Retain a touch-friendly target but never draw the button's old circular
+   backdrop/border/outline while it is being pressed or focused. */
+.hero.wrapper .theme-preview-toggle,
+.hero.wrapper .theme-preview-toggle:hover,
+.hero.wrapper .theme-preview-toggle:active,
+.hero.wrapper .theme-preview-toggle:focus,
+.hero.wrapper .theme-preview-toggle:focus-visible,
+html[data-theme="light"] .hero.wrapper .theme-preview-toggle,
+html[data-theme="light"] .hero.wrapper .theme-preview-toggle:hover,
+html[data-theme="light"] .hero.wrapper .theme-preview-toggle:active,
+html[data-theme="light"] .hero.wrapper .theme-preview-toggle:focus,
+html[data-theme="light"] .hero.wrapper .theme-preview-toggle:focus-visible{
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  outline:none!important;
+  -webkit-tap-highlight-color:transparent;
+}
+/* Keyboard focus highlights only the pictogram, never a circle around it. */
+.hero.wrapper .theme-preview-toggle:focus-visible svg{opacity:1;filter:drop-shadow(0 0 2px currentColor);}
+@media(prefers-reduced-motion:reduce){
+  #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{scroll-behavior:auto!important;}
+}

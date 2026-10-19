@@ -54,6 +54,25 @@
     if (!panel) return;
     panel.scrollTop = 0;
   }
+  let guidedScrollRequest=0;
+  function alignGuidedCategoryAtTop(detail){
+    const body=detail.parentElement;
+    const summary=detail.querySelector(':scope > summary');
+    if(!body || !summary)return;
+    const request=++guidedScrollRequest;
+    // Opening height animation begins on this same click; wait one paint for
+    // expanded content to establish the scroll range. Never call scrollIntoView,
+    // which could also move the main document and cause unexpected refocusing.
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      if(request!==guidedScrollRequest || !detail.open || !body.isConnected)return;
+      const scrollable=body.scrollHeight>body.clientHeight+3;
+      if(!scrollable)return;
+      const current=summary.getBoundingClientRect();
+      const viewport=body.getBoundingClientRect();
+      const wanted=Math.max(0,body.scrollTop+current.top-viewport.top-3);
+      body.scrollTo({top:wanted,behavior:reduceMotion.matches?'instant':'smooth'});
+    }));
+  }
   const siteContent = document.querySelector('.site-content');
   siteContent?.addEventListener('click', event => {
     const summary = event.target.closest('summary');
@@ -66,6 +85,7 @@
     const isAreaCategory = detail.parentElement?.classList.contains('area-category-list');
     const guidedPanel = detail.closest('.venue-directory-section .tab-panel.guided-focus-panel');
     const isFoodSubcategory = Boolean(guidedPanel && detail.parentElement === guidedPanel.querySelector(':scope > .indented'));
+    const isGuidedCategory = isAreaCategory || isFoodSubcategory;
     // Within the three four-row directories, never refocus or move the page
     // just because a nested heading expands. Other accordion types keep their
     // existing scroll-to-open behavior.
@@ -73,7 +93,10 @@
       closeBranch(detail);
     } else {
       openAccordion(detail);
-      if (!isAreaCategory && !isFoodSubcategory && !detail.classList.contains('daytrip-inline-accordion'))
+      // Moving just the scrollable list keeps the bubble row, regional intro,
+      // and the whole document steady. The title becomes the first visible row.
+      if (isGuidedCategory) alignGuidedCategoryAtTop(detail);
+      else if (!detail.classList.contains('daytrip-inline-accordion'))
         scrollOpenedSummaryIntoView(detail);
     }
   });
@@ -2294,53 +2317,11 @@ update();
   if(!destinationRow)return;
   const panels=[...section.querySelectorAll('.daytrip-destination-panel')];
   const activePanel=()=>panels.find(p=>!p.hidden&&!p.closest('[hidden]'))||null;
-  const visible=panel=>{
-    if(!panel||panel.hidden||panel.closest('[hidden]'))return false;
-    const rect=panel.getBoundingClientRect();
-    return rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<window.innerHeight;
-  };
-  let trackedPanel=null,hasBeenVisible=false,visibilityFrame=0;
-  const expand=()=>{
-    section.classList.remove('daytrip-mode-compact');
-    trackedPanel=null;hasBeenVisible=false;
-  };
-  const syncPanel=()=>{
-    const panel=activePanel();
-    if(panel!==trackedPanel){
-      trackedPanel=panel;
-      hasBeenVisible=visible(panel);
-    }else if(visible(panel)){
-      hasBeenVisible=true;
-    }
-    return panel;
-  };
-  const compact=()=>{
-    section.classList.add('daytrip-mode-compact');
-    syncPanel();
-  };
-  // The route content, not the destination toolbar, determines when the
-  // compact state ends. Keep the toolbar compact while changing destinations.
-  const checkRouteViewport=()=>{
-    visibilityFrame=0;
-    if(!section.classList.contains('daytrip-mode-compact'))return;
-    const panel=syncPanel();
-    if(!panel){
-      // A route was folded by the site's outside-viewport controller.
-      expand();return;
-    }
-    if(hasBeenVisible&&!visible(panel))expand();
-  };
-  const scheduleCheck=()=>{
-    if(!visibilityFrame)visibilityFrame=requestAnimationFrame(checkRouteViewport);
-  };
-  window.addEventListener('scroll',scheduleCheck,{passive:true});
-  window.addEventListener('resize',scheduleCheck,{passive:true});
-  window.addEventListener('pageshow',scheduleCheck);
-  // The automatic fold controller hides panels after they leave the viewport.
-  // Observe that event too, in case no further scroll event occurs.
-  const panelObserver=new MutationObserver(scheduleCheck);
-  panels.forEach(p=>panelObserver.observe(p,{attributes:true,attributeFilter:['hidden']}));
-
+  const expand=()=>section.classList.remove('daytrip-mode-compact');
+  const compact=()=>section.classList.add('daytrip-mode-compact');
+  // v30.9.47: no scroll, resize, pageshow or visibility handlers here.
+  // Destination toolbar changes size only when the visitor operates it
+  // (or leaves the entire section through a deliberate different-section action).
   section.addEventListener('click',e=>{
     const destination=e.target.closest('.daytrip-destination-buttons > .daytrip-destination-button');
     if(destination){
@@ -2352,7 +2333,6 @@ update();
         // buttons while showing their itinerary. Existing route switching
         // must not expand them again.
         compact();
-        queueMicrotask(()=>{syncPanel();scheduleCheck();});
       }
       return;
     }
@@ -2533,9 +2513,8 @@ update();
   // Never snap scrollable drawers, inner results, tabs, or programmatic navigation.
   const selectors=[
     '#top',
-    '#guide .page-body > h2:not(.emergency-section-title)',
-    '#guide .page-body > .airport-access-subheading',
-    '#guide .page-body > details.venue-directory-section > summary .accordion-category-heading',
+    '#guide .page-body > h2[id="3f86bda0-4caa-8049-b865-f2a862bb77c5"]',
+    '#guide .page-body > h2[id="3f66bda0-4caa-80df-96ae-ee6d8959abef"]',
     '#guide .page-body > .sights-day-trips > h3'
   ].join(',');
   const getHeadings=()=>[...document.querySelectorAll(selectors)]
@@ -2723,7 +2702,7 @@ update();
     panel.classList.remove('teaser-can-scroll');
     panel.removeAttribute('data-teaser-end');
     if(!body)return;
-    if(rows.length<5){
+    if(rows.length<2 || (rows.length<5 && !rows.some(row=>row.open))){
       panel.classList.remove('four-row-teaser');
       body.classList.remove('teaser-scroll-body','teaser-can-scroll');
       body.style.removeProperty('max-height');
@@ -2737,7 +2716,7 @@ update();
       return summary.getBoundingClientRect().height+(parseFloat(css.marginTop)||0)+(parseFloat(css.marginBottom)||0)+gap;
     };
     const h=rows.slice(0,4).map(rowHeight);
-    const natural=h[0]+h[1]+h[2]+h[3]*.68+16;
+    const natural=h.reduce((total,height,i)=>total+height*(i===3?.68:1),0)+16;
     const cap=Math.max(192,Math.min(window.innerHeight*.62,425));
     // The first three complete items and a faded fourth occupy the scroller.
     const max=Math.round(Math.min(cap,natural));
@@ -2761,4 +2740,66 @@ update();
   window.addEventListener('resize',()=>lists.forEach(sync),{passive:true});
   window.addEventListener('load',()=>lists.forEach(sync),{once:true});
   requestAnimationFrame(()=>lists.forEach(sync));
+})();
+
+
+/* =================== JS 22: cross-section intentional folding v30.9.47 =================== */
+(()=>{
+  'use strict';
+  const guide=document.getElementById('guide');
+  if(!guide)return;
+  const roots=[...guide.querySelectorAll('.page-body > details.root-accordion')];
+  const airport=guide.querySelector('#airport-route-selector');
+  const daytrip=guide.querySelector('.sights-day-trips');
+  let folding=false;
+  const findOwner=target=>{
+    const element=target instanceof Element?target:null;
+    if(!element)return null;
+    const nav=element.closest('.quick-nav > .nav-button[data-target]');
+    if(nav){
+      const id=nav.dataset.target;
+      if(id==='travel')return 'travel';
+      if(id==='sights')return roots.find(root=>root.id==='3f56bda0-4caa-8046-a491-c25321b680c1')||null;
+      return ({food:roots.find(root=>root.id==='3f56bda0-4caa-80cb-846a-c054fc9eb79b'),
+               areas:roots.find(root=>root.classList.contains('area-directory-section')),
+               experiences:roots.find(root=>root.id==='3f76bda0-4caa-80d2-8841-c76e1f8f749a'),
+               souvenirs:roots.find(root=>root.id==='3f66bda0-4caa-8038-8328-e8b12e95336f')})[id]||null;
+    }
+    const root=element.closest('#guide .page-body > details.root-accordion');
+    if(root)return root;
+    if(element.closest('#guide #airport-route-selector'))return airport;
+    if(element.closest('#guide .sights-day-trips'))return daytrip;
+    return null;
+  };
+  function foldOtherBlocks(owner){
+    roots.forEach(root=>{
+      if(root===owner || !root.open)return;
+      root.querySelectorAll('details[open]').forEach(child=>{child.open=false;});
+      root.open=false;
+    });
+    if(daytrip && owner!==daytrip){
+      daytrip.querySelectorAll('.daytrip-destination-buttons > .daytrip-destination-button').forEach(button=>{
+        if(button.getAttribute('aria-expanded')==='true'){
+          button.setAttribute('aria-expanded','false');
+          const dest=(button.querySelector('.daytrip-destination-button-name')?.textContent||'').trim();
+          button.setAttribute('aria-label',dest+'の交通案内を開く');
+        }
+      });
+      daytrip.querySelectorAll('.daytrip-destination-panel').forEach(panel=>{panel.hidden=true;});
+      daytrip.classList.remove('daytrip-mode-compact');
+    }
+    if(airport && owner!==airport){
+      const disclosure=airport.querySelector('#airsel-route-disclosure');
+      if(disclosure?.getAttribute('aria-expanded')==='true')disclosure.click();
+    }
+  }
+  document.addEventListener('click',event=>{
+    if(folding)return;
+    const owner=findOwner(event.target);
+    if(!owner)return;
+    // Do not mistake a tap on a non-interactive paragraph for a new selection.
+    if(!event.target.closest('button, summary, a, input, select, [role="tab"]'))return;
+    folding=true;
+    try{foldOtherBlocks(owner);}finally{folding=false;}
+  },true);
 })();
