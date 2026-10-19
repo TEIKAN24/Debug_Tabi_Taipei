@@ -5735,3 +5735,118 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
   .hero h1.hero-masthead .hero-lockup{font-size:clamp(28px,10vw,49px)!important;}
   .hero h1.hero-masthead .hero-lockup-slash{height:clamp(42px,11vw,54px);}
 }
+
+
+/* ========== v30.9.43 — masthead alignment and v30.9.41 intro typography ========== */
+/* Align the slash to the letter bottoms; no overlong tip above the wordmark. */
+.hero h1.hero-masthead .hero-lockup {
+  align-items:flex-end!important;
+  gap:clamp(10px,2.8vw,20px)!important;
+  font-size:clamp(29px,10vw,53px)!important;
+  font-weight:520!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+}
+.hero h1.hero-masthead .hero-lockup-word {
+  font-weight:520!important;
+  line-height:1!important;
+  letter-spacing:.018em!important;
+  align-items:baseline!important;
+  white-space:nowrap;
+}
+.hero h1.hero-masthead .hero-lockup-word .ta {
+  font-weight:inherit!important;
+  letter-spacing:inherit!important;
+}
+.hero h1.hero-masthead .hero-lockup-slash {
+  width:.22em!important;
+  height:.80em!important;
+  align-self:flex-end!important;
+  transform:translateY(-.07em)!important;
+}
+.hero h1.hero-masthead .hero-lockup-slash::before {
+  left:50%!important;
+  top:0!important;
+  width:.065em!important;
+  height:100%!important;
+  border-radius:1px!important;
+  transform:translateX(-50%) rotate(18deg)!important;
+}
+/* Revert the v30.9.42 enlargement of the introduction text. */
+.hero .tagline {
+  font-size:13px!important;
+  line-height:1.85!important;
+  max-width:560px!important;
+  letter-spacing:normal!important;
+}
+@media(max-width:600px){
+  .hero h1.hero-masthead .hero-lockup {
+    font-size:clamp(26px,10vw,43px)!important;
+    gap:clamp(8px,2.6vw,13px)!important;
+  }
+  .hero h1.hero-masthead .hero-lockup-word {letter-spacing:.017em!important;}
+  .hero .tagline {font-size:13px!important;line-height:1.85!important;max-width:560px!important;}
+}
+
+/* ========== v30.9.43 — transfer badges and double-ring interchange nodes ========== */
+#guide{--transfer-ring:#F2F2F2;--transfer-surface:#0D0D0D;}
+html[data-theme="light"] #guide{--transfer-ring:#3D474D;--transfer-surface:#F7F8F7;}
+/* Light transport route transfer badges: dark graphite with white text. */
+html[data-theme="light"] #guide .airport-route-selector .timeline-status--transfer,
+html[data-theme="light"] #guide .sights-day-trips .daytrip-timeline-transfer-tag,
+html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-transfer-tag{
+  background:#3D4348!important;
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+  border-color:#3D4348!important;
+  box-shadow:none!important;
+}
+/* Common concentric markers for interchange stations in both themes. */
+#guide .airport-route-selector .timeline-stop.transfer .node,
+#guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-node,
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop--transfer .daytrip-timeline-node{
+  box-sizing:border-box!important;
+  position:relative!important;
+  width:13px!important;
+  height:13px!important;
+  border:2px solid var(--transfer-ring)!important;
+  background:var(--transfer-surface)!important;
+  border-radius:50%!important;
+  box-shadow:0 0 0 2px var(--transfer-surface)!important;
+}
+#guide .airport-route-selector .timeline-stop.transfer .node::after,
+#guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-node::after,
+#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop--transfer .daytrip-timeline-node::after{
+  content:"";
+  position:absolute;
+  top:50%;left:50%;
+  width:4px;height:4px;
+  border:0;border-radius:50%;
+  background:var(--transfer-ring);
+  transform:translate(-50%,-50%);
+}
+/* Same icon treatment for transfer markers on the alternative MRT diagram. */
+#guide .airport-direction-switcher .air-rd-step--transfer .air-rd-node,
+#guide .airport-direction-switcher .metro-transfer-node{
+  position:relative!important;
+  box-sizing:border-box!important;
+  width:13px!important;height:13px!important;
+  border:2px solid var(--transfer-ring)!important;
+  border-radius:50%!important;
+  background:var(--transfer-surface)!important;
+  box-shadow:none!important;
+}
+#guide .airport-direction-switcher .air-rd-step--transfer .air-rd-node::after,
+#guide .airport-direction-switcher .metro-transfer-node::after{
+  content:"";
+  position:absolute;
+  top:50%;left:50%;
+  width:4px;height:4px;
+  border-radius:50%;
+  background:var(--transfer-ring);
+  transform:translate(-50%,-50%);
+}
+#guide .airport-direction-switcher .air-rd-step--transfer .air-rd-node{
+  margin-top:4px!important;
+}
+#guide .airport-direction-switcher .metro-transfer-node{flex:0 0 13px!important;}
