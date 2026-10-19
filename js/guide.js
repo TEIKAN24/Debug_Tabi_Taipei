@@ -228,7 +228,7 @@
   window.addEventListener('hashchange',revealHash);
   // The browser manages history restoration; don't reset scrolling on page load,
   // pageshow or when returning from an external map. Initial deep links remain usable.
-  if (location.hash) requestAnimationFrame(revealHash);
+  if (location.hash && performance.getEntriesByType('navigation')[0]?.type !== 'reload') requestAnimationFrame(revealHash);
   const back=document.querySelector('.back-top');
   if(back){
     let lastY=window.scrollY;

@@ -5487,3 +5487,24 @@ html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeli
   border-color:#35454D!important;
   box-shadow:none!important;
 }
+
+
+/* ======== v30.9.40: vivid airport station codes in light mode only ========
+   Preserve MRT line associations (BR brown, BL blue, A purple).
+   In dark mode the former pastel station numbering remains untouched. */
+html[data-theme="light"] #guide .airport-route-selector .code.code--brown{
+ color:#9B6024!important;border-color:#9B6024!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .code.code--blue{
+ color:#1676B7!important;border-color:#1676B7!important;
+}
+html[data-theme="light"] #guide .airport-route-selector .code.code--purple{
+ color:#8445B9!important;border-color:#8445B9!important;
+}
+/* Station codes shown in the alternate MRT direction itinerary. */
+html[data-theme="light"] #guide .airport-direction-switcher .air-rd-code.air-rd-code--brown{
+ color:#9B6024!important;
+}
+html[data-theme="light"] #guide .airport-direction-switcher .air-rd-code.air-rd-code--blue{
+ color:#1676B7!important;
+}
