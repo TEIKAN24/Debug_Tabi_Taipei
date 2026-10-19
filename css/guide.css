@@ -5473,3 +5473,17 @@ html[data-theme="light"] #guide .travel-caution .travel-topic-icon {
     background:#F7F8F7!important;
   }
 }
+
+/* v30.9.36: Light theme destinations should be solid graphite dots,
+   not graphite centers surrounded by the dark theme's white ring. */
+html[data-theme="light"] #guide .airport-route-selector .timeline-stop.end .node {
+  background:#35454D!important;
+  border-color:#35454D!important;
+  box-shadow:none!important;
+}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-timeline-stop--end .daytrip-timeline-node,
+html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop--end .daytrip-timeline-node {
+  background:#35454D!important;
+  border-color:#35454D!important;
+  box-shadow:none!important;
+}

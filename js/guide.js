@@ -1484,8 +1484,8 @@ function groundUpdate(airport,toCity){
       groundLeg('国光客運 1819／1819B',toCity?'台北車站周邊へ':'桃園國際機場へ','#AEB4BC',toCity?'台北轉運站 方面の路線。乗り場と運行方向を確認':'乗り場・運行便を事前に確認')+
       stop('到着',toCity?'台北駅周辺':airportLabel,'','end');
    if(toCity){
-     details.hidden=false;
-     details.innerHTML='<div class="airsel-ground-choice"><strong>1819</strong><span>約55分 · NT$133〜164</span></div><div class="airsel-ground-choice"><strong>1819B</strong><span>約75分 · NT$133〜164</span></div>';
+     // Route names already appear in the timeline. Keep the time/fare once,
+     // in the same facts row used by the reverse direction and other modes.
      facts('約55〜75分','NT$133〜164','なし');
      el('footnote').textContent='時間・料金は旧ガイド掲載の参考値です。運行路線、停留所、料金は出発前に国光客運の最新案内をご確認ください。';
    }else{
@@ -1737,12 +1737,12 @@ update();
     // Retain the original pinpoint short link for desktop and future reference.
     if(!place)continue;
     a.dataset.originalMapsUrl=original;
-    // Chain stores intentionally have no single branch selected: search in
-    // Taipei instead of all of Taiwan. Keep every other location's query as is.
+    // Keep Taipei as a search qualifier for chain stores only.
+    // Other venues search by their displayed name without appending 台湾.
     const item=a.closest('li');
     const tags=(item?.getAttribute('data-curated-tags')||'')+' '+(item?.textContent||'');
-    const searchArea=/チェーン店/.test(tags)?'台北':'台湾';
-    a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(place+' '+searchArea);
+    const query=place+(/チェーン店/.test(tags)?' 台北':'');
+    a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query);
     a.target='_self';
   }
 })();
