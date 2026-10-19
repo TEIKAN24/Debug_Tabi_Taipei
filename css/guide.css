@@ -5538,7 +5538,7 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge 
   border-color:#D6AE65!important;
 }
 
-/* v30.9.41 — temporary appearance control aligned with the masthead. */
+/* v30.9.42 — temporary appearance control aligned with the masthead. */
 .hero.wrapper{position:relative;}
 .hero.wrapper .theme-preview-toggle{
   position:absolute!important;z-index:15!important;
@@ -5553,3 +5553,185 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge 
 .hero.wrapper .theme-preview-toggle svg{width:20px;height:20px;flex:none;display:block;}
 @media(max-width:600px){.hero.wrapper .theme-preview-toggle{top:32px!important;right:0!important;}}
 @media(prefers-reduced-motion:reduce){.hero.wrapper .theme-preview-toggle{transition:none!important;}}
+
+
+/* ========== v30.9.42 patch: header lockup + subtler theme button + system sync ========== */
+.hero.wrapper{position:relative;}
+.hero.wrapper .theme-preview-toggle{
+  top:clamp(28px,6vw,44px)!important;
+  right:0!important;
+  min-width:32px!important;min-height:32px!important;
+  width:32px!important;height:32px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(173,181,186,.24)!important;
+  background:rgba(255,255,255,.02)!important;
+  color:#88949b!important;
+  box-shadow:none!important;
+  opacity:.7;
+}
+.hero.wrapper .theme-preview-toggle:hover{
+  filter:none!important;
+  opacity:.92;
+  border-color:rgba(173,181,186,.38)!important;
+  background:rgba(255,255,255,.04)!important;
+}
+.hero.wrapper .theme-preview-toggle:focus-visible{
+  outline:2px solid rgba(89,149,191,.65)!important;
+  outline-offset:2px!important;
+  opacity:1;
+}
+.hero.wrapper .theme-preview-toggle svg{width:16px!important;height:16px!important;}
+.hero.wrapper .theme-preview-toggle[data-theme-mode="system"]{opacity:.58;}
+html[data-theme="light"] .hero.wrapper .theme-preview-toggle{
+  color:#9da5ab!important;
+  border-color:rgba(157,165,171,.28)!important;
+  background:rgba(255,255,255,.5)!important;
+}
+html[data-theme="light"] .hero.wrapper .theme-preview-toggle:hover{
+  background:rgba(255,255,255,.85)!important;
+  border-color:rgba(144,153,160,.42)!important;
+}
+@media(max-width:600px){
+  .hero.wrapper .theme-preview-toggle{
+    top:28px!important;
+    right:0!important;
+  }
+}
+
+.hero{
+  padding-top:clamp(28px,6vw,44px)!important;
+}
+.hero-masthead{
+  margin:0!important;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.hero-brandline{
+  display:block;
+  color:#6C757C;
+  font-size:clamp(10px,2.25vw,18px);
+  font-weight:520;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.hero-lockup{
+  display:flex;
+  align-items:flex-end;
+  gap:clamp(14px,2.5vw,24px);
+  flex-wrap:wrap;
+  color:#AEAFB1;
+  font-size:clamp(34px,10vw,82px);
+  line-height:.9;
+  font-weight:640;
+  letter-spacing:-.045em;
+}
+.hero-lockup-word{
+  display:inline-flex;
+  align-items:flex-end;
+  color:#AEAFB1;
+}
+.hero-lockup-word .ta{color:#80D0B1;}
+.hero-lockup-slash{
+  position:relative;
+  display:inline-block;
+  width:clamp(18px,3vw,26px);
+  height:clamp(58px,9vw,88px);
+  flex:none;
+  transform:translateY(-2px);
+}
+.hero-lockup-slash::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:1px;
+  width:4px;
+  height:92%;
+  border-radius:999px;
+  background:#B1B0B1;
+  transform:translateX(-50%) rotate(18deg);
+  transform-origin:center center;
+}
+.hero .welcome{
+  margin:clamp(42px,8vw,74px) 0 10px!important;
+  font-size:clamp(24px,4.5vw,50px)!important;
+  line-height:1.2!important;
+  letter-spacing:-.03em;
+  color:var(--text-heading)!important;
+}
+.hero .tagline{
+  max-width:960px!important;
+  font-size:clamp(13px,2.1vw,26px)!important;
+  line-height:1.7!important;
+  color:#79848B!important;
+}
+html[data-theme="light"] .hero-brandline{color:#667078;}
+html[data-theme="light"] .hero-lockup,
+html[data-theme="light"] .hero-lockup-word,
+html[data-theme="light"] .hero-lockup-slash::before{color:#ADADAF; background-color:#ADADAF;}
+html[data-theme="light"] .hero-lockup-word .ta{color:#84D0B3!important;}
+html[data-theme="light"] .hero .tagline{color:#758088!important;}
+@media(max-width:600px){
+  .hero-masthead{gap:12px;}
+  .hero-brandline{font-size:11px;letter-spacing:.14em;}
+  .hero-lockup{gap:10px 12px;font-size:clamp(30px,12vw,52px);}
+  .hero-lockup-slash{width:16px;height:54px;}
+  .hero-lockup-slash::before{width:3px;height:90%;}
+  .hero .welcome{margin-top:40px!important;font-size:18px!important;}
+  .hero .tagline{font-size:13px!important;line-height:1.8!important;max-width:100%!important;}
+}
+
+
+/* v30.9.42: preserve the mint TA + gray lettering in both appearances.
+   Keep the slash geometric (including its short lower tip), not font-dependent. */
+.hero h1.hero-masthead .hero-brandline{
+  color:#8B969C!important;
+  -webkit-text-fill-color:#8B969C!important;
+  background:transparent!important;
+}
+.hero h1.hero-masthead .hero-lockup{
+  color:#B1B1B3!important;
+  background:transparent!important;
+  flex-wrap:nowrap;
+  white-space:nowrap;
+}
+.hero h1.hero-masthead .hero-lockup-word{
+  color:#B1B1B3!important;
+  -webkit-text-fill-color:#B1B1B3!important;
+  background:transparent!important;
+}
+.hero h1.hero-masthead .hero-lockup-word .ta{
+  color:#86D3B4!important;
+  -webkit-text-fill-color:#86D3B4!important;
+  background:transparent!important;
+}
+.hero h1.hero-masthead .hero-lockup-slash,
+.hero h1.hero-masthead .hero-lockup-slash::before{
+  background:transparent;
+}
+.hero h1.hero-masthead .hero-lockup-slash::before{
+  background:#B1B1B3!important;
+}
+html[data-theme="light"] .hero h1.hero-masthead .hero-brandline{
+  color:#68747B!important;
+  -webkit-text-fill-color:#68747B!important;
+  background:transparent!important;
+}
+html[data-theme="light"] .hero h1.hero-masthead .hero-lockup,
+html[data-theme="light"] .hero h1.hero-masthead .hero-lockup-word{
+  color:#B1B1B3!important;
+  -webkit-text-fill-color:#B1B1B3!important;
+  background:transparent!important;
+}
+html[data-theme="light"] .hero h1.hero-masthead .hero-lockup-word .ta{
+  color:#86D3B4!important;
+  -webkit-text-fill-color:#86D3B4!important;
+}
+body.food-drawer-open .hero.wrapper .theme-preview-toggle{
+  opacity:0!important;
+  pointer-events:none!important;
+}
+@media(max-width:600px){
+  .hero h1.hero-masthead .hero-lockup{font-size:clamp(28px,10vw,49px)!important;}
+  .hero h1.hero-masthead .hero-lockup-slash{height:clamp(42px,11vw,54px);}
+}

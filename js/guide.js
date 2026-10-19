@@ -46,8 +46,8 @@
       });
     }));
   }
-  // The same inner-list focus now applies to area districts, drinks and night markets.
-  // Focus the selected accordion heading, not merely the enclosing category bubble.
+  // Keep the guided inner-list focus for area districts only.
+  // Drinks and night-market rows now open in place without pulling focus.
   // Its category list is a nested scroll container. Align within that list first,
   // then check the heading's position in the visible phone viewport. Browser
   // scroll anchoring is disabled for this section so opening one large row does
@@ -107,16 +107,15 @@
     const isAreaCategory = detail.parentElement?.classList.contains('area-category-list');
     const guidedPanel = detail.closest('.venue-directory-section .tab-panel.guided-focus-panel');
     const isFoodSubcategory = Boolean(guidedPanel && detail.parentElement === guidedPanel.querySelector(':scope > .indented'));
-    const isGuidedCategory = isAreaCategory || isFoodSubcategory;
-    // Stop a still-running homepage smooth jump before focusing a row.
-    // Otherwise that animation can pull the page away after the row opens.
-    if (isGuidedCategory) window.scrollTo({top:window.scrollY,behavior:'instant'});
+    // Stop a still-running homepage smooth jump before focusing an area row.
+    // Drinks and night-market rows should simply expand where they are.
+    if (isAreaCategory) window.scrollTo({top:window.scrollY,behavior:'instant'});
     if (detail.open) {
       closeBranch(detail);
     } else {
       openAccordion(detail);
-      if (isGuidedCategory) focusDirectoryCategory(summary);
-      else if (!detail.classList.contains('daytrip-inline-accordion')) scrollOpenedSummaryIntoView(detail);
+      if (isAreaCategory) focusDirectoryCategory(summary);
+      else if (!isFoodSubcategory && !detail.classList.contains('daytrip-inline-accordion')) scrollOpenedSummaryIntoView(detail);
     }
   });
   // Also enforce sibling exclusivity if a detail is opened by other scripts.
@@ -2625,7 +2624,7 @@ update();
 })();
 
 
-/* =================== JS 20: guided-accordion-motion-v30.9.41 =================== */
+/* =================== JS 20: guided-accordion-motion-v30.9.42 =================== */
 (()=>{
   'use strict';
   const root=document.getElementById('guide');
