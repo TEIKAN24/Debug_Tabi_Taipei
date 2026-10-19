@@ -3056,7 +3056,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide #food-search #food-explorer .results-head h3 {font-size:14px;}
 #guide #food-search #food-explorer #results {
   flex:1 1 auto;min-height:170px;
-  max-height:none!important;
+  max-height:none;
   overflow-y:auto!important;overflow-x:hidden!important;
   scrollbar-width:thin;
   overscroll-behavior-y:contain;
@@ -3134,7 +3134,8 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide #food-search #food-explorer .quick { align-items:center!important; }
 #guide #food-search #food-explorer #results {
   min-height:0!important;
-  max-height:none!important;
+  /* Allow resizeResultViewport()'s measured inline max-height to apply. */
+  max-height:none;
   overflow-y:auto!important;
   -webkit-overflow-scrolling:touch;
 }
@@ -6154,4 +6155,15 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
 }
 @media(prefers-reduced-motion:reduce){
   .hero.wrapper .theme-preview-toggle{transition:none!important;}
+}
+
+
+/* v30.9.49 — respect the JavaScript-measured compact food list height.
+   The containing section still fills the drawer, but the list itself caps
+   at 4–5 visible dishes and independently scrolls (including expanded rows). */
+#guide #food-search #food-explorer #results {
+  flex:0 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  overscroll-behavior-y:contain;
 }
