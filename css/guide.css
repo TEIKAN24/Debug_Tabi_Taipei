@@ -5850,3 +5850,34 @@ html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeli
   margin-top:4px!important;
 }
 #guide .airport-direction-switcher .metro-transfer-node{flex:0 0 13px!important;}
+
+
+/* ========== v30.9.44 — restore v30.9.41 welcome; open up wordmark tracking ========== */
+/* The original 30.9.41 welcome was 18px/750 with 0.01em tracking,
+   7px bottom margin and a 17px gap after the preceding h1. */
+.hero h1.hero-masthead{
+  margin:0 0 17px!important;
+}
+.hero .welcome{
+  font-size:18px!important;
+  font-weight:750!important;
+  line-height:normal!important;
+  letter-spacing:.01em!important;
+  margin:0 0 7px!important;
+}
+/* Wider inter-letter spacing without changing the slash's angle or tip. */
+.hero h1.hero-masthead .hero-lockup-word{
+  letter-spacing:.07em!important;
+}
+.hero h1.hero-masthead .hero-lockup-word .ta{
+  letter-spacing:inherit!important;
+}
+@media(max-width:600px){
+  .hero .welcome{
+    font-size:18px!important;
+    margin:0 0 7px!important;
+  }
+  .hero h1.hero-masthead .hero-lockup-word{
+    letter-spacing:.07em!important;
+  }
+}
