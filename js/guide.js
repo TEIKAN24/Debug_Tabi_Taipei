@@ -1238,17 +1238,7 @@ loadData();
     savedStyle=null;
     window.scrollTo({top:savedY,behavior:'instant'});
   }
-  // v30.9.52: lightweight haptic on supported mobile browsers. iOS Safari currently
-  // does not expose navigator.vibrate, so this remains a silent no-op there.
-  function foodDrawerHaptic(){
-    if (typeof navigator.vibrate !== 'function') return;
-    if (!window.matchMedia('(pointer: coarse)').matches) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    try { navigator.vibrate(8); } catch (_) {}
-  }
   function settle(shouldOpen){
-    // Trigger once per completed change, never during partial dragging.
-    if (shouldOpen !== opened) foodDrawerHaptic();
     if(shouldOpen){
       lockPage();
       drawer.setAttribute('aria-hidden','false');

@@ -6157,3 +6157,12 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)!important;
   mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)!important;
 }
+
+
+/* v30.9.53 — compact TWAC official-site badge only; all other links unchanged. */
+#guide .travel-twac a.external-action-link {
+  padding-inline:5px!important;
+  gap:3px!important;
+  width:max-content!important;
+  max-width:100%!important;
+}
