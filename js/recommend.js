@@ -477,12 +477,22 @@
       const card=el('article','recommend-card');
       const top=el('div','recommend-card-top');
       top.append(el('span','recommend-category',item.displayType||typeLabel[item.category]||'グルメ'));
+      // Area sits beside the genre on the upper right. Reuse the exact SVG
+      // path of the area selector, scaled for the compact card eyebrow.
+      if(item.area){
+        const place=AREAS.find(([code])=>code===item.area);
+        if(place){
+          const location=el('span','recommend-place');
+          const pin=el('span','recommend-place-pin');
+          pin.setAttribute('aria-hidden','true');
+          pin.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
+          location.append(pin,el('span','recommend-place-label',place[1]));
+          top.append(location);
+        }
+      }
       card.append(top);
       const a=el('a','recommend-venue',item.name);a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';card.append(a);
       card.append(el('p','recommend-reason',reason(item)));
-      const links=el('div','recommend-card-footer');
-      if(item.area){const place=AREAS.find(([code])=>code===item.area);if(place)links.append(el('span','recommend-place','⌖ '+place[1]));}
-      if(links.childElementCount)card.append(links);
       results.append(card);
     });
     more.hidden=ordered.length<=3;
