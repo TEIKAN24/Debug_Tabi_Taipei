@@ -843,10 +843,10 @@ if (expandable) {
       if (expandable && food.name === expandedDishName) setFoodEntryExpanded(row, true);
     }
   }
+  results.scrollTop = 0;
   // Sizes are known only after the rows join the document and wrap at the
   // current screen width. Collapsed previews now take exactly one line.
   results.querySelectorAll('.food-entry-expandable').forEach(measureFoodDescription);
-  results.scrollTop = 0;
   resizeResultViewport();
 }
 function onSearch() {
@@ -1238,7 +1238,17 @@ loadData();
     savedStyle=null;
     window.scrollTo({top:savedY,behavior:'instant'});
   }
+  // v30.9.52: lightweight haptic on supported mobile browsers. iOS Safari currently
+  // does not expose navigator.vibrate, so this remains a silent no-op there.
+  function foodDrawerHaptic(){
+    if (typeof navigator.vibrate !== 'function') return;
+    if (!window.matchMedia('(pointer: coarse)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    try { navigator.vibrate(8); } catch (_) {}
+  }
   function settle(shouldOpen){
+    // Trigger once per completed change, never during partial dragging.
+    if (shouldOpen !== opened) foodDrawerHaptic();
     if(shouldOpen){
       lockPage();
       drawer.setAttribute('aria-hidden','false');
@@ -2802,11 +2812,19 @@ update();
       const css=getComputedStyle(el);
       return summary.getBoundingClientRect().height+(parseFloat(css.marginTop)||0)+(parseFloat(css.marginBottom)||0)+gap;
     };
-    const h=rows.slice(0,4).map(rowHeight);
-    const natural=h.reduce((total,height,i)=>total+height*(i===3?.68:1),0)+16;
-    const cap=Math.max(192,Math.min(window.innerHeight*.62,425));
-    // The first three complete items and a faded fourth occupy the scroller.
-    const max=Math.round(Math.min(cap,natural));
+    // Allow more of the existing recommendation list to be read at once.
+    // Five complete headings and part of the sixth are the target, while
+    // actual row sizes (including tags/secondary lines) determine the height.
+    const visibleCount=Math.min(rows.length,6);
+    const h=rows.slice(0,visibleCount).map(rowHeight);
+    const natural=h.reduce((total,height,i)=>total+height*(i===5?.48:1),0)+4;
+    const cap=Math.max(260,Math.min(window.innerHeight*.72,560));
+    // Expanded lists contain taller shop rows (name, tags, notes). Reserve
+    // a larger inner viewport for those, without affecting page scrolling.
+    const expandedTarget=rows.some(row=>row.open)
+      ? Math.min(480,Math.max(275,window.innerHeight*.56))
+      : 0;
+    const max=Math.round(Math.min(cap,Math.max(natural,expandedTarget)));
     panel.classList.add('four-row-teaser');
     body.classList.add('teaser-scroll-body');
     if(body.style.maxHeight!==max+'px')body.style.setProperty('max-height',max+'px','important');

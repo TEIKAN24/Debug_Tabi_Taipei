@@ -6149,3 +6149,11 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
     transition:none!important;
   }
 }
+
+
+/* v30.9.52 — longer restaurant/area teaser: retain the pinned headings,
+   inner scroll and bottom-end fade, but show about five entries at once. */
+#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body.teaser-can-scroll:not([data-teaser-end="true"]){
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)!important;
+}
