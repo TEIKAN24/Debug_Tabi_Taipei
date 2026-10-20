@@ -6175,3 +6175,17 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
 #guide .emergency-official-links{grid-column:1/-1;margin:0;padding:0 3px 2px;}
 #guide .emergency-official-links a{font-size:11.5px;line-height:1.5;text-decoration:underline;text-underline-offset:3px;color:#AFCDD7;}
 html[data-theme="light"] #guide .emergency-official-links a{color:#245E82;}
+
+
+/* v30.9.55 — the original category summary is duplicated in a separate pinned
+   heading while expanded. Visibility:hidden kept its 46–68px layout height,
+   leaving an apparent blank row before item 01. Completely take that duplicate
+   summary out of flow while the accessible pinned button remains available. */
+#guide .venue-directory-section .tab-panel .teaser-scroll-body > details.guided-title-pinned > summary {
+  display:none!important;
+}
+/* Preserve a small reading gap after the pinned title, but not the old summary's
+   full-height placeholder. Leave other accordion spacing completely unchanged. */
+#guide .area-directory-section .tab-panel .teaser-scroll-body > details.guided-title-pinned > .indented {
+  margin-top:4px!important;
+}

@@ -67,9 +67,11 @@
       if(request!==guidedScrollRequest || !detail.open || !body.isConnected)return;
       const scrollable=body.scrollHeight>body.clientHeight+3;
       if(!scrollable)return;
-      const current=summary.getBoundingClientRect();
+      // Once the fixed heading is created, its original summary is removed
+      // from layout. Align using the details row itself, not that hidden summary.
+      const current=detail.getBoundingClientRect();
       const viewport=body.getBoundingClientRect();
-      const wanted=Math.max(0,body.scrollTop+current.bottom-viewport.top-3);
+      const wanted=Math.max(0,body.scrollTop+current.top-viewport.top);
       body.scrollTo({top:wanted,behavior:reduceMotion.matches?'instant':'smooth'});
     }));
   }
