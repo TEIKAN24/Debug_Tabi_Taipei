@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.67 — optional on-device nearby distance for verified venues. */
+/* TAIPEI CITY GUIDE v30.9.68 — optional on-device nearby distance for verified venues. */
 (() => {
   'use strict';
   const drawer = document.getElementById('taipei-recommender');
@@ -53,7 +53,7 @@
   // Static same-origin JSON; no key, request to mapping APIs, or GPS upload.
   async function loadCoordinates(){
     try{
-      const reply=await fetch('food/venues.json?v=30.9.67',{cache:'no-store'});
+      const reply=await fetch('food/venues.json?v=30.9.68',{cache:'no-store'});
       if(!reply.ok)throw new Error('venue file unavailable');
       const data=await reply.json();
       if(data.schemaVersion!==1||!data.venues||typeof data.venues!=='object')throw new Error('venue file invalid');
@@ -493,7 +493,7 @@
     // Never request geolocation on drawer open or reopen. Only a direct tap on
     // 「現在地」 inside the area chooser may ask for permission.
   }
-  function formatDistance(meters){return meters<1000?`${Math.max(50,Math.round(meters/50)*50)}m`:`${(meters/1000).toFixed(1)}km`;}
+  function formatDistance(meters){return `${Math.max(10,Math.round(meters/10)*10)}m`;}
   function renderResults(){
     const {ordered,timeCount,lifted,nearbyFallback,useGPS,nearbyCount}=recommendedPool();
     results.replaceChildren();
@@ -528,6 +528,7 @@
         (AREAS.find(([code])=>code===item.area)?.[1]||'');
       if(locationText){
         const location=el('span','recommend-place');
+        if(Number.isFinite(item.distanceMeters))location.classList.add('recommend-distance-badge');
         if(Number.isFinite(item.distanceMeters))location.setAttribute('aria-label',`現在地からの直線距離 ${locationText}`);
         const pin=el('span','recommend-place-pin');
         pin.setAttribute('aria-hidden','true');
