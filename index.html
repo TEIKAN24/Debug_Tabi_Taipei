@@ -64,8 +64,8 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
    applyTheme(currentTheme());
   });
  });
-})();</script><link rel="stylesheet" href="css/guide.css?v=30.9.59"/>
-<link rel="stylesheet" href="css/recommend.css?v=30.9.59"/>
+})();</script><link rel="stylesheet" href="css/guide.css?v=30.9.60"/>
+<link rel="stylesheet" href="css/recommend.css?v=30.9.60"/>
 
 
 
@@ -142,29 +142,34 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
 </head><body><div class="recommend-drawer-backdrop" aria-hidden="true"></div>
 <aside class="recommend-drawer" id="taipei-recommender" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="recommend-title" tabindex="-1">
  <div class="recommend-drawer-inner">
-  <div class="recommend-drawer-top"><span class="recommend-kicker">TABI / TAIPEI · PERSONAL PICKS</span><button class="recommend-close" type="button" aria-label="おすすめを閉じる"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+  <div class="recommend-drawer-top"><span class="recommend-kicker">TABI / TAIPEI · PERSONAL PICKS</span></div>
   <h2 id="recommend-title">今、どこで食べよう。</h2>
  <p class="recommend-intro">台北のおすすめから、今の気分に合う3軒を。</p>
  <div class="recommend-controls" aria-label="おすすめの条件">
-  <div class="recommend-control-wrap">
-   <button class="recommend-control" id="recommend-time-trigger" type="button" aria-expanded="false" aria-controls="recommend-time-options"><span class="recommend-control-icon" aria-hidden="true">◷</span><span id="recommend-time-label">現時刻</span><span class="recommend-control-arrow" aria-hidden="true">⌄</span></button>
-   <div class="recommend-options" id="recommend-time-options" hidden></div>
+  <div class="recommend-controls-primary">
+   <div class="recommend-control-wrap recommend-control-time-wrap">
+    <button class="recommend-control" id="recommend-time-trigger" type="button" aria-expanded="false" aria-controls="recommend-time-options"><span class="recommend-control-icon" aria-hidden="true">◷</span><span id="recommend-time-label">現時刻</span><span class="recommend-control-arrow" aria-hidden="true">⌄</span></button>
+    <div class="recommend-options" id="recommend-time-options" hidden></div>
+   </div>
+   <div class="recommend-control-wrap recommend-control-area-wrap">
+    <button class="recommend-control" id="recommend-area-trigger" type="button" aria-expanded="false" aria-controls="recommend-area-options"><span class="recommend-control-icon" aria-hidden="true">⌖</span><span id="recommend-area-label">エリア指定なし</span><span class="recommend-control-arrow" aria-hidden="true">⌄</span></button>
+    <div class="recommend-options" id="recommend-area-options" hidden></div>
+   </div>
   </div>
-  <div class="recommend-control-wrap recommend-control-area-wrap">
-   <button class="recommend-control" id="recommend-area-trigger" type="button" aria-expanded="false" aria-controls="recommend-area-options"><span class="recommend-control-icon" aria-hidden="true">⌖</span><span id="recommend-area-label">エリア指定なし</span><span class="recommend-control-arrow" aria-hidden="true">⌄</span></button>
-   <div class="recommend-options" id="recommend-area-options" hidden></div>
-  </div>
-  <div class="recommend-control-wrap recommend-control-advanced-wrap">
-   <details class="recommend-advanced" id="recommend-advanced">
-    <summary class="recommend-control recommend-advanced-trigger"><span class="recommend-control-icon" aria-hidden="true">☷</span><span>さらに条件を指定</span><span class="recommend-advanced-count" id="recommend-advanced-count"></span><span class="recommend-control-arrow" aria-hidden="true">⌄</span></summary>
-    <div class="recommend-advanced-panel">
-     <h3 id="recommend-mood-title">ちょっと気分を変える？</h3>
-     <div class="recommend-choices" id="recommend-mood-options" role="group" aria-labelledby="recommend-mood-title"></div>
-     <h3 class="recommend-avoid-heading">避けたい条件</h3>
-     <div class="recommend-choices" id="recommend-avoid-options" role="group" aria-label="避けたい条件"></div>
-     <p class="recommend-help">支払い方法・日本語メニューは未確認の場合があります。確認できない条件では絞り込みません。</p>
-    </div>
-   </details>
+  <div class="recommend-controls-secondary" id="recommend-controls-secondary">
+   <div class="recommend-active-filters" id="recommend-active-filters" aria-live="polite"></div>
+   <div class="recommend-control-wrap recommend-control-advanced-wrap">
+    <details class="recommend-advanced" id="recommend-advanced">
+     <summary class="recommend-control recommend-advanced-trigger" aria-label="さらに条件を指定"><span class="recommend-advanced-label">さらに条件を指定</span><span class="recommend-advanced-plus" aria-hidden="true">＋</span></summary>
+     <div class="recommend-advanced-panel">
+      <h3 id="recommend-mood-title">ちょっと気分を変える？</h3>
+      <div class="recommend-choices" id="recommend-mood-options" role="group" aria-labelledby="recommend-mood-title"></div>
+      <h3 class="recommend-avoid-heading">避けたい条件</h3>
+      <div class="recommend-choices" id="recommend-avoid-options" role="group" aria-label="避けたい条件"></div>
+      <p class="recommend-help">支払い方法・日本語メニューは未確認の場合があります。確認できない条件では絞り込みません。</p>
+     </div>
+    </details>
+   </div>
   </div>
  </div>
  <p class="recommend-location-status" id="recommend-location-status" role="status" aria-live="polite"></p>
@@ -301,5 +306,5 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
 
 
 
-<script src="js/recommend.js?v=30.9.59"></script>
+<script src="js/recommend.js?v=30.9.60"></script>
 </body></html>

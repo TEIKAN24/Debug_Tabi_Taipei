@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.59 — instant local picks, no questionnaire. */
+/* TAIPEI CITY GUIDE v30.9.60 — instant local picks, no questionnaire. */
 (() => {
   'use strict';
   const drawer = document.getElementById('taipei-recommender');
@@ -9,7 +9,6 @@
   const relaxed=document.getElementById('recommend-relaxed');
   const disclaimer=document.getElementById('recommend-disclaimer');
   const more=document.getElementById('recommend-more');
-  const closeButton=drawer.querySelector('.recommend-close');
   const timeButton=document.getElementById('recommend-time-trigger');
   const timeLabel=document.getElementById('recommend-time-label');
   const timeOptions=document.getElementById('recommend-time-options');
@@ -19,7 +18,10 @@
   const locationStatus=document.getElementById('recommend-location-status');
   const moods=document.getElementById('recommend-mood-options');
   const avoids=document.getElementById('recommend-avoid-options');
-  const avoidCount=document.getElementById('recommend-advanced-count');
+  const activeFilters=document.getElementById('recommend-active-filters');
+  const secondaryControls=document.getElementById('recommend-controls-secondary');
+  const advanced=document.getElementById('recommend-advanced');
+  const advancedTrigger=advanced.querySelector('summary');
   const body=document.body;
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const TIME=[['current','現時刻'],['morning','朝'],['lunch','昼'],['night','夜'],['late','深夜']];
@@ -107,13 +109,95 @@
     if(mood==='local')return ['breakfast','nightmarket','dumpling','rice','noodle','hotpot','meal'].includes(c)||/台湾|ローカル|伝統/.test(s);
     return true;
   }
+  // Reviewed descriptions for a small set of identifiable venues. Other
+  // entries use the guide's own editorial notes, never generic "おすすめが特徴".
+  // Some examples use publicly reported visitor impressions and menu details;
+  // other descriptions draw on existing guide notes, never invented ratings.
+  const venueReasons=new Map([
+    ['阜杭豆漿','厚焼きの焼餅と豆乳が名物。行列も多い定番の台湾朝食。'],
+    ['鼎泰豊','薄皮の小籠包と丁寧なサービスで知られる定番店。'],
+    ['金峰魯肉飯','甘辛く煮込んだ魯肉飯に、肉羹スープを添えて。'],
+    ['白水豆花','なめらかな豆花に、麦芽糖とピーナッツの香ばしさ。'],
+    ['蜂大咖啡','昔ながらの喫茶空間で、水出しコーヒーや焼き菓子を。'],
+    ['阿城鵝肉','香り豊かな燻製ガチョウ肉とガチョウ油ご飯。'],
+    ['香滿園','八角の風味が控えめな魯肉飯。漬物や小皿料理と一緒に。'],
+    ['小王煮瓜','色の濃い魯肉飯と、あっさりした瓜仔肉のスープ。'],
+  ]);
+  const detailReasons=[
+    [/八角なし/, '八角が苦手な人にも選びやすい、八角不使用の味付け。'],
+    [/炭火トースト/, '炭火で焼くトーストが看板の台湾朝食店。'],
+    [/台湾おにぎり/, '具をたっぷり包んだ台湾式おにぎりで朝ごはん。'],
+    [/ミルク系/, 'ミルク系の台湾茶ドリンクが好きな人に。'],
+    [/芝芝金萱/, '「芝芝金萱」のチーズフォームとお茶の組み合わせ。'],
+    [/パパイヤミルク/, 'パパイヤミルクで台湾らしいドリンク休憩。'],
+    [/水出し珈琲/, '水出しコーヒーをゆっくり味わいたいときに。'],
+    [/茶チョコ/, 'お茶の風味を生かしたチョコレートも楽しめます。'],
+    [/夜カフェ/, '夜にカフェでひと息つきたいときの候補。'],
+    [/トウファ専門/, '台湾の豆花を味わいたいときに立ち寄りたい専門店。'],
+    [/マンゴーかき氷/, 'マンゴーを使った台湾かき氷でひと休み。'],
+    [/お餅入りかき氷/, 'もちもち食感を楽しめる台湾かき氷。'],
+    [/烏龍茶小籠包/, '烏龍茶の香りを生かした小籠包が目当てなら。'],
+    [/焼き小籠包/, '焼き目の香ばしい小籠包を味わえるお店。'],
+    [/小籠包/, 'スープを包んだ小籠包を食べたいときに。'],
+    [/水餃子|焼き棒餃子/, 'もちもちの水餃子や焼き餃子を気軽に。'],
+    [/蒸し餃子/, '蒸したての餃子を楽しみたいときに。'],
+    [/豚足の煮込み/, 'じっくり煮込んだ豚足を、ごはんと一緒に。'],
+    [/台湾豚角煮丼/, 'やわらかく煮込んだ豚角煮をごはんと一緒に。'],
+    [/台湾南部風おこわ/, '台湾南部風のおこわ「米糕」を味わえます。'],
+    [/台湾北部風おこわ/, '台湾北部風のおこわ「米糕」を味わえます。'],
+    [/牛肉麺/, '台湾の牛肉麺を一杯しっかり楽しみたいときに。'],
+    [/券売機/, '券売機で注文できる台湾の食堂。'],
+    [/冷麺/, 'さっぱりした台湾式の涼麺を食べたいときに。'],
+    [/豆乳ベース/, '豆乳ベースの鍋を囲んで台湾の鍋料理を。'],
+    [/辛くない|辛さ調整/, '辛さに配慮した鍋の選択肢もあります。'],
+    [/ハーゲンダッツ/, '火鍋に加え、アイス食べ放題も楽しめます。'],
+    [/ヤギ肉鍋/, '薬膳と羊肉を合わせた台湾の鍋料理。'],
+    [/台湾風煮込み/, '台湾風の煮込み料理「滷味」をつまみに。'],
+    [/さつまいもボール/, 'もちっとした地瓜球を食べ歩きで。'],
+    [/焼きエリンギ/, '香ばしく焼いたエリンギを屋台で。'],
+    [/揚げイカ/, 'サクサクの揚げイカで夜市の食べ歩きを。'],
+    [/胡椒餅/, '焼きたての胡椒餅で食べ歩き。'],
+    [/塩ゆで鶏肉/, 'さっぱりした塩ゆで鶏と野菜の小吃。'],
+    [/薬膳スープ/, '薬膳の風味を楽しむ温かいスープ。'],
+    [/レトロ/, 'どこか懐かしい雰囲気を楽しみたいときに。'],
+    [/老舗/, '昔ながらの台湾の味をたどる一軒。'],
+  ];
   function reason(item){
-    const c=item.category;
-    let lead=({breakfast:'台湾の朝ごはんを気軽に',nightmarket:'夜市ならではの屋台グルメ',dumpling:'小籠包・餃子を楽しめる',rice:'台湾のごはん料理',noodle:'食べごたえのある麺料理',hotpot:'台湾鍋を楽しめる',izakaya:'台湾式の熱炒・おつまみ',bar:'夜に立ち寄りたいバー',sweet:'台湾スイーツでひと休み',drink:'台湾のドリンクを楽しむ',cafe:'街歩き途中のカフェ',meal:'街歩きと一緒に楽しむごはん'})[c]||'台湾で立ち寄りたい一軒';
-    if(item.area&&state.area===item.area)lead='選んだエリアで楽しむ'+(c==='sweet'?'スイーツ':c==='cafe'?'カフェ':c==='drink'?'ドリンク':'一軒');
-    const detail=item.details.split('、').find(t=>/おすすめ|名物|人気|レトロ|地元|伝統|豆花|かき氷|小籠包|八角なし|水出し/.test(t)&&t.length<18);
-    return detail?`${lead}。${detail.replace(/[（）]/g,'')}が特徴。`:`${lead}。`;
+    const precise=venueReasons.get(item.name);
+    if(precise)return precise;
+    const details=item.details||'';
+    for(const [pattern,sentence] of detailReasons){if(pattern.test(details))return sentence;}
+    // A named specialty is more useful than the vague "popular/recommended" tags.
+    const name=item.name;
+    if(/魯肉飯|滷肉飯/.test(name))return '台湾の定番、甘辛い魯肉飯を味わいたいときに。';
+    if(/豆漿/.test(name))return '豆乳と軽食で台湾らしい朝を始めたいときに。';
+    if(/飯糰/.test(name))return '具だくさんの台湾式おにぎりで朝ごはん。';
+    if(/胡椒餅/.test(name))return '胡椒がきいた肉あん入りの焼きパンを食べ歩きで。';
+    if(/雞排/.test(name))return '台湾の大きなフライドチキンをかじりたいときに。';
+    if(/蚵仔煎/.test(name))return '台湾屋台の定番、牡蠣入りオムレツを。';
+    if(/鹽酥雞/.test(name))return '台湾式の揚げ物を少しずつつまみたいときに。';
+    if(/牛肉麵|牛肉麺/.test(name))return '台湾の牛肉麺を食べてみたいときに。';
+    if(/火鍋|鍋物/.test(name))return '温かい台湾の鍋料理を囲みたいときに。';
+    if(/豆花/.test(name))return 'やさしい甘さの台湾スイーツ、豆花でひと休み。';
+    if(/咖啡|COFFEE|Coffee/i.test(name))return '台湾の街歩きと一緒にコーヒー休憩を。';
+    if(/茶坊|茶屋|Tea|嵐/.test(name)&&item.category==='drink')return '台湾茶を使ったドリンクを選びたいときに。';
+    const defaults={
+      breakfast:'豆乳や焼きパンなど、台湾の朝食文化に触れられます。',
+      nightmarket:'台湾の夜市で食べ歩きを楽しみたいときに。',
+      dumpling:'小籠包や餃子などの点心を楽しみたいときに。',
+      rice:'台湾の定番ごはん料理をしっかり食べたいときに。',
+      noodle:'台湾式の麺料理を一杯楽しみたいときに。',
+      hotpot:'台湾の鍋料理をゆっくり味わいたいときに。',
+      izakaya:'台湾の熱炒料理をみんなでシェアしたいときに。',
+      bar:'街歩きのあとにバーへ寄りたいときに。',
+      sweet:'台湾スイーツで甘いひと休みを。',
+      drink:'台湾のドリンクを試したいときに。',
+      cafe:'街歩きの合間にカフェでひと休み。',
+      meal:'台湾のごはん料理を楽しみたいときに。'
+    };
+    return defaults[item.category]||'旅の途中に立ち寄れる一軒。';
   }
+
   function recommendedPool(){
     const byTime=readCatalog().filter(item=>eligibleTime(item,state.time));
     const steps=[];
@@ -165,13 +249,12 @@
     syncUI();renderResults();closeOptions();
   });
   buildChoice(moodControls,MOODS,moods,'recommend-pill',value=>{
-    state.mood=state.mood===value?'':value;state.page=0;syncUI();renderResults();
+    state.mood=state.mood===value?'':value;state.page=0;advanced.open=false;syncUI();renderResults();
   });
   buildChoice(avoidControls,AVOID,avoids,'recommend-pill',value=>{
     state.avoid.has(value)?state.avoid.delete(value):state.avoid.add(value);
-    state.page=0;syncUI();renderResults();
+    state.page=0;advanced.open=false;syncUI();renderResults();
   });
-  const advanced=document.getElementById('recommend-advanced');
   function closeOptions(){for(const [b,options] of [[timeButton,timeOptions],[areaButton,areaOptions]]){options.hidden=true;b.setAttribute('aria-expanded','false');}}
   function toggleOptions(button,options){const shouldOpen=options.hidden;closeOptions();advanced.open=false;if(shouldOpen){options.hidden=false;button.setAttribute('aria-expanded','true');}}
   timeButton.addEventListener('click',()=>toggleOptions(timeButton,timeOptions));
@@ -181,7 +264,38 @@
     if(!e.target.closest('.recommend-control-wrap'))closeOptions();
     if(!e.target.closest('.recommend-control-advanced-wrap'))advanced.open=false;
   });
+  // Selected conditions become removable bubbles; the add button stays last.
+  // With no active conditions the wide "さらに条件を指定 ＋" button returns.
+  function syncActiveConditions(){
+    activeFilters.replaceChildren();
+    const selected=[];
+    if(state.mood){
+      const mood=MOODS.find(([id])=>id===state.mood);
+      if(mood)selected.push({kind:'mood',value:mood[0],label:mood[1]});
+    }
+    for(const [value,label] of AVOID){
+      if(state.avoid.has(value))selected.push({kind:'avoid',value,label});
+    }
+    for(const choice of selected){
+      const chip=el('button','recommend-active-chip');chip.type='button';
+      chip.setAttribute('aria-label',`${choice.label}の条件を解除`);
+      chip.title=`${choice.label}を解除`;
+      chip.append(el('span','recommend-active-chip-label',choice.label));
+      const remove=el('span','recommend-active-chip-remove','×');remove.setAttribute('aria-hidden','true');chip.append(remove);
+      chip.addEventListener('click',()=>{
+        if(choice.kind==='mood')state.mood='';
+        else state.avoid.delete(choice.value);
+        state.page=0;advanced.open=false;closeOptions();syncUI();renderResults();
+      });
+      activeFilters.append(chip);
+    }
+    const hasSelections=selected.length>0;
+    secondaryControls.classList.toggle('recommend-has-selected',hasSelections);
+    advancedTrigger.setAttribute('aria-label',hasSelections?'条件を追加':'さらに条件を指定');
+    advancedTrigger.title=hasSelections?'条件を追加':'さらに条件を指定';
+  }
   function syncUI(){
+    syncActiveConditions();
     const timeName=TIME.find(([value])=>value===state.time)?.[1]||'昼';
     timeLabel.textContent=state.timeMode==='current'?`現時刻 · ${timeName}`:timeName;
     areaLabel.textContent=state.areaMode==='current'?'現在地':state.areaMode==='all'?'エリア指定なし':AREAS.find(([id])=>id===state.areaMode)?.[1]||'エリアを選ぶ';
@@ -189,7 +303,6 @@
     for(const b of areaControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.areaMode));
     for(const b of moodControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.mood));
     for(const b of avoidControls)b.setAttribute('aria-pressed',String(state.avoid.has(b.dataset.value)));
-    avoidCount.textContent=state.avoid.size?`${state.avoid.size}件選択中`:'';
     const messages={idle:'',loading:'現在地を確認しています…',unsupported:'このブラウザでは位置情報を取得できません。エリア指定なしでご案内します。',denied:'位置情報を利用できません。エリア指定なしでご案内します。',outside:'現在地は収録エリア外です。エリア指定なしでご案内します。',imprecise:'位置情報の精度が足りません。エリア指定なしでご案内します。',error:'位置情報を取得できませんでした。エリア指定なしでご案内します。',success:`現在地付近：${state.locationName}（周辺エリアの目安）`};
     locationStatus.textContent=state.areaMode==='current'?messages[state.locationStatus]||'': '';
     locationStatus.hidden=!locationStatus.textContent;
@@ -252,15 +365,13 @@
       const card=el('article','recommend-card');
       if(i===0&&state.page===0)card.classList.add('recommend-card-primary');
       const top=el('div','recommend-card-top');
-      top.append(el('span','recommend-rank',String(state.page*3+i+1).padStart(2,'0')));
       top.append(el('span','recommend-category',typeLabel[item.category]||'ローカル'));
-      if(item.curated>0)top.append(el('span','recommend-featured','おすすめ'));
       card.append(top);
       const a=el('a','recommend-venue',item.name);a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';card.append(a);
       card.append(el('p','recommend-reason',reason(item)));
       const links=el('div','recommend-card-footer');
       if(item.area){const place=AREAS.find(([code])=>code===item.area);if(place)links.append(el('span','recommend-place','⌖ '+place[1]));}
-      const map=el('a','recommend-map','地図を見る ↗');map.href=item.url;map.target='_blank';map.rel='noopener noreferrer';links.append(map);card.append(links);
+      if(links.childElementCount)card.append(links);
       results.append(card);
     });
     more.hidden=ordered.length<=3;
@@ -303,7 +414,6 @@
     }
   }
   backdrop.addEventListener('click',()=>{if(isOpen)settle(false);});
-  closeButton.addEventListener('click',()=>settle(false));
   function blocked(target){
     if(!(target instanceof Element))return true;
     if(target.closest('input,textarea,select,[contenteditable="true"],audio,video,a[href]'))return true;

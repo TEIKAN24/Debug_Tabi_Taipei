@@ -6280,3 +6280,18 @@ body.food-swipe-active #guide #food-search.food-drawer::after {opacity:0!importa
  html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::before,
  html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::after {transition:none;}
 }
+
+/* v30.9.60 — keep the bottom edge flat while either side drawer is active.
+   The earlier full-width ::after gradient resembled a shadow along the
+   bottom of the screen during touch-dragging. Keep the solid root canvas
+   and the top safe-area bridge, but do not dim the bottom viewport edge. */
+html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::after {
+  content:none!important;
+  display:none!important;
+}
+/* The drawers move as solid surfaces without casting a shadow on the
+   underlying guide while opening, dragging, or closing. */
+body.recommend-swipe-active .recommend-drawer,
+body.food-swipe-active #guide #food-search.food-drawer {
+  box-shadow:none!important;
+}
