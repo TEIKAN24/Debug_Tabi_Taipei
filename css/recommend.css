@@ -281,3 +281,43 @@ html[data-theme="light"] .recommend-advanced-trigger .recommend-advanced-plus {c
     width:30px;height:30px;min-height:30px;padding:0;
   }
 }
+
+
+/* v30.9.62 — symmetrical left/right dictionary heading baselines.
+   Both side panels start at 22px + safe-area, without redundant eyebrow text. */
+.recommend-drawer-inner {
+  padding-top:calc(22px + env(safe-area-inset-top))!important;
+}
+/* Draw the add icon using crossing strokes, not a font glyph whose visual
+   center shifts between iOS system fonts and Android. */
+.recommend-controls-secondary .recommend-advanced-trigger {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.recommend-controls-secondary .recommend-advanced-plus {
+  position:relative!important;
+  display:inline-block!important;
+  box-sizing:border-box!important;
+  width:16px!important;height:16px!important;
+  min-width:16px!important;flex:0 0 16px!important;
+  line-height:0!important;
+  font-size:0!important;
+  vertical-align:middle;
+}
+.recommend-controls-secondary .recommend-advanced-plus::before,
+.recommend-controls-secondary .recommend-advanced-plus::after {
+  content:'';position:absolute;left:50%;top:50%;
+  background:currentColor;border-radius:2px;transform:translate(-50%,-50%);
+}
+.recommend-controls-secondary .recommend-advanced-plus::before {width:12px;height:1.6px;}
+.recommend-controls-secondary .recommend-advanced-plus::after {height:12px;width:1.6px;}
+.recommend-controls-secondary.recommend-has-selected .recommend-advanced-trigger {
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+}
+@media(max-width:360px){
+  .recommend-drawer-inner {padding-top:calc(18px + env(safe-area-inset-top))!important;}
+}
+@media(min-width:600px){
+  .recommend-drawer-inner {padding-top:calc(26px + env(safe-area-inset-top))!important;}
+}

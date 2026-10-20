@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.60 — instant local picks, no questionnaire. */
+/* TAIPEI CITY GUIDE v30.9.62 — instant local picks, afternoon window. */
 (() => {
   'use strict';
   const drawer = document.getElementById('taipei-recommender');
@@ -24,7 +24,7 @@
   const advancedTrigger=advanced.querySelector('summary');
   const body=document.body;
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const TIME=[['current','現時刻'],['morning','朝'],['lunch','昼'],['night','夜'],['late','深夜']];
+  const TIME=[['current','現時刻'],['morning','朝'],['lunch','昼'],['afternoon','午後'],['night','夜'],['late','深夜']];
   const MOODS=[['local','🇹🇼 台湾らしく'],['sweet','🍧 甘いもの'],['light','🥟 軽く'],['hearty','🍜 がっつり']];
   const AREAS=[
     ['nakayama','中山駅・赤峰街',25.0529,121.5204],
@@ -41,7 +41,7 @@
   function taipeiNow(){return new Date();}
   function taipeiTimeLabel(){return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(taipeiNow());}
   function taipeiHour(){return Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hourCycle:'h23'}).formatToParts(taipeiNow()).find(p=>p.type==='hour')?.value??12);}
-  function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<17?'lunch':h>=17&&h<23?'night':'late';}
+  function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<14?'lunch':h>=14&&h<17?'afternoon':h>=17&&h<23?'night':'late';}
   const state={timeMode:'current',time:defaultBand(),areaMode:'all',area:'',mood:'',avoid:new Set(),page:0,locationStatus:'idle',locationName:'',geoRequested:false};
   const normalize=t=>String(t||'').replace(/\s+/g,'').toLowerCase();
   const categoryOf=(tab,group)=>{
@@ -98,6 +98,7 @@
     const c=item.category,s=item.details;
     if(time==='morning')return c==='breakfast'||(c==='cafe'&&!/夜カフェ/.test(s));
     if(time==='lunch')return !['breakfast','nightmarket','bar','izakaya'].includes(c);
+    if(time==='afternoon')return !['breakfast','nightmarket','bar','izakaya'].includes(c);
     if(time==='night')return c!=='breakfast';
     return ['bar','izakaya'].includes(c)||/24h|24時間|深夜まで|夜カフェ/.test(s);
   }
@@ -216,6 +217,7 @@
     const bonus=item=>state.time==='night'&&item.category==='nightmarket'?21:
       state.time==='morning'&&item.category==='breakfast'?16:
       state.time==='lunch'&&['rice','noodle','dumpling'].includes(item.category)?6:
+      state.time==='afternoon'&&['sweet','drink','cafe'].includes(item.category)?11:
       state.time==='late'&&/24h|24時間|深夜まで/.test(item.details)?12:0;
     const score=item=>item.curated*8+bonus(item)+(state.area&&item.area===state.area?16:0)
       +(state.mood&&moodMatch(item,state.mood)?7:0)+(state.avoid.has('japanese')&&item.japanese?8:0)
