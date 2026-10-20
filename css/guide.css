@@ -6189,3 +6189,21 @@ html[data-theme="light"] #guide .emergency-official-links a{color:#245E82;}
 #guide .area-directory-section .tab-panel .teaser-scroll-body > details.guided-title-pinned > .indented {
   margin-top:4px!important;
 }
+
+/* v30.9.57 — smoother dictionary swipe and consistent Safari chrome. */
+#guide #food-search.food-drawer:focus,
+#guide #food-search.food-drawer:focus-visible{outline:none!important;}
+/* The full document is very tall. Translating it a whole drawer width and
+   applying a filter forces the browser to repaint large raster surfaces. */
+body.food-swipe-active > .hero,
+body.food-swipe-active #guide > .divider,
+body.food-swipe-active #guide > .page-body,
+body.food-swipe-active > footer{
+  transform:translate3d(var(--food-main-shift,0px),0,0)!important;
+  filter:none!important;
+}
+#guide > .page-body{will-change:auto!important;}
+html:has(body.food-swipe-active),
+body.food-swipe-active {background:#0d0d0d!important;}
+html[data-theme="light"]:has(body.food-swipe-active),
+html[data-theme="light"] body.food-swipe-active {background:#f7f8f7!important;}

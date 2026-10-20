@@ -64,7 +64,8 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
    applyTheme(currentTheme());
   });
  });
-})();</script><link rel="stylesheet" href="css/guide.css?v=30.9.55"/>
+})();</script><link rel="stylesheet" href="css/guide.css?v=30.9.57"/>
+<link rel="stylesheet" href="css/recommend.css?v=30.9.57"/>
 
 
 
@@ -138,7 +139,39 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
 
 
 
-</head><body><div class="food-drawer-backdrop" aria-hidden="true"></div>
+</head><body><div class="recommend-drawer-backdrop" aria-hidden="true"></div>
+<aside class="recommend-drawer" id="taipei-recommender" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="recommend-title" tabindex="-1">
+ <div class="recommend-drawer-inner">
+  <div class="recommend-drawer-top"><span class="recommend-kicker">TABI / TAIPEI · PERSONAL PICKS</span><button class="recommend-close" type="button" aria-label="おすすめを閉じる"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+  <h2 id="recommend-title">今、どこで食べよう。</h2>
+ <p class="recommend-intro">台北のおすすめから、今の気分に合う3軒を。</p>
+ <div class="recommend-controls" aria-label="おすすめの条件">
+  <div class="recommend-control-wrap">
+   <button class="recommend-control" id="recommend-time-trigger" type="button" aria-expanded="false" aria-controls="recommend-time-options"><span class="recommend-control-icon" aria-hidden="true">◷</span><span id="recommend-time-label">現時刻</span><span class="recommend-control-arrow" aria-hidden="true">⌄</span></button>
+   <div class="recommend-options" id="recommend-time-options" hidden></div>
+  </div>
+  <div class="recommend-control-wrap recommend-control-area-wrap">
+   <button class="recommend-control" id="recommend-area-trigger" type="button" aria-expanded="false" aria-controls="recommend-area-options"><span class="recommend-control-icon" aria-hidden="true">⌖</span><span id="recommend-area-label">現在地</span><span class="recommend-control-arrow" aria-hidden="true">⌄</span></button>
+   <div class="recommend-options" id="recommend-area-options" hidden></div>
+  </div>
+ </div>
+ <p class="recommend-location-status" id="recommend-location-status" role="status" aria-live="polite"></p>
+ <div class="recommend-result-head"><h3>今のおすすめ</h3><span class="recommend-count" id="recommend-count">3軒をピックアップ</span></div>
+ <p class="recommend-relaxed" id="recommend-relaxed" role="status" aria-live="polite" hidden></p>
+ <div id="recommend-results" class="recommend-results" aria-live="polite"></div>
+ <button class="recommend-more" id="recommend-more" type="button"><span aria-hidden="true">↻</span> ほかの3軒を見る</button>
+ <section class="recommend-tuning" aria-labelledby="recommend-mood-title">
+  <h3 id="recommend-mood-title">ちょっと気分を変える？</h3>
+  <div class="recommend-choices" id="recommend-mood-options" role="group" aria-label="今の気分"></div>
+  <details class="recommend-advanced" id="recommend-advanced"><summary>さらに条件を指定 <span class="recommend-advanced-count" id="recommend-advanced-count"></span></summary>
+   <div class="recommend-choices" id="recommend-avoid-options" role="group" aria-label="避けたい条件"></div>
+   <p class="recommend-help">支払い方法・日本語メニューは未確認の場合があります。確認できない条件では絞り込みません。</p>
+  </details>
+ </section>
+ <p class="recommend-disclaimer" id="recommend-disclaimer">※ 時間帯は料理ジャンルの目安です。営業中とは限りません。訪問前に営業時間をご確認ください。</p>
+ </div>
+</aside>
+<div class="food-drawer-backdrop" aria-hidden="true"></div>
 <header class="hero wrapper" id="top"><button type="button" id="theme-preview-toggle" class="theme-preview-toggle" aria-pressed="false" aria-label="明るいモードに切り替える" title="端末の明暗設定に追従中"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></button><h1 class="hero-masthead"><span class="hero-brandline">TAIPEI CITY GUIDE</span><span class="hero-lockup" aria-label="TABI slash TAIPEI"><span class="hero-lockup-word"><span class="ta">TA</span>BI</span><span class="hero-lockup-slash" aria-hidden="true"></span><span class="hero-lockup-word"><span class="ta">TA</span>IPEI</span></span></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
 <a class="nav-button" data-target="travel" href="#travel"><span aria-hidden="true" class="nav-icon">✈️</span><span class="nav-copy"><span class="nav-title">旅の準備・交通</span><span class="nav-subtitle">入国・注意事項・空港交通</span></span></a>
 <a class="nav-button" data-target="food" href="#food"><span aria-hidden="true" class="nav-icon">🥢</span><span class="nav-copy"><span class="nav-title">おすすめグルメ</span><span class="nav-subtitle">地元目線でセレクト</span></span></a>
@@ -249,7 +282,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
 </div>
 </div>
 </section>
-</main><footer class="wrapper"><strong>2026 TAIPEI CITY GUIDE</strong> · By TEIKAN_YOH<br/>情報・店舗の最新状況は訪問前にご確認ください。</footer><button aria-label="ページの先頭に戻る" class="back-top" title="ページの先頭に戻る" type="button">↑</button><script src="js/guide.js?v=30.9.55"></script>
+</main><footer class="wrapper"><strong>2026 TAIPEI CITY GUIDE</strong> · By TEIKAN_YOH<br/>情報・店舗の最新状況は訪問前にご確認ください。</footer><button aria-label="ページの先頭に戻る" class="back-top" title="ページの先頭に戻る" type="button">↑</button><script src="js/guide.js?v=30.9.57"></script>
 
 
 
@@ -263,4 +296,5 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
 
 
 
+<script src="js/recommend.js?v=30.9.57"></script>
 </body></html>
