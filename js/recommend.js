@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.63 — matching-first daily curated & discovery picks. */
+/* TAIPEI CITY GUIDE v30.9.67 — optional on-device nearby distance for verified venues. */
 (() => {
   'use strict';
   const drawer = document.getElementById('taipei-recommender');
@@ -47,7 +47,26 @@
   function taipeiTimeLabel(){return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(taipeiNow());}
   function taipeiHour(){return Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hourCycle:'h23'}).formatToParts(taipeiNow()).find(p=>p.type==='hour')?.value??12);}
   function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<14?'lunch':h>=14&&h<17?'afternoon':h>=17&&h<23?'night':'late';}
-  const state={timeMode:'current',time:defaultBand(),areaMode:'all',area:'',genre:'',volume:'',scene:'',page:0,locationStatus:'idle',locationName:'',geoRequested:false};
+  const state={timeMode:'current',time:defaultBand(),areaMode:'all',area:'',genre:'',volume:'',scene:'',page:0,locationStatus:'idle',geoRequested:false,position:null};
+  const GEO_MAX_METERS=4000; // Honest straight-line radius for the first verified batch.
+  let coordinates=new Map(),coordinatesReady=false,coordinatesFailed=false;
+  // Static same-origin JSON; no key, request to mapping APIs, or GPS upload.
+  async function loadCoordinates(){
+    try{
+      const reply=await fetch('food/venues.json?v=30.9.67',{cache:'no-store'});
+      if(!reply.ok)throw new Error('venue file unavailable');
+      const data=await reply.json();
+      if(data.schemaVersion!==1||!data.venues||typeof data.venues!=='object')throw new Error('venue file invalid');
+      const clean=new Map();
+      for(const [name,entry] of Object.entries(data.venues)){
+        if(!entry||!Number.isFinite(entry.lat)||!Number.isFinite(entry.lng)||entry.lat<24.7||entry.lat>25.4||entry.lng<121.2||entry.lng>122||!/^https:\/\//.test(entry.mapUrl||''))continue;
+        clean.set(name,entry);
+      }
+      coordinates=clean;coordinatesReady=true;catalog=null;
+    }catch(_){coordinatesFailed=true;}
+    // Updating metadata never requests location or stores the user's coordinates.
+    if(state.areaMode==='current'){syncUI();renderResults();}
+  }
   const normalize=t=>String(t||'').replace(/\s+/g,'').toLowerCase();
   const categoryOf=(tab,group)=>{
     if(/朝ごはん/.test(tab))return 'breakfast';
@@ -101,7 +120,12 @@
     read(foodRoot,false);read(areaRoot,true);
     // Venue metadata is independent of the legacy navigation category.
     // Uncertain tags are left absent rather than fabricated from 「グルメ」.
-    catalog=[...found.values()].map(item=>Object.assign(item,inferVenueTags(item)));
+    catalog=[...found.values()].map(item=>{
+      const stored=coordinates.get(item.name);
+      // Never attach a location if this guide's Maps destination changed.
+      const location=stored&&(stored.mapUrl===item.url||stored.searchUrl===item.url)?{lat:stored.lat,lng:stored.lng}:{};
+      return Object.assign(item,inferVenueTags(item),location);
+    });
     return catalog;
   }
   function eligibleTime(item,time){
@@ -265,11 +289,21 @@
   function hash32(text){let h=2166136261;for(const ch of text){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
   function dailyNoise(name,seed){const v=hash32(seed+'|'+name);return ((v^v>>>16)>>>0)/4294967296;}
   function recommendationSeed(){
-    return [taipeiDate(),state.time,state.areaMode==='current'?(state.area||'all'):state.area,
+    // Include rounded position only in ephemeral daily ordering, never storage.
+    const geoKey=state.areaMode==='current'&&state.position?`${state.position.lat.toFixed(3)},${state.position.lng.toFixed(3)}`:'';
+    return [taipeiDate(),state.time,geoKey||state.area,
       state.genre,state.volume,state.scene].join('|');
   }
   function recommendedPool(){
-    const byTime=readCatalog().filter(item=>eligibleTime(item,state.time));
+    const timeCandidates=readCatalog().filter(item=>eligibleTime(item,state.time));
+    const useGPS=state.areaMode==='current'&&state.locationStatus==='success'&&!!state.position&&coordinatesReady;
+    // Only verified, specifically matched storefronts take part in GPS ranking.
+    // An unknown location is never assumed to be at a neighborhood midpoint.
+    const withinRange=useGPS?timeCandidates.filter(item=>Number.isFinite(item.lat)&&Number.isFinite(item.lng))
+      .map(item=>({...item,distanceMeters:distanceMeters(state.position.lat,state.position.lng,item.lat,item.lng)}))
+      .filter(item=>item.distanceMeters<=GEO_MAX_METERS):[];
+    const nearbyFallback=useGPS&&withinRange.length===0;
+    const byTime=useGPS&&!nearbyFallback?withinRange:timeCandidates;
     const criteria=[];
     if(state.area)criteria.push({label:'エリア',weight:35,fn:item=>item.area===state.area});
     if(state.genre)criteria.push({label:'料理ジャンル',weight:30,fn:item=>genreMatch(item,state.genre)});
@@ -293,7 +327,8 @@
       const matched=criteria.filter(c=>c.fn(item));
       const score=matched.reduce((sum,c)=>sum+c.weight,0)
         +(item.curated>0?8:0)
-        +(state.area&&item.chain?6:0) // chain convenience, never a location match
+        +(state.area&&state.areaMode!=='current'&&item.chain?6:0) // not a proxy for branch proximity
+        +(Number.isFinite(item.distanceMeters)?Math.round(40*(1-item.distanceMeters/GEO_MAX_METERS)):0)
         +mealBonus(item);
       return {...item,matchScore:matched.reduce((sum,c)=>sum+c.weight,0),score,
         fullMatch:matched.length===criteria.length,matched:matched.map(c=>c.label),
@@ -330,7 +365,7 @@
       append(fromTier(strong)||fromTier(weak));
     };
     while(ordered.length<scored.length)chooseNext();
-    return {ordered,timeCount:byTime.length,criteria,lifted};
+    return {ordered,timeCount:byTime.length,criteria,lifted,nearbyFallback,useGPS,nearbyCount:withinRange.length};
   }
   function diversityKey(item,genre){
     if(genre==='noodle'){
@@ -361,8 +396,8 @@
   });
   buildChoice(areaControls,[['current','現在地'],['all','エリア指定なし'],...AREAS.map(([id,label])=>[id,label])],areaOptions,'recommend-option',value=>{
     state.areaMode=value;state.page=0;
-    if(value==='current'){state.area='';state.locationStatus='loading';state.locationName='';requestLocation(true);}
-    else {state.area=value==='all'?'':value;state.locationStatus='idle';}
+    if(value==='current'){state.area='';state.position=null;state.locationStatus='loading';requestLocation(true);}
+    else {state.area=value==='all'?'':value;state.position=null;state.locationStatus='idle';geoRun++;}
     syncUI();renderResults();closeOptions();
   });
   buildChoice(genreControls,GENRES,moods,'recommend-pill',value=>{
@@ -419,7 +454,7 @@
     for(const b of genreControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.genre));
     for(const b of volumeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.volume));
     for(const b of sceneControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.scene));
-    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'このブラウザでは位置情報を取得できません。エリア指定なしでご案内します。',denied:'位置情報を利用できません。エリア指定なしでご案内します。',outside:'現在地は収録エリア外です。エリア指定なしでご案内します。',imprecise:'位置情報の精度が足りません。エリア指定なしでご案内します。',error:'位置情報を取得できませんでした。エリア指定なしでご案内します。',success:`現在地付近：${state.locationName}（周辺エリアの目安）`};
+    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:coordinatesFailed?'店舗の座標データを読み込めませんでした。通常のおすすめを表示します。':!coordinatesReady?'登録店の位置情報を読み込んでいます…':`現在地から直線${(GEO_MAX_METERS/1000).toFixed(0)}km以内・座標登録${coordinates.size}軒の中からご案内します。`};
     locationStatus.textContent=state.areaMode==='current'?messages[state.locationStatus]||'': '';
     locationStatus.hidden=!locationStatus.textContent;
   }
@@ -438,18 +473,19 @@
     navigator.geolocation.getCurrentPosition(pos=>{
       if(request!==geoRun||state.areaMode!=='current')return;
       const {latitude,longitude,accuracy}=pos.coords;
-      if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||!Number.isFinite(accuracy)||accuracy>2500){
-        state.area='';state.locationStatus='imprecise';
+      if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||!Number.isFinite(accuracy)||accuracy>1000){
+        state.position=null;state.locationStatus='imprecise';
+      }else if(latitude<24.7||latitude>25.4||longitude<121.2||longitude>122){
+        state.position=null;state.locationStatus='outside';
       }else{
-        const nearest=AREAS.map(([id,label,lat,lng])=>({id,label,dist:distanceMeters(latitude,longitude,lat,lng)})).sort((a,b)=>a.dist-b.dist)[0];
-        if(nearest&&nearest.dist<=2200){state.area=nearest.id;state.locationName=nearest.label;state.locationStatus='success';}
-        else {state.area='';state.locationStatus='outside';}
+        state.position={lat:latitude,lng:longitude,accuracy}; // session only; never persisted or transmitted
+        state.locationStatus='success';
       }
       state.page=0;syncUI();renderResults();
     },err=>{
       if(request!==geoRun||state.areaMode!=='current')return;
-      state.area='';state.locationStatus=err.code===1?'denied':'error';state.page=0;syncUI();renderResults();
-    },{enableHighAccuracy:false,timeout:9500,maximumAge:300000});
+      state.position=null;state.locationStatus=err.code===1?'denied':'error';state.page=0;syncUI();renderResults();
+    },{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
   }
   function refreshContextOnOpen(){
     if(state.timeMode==='current'){state.time=defaultBand();state.page=0;}
@@ -457,8 +493,9 @@
     // Never request geolocation on drawer open or reopen. Only a direct tap on
     // 「現在地」 inside the area chooser may ask for permission.
   }
+  function formatDistance(meters){return meters<1000?`${Math.max(50,Math.round(meters/50)*50)}m`:`${(meters/1000).toFixed(1)}km`;}
   function renderResults(){
-    const {ordered,timeCount,lifted}=recommendedPool();
+    const {ordered,timeCount,lifted,nearbyFallback,useGPS,nearbyCount}=recommendedPool();
     results.replaceChildren();
     if(!ordered.length){
       more.hidden=true;
@@ -471,24 +508,32 @@
     state.page=((state.page%pages)+pages)%pages;
     const slice=ordered.slice(state.page*3,state.page*3+3);
     count.textContent=`${slice.length}軒をピックアップ`;
-    relaxed.hidden=!lifted.length;
-    relaxed.textContent=relaxed.hidden?'':`条件を少しゆるめました（${lifted.join('・')}）。時間帯は変更していません。`;
+    relaxed.hidden=!lifted.length&&!nearbyFallback;
+    relaxed.textContent=nearbyFallback?'この時間帯は近くに位置確認済みのお店がありません。位置が未登録のお店も含む通常のおすすめを表示しています。':lifted.length?`条件を少しゆるめました（${lifted.join('・')}）。時間帯は変更していません。`:'';
+    if(useGPS&&nearbyFallback){
+      locationStatus.textContent='この時間帯は直線4km以内に位置確認済みの店がありません。';
+      locationStatus.hidden=false;
+    }
+    if(useGPS&&!nearbyFallback){
+      locationStatus.textContent=`現在地から直線4km以内の位置確認済み${nearbyCount}軒を検索中（登録全${coordinates.size}軒）。`;
+      locationStatus.hidden=false;
+    }
     slice.forEach(item=>{
       const card=el('article','recommend-card');
       const top=el('div','recommend-card-top');
       top.append(el('span','recommend-category',item.displayType||typeLabel[item.category]||'グルメ'));
       // Area sits beside the genre on the upper right. Reuse the exact SVG
       // path of the area selector, scaled for the compact card eyebrow.
-      if(item.area){
-        const place=AREAS.find(([code])=>code===item.area);
-        if(place){
-          const location=el('span','recommend-place');
-          const pin=el('span','recommend-place-pin');
-          pin.setAttribute('aria-hidden','true');
-          pin.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
-          location.append(pin,el('span','recommend-place-label',place[1]));
-          top.append(location);
-        }
+      const locationText=Number.isFinite(item.distanceMeters)?`約${formatDistance(item.distanceMeters)}`:
+        (AREAS.find(([code])=>code===item.area)?.[1]||'');
+      if(locationText){
+        const location=el('span','recommend-place');
+        if(Number.isFinite(item.distanceMeters))location.setAttribute('aria-label',`現在地からの直線距離 ${locationText}`);
+        const pin=el('span','recommend-place-pin');
+        pin.setAttribute('aria-hidden','true');
+        pin.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
+        location.append(pin,el('span','recommend-place-label',locationText));
+        top.append(location);
       }
       card.append(top);
       const a=el('a','recommend-venue',item.name);a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';card.append(a);
@@ -496,10 +541,10 @@
       results.append(card);
     });
     more.hidden=ordered.length<=3;
-    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}時間帯・ボリュームは料理・店舗情報からの目安です。現在営業中とは限りません。来店前に営業時間をご確認ください。`;
+    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useGPS&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
-  syncUI();renderResults();
+  syncUI();renderResults();loadCoordinates();
   let isOpen=false, dragging=null, raf=0, queuedProgress=0, progress=0, lastFocus=null, lockedY=0, savedStyle=null, suppressedUntil=0;
   const panelWidth=()=>Math.min(innerWidth,480);
   const clamp=v=>Math.max(0,Math.min(1,v));
