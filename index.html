@@ -65,7 +65,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
   });
  });
 })();</script><link rel="stylesheet" href="css/guide.css?v=30.9.60"/>
-<link rel="stylesheet" href="css/recommend.css?v=30.9.62"/>
+<link rel="stylesheet" href="css/recommend.css?v=30.9.63"/>
 
 
 
@@ -152,7 +152,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
     <div class="recommend-options" id="recommend-time-options" hidden></div>
    </div>
    <div class="recommend-control-wrap recommend-control-area-wrap">
-    <button class="recommend-control" id="recommend-area-trigger" type="button" aria-expanded="false" aria-controls="recommend-area-options"><span class="recommend-control-icon" aria-hidden="true">⌖</span><span id="recommend-area-label">エリア指定なし</span><span class="recommend-control-arrow" aria-hidden="true">⌄</span></button>
+    <button class="recommend-control" id="recommend-area-trigger" type="button" aria-expanded="false" aria-controls="recommend-area-options"><span class="recommend-control-icon recommend-area-pin" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg></span><span id="recommend-area-label">エリア指定なし</span><span class="recommend-control-arrow" aria-hidden="true">⌄</span></button>
     <div class="recommend-options" id="recommend-area-options" hidden></div>
    </div>
   </div>
@@ -162,11 +162,13 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
     <details class="recommend-advanced" id="recommend-advanced">
      <summary class="recommend-control recommend-advanced-trigger" aria-label="さらに条件を指定"><span class="recommend-advanced-label">さらに条件を指定</span><span class="recommend-advanced-plus" aria-hidden="true"></span></summary>
      <div class="recommend-advanced-panel">
-      <h3 id="recommend-mood-title">ちょっと気分を変える？</h3>
+      <h3 id="recommend-mood-title">料理ジャンル</h3>
       <div class="recommend-choices" id="recommend-mood-options" role="group" aria-labelledby="recommend-mood-title"></div>
-      <h3 class="recommend-avoid-heading">避けたい条件</h3>
-      <div class="recommend-choices" id="recommend-avoid-options" role="group" aria-label="避けたい条件"></div>
-      <p class="recommend-help">支払い方法・日本語メニューは未確認の場合があります。確認できない条件では絞り込みません。</p>
+      <h3 class="recommend-volume-heading" id="recommend-volume-title">ボリューム</h3>
+      <div class="recommend-choices" id="recommend-volume-options" role="group" aria-labelledby="recommend-volume-title"></div>
+      <h3 class="recommend-scene-heading" id="recommend-scene-title">食べ方・シーン</h3>
+      <div class="recommend-choices" id="recommend-scene-options" role="group" aria-labelledby="recommend-scene-title"></div>
+      <p class="recommend-help">※ ボリューム・シーンは料理や店の情報から推定した目安です。</p>
      </div>
     </details>
    </div>
@@ -306,5 +308,5 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
 
 
 
-<script src="js/recommend.js?v=30.9.62"></script>
+<script src="js/recommend.js?v=30.9.63"></script>
 </body></html>
