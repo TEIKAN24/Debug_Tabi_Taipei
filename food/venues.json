@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "updated": "2026-10-21",
-  "note": "Coordinates from previously identified venues and user-supplied Google Maps place URLs. User-confirmed non-food exclusions omitted. Places without exact place-point coordinates remain excluded from nearby matching. Coordinates used only for on-device straight-line 500 m searches; opening the recommendation follows the matching branch link. Store hours are not inferred from map URLs.",
+  "note": "Coordinates from previously identified venues and user-supplied Google Maps place URLs. User-confirmed non-food exclusions omitted. Places without exact place-point coordinates remain excluded from nearby matching. Coordinates used only for on-device straight-line 500 m searches; opening the recommendation follows the matching branch link. Store hours are not inferred from map URLs. Night-market stalls without their own point use the market reference point in nightMarkets; cards then show 〇〇夜市内 and the distance to the market.",
   "venues": {
     "阜杭豆漿": {
       "lat": 25.044195,
@@ -2497,12 +2497,6 @@
       "mapUrl": "https://maps.app.goo.gl/Kj2JC8rDGA8vr12r7",
       "branches": [
         {
-          "name": "Chin Huajiao Taipei Zhongshan North",
-          "lat": 25.051733,
-          "lng": 121.522787,
-          "mapUrl": "https://www.google.com/maps/place/Chin+Huajiao+Taipei+Zhongshan+North/@25.051733,121.4860294,14z/data=!4m10!1m2!2m1!1z6aas6L6jIOWPsOWMl-W4gg!3m6!1s0x3442a9dca56e2dbd:0x369414802e4b830c!8m2!3d25.051733!4d121.522787!15sChDppqzovqMg5Y-w5YyX5biCIgOIAQFaFCIS6aasIOi-oyDlj7DljJcg5biCkgESaG90X3BvdF9yZXN0YXVyYW50mgEkQ2hkRFNVaE5NRzluUzBWTmNYWTVTMGhRWjB0TGJYRlJSUkFC4AEA-gEECCEQJQ!16s%2Fg%2F11gfd8_24m?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAxNC4wIKXMDSoASAFQAw%3D%3D"
-        },
-        {
           "name": "馬辣頂級麻辣鴛鴦火鍋 中山店",
           "lat": 25.0525519,
           "lng": 121.5201342,
@@ -3148,6 +3142,43 @@
         }
       ],
       "source": "User-supplied Google Maps place links (2026-10-20)"
+    }
+  },
+  "nightMarkets": {
+    "饒河夜市": {
+      "lat": 25.050167,
+      "lng": 121.572639,
+      "source": "Wikipedia: Raohe Street Night Market"
+    },
+    "士林夜市": {
+      "lat": 25.0866,
+      "lng": 121.5254,
+      "source": "Wikipedia: Shilin Night Market"
+    },
+    "寧夏夜市": {
+      "lat": 25.056681,
+      "lng": 121.515364,
+      "source": "交通部觀光署 觀光多媒體開放資料 Attraction_379000000A_001560"
+    },
+    "華西街夜市": {
+      "lat": 25.038598,
+      "lng": 121.49844,
+      "source": "交通部觀光署 臺灣觀光資訊網 華西街觀光夜市"
+    },
+    "師大夜市": {
+      "lat": 25.0245042,
+      "lng": 121.5293123,
+      "source": "食尚玩家 店家資訊（構造化データ）"
+    },
+    "南機場夜市": {
+      "lat": null,
+      "lng": null,
+      "source": "未確認：中華路二段307〜315巷。Google Maps の地点リンクで追加してください"
+    },
+    "公館夜市": {
+      "lat": null,
+      "lng": null,
+      "source": "未確認：羅斯福路四段90・108巷。Google Maps の地点リンクで追加してください"
     }
   }
 }

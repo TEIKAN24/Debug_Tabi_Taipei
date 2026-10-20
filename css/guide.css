@@ -6,7 +6,7 @@
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:22px;-webkit-text-size-adjust:100%;}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;line-height:1.75;font-size:14px;overflow-wrap:anywhere}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;line-height:1.75;font-size:14px;overflow-wrap:anywhere}
 a{color:#bd4c3f;text-decoration:none}a:hover{text-decoration:underline}
 button,a{-webkit-tap-highlight-color:transparent}
 button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
@@ -14,17 +14,15 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .hero{padding:clamp(30px,8vw,60px) 0 10px}
 .eyebrow{font-weight:750;font-size:10px;letter-spacing:.24em;color:var(--accent)}
 .hero h1{font-size:clamp(28px,8vw,47px);line-height:1.1;letter-spacing:-.04em;margin:12px 0 17px;font-weight:830}
-.hero h1 span{color:var(--accent)}
-.hero .welcome{font-weight:750;font-size:18px;margin:0 0 7px;}
-.hero .tagline{font-size:13px;color:#697174;line-height:1.85;margin:0;max-width:560px}
+.hero .tagline{margin:0}
 .quick-nav{margin:22px 0 12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.nav-button{border-radius:17px;padding:15px 12px 13px;min-height:128px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;box-shadow:var(--shadow);color:var(--ink);transition:transform .18s ease,box-shadow .18s ease}
+.nav-button{border-radius:17px;padding:15px 12px 13px;min-height:128px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease}
 .nav-button:hover{text-decoration:none;}
 .nav-button:active{transform:scale(.975)}
 
 .nav-icon{font-size:27px;line-height:1}.nav-copy{display:flex;flex-direction:column;gap:1px;padding-top:8px;z-index:1}
 .nav-title{font-size:13px;font-weight:790;line-height:1.5;letter-spacing:-.02em}
-.nav-subtitle{font-size:10px;color:#626a6b;line-height:1.5}
+.nav-subtitle{font-size:10px;line-height:1.5}
 .nav-arrow{position:absolute;top:13px;right:13px;font-size:17px;}
 .below-nav{font-size:11px;color:#81878a;margin:5px 1px 0}
 .divider{margin:32px 0 17px;border:0;border-top:1px solid var(--line)}
@@ -34,8 +32,8 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .site-content p{margin:8px 0;line-height:1.85}
 .site-content hr{border:0;border-top:1px solid var(--line);margin:23px 0}
 .jump-anchor{display:block;height:0;scroll-margin-top:16px}
-.site-content details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:9px 0;overflow:visible}
-.site-content details.root-accordion{border-radius:15px;box-shadow:var(--shadow);margin:11px 0}
+.site-content details{border:1px solid var(--line);border-radius:12px;margin:9px 0;overflow:visible}
+.site-content details.root-accordion{border-radius:15px;margin:11px 0}
 .site-content details.root-accordion > summary{font-weight:730;font-size:15px;padding:15px 16px}
 .site-content details.nested-accordion{border-radius:11px;margin:8px 0}
 .site-content details.nested-accordion > summary{padding:11px 12px;font-size:13px;font-weight:650}
@@ -75,8 +73,8 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .feature-link-label strong{font-size:14px}.feature-link-label small{font-size:11px;color:#cdd5d2}
 .feature-link-arrow{font-size:20px;color:#fff}
 .site-content figure{margin:12px 0}
-.site-content figure figcaption{font-size:11px;color:#929a9d}
-.back-top{bottom:calc(18px + env(safe-area-inset-bottom));border-radius:50%;cursor:pointer;z-index:10;transition:opacity .2s,transform .2s}
+.site-content figure figcaption{font-size:11px}
+.back-top{bottom:calc(18px + env(safe-area-inset-bottom));cursor:pointer;z-index:10;transition:opacity .2s,transform .2s}
 
 footer{border-top:1px solid var(--line);margin-top:24px;padding:20px 0 32px;color:#82898b;font-size:11px}
 @media(min-width:650px){.wrapper{width:min(100% - 64px,760px)}.quick-nav{gap:14px}.nav-button{min-height:144px;padding:17px 20px}.nav-title{font-size:16px}.nav-subtitle{font-size:12px}.nav-icon{font-size:34px}.site-content{font-size:15px}}
@@ -88,7 +86,7 @@ footer{border-top:1px solid var(--line);margin-top:24px;padding:20px 0 32px;colo
 
 /* === 2026-10-14: Dark mobile-first edition === */
 
-body {background:var(--bg);color:var(--ink)}
+body {background:var(--bg)}
 a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
 .hero .tagline,.below-nav {color:var(--muted)}
 .nav-button {color:var(--ink);border:1px solid #353e45;box-shadow:0 5px 18px rgba(0,0,0,.16)}
@@ -99,7 +97,6 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
 .nav-button:nth-child(4) {background:#292737}
 .nav-button:nth-child(5) {background:#342b31}
 .nav-button:nth-child(6) {background:#342a31}
-.nav-subtitle {color:#bbc2c4}
 .nav-arrow {opacity:.65}
 .site-content details,.site-content .block-color-gray_background {background:var(--paper)}
 .site-content details.root-accordion {box-shadow:0 3px 14px rgba(0,0,0,.12)}
@@ -125,10 +122,9 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
  .quick-nav {gap:9px}
  .nav-button {min-height:118px;padding:14px 12px;border-radius:15px}
  .site-content details.root-accordion > summary {padding:14px 15px}
- .food-frame {height:710px}
  .food-frame-shell {border-radius:13px}
 }
-@media(max-width:365px){.nav-title{font-size:12px}.nav-subtitle{font-size:9px}.nav-icon{font-size:25px}.food-frame{height:755px}}
+@media(max-width:365px){.nav-title{font-size:12px}.nav-subtitle{font-size:9px}.nav-icon{font-size:25px}}
 
 /* --- Mobile category pills, based on the original Notion tab-bar design --- */
 .site-content .tab[data-notion-tab-container] {display:block;min-width:0;max-width:100%;margin-top:6px}
@@ -148,10 +144,8 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
   cursor:pointer;white-space:nowrap;scroll-snap-align:start;
   transition:background .15s,color .15s,border-color .15s;
 }
-.site-content .tab-pill[aria-selected="true"] {
-  color:#f2f5f6;font-weight:740;
+.site-content .tab-pill[aria-selected="true"] {font-weight:740;
 }
-.site-content .tab-pill:hover {color:#f2f5f6}
 .site-content .tab-pill .inline-category-icon {width:25px;height:25px;margin:0;object-fit:contain}
 .site-content .tab-pill .icon {font-size:22px;line-height:1;display:inline-flex;align-items:center}
 .site-content .tab-panels {min-width:0;width:100%}
@@ -162,7 +156,7 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
 .site-content .tab-panel .nested-accordion {margin:8px 0}
 @media(max-width:600px) {
  .site-content .tab-pills {gap:6px;margin-right:-3px;padding:6px 2px 11px}
- .site-content .tab-pill {min-height:43px;padding:8px 11px;font-size:12.5px}
+ .site-content .tab-pill {padding:8px 11px;font-size:12.5px}
  .site-content .tab-pill .inline-category-icon {width:23px;height:23px}
  .site-content details.root-accordion > .indented {margin-left:11px;margin-right:11px}
 }
@@ -185,7 +179,6 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
   text-decoration-color:currentColor;
 }
 .site-content .venue-list-item {
-  color:#9da9b0;
   font-size:13px;
 }
 .site-content .venue-list-item > a[href^="https://maps.app.goo.gl"],
@@ -200,27 +193,15 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
 }
 .site-content .callout,
 .site-content .callout.block-color-gray_background {
-  background:transparent;
-  color:#a2acb2;
-  box-shadow:none;
-  border:0;
   border-radius:0;
   padding:4px 0;
 }
 .site-content .callout p {color:inherit}
-.site-content .section-note,
-.site-content .section-note mark {background:transparent !important;color:#a2acb2 !important}
 .site-content .callout mark:not(:has(a)) {
   background:transparent;
   color:inherit;
 }
 /* Remove Notion text-highlight backgrounds; keep original emphasis colors. */
-.site-content mark,
-.site-content mark[class*="highlight-"] {
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0;
-}
 
 
 /* === Typography hierarchy & subtle navigation surfaces, 2026-10-14 ===
@@ -244,10 +225,8 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
   
   --tag-gold: #EBC489;
 }
-body {color:var(--text-body)}
 .hero h1,.hero .welcome {color:var(--text-heading)}
 .hero h1 span,.eyebrow {color:var(--accent)}
-.hero .tagline {color:var(--text-secondary)}
 .below-nav,footer {color:var(--text-caption)}
 .nav-title {color:var(--text-heading)}
 .nav-subtitle {color:var(--text-secondary)}
@@ -439,24 +418,10 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 #food-explorer, #food-explorer *, #food-explorer *::before, #food-explorer *::after{ box-sizing: border-box; }
 #food-explorer{ -webkit-text-size-adjust: 100%; }
 #food-explorer{
-    
-    
-    background: var(--page);
-    color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
     
   }
-#food-explorer .food-panel{
-    
-    
-    
-    border: 1px solid var(--border);
-    
-    background: var(--surface);
-  }
 #food-explorer .kicker{ font-size: 10px; letter-spacing: .17em; color: var(--accent); font-weight: 750; margin: 0 0 8px; }
-
-#food-explorer .intro{  color: var(--muted);  }
 #food-explorer .search-shell{
     display: flex; align-items: center; gap: 10px;
     padding: 0 13px;
@@ -505,7 +470,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 #food-explorer .result{ display: flex; align-items: start; justify-content: space-between; gap: 10px; padding: 13px 2px; border-bottom: 1px solid var(--border); }
 #food-explorer .result:last-child{ border-bottom: 0; }
 
-#food-explorer .desc{  color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+#food-explorer .desc{ font-size: 12px; overflow-wrap: anywhere; }
 #food-explorer .tag{ white-space: nowrap; font-size: 10px; padding: 3px 6px; border-radius: 6px; color: var(--muted); background: var(--soft); margin-top: 3px; }
 #food-explorer .result-meta{
   display: flex;
@@ -556,7 +521,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
     text-align: center;
   }
 #food-explorer .scroll-tip[hidden], #food-explorer .spice-caption[hidden], #food-explorer #scroll-text[hidden]{ display: none; }
-#food-explorer .foot{ text-align: center; color: var(--muted); font-size: 11px;  }
+#food-explorer .foot{ text-align: center; font-size: 11px;  }
 @media  (max-width: 420px) {#food-explorer .food-panel{ border-radius: 12px; padding: 17px 13px 10px; }
 #food-explorer .tag{ font-size: 9px; }
 #food-explorer .result{ gap: 5px; }
@@ -669,9 +634,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   overflow-wrap:anywhere;
 }
 .site-content .venue-directory-section .venue-tag--featured {
-  background:#423A2D;
   border-color:#66533B;
-  color:#EBC489;
 }
 .site-content .venue-directory-section .venue-tag--caution {
   background:#3F3032;
@@ -767,17 +730,14 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .venue-directory-section .venue-secondary-links a{
   display:inline-flex;align-items:center;justify-content:center;
   padding:4px 6px;background:#273944;border:1px solid #4A6574;
-  border-radius:6px;text-align:center;text-decoration:none!important;
-  color:#B9DAED;line-height:1.4;max-width:128px;
+  border-radius:6px;text-align:center;text-decoration:none!important;line-height:1.4;max-width:128px;
   overflow-wrap:anywhere;
 }
 .site-content .venue-directory-section .venue-secondary-links a::after{content:'↗';opacity:.8;margin-left:3px;font-size:9px;}
 @media(max-width:365px){
  .site-content .venue-directory-section .venue-secondary-links{max-width:100px;}
- .site-content .venue-directory-section .venue-secondary-links a{font-size:9px;padding:4px 5px;}
+ .site-content .venue-directory-section .venue-secondary-links a{padding:4px 5px;}
  .site-content .metro-route{padding:12px 8px 9px;}
- .site-content .metro-route--transfer .metro-route-chip{font-size:8px;padding:4px 3px;}
- .site-content .metro-route--transfer .metro-route-stops span{font-size:9px;}
 }
 /* Directory tags: keep each short label on one line when it fits.
    Wrap the whole label to the next row only if necessary; never hide tags behind a swipe. */
@@ -842,14 +802,10 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 }
 /* Back-to-top appears during scrolling, then fades after the user stops for a moment. */
 .back-top {
-  width:38px;height:38px;right:10px;
   bottom:calc(10px + env(safe-area-inset-bottom));
-  font-size:16px;background:#26333A;color:#DCE8EB;
-  border:1px solid #58717E;box-shadow:0 3px 12px rgba(0,0,0,.24);
+  font-size:16px;
   opacity:0;pointer-events:none;transform:translateY(9px);
 }
-.back-top.show {opacity:.88;transform:translateY(0);}
-.back-top.show:hover,.back-top.show:focus-visible {opacity:1;}
 /* Two essential travel cards are legible but not visually competing yellow blocks. */
 .site-content details.root-accordion.travel-caution,
 .site-content details.root-accordion.travel-twac {overflow:visible;border-radius:14px;}
@@ -865,8 +821,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;
   border-radius:11px;font-size:19px;background:rgba(255,255,255,.06);
 }
-.site-content .travel-caution .travel-key-icon {background:#433D2B;}
-.site-content .travel-twac .travel-key-icon {background:#304A40;}
 .site-content .travel-key-copy {min-width:0;display:flex;flex-direction:column;gap:3px;}
 .site-content .travel-key-title {color:#F5F7F8;font-weight:760;font-size:14px;line-height:1.5;}
 .site-content .travel-key-subtitle {color:#BCC9C9;font-size:11px;font-weight:460;line-height:1.5;}
@@ -1043,8 +997,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 }
 .site-content .destination-card .tab-panel ol.numbered-list::before {
   content:attr(start);position:absolute;left:-11px;top:9px;
-  width:20px;height:20px;display:grid;place-items:center;
-  background:#2E4753;border:1px solid #6A8A99;border-radius:50%;
+  width:20px;height:20px;display:grid;place-items:center;border:1px solid #6A8A99;border-radius:50%;
   color:#D9EAF0;font-size:10px;font-weight:750;font-variant-numeric:tabular-nums;
 }
 .site-content .destination-card .tab-panel ol.numbered-list > li {
@@ -1082,7 +1035,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   .site-content .destination-spots > ol.numbered-list {min-width:0;}
 }
 @media(max-width:365px){
-  .site-content .travel-topic-subtitle{font-size:10px;}
   .site-content .destination-card .tab-panel{padding:10px 8px;}
   .site-content .destination-card .tab-pill{font-size:11px;}
 }
@@ -1162,7 +1114,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   .site-content .destination-pr {font-size:11.5px;}
   .site-content .travel-topic-subtitle {font-size:11px;}
   .site-content .venue-directory-section .venue-secondary-links a {font-size:11px;}
-  .site-content .metro-route--transfer .metro-route-chip {font-size:9.5px;padding:4px 3px;}
+  .site-content .metro-route--transfer .metro-route-chip {padding:4px 3px;}
 }
 
 
@@ -1271,7 +1223,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 @media(max-width:600px){
  .site-content .airport-direction-switcher {padding:0;}
  .site-content .airport-direction-buttons {gap:9px;}
- .site-content .airport-direction-button {min-height:128px;padding:13px 12px 13px;gap:11px;border-radius:12px;}
+ .site-content .airport-direction-button {padding:13px 12px 13px;gap:11px;border-radius:12px;}
  .site-content .airport-direction-icon {width:26px;height:26px;}
  .site-content .airport-direction-text {gap:4px;}
  .site-content .airport-direction-text strong {font-size:14px;}
@@ -1404,7 +1356,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   #food-explorer .dish {font-size:14.5px;}
 }
 @media (max-width:365px) {
-  .site-content .airport-mode-card .airport-fare-grid {grid-template-columns:1fr;gap:0;}
   .site-content .airport-mode-card .airport-fare-item + .airport-fare-item {
     border-left:0;border-top:1px solid #40515c;padding-left:0;padding-top:12px;margin-top:7px;
   }
@@ -1424,8 +1375,8 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .metro-service-heading {display:block;text-align:center;color:#CBD6E2;font-size:11px;font-weight:650;letter-spacing:.025em;margin-bottom:8px;}
 .site-content .metro-dual-lines {display:flex;flex-direction:column;gap:7px;padding:0 2px;}
 .site-content .metro-service-line {display:block;height:3px;width:100%;border-radius:999px;}
-.site-content .metro-service-express {background:#AC72D0;box-shadow:none;}
-.site-content .metro-service-commuter {background:#4396D2;box-shadow:none;}
+.site-content .metro-service-express {box-shadow:none;}
+.site-content .metro-service-commuter {box-shadow:none;}
 .site-content .metro-route-key {margin-top:10px;min-height:0;gap:6px 15px;}
 .site-content .metro-route-key-item {font-size:11.5px;line-height:1.45;white-space:nowrap;}
 .site-content .metro-route-key-dot {width:7px;height:7px;flex:0 0 7px;}
@@ -1437,17 +1388,15 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .metro-transfer-service-labels span {text-align:center;white-space:nowrap;color:#DCE8EE;font-size:11px;font-weight:720;line-height:1.4;}
 .site-content .metro-transfer-service-labels span::before {content:'';display:inline-block;width:6px;height:6px;margin-right:6px;border-radius:2px;background:var(--service-color);vertical-align:2px;}
 .site-content .metro-transfer-track {display:flex;align-items:center;width:100%;padding:0 2px;}
-.site-content .metro-transfer-leg {height:3px;min-width:0;flex:1;background:var(--service-color);border-radius:999px;}
-.site-content .metro-transfer-node {height:24px;width:24px;flex:0 0 24px;border-radius:50%;border:1px solid #8095A2;background:#26343D;display:grid;place-items:center;color:#E0EBF1;margin:0 3px;box-shadow:none;}
+.site-content .metro-transfer-leg {height:3px;min-width:0;flex:1;border-radius:999px;}
+.site-content .metro-transfer-node {height:24px;width:24px;flex:0 0 24px;border-radius:50%;border:1px solid #8095A2;display:grid;place-items:center;color:#E0EBF1;margin:0 3px;box-shadow:none;}
 .site-content .metro-route--transfer .metro-route-key {margin-top:7px;}
 .site-content .metro-transfer-note {font-size:11.5px;color:#AEBFCC;}
 /* Fare cards regain distinct purple/blue gradient identity without inset boxes. */
 .site-content .airport-mode-card .airport-fare-item--express {
- background:linear-gradient(180deg,rgba(164,104,210,.23),rgba(164,104,210,.065) 55%,transparent 100%);
  border:0;border-top:2px solid #A477D0;border-radius:8px 8px 0 0;padding:12px 10px 9px;
 }
 .site-content .airport-mode-card .airport-fare-item--commuter {
- background:linear-gradient(180deg,rgba(60,139,208,.23),rgba(60,139,208,.065) 55%,transparent 100%);
  border:0;border-top:2px solid #5F9DD0;border-radius:8px 8px 0 0;padding:12px 10px 9px;
 }
 .site-content .airport-mode-card .airport-fare-item--express + .airport-fare-item--commuter {border-left:0;padding-left:10px;}
@@ -1467,8 +1416,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 /* =================== CSS 14: k95-flat-route-refinement =================== */
 
 /* K95: 95% black ink approximate sRGB on screen (5% remaining = 13/255). */
-
-html,body { background:#0D0D0D; }
 /* Flat, static diagram lines: no moving shine, bloom or reflection. */
 .site-content .metro-service-line,
 .site-content .metro-transfer-leg,
@@ -1521,7 +1468,6 @@ html,body { background:#0D0D0D; }
 .site-content .venue-directory-section .venue-secondary-links a {
  border-color:var(--outline-white)!important;
 }
-.site-content .airport-direction-button[aria-expanded='true']{border-color:var(--outline-strong)!important;box-shadow:inset 0 0 0 1px var(--outline-strong)!important;}
 .site-content .airport-mode-compact {border:1px solid var(--outline-white)!important;}
 .site-content .destination-card .tab-panel,
 .site-content .destination-info-group,
@@ -1538,7 +1484,7 @@ html,body { background:#0D0D0D; }
  color:#DCE4E8!important;
 }
 .site-content .tab-pill[aria-selected='true'],
-.site-content .destination-card .tab-pill[aria-selected='true'] {border-color:var(--outline-strong)!important;outline:1px solid rgba(248,250,252,.35);outline-offset:-3px;}
+.site-content .destination-card .tab-pill[aria-selected='true'] {outline-offset:-3px;}
 /* Ordinary directory rows and tags. */
 .site-content .venue-directory-section .venue-tag,
 .site-content .venue-directory-section .venue-tag--featured,
@@ -1554,14 +1500,8 @@ html,body { background:#0D0D0D; }
 .site-content .destination-card .tab-panel ol.numbered-list {border-left-color:var(--outline-divider)!important;}
 .site-content .destination-card .tab-panel ol.numbered-list::before {background:#0D0D0D!important;border-color:var(--outline-white)!important;}
 /* Preserve line identity and the expressly requested purple/blue fare gradients. */
-.site-content .airport-mode-card .airport-fare-item--express {background:linear-gradient(180deg,rgba(164,104,210,.23),rgba(164,104,210,.065) 55%,transparent 100%)!important;}
-.site-content .airport-mode-card .airport-fare-item--commuter {background:linear-gradient(180deg,rgba(60,139,208,.23),rgba(60,139,208,.065) 55%,transparent 100%)!important;}
 .site-content .metro-transfer-node {background:#0D0D0D!important;border-color:var(--outline-white)!important;}
 /* Keep all food-search and two key travel cards exactly as previously styled. */
-@media(max-width:600px){
- .site-content .airport-direction-button {min-height:128px;}
- .site-content .tab-pill {min-height:42px;}
-}
 
 
 /* =================== CSS 16: k95-monochrome-text-airport-icons =================== */
@@ -1579,7 +1519,6 @@ body{color:var(--mono-body)}
 .site-content :is(.airport-direction-text strong,.airport-direction-button,.selected-value,.venue-main-link,.section-jump-button):not(#food-explorer *){color:var(--mono-main)!important}
 .site-content :is(.airport-direction-icon,.airport-direction-indicator,.airport-mode-icon,.section-jump-arrow){color:var(--mono-body)!important}
 /* Navigation links remain recognizable through underlines / outlines rather than cyan text. */
-.site-content a:not(.travel-twac a):not(#food-explorer a){color:var(--mono-main)!important;}
 .site-content a:not(.travel-twac a):not(#food-explorer a):hover{color:#FFFFFF!important;text-decoration-color:#FFFFFF!important}
 .site-content .venue-directory-section .venue-secondary-links a{color:var(--mono-body)!important}
 .site-content .airport-direction-button[aria-expanded='true'] .airport-direction-icon{color:#FFFFFF!important}
@@ -1671,8 +1610,6 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 .quick-nav .nav-button:nth-child(n){background:#181818!important;border:1px solid #333333!important;box-shadow:none!important;}
 .quick-nav .nav-button:hover{background:#222222!important;border-color:#505050!important;}
 .quick-nav .nav-icon{filter:none;}
-
-.quick-nav .nav-subtitle,.quick-nav .nav-arrow{color:#A8A8A8!important;}
 /* Neutral airport icons; distinct route colors remain functional. */
 .site-content .airport-direction-switcher .airport-direction-icon,
 .site-content .airport-direction-switcher .airport-direction-indicator{color:#DADADA!important;}
@@ -1781,19 +1718,11 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 .quick-nav > .nav-button:nth-child(5) {--nav-rgb:204,145,172;--nav-accent:#CC91AC;}
 .quick-nav > .nav-button:nth-child(6) {--nav-rgb:196,169,104;--nav-accent:#C4A968;}
 .quick-nav > .nav-button:nth-child(n) {
-  background:linear-gradient(180deg,
-    rgba(var(--nav-rgb),.27) 0%,
-    rgba(var(--nav-rgb),.10) 41%,
-    rgba(var(--nav-rgb),0) 92%),#181818!important;
   
   border-top:2px solid var(--nav-accent)!important;
   
 }
 .quick-nav > .nav-button:nth-child(n):hover {
-  background:linear-gradient(180deg,
-    rgba(var(--nav-rgb),.33) 0%,
-    rgba(var(--nav-rgb),.13) 45%,
-    rgba(var(--nav-rgb),0) 94%),#1A1A1A!important;
   
   border-top-color:var(--nav-accent)!important;
 }
@@ -2001,11 +1930,9 @@ html, body,
 #guide .sights-day-trips .daytrip-timeline-name a {font-weight:inherit!important;text-decoration-thickness:1px!important;text-decoration-color:#808080!important;text-underline-offset:3px;}
 #guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-station {color:#D0D0D0;font-weight:700;}
 #guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-name {color:#FFF;font-weight:800;}
-#guide .sights-day-trips .daytrip-timeline-transfer-tag {color:#101010;padding:3px 7px;font-size:10.5px;line-height:1.4;}
 #guide .sights-day-trips .daytrip-timeline-leg {display:grid;grid-template-columns:42px minmax(0,1fr);gap:8px;}
 #guide .sights-day-trips .daytrip-timeline-stem {justify-self:start;margin-left:20px;border-left:2px solid #8B8B8B;height:100%;min-height:45px;}
 #guide .sights-day-trips .daytrip-timeline--transfer .daytrip-timeline-leg:first-of-type .daytrip-timeline-stem {border-left-color:#B3B3B3;}
-#guide .sights-day-trips .daytrip-timeline-leg-content {padding:7px 0 7px;}
 #guide .sights-day-trips .daytrip-timeline-mode {color:#BDBDBD;font-size:12.5px;line-height:1.55;word-break:normal;overflow-wrap:anywhere;font-weight:560;}
 #guide .sights-day-trips .daytrip-facts {flex-wrap:wrap;border-top:1px solid #2D2D2D;padding-top:11px;}
 
@@ -2143,11 +2070,8 @@ html, body,
 #guide .sights-day-trips .daytrip-option--alternative {
   --choice-accent:#888;
   
-  border-left:3px solid var(--choice-accent)!important;
-  
   padding:13px 12px 14px!important;
   margin:10px 0 15px!important;
-  background:transparent!important;
 }
 #guide .sights-day-trips .daytrip-option--taxi-choice { --choice-accent:#D9B65F; }
 #guide .sights-day-trips .daytrip-option--bus-choice { --choice-accent:#939393; }
@@ -2185,14 +2109,6 @@ html, body,
 /* Transport option cards: muted top-down washes, NOT accent-colored left bars.
    Route-specific blue (rail) and yellow (taxi) timeline lines remain unchanged. */
 #guide .sights-day-trips .daytrip-option--alternative {
-  
-  
-  
-  background:linear-gradient(180deg,
-    rgba(154,164,174,.24) 0px,
-    rgba(154,164,174,.11) 68px,
-    rgba(154,164,174,.025) 140px,
-    transparent 205px) !important;
   background-color:transparent !important;
   
 }
@@ -2218,7 +2134,6 @@ html, body,
 #guide .sights-day-trips {
   margin:19px 0 25px;
   padding:20px 0 0;
-  border-top:1px solid #303030;
   min-width:0;
   scroll-margin-top:16px;
 }
@@ -2644,10 +2559,6 @@ html, body,
   color:inherit;
 }
 /* Keep the separate excursion module editorial but no longer a main chapter. */
-#guide .sights-day-trips {
-  margin-top:24px;
-  padding-top:15px;
-}
 #guide .sights-day-trips > h3 {
   font-size:17px;
   line-height:1.5;
@@ -2707,19 +2618,11 @@ html, body,
 #guide #food-explorer .food-entry-static-left { flex:1 1 auto;min-width:0; }
 #guide #food-explorer .food-entry-static-meta,
 #guide #food-explorer .food-entry-toggle .result-meta {flex:0 0 auto;}
-#guide #food-explorer .food-desc-preview {
-  
-  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 73%,transparent 100%);
-  mask-image:linear-gradient(to right,#000 0%,#000 73%,transparent 100%);
-}
-#guide #food-explorer .food-desc-preview[hidden],
-#guide #food-explorer .food-desc-full[hidden]{display:none!important;}
 #guide #food-explorer .food-desc-full {
   
   -webkit-mask-image:none;mask-image:none;
 }
-#guide #food-explorer .food-expand-cue {
-  display:inline-flex;align-items:center;justify-content:flex-end;
+#guide #food-explorer .food-expand-cue {align-items:center;justify-content:flex-end;
   color:var(--muted);font-size:10px;line-height:1.45;white-space:nowrap;
   opacity:.88;letter-spacing:0;
 }
@@ -2755,9 +2658,7 @@ html, body,
 .food-drawer-trigger:hover {background:rgba(255,255,255,.11)!important;}
 .food-drawer-trigger:focus-visible,.food-drawer-close:focus-visible {outline:2px solid #83D3B0;outline-offset:3px;}
 .food-drawer-backdrop {
-  position:fixed; inset:0;z-index:198;background:rgba(0,0,0,.58);
-  opacity:0;
-  transition:opacity .25s ease,visibility 0s linear .28s;
+  position:fixed; inset:0;z-index:198;
 }
 #guide #food-search.food-drawer {
   position:fixed!important;inset:0 0 0 auto!important;
@@ -2767,8 +2668,6 @@ html, body,
   color:#F7F7F7;
   border-radius:0;
   z-index:200;display:flex;flex-direction:column;
-  transform:translate3d(102%,0,0);
-  transition:transform .32s cubic-bezier(.22,.76,.24,1),visibility 0s linear .33s;
   overflow:hidden;
   overscroll-behavior:contain;
 }
@@ -2782,8 +2681,7 @@ body.food-drawer-open .food-drawer-backdrop {
 }
 body.food-drawer-open .food-drawer-trigger {opacity:0;pointer-events:none;transform:translateX(15px);}
 #guide #food-search .food-drawer-toolbar {
-  flex:0 0 auto;position:relative;z-index:5;
-  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  flex:0 0 auto;position:relative;z-index:5;justify-content:space-between;align-items:center;gap:10px;
   padding:calc(11px + env(safe-area-inset-top)) 14px 10px 19px;
   border-bottom:1px solid rgba(255,255,255,.095);
   background:rgba(13,13,13,.97);
@@ -2798,12 +2696,10 @@ body.food-drawer-open .food-drawer-trigger {opacity:0;pointer-events:none;transf
   border:1px solid rgba(255,255,255,.13);border-radius:50%;padding:0;
 }
 #guide #food-search .food-drawer-scroll {
-  flex:1 1 auto;min-height:0;
   padding:9px 12px calc(22px + env(safe-area-inset-bottom));
   -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
   
 }
-#guide #food-search #food-explorer {width:100%;}
 
  /* The drawer toolbar already says FOOD INDEX. */
 
@@ -2837,18 +2733,13 @@ body > .hero,
 #guide > .divider,
 #guide > .page-body,
 body > footer {
-  transform:translate3d(calc(0px - var(--food-swipe-px, 0px)),0,0);
-  transition:transform .29s cubic-bezier(.22,.75,.27,1);
   will-change:transform;
 }
 /* Also float the back-to-top with the main page, without changing its own fade/offset rules. */
 body.food-drawer-open .back-top, body.food-swipe-active .back-top {pointer-events:none!important;opacity:0!important;}
 #guide #food-search.food-drawer {
-  transform:translate3d(calc(100% - var(--food-swipe-px, 0px)),0,0)!important;
   
   visibility:hidden;pointer-events:none;
-  box-shadow:-6px 0 22px rgba(0,0,0,.15);
-  border-left:1px solid rgba(255,255,255,.11);
   will-change:transform;
 }
 body.food-swipe-active #guide #food-search.food-drawer,
@@ -2858,14 +2749,12 @@ body.food-drawer-open #guide #food-search.food-drawer {
 }
 .food-drawer-backdrop {
   visibility:hidden;pointer-events:none;
-  opacity:var(--food-swipe-progress,0)!important;
   
   
 }
 body.food-swipe-active .food-drawer-backdrop,
 body.food-drawer-open .food-drawer-backdrop {
   visibility:visible;
-  opacity:calc(var(--food-swipe-progress, 0) * 1)!important;
   pointer-events:none;
   
 }
@@ -2881,23 +2770,17 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide #food-search .food-drawer-scroll {
   padding:calc(13px + env(safe-area-inset-top)) 12px calc(22px + env(safe-area-inset-bottom));
 }
-#guide #food-search #food-explorer .kicker {
-  font-size:10px;
-  color:rgba(131,211,176,.78);margin-bottom:9px;
+#guide #food-search #food-explorer .kicker {margin-bottom:9px;
 }
 
 /* A subtle visual seam on the drawer edge; not an interactive button. */
 #guide #food-search.food-drawer::before {
-  content:"";position:absolute;left:0;top:30%;height:40%;width:1px;
+  content:"";position:absolute;left:0;height:40%;width:1px;
   background:linear-gradient(to bottom,transparent,rgba(255,255,255,.18),transparent);
   pointer-events:none;z-index:5;
 }
 @media(min-width:600px) {
   #guide #food-search .food-drawer-scroll {padding:calc(18px + env(safe-area-inset-top)) 20px 32px;}
-}
-@media(prefers-reduced-motion:reduce) {
-  body > .hero,#guide > .divider,#guide > .page-body,body > footer,
-  #guide #food-search.food-drawer,.food-drawer-backdrop {transition:none!important;}
 }
 
 
@@ -2918,15 +2801,12 @@ body > footer {
   background:#0D0D0D!important;
   border:0!important;border-left:0!important;outline:none!important;
   transform:translate3d(calc(100% - var(--food-swipe-px,0px)),0,0)!important;
-  box-shadow:-24px 0 52px rgba(0,0,0,.34),-5px 0 24px rgba(0,0,0,.14)!important;
   transition:transform .32s cubic-bezier(.22,.76,.24,1),visibility 0s linear .33s!important;
 }
-#guide #food-search.food-drawer::before,
-#guide #food-search.food-drawer::after {content:none!important;display:none!important;}
 .food-drawer-backdrop {
   background:rgba(0,0,0,.56)!important;
   opacity:var(--food-swipe-progress,0)!important;
-  border:0!important;box-shadow:none!important;
+  border:0!important;
   transition:opacity .32s ease,visibility 0s linear .33s!important;
 }
 body.food-swipe-active .food-drawer-backdrop,
@@ -2950,12 +2830,10 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide #food-search #food-explorer {
   width:100%!important;max-width:none!important;
   margin:0!important;padding:0!important;
-  min-height:100%;
 }
 #guide #food-search #food-explorer .food-panel {
   position:relative!important;
   width:100%!important;max-width:none!important;
-  min-height:calc(100dvh - 38px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   display:flex!important;flex-direction:column!important;
   padding:0!important;margin:0!important;
   border:0!important;border-radius:0!important;
@@ -3005,11 +2883,10 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   gap:7px!important;padding:2px 0 5px!important;
 }
 #guide #food-search #food-explorer .filters .pill {
-  min-height:40px!important;padding:7px 12px!important;
-  font-size:11.5px!important;border-radius:22px;
+  font-size:11.5px!important;
 }
 #guide #food-search #food-explorer .food-panel > section {
-  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+  flex:1 1 auto;display:flex;flex-direction:column;
 }
 #guide #food-search #food-explorer .results-head {
   flex:0 0 auto;padding:5px 0 10px;
@@ -3017,7 +2894,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 }
 #guide #food-search #food-explorer .results-head h3 {font-size:14px;}
 #guide #food-search #food-explorer #results {
-  flex:1 1 auto;min-height:170px;
   
   overflow-x:hidden!important;
   scrollbar-width:thin;
@@ -3189,8 +3065,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   font-size:10px;line-height:1.35;padding:3px 6px;
 }
 /* Labels link route geometry to the traveller's next action. */
-#guide .airport-direction-switcher .metro-route-stops {
-  display:flex;align-items:start;gap:8px;
+#guide .airport-direction-switcher .metro-route-stops {align-items:start;gap:8px;
 }
 #guide .airport-direction-switcher .metro-route-stops > span {
   display:flex;flex-direction:column;gap:2px;
@@ -3241,12 +3116,11 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   box-shadow:none!important;
 }
 #guide .airport-direction-switcher .metro-transfer-node {
-  width:13px;height:13px;flex:0 0 13px;margin:0;
+  width:13px;height:13px;margin:0;
   border:2px solid #EAEAEA;background:#0D0D0D!important;
   box-shadow:none!important;color:transparent;
 }
 #guide .airport-direction-switcher .metro-transfer-node svg {display:none;}
-#guide .airport-direction-switcher .metro-route--transfer .metro-route-key {margin-top:10px;}
 #guide .airport-direction-switcher .metro-transfer-note {font-size:11px;color:#AAAAAA!important;}
 /* Route-color light is reflected from the top of each fare panel, not a filled tile. */
 #guide .airport-direction-switcher .airport-mode-rail .airport-fare-grid {gap:9px;}
@@ -3379,7 +3253,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-direction-switcher .air-rd-step--brown {--air-rd-line:#B58A51;}
 #guide .airport-direction-switcher .air-rd-step--blue {--air-rd-line:#4396D2;}
 #guide .airport-direction-switcher .air-rd-node {position:relative;z-index:1;display:block;box-sizing:border-box;margin-top:3px;width:16px;height:16px;border-radius:50%;border:2px solid #F3F3F3;background:#0D0D0D;}
-#guide .airport-direction-switcher .air-rd-step--transfer .air-rd-node {width:18px;height:18px;margin-top:1.5px;border-width:2.3px;}
+#guide .airport-direction-switcher .air-rd-step--transfer .air-rd-node {width:18px;height:18px;border-width:2.3px;}
 #guide .airport-direction-switcher .air-rd-step--destination .air-rd-node {width:14px;height:14px;margin-top:4px;border:0;background:#F3F3F3;}
 #guide .airport-direction-switcher .air-rd-step-content {padding-bottom:15px;min-width:0;}
 #guide .airport-direction-switcher .air-rd-step--destination .air-rd-step-content {padding-bottom:1px;}
@@ -3409,14 +3283,14 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 
 /* =================== CSS 46: airport-selector-integrated-style =================== */
 
-#guide .airport-route-selector .section-top{display:flex;justify-content:space-between;align-items:center;}
+#guide .airport-route-selector .section-top{justify-content:space-between;align-items:center;}
 #guide .airport-route-selector .section-top h2{margin:0}
 #guide .airport-route-selector .hint{color:#999;font-size:10px;letter-spacing:.04em}
 #guide .airport-route-selector .selector{border:1px solid var(--line);border-radius:13px;position:relative;isolation:isolate;background:transparent}
 #guide .airport-route-selector .selrow{min-height:68px;display:grid;grid-template-columns:49px minmax(0,1fr) 15px;gap:11px;align-items:center;padding:9px 15px;position:relative}
 #guide .airport-route-selector .selrow+.selrow{border-top:1px solid #303030}
 #guide .airport-route-selector .sel-label{font-size:11px;color:#999;font-weight:650}
-#guide .airport-route-selector .sel-value{width:100%;min-width:0;appearance:none;-webkit-appearance:none;border:0;color:#F2F2F2;background:transparent;font-size:13px;font-weight:720;padding:14px 0;line-height:1.4;cursor:pointer;outline:0}
+#guide .airport-route-selector .sel-value{width:100%;min-width:0;appearance:none;-webkit-appearance:none;border:0;background:transparent;font-size:13px;font-weight:720;padding:14px 0;line-height:1.4;cursor:pointer;outline:0}
 #guide .airport-route-selector .sel-value option{color:#F7F7F7;background:#181818}
 #guide .airport-route-selector .chev{width:7px;height:7px;border-right:1.5px solid #AAA;border-bottom:1.5px solid #AAA;transform:rotate(45deg);pointer-events:none}
 #guide .airport-route-selector .swap{position:absolute;top:50%;right:28px;transform:translateY(-50%);z-index:3;height:33px;width:33px;border:1px solid #5B5B5B;border-radius:50%;display:grid;place-items:center;color:white;background:#191919;cursor:pointer;transition:background .15s}
@@ -3430,7 +3304,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector .tab{border:1px solid #555;border-radius:20px;min-height:30px;padding:4px 12px;color:#CBCBCB;font-size:12px;font-weight:700;background:transparent;cursor:pointer;white-space:nowrap;line-height:1.3}
 
 #guide .airport-route-selector .airsel-tab:focus-visible,#guide .airport-route-selector .swap:focus-visible,#guide .airport-route-selector .sel-value:focus-visible{outline:2px solid #E4E4E4;outline-offset:3px}
-#guide .airport-route-selector .route-panel{border-top:1px solid #343434;padding:12px 0 0}
+#guide .airport-route-selector .route-panel{padding:12px 0 0}
 #guide .airport-route-selector .rail-title{font-weight:730;font-size:13px;}
 #guide .airport-route-selector .timeline{--dt-label:38px;--dt-axis:16px;--dt-gap:9px;display:flex;flex-direction:column;gap:0;min-width:0;padding:0;margin:7px 0 11px}
 #guide .airport-route-selector .timeline-stop,#guide .airport-route-selector .timeline-leg{display:grid;grid-template-columns:var(--dt-label) var(--dt-axis) minmax(0,1fr);gap:var(--dt-gap);align-items:center;position:relative;min-width:0}
@@ -3464,19 +3338,15 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector .timeline{--dt-label:34px;--dt-gap:7px}
 #guide .airport-route-selector .stop-name{font-size:12px}
 #guide .airport-route-selector .direction{font-size:13px}
-#guide .airport-route-selector .airsel-tabs{gap:5px}
 #guide .airport-route-selector .tab{padding-inline:9px}
 #guide .airport-route-selector .fact{padding-inline:5px}
 #guide .airport-route-selector .fact-value{font-size:13px}}
-@media (min-width:600px){}
 #guide .airport-route-selector{--bg:#0D0D0D;--line:#363636;--white:#F4F4F4;--muted:#A6A6A6;--purple:#A978D5;--commuter:#478ED1;--brown:#AE854E;--bannan:#378BC7;min-width:0;margin:8px 0 33px;color:#F4F4F4;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;-webkit-font-smoothing:antialiased}
 #guide .airport-route-selector *{box-sizing:border-box}
 #guide .airport-route-selector [hidden]{display:none!important}
 #guide .airport-route-selector .airport-selector-intro{font-size:12px;color:#A6A6A6;line-height:1.65;margin:0 0 19px}
 #guide .airport-route-selector .section-top{margin-bottom:12px}
 #guide .airport-route-selector .selector{margin-bottom:23px}
-#guide .airport-route-selector .route-head{border-top:1px solid #303030;}
-#guide .airport-route-selector .airsel-tabs{margin:0 0 18px}
 #guide .airport-route-selector .airsel-tab{border:1px solid #555;border-radius:20px;min-height:30px;padding:4px 12px;color:#CBCBCB;font-size:12px;font-weight:700;background:transparent;cursor:pointer;white-space:nowrap;line-height:1.3}
 #guide .airport-route-selector .airsel-tab[aria-selected="true"]{background:#F5F5F5;border-color:#F5F5F5;color:#171717}
 #guide .airport-route-selector .airsel-tab:focus-visible{outline:2px solid #E4E4E4;outline-offset:3px}
@@ -3506,8 +3376,8 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 /* =================== CSS 48: airport-ground-options-style =================== */
 
 
-#guide .airport-route-selector .airsel-transport-tab{border:1px solid #444;border-radius:10px;background:transparent;color:#D4D4D4;line-height:1.45;gap:7px;cursor:pointer;white-space:nowrap;font-family:inherit}
-#guide .airport-route-selector .airsel-transport-tab[aria-selected="true"]{background:#F5F5F5;color:#111;border-color:#F5F5F5}
+#guide .airport-route-selector .airsel-transport-tab{line-height:1.45;gap:7px;cursor:pointer;white-space:nowrap;font-family:inherit}
+#guide .airport-route-selector .airsel-transport-tab[aria-selected="true"]{background:#F5F5F5;border-color:#F5F5F5}
 #guide .airport-route-selector .airsel-transport-tab:focus-visible{outline:2px solid #DDD;outline-offset:2px}
 #guide .airport-route-selector .airsel-transport-tab > span{font-size:14px}
 #guide .airport-route-selector .airsel-ground-details{margin:12px 0 0;display:grid;gap:8px}
@@ -3526,20 +3396,10 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector{margin-top:3px;}
 
 
-#guide .airport-route-selector .airsel-route-fields{
- position:relative;isolation:isolate;display:block;
- margin:0 0 22px;border:1px solid #3A3A3A;border-radius:14px;
- background:linear-gradient(130deg,rgba(255,255,255,.025),rgba(255,255,255,.005) 70%); 
- overflow:visible;
+#guide .airport-route-selector .airsel-route-fields{isolation:isolate;
 }
-#guide .airport-route-selector .airsel-route-fields::before{
- content:"";position:absolute;left:25px;top:47px;bottom:47px;width:1.5px;
+#guide .airport-route-selector .airsel-route-fields::before{position:absolute;left:25px;top:47px;bottom:47px;width:1.5px;
  background:#6A6A6A;opacity:.64;z-index:0;
-}
-#guide .airport-route-selector .airsel-route-fields .selrow{
- min-height:74px;
- gap:12px;padding:12px 17px 11px 13px;
- border:0;
 }
 
 #guide .airport-route-selector .sel-route-node{
@@ -3548,34 +3408,17 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
  box-shadow:0 0 0 3px #141414;z-index:2;
 }
 #guide .airport-route-selector .selrow--destination .sel-route-node{background:#EAEAEA;}
-#guide .airport-route-selector .airsel-route-fields .sel-field{display:flex;flex-direction:column;min-width:0;}
-#guide .airport-route-selector .airsel-route-fields .sel-label{
- line-height:1.25;letter-spacing:.035em;
-}
 #guide .airport-route-selector .airsel-route-fields .sel-value{
  font-family:inherit;
  outline:none;
- padding:0 4px 0 0;margin:0;width:100%;
  
 }
-#guide .airport-route-selector .airsel-route-fields .chev{
- justify-self:center;align-self:center;
- 
-}
-#guide .airport-route-selector .airsel-route-fields .swap{
- 
- background:#1B1B1B;border:1px solid #686868;
- display:grid;place-items:center;
- box-shadow:0 0 0 5px #121212;
-}
-#guide .airport-route-selector .airsel-route-fields .swap:hover{background:#2C2C2C;border-color:#B0B0B0;}
 
 #guide .airport-route-selector .route-head{margin-bottom:12px;border-top-color:#292929;}
 @media(max-width:354px){
- #guide .airport-route-selector .airsel-route-fields .selrow{padding-left:10px;padding-right:14px;gap:10px;grid-template-columns:24px minmax(0,1fr) 10px;min-height:74px;}
+ #guide .airport-route-selector .airsel-route-fields .selrow{padding-left:10px;gap:10px;grid-template-columns:24px minmax(0,1fr) 10px;}
  #guide .airport-route-selector .airsel-route-fields::before{left:22px;}
  #guide .airport-route-selector .airsel-route-fields .selrow--origin::after{left:44px;}
- #guide .airport-route-selector .airsel-route-fields .sel-value{font-size:12.5px;}
 }
 @media(prefers-reduced-motion:reduce){#guide .airport-route-selector .airsel-route-fields .swap{transition:none;}}
 
@@ -3583,40 +3426,18 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 /* =================== CSS 50: airport-picker-calm-v9 =================== */
 
 /* Flat two-row selector. The actual transit timeline below retains its ring language. */
-#guide .airport-route-selector .section-top{margin:0 0 6px;}
-#guide .airport-route-selector .section-top h2{font-size:12px;letter-spacing:.015em;color:#BABABA;font-weight:680;}
 #guide .airport-route-selector .airsel-route-fields{
  border-radius:0!important;
  
 }
 #guide .airport-route-selector .airsel-route-fields::before{content:none!important;}
-#guide .airport-route-selector .airsel-route-fields .selrow{
- display:grid;grid-template-columns:minmax(0,1fr) 10px;column-gap:10px;
+#guide .airport-route-selector .airsel-route-fields .selrow{column-gap:10px;
  
  align-items:center;position:relative;
 }
-#guide .airport-route-selector .airsel-route-fields .selrow--origin::after{
- content:"";position:absolute;bottom:0;left:3px;right:0;height:1px;background:#333;
+#guide .airport-route-selector .airsel-route-fields .selrow--origin::after{position:absolute;bottom:0;left:3px;right:0;height:1px;background:#333;
 }
 #guide .airport-route-selector .airsel-route-fields .selrow--destination{border-bottom:1px solid #333!important;}
-#guide .airport-route-selector .airsel-route-fields .sel-field{gap:5px;}
-#guide .airport-route-selector .airsel-route-fields .sel-label{font-size:10px;color:#898989;font-weight:650;}
-#guide .airport-route-selector .airsel-route-fields .sel-value{
- display:block;max-width:100%;font-size:13px;line-height:1.55;
- min-height:27px;font-weight:715;
- border:0;background:transparent;
- text-overflow:ellipsis;overflow:hidden;white-space:nowrap;
-}
-#guide .airport-route-selector .airsel-route-fields .chev{
- width:6px;height:6px;border-color:#868686;transform:rotate(45deg) translate(-2px,-2px);
-}
-#guide .airport-route-selector .airsel-route-fields .swap{
- position:absolute;top:50%;right:4px;transform:translateY(-50%);
- 
- width:39px;height:39px;color:#CACACA;z-index:5;border-radius:50%;
-}
-
-#guide .airport-route-selector .airsel-route-fields .swap svg{width:17px;height:17px;}
 /* One quiet hierarchy for MRT / bus / taxi instead of three framed cards. */
 #guide .airport-route-selector .route-head{
  padding-top:11px;margin:0 0 3px;border-top:0!important;
@@ -3668,9 +3489,8 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
  border-right:1px solid #999;border-bottom:1px solid #999;pointer-events:none;
 }
 @media(max-width:354px){
- #guide .airport-route-selector .airsel-route-fields .selrow{min-height:61px!important;padding-right:23px!important;}
- #guide .airport-route-selector .airsel-route-fields .sel-value{font-size:12.5px;}
- #guide .airport-route-selector .airsel-train-select{font-size:10.5px;max-width:118px;padding-right:14px;}
+ #guide .airport-route-selector .airsel-route-fields .selrow{padding-right:23px!important;}
+ #guide .airport-route-selector .airsel-train-select{font-size:10.5px;padding-right:14px;}
  #guide .airport-route-selector #airsel-rail-head-name{font-size:12px;}
 }
 
@@ -3712,13 +3532,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector .airsel-route-fields .selrow--destination{margin-top:10px!important}
 #guide .airport-route-selector .airsel-route-fields .selrow--origin::after{content:none!important}
 #guide .airport-route-selector .airsel-route-fields .selrow--destination{border:1px solid #383838!important}
-#guide .airport-route-selector .airsel-route-fields .selrow:focus-within{box-shadow:0 0 0 1px rgba(240,240,240,.09)}
-
-
-#guide .airport-route-selector .airsel-route-fields .sel-value{
- 
- letter-spacing:-.018em;
-}
 
 
 
@@ -3727,16 +3540,14 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 
 /* Lightweight single disclosure with results hidden until a valid route is selected. */
 #guide .airport-route-selector .airsel-route-disclosure{
- box-sizing:border-box;display:flex;width:100%;min-height:64px;align-items:center;justify-content:space-between;gap:12px;
- padding:13px 15px;margin:16px 0 4px;border-radius:12px;border:1px solid #3B3B3B;
- background:#191919;color:#F3F3F3;text-align:left;cursor:pointer;
+ box-sizing:border-box;display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;color:#F3F3F3;text-align:left;cursor:pointer;
  
 }
 #guide .airport-route-selector .airsel-route-disclosure[hidden],#guide .airport-route-selector .airsel-results-clip[hidden]{display:none!important}
-#guide .airport-route-selector .airsel-route-disclosure:hover{background:#202020;border-color:#626262}
+#guide .airport-route-selector .airsel-route-disclosure:hover{border-color:#626262}
 #guide .airport-route-selector .airsel-route-disclosure:focus-visible{outline:2px solid #CFCFCF;outline-offset:2px}
-#guide .airport-route-selector .airsel-disclosure-copy{display:flex;flex-direction:column;gap:4px}
-#guide .airport-route-selector .airsel-disclosure-copy strong{font-size:13.5px;font-weight:760;letter-spacing:-.01em;line-height:1.4}
+#guide .airport-route-selector .airsel-disclosure-copy{display:flex;flex-direction:column}
+#guide .airport-route-selector .airsel-disclosure-copy strong{font-weight:760;line-height:1.4}
 #guide .airport-route-selector .airsel-disclosure-copy small{font-size:10.5px;color:#999;line-height:1.4}
 #guide .airport-route-selector .airsel-disclosure-chevron{width:18px;height:18px;color:#B3B3B3;transition:transform .58s cubic-bezier(.2,.8,.2,1);flex:0 0 18px}
 #guide .airport-route-selector .airsel-route-disclosure[aria-expanded="true"] .airsel-disclosure-chevron{transform:rotate(90deg)}
@@ -3836,11 +3647,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector .airsel-disclosure-copy strong{font-size:13px!important;letter-spacing:0!important}
 #guide .airport-route-selector .airsel-disclosure-copy small{display:none!important}
 @media(max-width:355px){
- #guide .airport-route-selector .airsel-route-fields{gap:10px!important}
  #guide .airport-route-selector .airsel-route-fields .selrow{padding:12px 9px 12px 12px!important;min-height:75px!important;height:75px!important}
- #guide .airport-route-selector .airsel-route-fields .sel-value{font-size:11.8px!important}
- #guide .airport-route-selector .airsel-route-fields .sel-label{font-size:9.5px!important}
- #guide .airport-route-selector .airsel-route-fields .swap{width:31px!important;height:31px!important}
 }
 @media(prefers-reduced-motion:reduce){
  #guide .airport-route-selector .airsel-route-fields .selrow,
@@ -4763,7 +4570,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   #guide .sights-day-trips .daytrip-destination-panel-heading {
     padding-top:7px!important;padding-bottom:6px!important;
   }
-  #guide .sights-day-trips .daytrip-destination-panel > .destination-body {padding-top:5px!important;}
   #guide .sights-day-trips .tab-pills.daytrip-transport {
     margin-top:5px!important;margin-bottom:6px!important;
   }
@@ -5220,9 +5026,6 @@ html[data-theme="light"] .quick-nav > .nav-button:nth-child(n),
 html[data-theme="light"] .quick-nav > .nav-button:nth-child(n):hover{
  border-top:1px solid #D7DDE0!important;
 }
-@media(max-width:355px){
- #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{font-size:9.6px;letter-spacing:-.02em;}
-}
 
 
 /* v30.9.30: Light-theme route pictograms and accessible enlarged cost/time */
@@ -5494,9 +5297,7 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge 
   
   transition:background .2s,color .2s,border-color .2s,box-shadow .2s!important;
 }
-.hero.wrapper .theme-preview-toggle svg{width:20px;height:20px;flex:none;display:block;}
-@media(max-width:600px){.hero.wrapper .theme-preview-toggle{top:32px!important;right:0!important;}}
-@media(prefers-reduced-motion:reduce){.hero.wrapper .theme-preview-toggle{transition:none!important;}}
+.hero.wrapper .theme-preview-toggle svg{flex:none;display:block;}
 
 
 /* ========== v30.9.42 patch: header lockup + subtler theme button + system sync ========== */
@@ -5510,8 +5311,6 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge 
   border:1px solid rgba(173,181,186,.24)!important;
   
   color:#88949b!important;
-  
-  opacity:.7;
 }
 .hero.wrapper .theme-preview-toggle:hover{
   filter:none!important;
@@ -5593,10 +5392,6 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:hover{
   transform-origin:center center;
 }
 .hero .welcome{
-  
-  
-  
-  letter-spacing:-.03em;
   color:var(--text-heading)!important;
 }
 .hero .tagline{
@@ -5617,8 +5412,7 @@ html[data-theme="light"] .hero .tagline{color:#758088!important;}
   .hero-lockup{gap:10px 12px;font-size:clamp(30px,12vw,52px);}
   .hero-lockup-slash{width:16px;height:54px;}
   .hero-lockup-slash::before{width:3px;height:90%;}
-  .hero .welcome{margin-top:40px!important;font-size:18px!important;}
-  .hero .tagline{font-size:13px!important;line-height:1.8!important;max-width:100%!important;}
+  .hero .welcome{margin-top:40px!important;}
 }
 
 
@@ -5724,7 +5518,6 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
     font-size:clamp(26px,10vw,43px)!important;
     gap:clamp(8px,2.6vw,13px)!important;
   }
-  .hero h1.hero-masthead .hero-lockup-word {letter-spacing:.017em!important;}
   .hero .tagline {font-size:13px!important;line-height:1.85!important;max-width:560px!important;}
 }
 
@@ -5909,10 +5702,6 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-mark img
   
 }
 /* Mask only the rows (never the region title) until the actual scroll-end. */
-#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body.teaser-can-scroll:not([data-teaser-end="true"]){
-  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 73%,transparent 100%)!important;
-  mask-image:linear-gradient(to bottom,#000 0%,#000 73%,transparent 100%)!important;
-}
 #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body[data-teaser-end="true"]{
   -webkit-mask-image:none!important;
   mask-image:none!important;
@@ -5953,7 +5742,6 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-mark img
 
 /* =================== v30.9.47 — list heading transition and frameless theme toggle =================== */
 #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{
-  scroll-padding-top:3px;
   scroll-behavior:smooth;
 }
 /* Retain a touch-friendly target but never draw the button's old circular

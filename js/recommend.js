@@ -1,6 +1,9 @@
-/* TAIPEI CITY GUIDE v30.9.76 — optional on-device nearby distance for verified venues. */
+/* TAIPEI CITY GUIDE v30.9.81 — optional on-device nearby distance for verified venues.
+   v30.9.81: match every listed map link; night-market stalls use their market;
+   bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
+  const VERSION='30.9.81';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -75,11 +78,11 @@
   function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<14?'lunch':h>=14&&h<17?'afternoon':h>=17&&h<23?'night':'late';}
   const state={timeMode:'current',time:defaultBand(),areaMode:'all',area:'',genre:'',volume:'',scene:'',page:0,locationStatus:'idle',geoRequested:false,position:null};
   const GEO_MAX_METERS=500; // Honest straight-line radius for the first verified batch.
-  let coordinates=new Map(),coordinatesReady=false,coordinatesFailed=false;
+  let coordinates=new Map(),markets=new Map(),coordinatesReady=false,coordinatesFailed=false;
   // Static same-origin JSON; no key, request to mapping APIs, or GPS upload.
   async function loadCoordinates(){
     try{
-      const reply=await fetch('food/venues.json?v=30.9.76',{cache:'no-store'});
+      const reply=await fetch(`food/venues.json?v=${VERSION}`,{cache:'no-store'});
       if(!reply.ok)throw new Error('venue file unavailable');
       const data=await reply.json();
       if(data.schemaVersion!==1||!data.venues||typeof data.venues!=='object')throw new Error('venue file invalid');
@@ -90,7 +93,14 @@
         if(Array.isArray(entry.branches)){const branches=entry.branches.filter(valid);if(branches.length)clean.set(name,{...entry,branches});}
         else if(valid(entry))clean.set(name,entry);
       }
-      coordinates=clean;coordinatesReady=true;catalog=null;
+      // Night markets: one reference point per market for stalls without their
+      // own verified point. Entries with null coordinates are simply skipped.
+      const marketPoints=new Map();
+      for(const [name,point] of Object.entries(data.nightMarkets||{})){
+        if(point&&Number.isFinite(point.lat)&&Number.isFinite(point.lng)&&point.lat>=24.7&&point.lat<=25.4&&point.lng>=121.2&&point.lng<=122)
+          marketPoints.set(name,{lat:point.lat,lng:point.lng});
+      }
+      coordinates=clean;markets=marketPoints;coordinatesReady=true;catalog=null;
     }catch(_){coordinatesFailed=true;}
     // Updating metadata never requests location or stores the user's coordinates.
     if(state.areaMode==='current'){syncUI();renderResults();}
@@ -138,10 +148,17 @@
         const category=isArea?categoryOf('',group):categoryOf(tab,group);
         const curated=(/おすすめ|地元人気|一番人気|人気|ビブグルマン|ミシュラン|孤独のグルメ/.test(info)?2:0)
           +(li.querySelector('.venue-tag--featured')?3:0)+(/定番/.test(info)?1:0);
-        const record={name,url:a.href,area,category,details:info,curated,chain:CHAIN_NAMES.test(name),order:found.size};
+        // guide.js rewrites map links to Google Maps search URLs on touch devices.
+        // Match coordinates against the original per-place URL, not the mobile navigation URL.
+        // A venue listed twice keeps every link it is listed with.
+        const sourceMapUrl=a.dataset.originalMapsUrl || a.href;
+        // Night-market stalls are grouped under 「〇〇夜市おすすめ…」.
+        const market=category==='nightmarket'?(group.match(/^(.+?夜市)/)?.[1]||''):'';
+        const record={name,url:a.href,sourceMapUrls:[sourceMapUrl],market,area,category,details:info,curated,chain:CHAIN_NAMES.test(name),order:found.size};
         const existing=found.get(key);
         if(!existing){found.set(key,record);return;}
         if(isArea){existing.area=area;existing.url=a.href;}
+        if(!existing.sourceMapUrls.includes(sourceMapUrl))existing.sourceMapUrls.push(sourceMapUrl);
         existing.curated=Math.max(existing.curated,curated);
         existing.chain||=record.chain;
         existing.details=[...new Set([existing.details,info].filter(Boolean))].join('、').slice(0,135);
@@ -152,9 +169,13 @@
     // Uncertain tags are left absent rather than fabricated from 「グルメ」.
     catalog=[...found.values()].map(item=>{
       const stored=coordinates.get(item.name);
-      // Never attach a location if this guide's Maps destination changed.
-      const location=stored&&(stored.mapUrl===item.url||stored.searchUrl===item.url)?(stored.branches?{branches:stored.branches,brandId:stored.brandId||null}:{lat:stored.lat,lng:stored.lng,brandId:stored.brandId||null}):{};
-      return Object.assign(item,inferVenueTags(item),location);
+      // Check the original place link; mobile links may be rewritten for navigation.
+      // Keep verification strict so an unrelated branch's coordinates never attach.
+      const listed=item.sourceMapUrls;
+      const location=stored&&(listed.includes(stored.mapUrl)||listed.includes(stored.searchUrl))?(stored.branches?{branches:stored.branches,brandId:stored.brandId||null}:{lat:stored.lat,lng:stored.lng,brandId:stored.brandId||null}):{};
+      // A stall without its own verified point is placed at its market.
+      const marketPoint=item.market&&!location.branches&&!Number.isFinite(location.lat)?markets.get(item.market)||null:null;
+      return Object.assign(item,inferVenueTags(item),location,{marketPoint});
     });
     return catalog;
   }
@@ -325,16 +346,17 @@
       state.genre,state.volume,state.scene].join('|');
   }
   function recommendedPool(){
-    const timeCandidates=readCatalog().filter(item=>!['bar','izakaya'].includes(item.category)&&eligibleTime(item,state.time));
+    const timeCandidates=readCatalog().filter(item=>eligibleTime(item,state.time));
     const useGPS=state.areaMode==='current'&&state.locationStatus==='success'&&!!state.position&&coordinatesReady;
     // Only verified, specifically matched storefronts take part in GPS ranking.
     // An unknown location is never assumed to be at a neighborhood midpoint.
     const withinRange=useGPS?closestPerBrand(timeCandidates.map(item=>{
-      const candidates=Array.isArray(item.branches)?item.branches:[item];
+      const own=Array.isArray(item.branches)?item.branches:Number.isFinite(item.lat)?[item]:[];
+      const candidates=own.length?own:item.marketPoint?[item.marketPoint]:[];
       const nearest=candidates.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng))
         .map(p=>({...p,distanceMeters:distanceMeters(state.position.lat,state.position.lng,p.lat,p.lng)}))
         .sort((a,b)=>a.distanceMeters-b.distanceMeters)[0];
-      return nearest?{...item,distanceMeters:nearest.distanceMeters,nearestMapUrl:Array.isArray(item.branches)?nearest.mapUrl:null}:null;
+      return nearest?{...item,distanceMeters:nearest.distanceMeters,distanceToMarket:!own.length,nearestMapUrl:Array.isArray(item.branches)?nearest.mapUrl:null}:null;
     }).filter(item=>item&&item.distanceMeters<=GEO_MAX_METERS)):[];
     const nearbyFallback=false;
     const byTime=useGPS?withinRange:timeCandidates;
@@ -509,27 +531,66 @@
     syncUI();renderResults();return true;
   }
   if(debugEnabled){
+    // Debug tools float over the drawer rather than consume the three-card layout.
+    const toggle=document.createElement('button');
+    toggle.type='button';toggle.id='recommend-debug-fab';
+    toggle.setAttribute('aria-label','模擬定位設定');
+    toggle.setAttribute('aria-controls','recommend-debug-location');
+    toggle.setAttribute('aria-expanded','false');
+    toggle.setAttribute('title','模擬定位設定');
+    toggle.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
     const panel=document.createElement('section');panel.id='recommend-debug-location';
-    panel.innerHTML='<strong>模擬定位設定 · テスト専用</strong><label for="recommend-debug-select">測試位置</label><select id="recommend-debug-select"><option value="station">台北車站</option><option value="ximen">西門町</option><option value="zhongshan">中山站</option><option value="custom">自訂座標</option><option value="real">恢復真實定位</option></select><div id="recommend-debug-custom" hidden><input id="recommend-debug-lat" type="number" step="any" placeholder="緯度 Latitude" inputmode="decimal"><input id="recommend-debug-lng" type="number" step="any" placeholder="經度 Longitude" inputmode="decimal"></div><button id="recommend-debug-apply" type="button">套用位置</button><small id="recommend-debug-feedback">僅影響網站距離計算，不會更改手機 GPS。</small>';
-    locationStatus.insertAdjacentElement('afterend',panel);
+    panel.setAttribute('aria-label','模擬定位設定');panel.hidden=true;
+    panel.innerHTML='<div class="recommend-debug-header"><strong>模擬定位設定</strong><button id="recommend-debug-close" type="button" aria-label="關閉設定">×</button></div><label for="recommend-debug-select">測試位置</label><select id="recommend-debug-select"><option value="station">台北車站</option><option value="ximen">西門町</option><option value="zhongshan">中山站</option><option value="custom">自訂座標</option><option value="real">恢復真實定位</option></select><div id="recommend-debug-custom" hidden><input id="recommend-debug-lat" type="number" step="any" placeholder="緯度 Latitude" inputmode="decimal"><input id="recommend-debug-lng" type="number" step="any" placeholder="經度 Longitude" inputmode="decimal"></div><button id="recommend-debug-apply" type="button">套用位置</button><small id="recommend-debug-feedback">只影響網站距離計算，不會更改手機 GPS。</small>';
+    // Keep the popover outside .recommend-drawer-inner: that mobile container
+    // has a fixed height and overflow:hidden, so an inline debug panel hid results.
+    drawer.append(toggle,panel);
+    function setPanelOpen(open){
+      panel.hidden=!open;
+      toggle.setAttribute('aria-expanded',String(open));
+      toggle.classList.toggle('is-active',open);
+      if(open)panel.querySelector('#recommend-debug-select').focus({preventScroll:true});
+      else toggle.focus({preventScroll:true});
+    }
+    toggle.addEventListener('click',()=>setPanelOpen(panel.hidden));
+    panel.querySelector('#recommend-debug-close').addEventListener('click',()=>setPanelOpen(false));
+    document.addEventListener('pointerdown',e=>{
+      if(!panel.hidden&&!panel.contains(e.target)&&!toggle.contains(e.target)){
+        panel.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.classList.remove('is-active');
+      }
+    },true);
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape'&&!panel.hidden){
+        e.preventDefault();e.stopImmediatePropagation();setPanelOpen(false);
+      }
+    });
+    const diag=document.createElement('pre');
+    diag.id='recommend-debug-diagnostics';
+    diag.textContent=`推薦診斷 v${VERSION}：資料載入中…`;
+    panel.append(diag);
+
     const select=panel.querySelector('select'),custom=panel.querySelector('#recommend-debug-custom'),feedback=panel.querySelector('#recommend-debug-feedback');
     select.addEventListener('change',()=>{custom.hidden=select.value!=='custom';});
     panel.querySelector('#recommend-debug-apply').addEventListener('click',()=>{
       if(select.value==='real'){
         debugPosition=null;try{sessionStorage.removeItem('taipeiDebugLocation');}catch(e){}
         state.position=null;state.geoRequested=false;state.areaMode='current';requestLocation(true);
-        feedback.textContent='已恢復真實 GPS 定位';return;
+        feedback.textContent='已恢復真實 GPS 定位';setPanelOpen(false);return;
       }
       const point=debugPoints.find(p=>p[0]===select.value);
       const lat=point?point[2]:Number(panel.querySelector('#recommend-debug-lat').value);
       const lng=point?point[3]:Number(panel.querySelector('#recommend-debug-lng').value);
-      if(select.value==='custom'&&(!panel.querySelector('#recommend-debug-lat').value||!panel.querySelector('#recommend-debug-lng').value)||!setDebugPosition(lat,lng)){
+      if((select.value==='custom'&&(!panel.querySelector('#recommend-debug-lat').value||!panel.querySelector('#recommend-debug-lng').value))||!setDebugPosition(lat,lng)){
         feedback.textContent='請輸入有效的台北地區經緯度';return;
       }
       feedback.textContent=`模擬定位已套用：${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      toggle.title=`模擬定位：${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      setPanelOpen(false);
     });
     try{const saved=JSON.parse(sessionStorage.getItem('taipeiDebugLocation')||'null');if(saved&&Number.isFinite(saved.lat)&&Number.isFinite(saved.lng)){
-      select.value='custom';custom.hidden=false;panel.querySelector('#recommend-debug-lat').value=saved.lat;panel.querySelector('#recommend-debug-lng').value=saved.lng;
+      const savedPoint=debugPoints.find(p=>p[2]===saved.lat&&p[3]===saved.lng);
+      select.value=savedPoint?savedPoint[0]:'custom';custom.hidden=!!savedPoint;
+      panel.querySelector('#recommend-debug-lat').value=saved.lat;panel.querySelector('#recommend-debug-lng').value=saved.lng;
       setDebugPosition(saved.lat,saved.lng);
     }}catch(e){}
   }
@@ -565,6 +626,35 @@
     // 「現在地」 inside the area chooser may ask for permission.
   }
   function formatDistance(meters){return `${Math.max(10,Math.round(meters/10)*10)}m`;}
+  function reportDebug(orderedCount){
+    if(!debugEnabled)return;
+    const target=document.getElementById('recommend-debug-diagnostics');
+    if(!target)return;
+    try{
+      const rows=readCatalog();
+      const positioned=rows.filter(x=>Array.isArray(x.branches)?x.branches.length:(Number.isFinite(x.lat)&&Number.isFinite(x.lng))||!!x.marketPoint);
+      let near=0,eligible=0;
+      if(state.position){
+        for(const x of positioned){
+          const points=Array.isArray(x.branches)?x.branches:Number.isFinite(x.lat)?[x]:x.marketPoint?[x.marketPoint]:[];
+          if(points.some(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng)&&distanceMeters(state.position.lat,state.position.lng,p.lat,p.lng)<=GEO_MAX_METERS)){
+            near++;
+            if(eligibleTime(x,state.time))eligible++;
+          }
+        }
+      }
+      target.textContent=`JS 版本：v${VERSION}
+座標 JSON：${coordinatesReady?'已載入 '+coordinates.size+' 筆':coordinatesFailed?'載入失敗':'載入中'}
+網頁餐飲清單：${rows.length} 筆
+配對成功：${positioned.length} 筆
+500m 內：${near} 筆
+符合時段：${eligible} 筆
+實際推薦：${orderedCount} 筆
+定位狀態：${state.locationStatus}
+選擇時段：${state.time}
+模擬座標：${state.position?state.position.lat.toFixed(4)+', '+state.position.lng.toFixed(4):'尚未設定'}`;
+    }catch(e){target.textContent='推薦診斷錯誤：'+e.message;}
+  }
   function renderResults(){
     const {ordered,timeCount,lifted,nearbyFallback,useGPS,nearbyCount}=recommendedPool();
     results.replaceChildren();
@@ -573,7 +663,7 @@
       relaxed.hidden=false;
       relaxed.textContent=timeCount===0?(useGPS?'直線500m以内に位置確認済みの該当店はありません。':'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。'):'該当店が見つかりません。';
       results.append(el('p','recommend-no-data','おすすめ情報を準備中です。'));
-      count.textContent='0軒';return;
+      count.textContent='0軒';reportDebug(0);return;
     }
     const pages=Math.ceil(ordered.length/3);
     state.page=((state.page%pages)+pages)%pages;
@@ -589,18 +679,22 @@
       locationStatus.textContent=`現在地から直線500m以内の位置確認済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size}店・ブランド）。`;
       locationStatus.hidden=false;
     }
+    reportDebug(ordered.length);
     slice.forEach(item=>{
       const card=el('article','recommend-card');
       const top=el('div','recommend-card-top');
       top.append(el('span','recommend-category',item.displayType||typeLabel[item.category]||'グルメ'));
       // Area sits beside the genre on the upper right. Reuse the exact SVG
       // path of the area selector, scaled for the compact card eyebrow.
-      const locationText=Number.isFinite(item.distanceMeters)?`約${formatDistance(item.distanceMeters)}`:
-        (AREAS.find(([code])=>code===item.area)?.[1]||'');
+      const distanceText=Number.isFinite(item.distanceMeters)?`約${formatDistance(item.distanceMeters)}`:'';
+      const locationText=item.market?(distanceText?`${item.market}内・${distanceText}`:`${item.market}内`):
+        (distanceText||AREAS.find(([code])=>code===item.area)?.[1]||'');
       if(locationText){
         const location=el('span','recommend-place');
         if(Number.isFinite(item.distanceMeters))location.classList.add('recommend-distance-badge');
-        if(Number.isFinite(item.distanceMeters))location.setAttribute('aria-label',`現在地からの直線距離 ${locationText}`);
+        if(distanceText)location.setAttribute('aria-label',item.market
+          ?`${item.market}内。${item.distanceToMarket?'夜市まで':'現在地から'}の直線距離 ${distanceText}`
+          :`現在地からの直線距離 ${distanceText}`);
         const pin=el('span','recommend-place-pin');
         pin.setAttribute('aria-hidden','true');
         pin.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
@@ -613,10 +707,15 @@
       results.append(card);
     });
     more.hidden=ordered.length<=3;
-    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useGPS&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。`;
+    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useGPS&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useGPS&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
   syncUI();renderResults();loadCoordinates();
+  // Safari often restores a previous page snapshot from the Back/Forward cache.
+  // Recompute results from current DOM, without requesting location.
+  window.addEventListener('pageshow',event=>{
+    if(event.persisted){catalog=null;syncUI();renderResults();if(!coordinatesReady&&!coordinatesFailed)loadCoordinates();}
+  });
   let isOpen=false, dragging=null, raf=0, queuedProgress=0, progress=0, lastFocus=null, lockedY=0, savedStyle=null, suppressedUntil=0;
   const panelWidth=()=>Math.min(innerWidth,480);
   const clamp=v=>Math.max(0,Math.min(1,v));
@@ -663,6 +762,7 @@
     return false;
   }
   function begin(x,y,target,kind){
+    if(target instanceof Element && target.closest('#recommend-debug-fab,#recommend-debug-location'))return;
     if(dragging||body.classList.contains('food-drawer-open')||body.classList.contains('food-swipe-active'))return;
     if(!isOpen&&blocked(target))return;
     dragging={x,y,px:x,t:performance.now(),velocity:0,axis:'unset',activated:false,start:isOpen?1:0,kind};
