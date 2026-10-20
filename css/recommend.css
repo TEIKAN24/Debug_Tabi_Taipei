@@ -232,3 +232,52 @@ html[data-theme="light"] .recommend-advanced-trigger .recommend-advanced-plus {c
  .recommend-controls-primary .recommend-control-icon {font-size:14px;}
  .recommend-active-chip{font-size:11.5px;padding-left:10px;}
 }
+
+
+/* v30.9.61 — use the same compact pill geometry as ⭐ おすすめリスト.
+   Time/area retain dropdown indicators; extra conditions use only + / ×. */
+.recommend-controls-primary .recommend-control,
+.recommend-controls-secondary .recommend-advanced-trigger,
+.recommend-controls-secondary .recommend-active-chip,
+.recommend-advanced-panel .recommend-pill {
+  box-sizing:border-box;
+  min-height:32px;
+  height:auto;
+  padding:3px 10px;
+  border-radius:999px;
+  line-height:1.25;
+  align-items:center;
+}
+.recommend-controls-primary .recommend-control {gap:5px;}
+.recommend-controls-primary .recommend-control-icon {font-size:13px;}
+.recommend-controls-primary .recommend-control-arrow {font-size:12px;line-height:1;}
+.recommend-controls-secondary .recommend-advanced-trigger {gap:5px;}
+.recommend-controls-secondary .recommend-advanced-plus {font-size:16px;}
+.recommend-controls-secondary.recommend-has-selected .recommend-advanced-trigger {
+  width:32px;height:32px;min-height:32px;padding:0;border-radius:50%;
+}
+.recommend-controls-secondary .recommend-active-chip {gap:5px;}
+.recommend-controls-secondary .recommend-active-chip-remove {font-size:15px;}
+/* The legacy open-state rule added an up arrow even after the closed-state
+   arrow was removed. Suppress both states and native details markers. */
+.recommend-advanced > summary::after,
+.recommend-advanced[open] > summary::after {
+  content:none!important;display:none!important;
+}
+.recommend-advanced > summary::marker {content:'';}
+.recommend-advanced > summary::-webkit-details-marker {display:none!important;}
+.recommend-advanced-panel .recommend-pill::after {content:none!important;}
+@media(max-width:430px){
+  .recommend-controls-primary .recommend-control,
+  .recommend-controls-secondary .recommend-advanced-trigger,
+  .recommend-controls-secondary .recommend-active-chip,
+  .recommend-advanced-panel .recommend-pill {
+    min-height:30px;
+    padding:3px 9px;
+    gap:5px;
+  }
+  .recommend-controls-primary .recommend-control-icon{font-size:12.5px;}
+  .recommend-controls-secondary.recommend-has-selected .recommend-advanced-trigger{
+    width:30px;height:30px;min-height:30px;padding:0;
+  }
+}
