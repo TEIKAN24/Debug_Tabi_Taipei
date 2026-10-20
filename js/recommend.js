@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.68 — optional on-device nearby distance for verified venues. */
+/* TAIPEI CITY GUIDE v30.9.69 — optional on-device nearby distance for verified venues. */
 (() => {
   'use strict';
   const drawer = document.getElementById('taipei-recommender');
@@ -462,9 +462,46 @@
   // No coordinates are stored, sent to any service, or persisted.
   const rad=n=>n*Math.PI/180;
   function distanceMeters(lat1,lng1,lat2,lng2){const dLat=rad(lat2-lat1),dLng=rad(lng2-lng1);const a=Math.sin(dLat/2)**2+Math.cos(rad(lat1))*Math.cos(rad(lat2))*Math.sin(dLng/2)**2;return 6371000*2*Math.asin(Math.min(1,Math.sqrt(a)));}
+  // Debug-only location override, enabled solely by ?debugLocation=1.
+  const debugEnabled=new URLSearchParams(location.search).get('debugLocation')==='1';
+  const debugPoints=[['station','台北車站',25.0478,121.5170],['ximen','西門町',25.0421,121.5081],['zhongshan','中山站',25.0526,121.5204]];
+  let debugPosition=null;
+  function setDebugPosition(lat,lng){
+    if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat<24.7||lat>25.4||lng<121.2||lng>122)return false;
+    debugPosition={lat,lng,accuracy:10};
+    try{sessionStorage.setItem('taipeiDebugLocation',JSON.stringify({lat,lng}));}catch(e){}
+    geoRun++;state.areaMode='current';state.area='';state.position={...debugPosition};state.locationStatus='success';state.page=0;
+    syncUI();renderResults();return true;
+  }
+  if(debugEnabled){
+    const panel=document.createElement('section');panel.id='recommend-debug-location';
+    panel.innerHTML='<strong>模擬定位設定 · テスト専用</strong><label for="recommend-debug-select">測試位置</label><select id="recommend-debug-select"><option value="station">台北車站</option><option value="ximen">西門町</option><option value="zhongshan">中山站</option><option value="custom">自訂座標</option><option value="real">恢復真實定位</option></select><div id="recommend-debug-custom" hidden><input id="recommend-debug-lat" type="number" step="any" placeholder="緯度 Latitude" inputmode="decimal"><input id="recommend-debug-lng" type="number" step="any" placeholder="經度 Longitude" inputmode="decimal"></div><button id="recommend-debug-apply" type="button">套用位置</button><small id="recommend-debug-feedback">僅影響網站距離計算，不會更改手機 GPS。</small>';
+    locationStatus.insertAdjacentElement('afterend',panel);
+    const select=panel.querySelector('select'),custom=panel.querySelector('#recommend-debug-custom'),feedback=panel.querySelector('#recommend-debug-feedback');
+    select.addEventListener('change',()=>{custom.hidden=select.value!=='custom';});
+    panel.querySelector('#recommend-debug-apply').addEventListener('click',()=>{
+      if(select.value==='real'){
+        debugPosition=null;try{sessionStorage.removeItem('taipeiDebugLocation');}catch(e){}
+        state.position=null;state.geoRequested=false;state.areaMode='current';requestLocation(true);
+        feedback.textContent='已恢復真實 GPS 定位';return;
+      }
+      const point=debugPoints.find(p=>p[0]===select.value);
+      const lat=point?point[2]:Number(panel.querySelector('#recommend-debug-lat').value);
+      const lng=point?point[3]:Number(panel.querySelector('#recommend-debug-lng').value);
+      if(select.value==='custom'&&(!panel.querySelector('#recommend-debug-lat').value||!panel.querySelector('#recommend-debug-lng').value)||!setDebugPosition(lat,lng)){
+        feedback.textContent='請輸入有效的台北地區經緯度';return;
+      }
+      feedback.textContent=`模擬定位已套用：${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    });
+    try{const saved=JSON.parse(sessionStorage.getItem('taipeiDebugLocation')||'null');if(saved&&Number.isFinite(saved.lat)&&Number.isFinite(saved.lng)){
+      select.value='custom';custom.hidden=false;panel.querySelector('#recommend-debug-lat').value=saved.lat;panel.querySelector('#recommend-debug-lng').value=saved.lng;
+      setDebugPosition(saved.lat,saved.lng);
+    }}catch(e){}
+  }
   let geoRun=0;
   function requestLocation(force=false){
     if(state.areaMode!=='current')return;
+    if(debugEnabled&&debugPosition){setDebugPosition(debugPosition.lat,debugPosition.lng);return;}
     if(!navigator.geolocation||!window.isSecureContext){state.area='';state.locationStatus='unsupported';syncUI();renderResults();return;}
     if(!force&&state.geoRequested)return;
     state.geoRequested=true;
