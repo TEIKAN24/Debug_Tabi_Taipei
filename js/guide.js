@@ -1290,7 +1290,7 @@ loadData();
     return false;
   }
   function start(x,y,target,kind){
-    if(drag || !target || body.classList.contains('recommend-drawer-open') || body.classList.contains('recommend-swipe-active'))return;
+    if(drag || !target)return;
     if(blockTarget(target))return;
     drag={x,y,prevX:x,prevT:performance.now(),velocity:0,p0:opened?1:0,
       axis:'undecided',kind,activated:false};
@@ -2624,9 +2624,7 @@ update();
   const stop=()=>{armed=false;moving=false;clearTimeout(scrollTimer);};
   const blocked=target=>{
     if(document.body.classList.contains('food-drawer-open') ||
-       document.body.classList.contains('food-swipe-active') ||
-       document.body.classList.contains('recommend-drawer-open') ||
-       document.body.classList.contains('recommend-swipe-active'))return true;
+       document.body.classList.contains('food-swipe-active'))return true;
     const el=target instanceof Element?target:null;
     return !!(el && (el.closest('a, button, summary, input, textarea, select, [role="tab"], [contenteditable="true"]') || hasNestedScroller(el)));
   };
