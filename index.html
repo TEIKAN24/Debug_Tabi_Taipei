@@ -308,5 +308,13 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
 
 
 
-<script src="js/recommend.js?v=30.9.66"></script>
+<style>
+/* v30.9.68 — compact distance badge aligned to the right of recommendation cards */
+.recommend-card-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.recommend-card-top .recommend-place{margin-left:auto}
+.recommend-card-top .recommend-distance-badge{display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;border:1px solid currentColor;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:650;line-height:1.25;letter-spacing:.015em;opacity:.92}
+.recommend-distance-badge .recommend-place-pin{display:inline-flex;align-items:center}
+.recommend-distance-badge .recommend-place-pin svg{width:11px;height:11px}
+</style>
+<script src="js/recommend.js?v=30.9.68"></script>
 </body></html>
