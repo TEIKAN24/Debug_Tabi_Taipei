@@ -6295,3 +6295,35 @@ body.recommend-swipe-active .recommend-drawer,
 body.food-swipe-active #guide #food-search.food-drawer {
   box-shadow:none!important;
 }
+
+
+/* v30.9.65 — compact category pills in the right-hand Food Index.
+   Match the 30px mobile / 32px desktop recommendation chips. This is
+   deliberately scoped to the dictionary's category bar only. */
+#guide #food-search #food-explorer .filters .pill {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+  min-height:32px!important;
+  height:32px!important;
+  border-radius:999px!important;
+  padding:3px 10px!important;
+  line-height:1.2!important;
+}
+@media(max-width:600px){
+  #guide #food-search #food-explorer .filters .pill {
+    min-height:30px!important;
+    height:30px!important;
+    padding:3px 9px!important;
+  }
+}
+/* The outgoing drawer must never cast a shadow once it is sliding offscreen.
+   A legacy default box-shadow reappeared for one frame after swipe-active was
+   removed, even though its drag-state override was shadowless. */
+#guide #food-search.food-drawer {
+  box-shadow:none!important;
+  -webkit-box-shadow:none!important;
+}
+/* Backdrop itself must not create a seam on the right edge. */
+.food-drawer-backdrop {box-shadow:none!important;filter:none!important;}

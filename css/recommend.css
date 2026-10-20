@@ -425,3 +425,31 @@ html[data-theme="light"] .recommend-advanced-panel h3{color:#433354;}
  .recommend-disclaimer{font-size:8px;line-height:1.2;}
 }
 @media(prefers-reduced-motion:reduce){.recommend-card{animation:none;}}
+
+
+/* v30.9.65 — make good use of the available mobile height without making
+   cards enormous; the three recommendations remain in a single viewport. */
+@media(max-width:600px) and (min-height:760px){
+  .recommend-drawer-inner{display:flex;flex-direction:column;}
+  .recommend-results{
+    flex:1 1 auto;
+    min-height:0;
+    display:grid;
+    grid-template-rows:repeat(3,minmax(0,1fr));
+    max-height:clamp(395px,57dvh,522px);
+    gap:clamp(8px,1.25dvh,12px);
+  }
+  .recommend-card{
+    min-height:0;
+    height:100%;
+    justify-content:center;
+    padding:clamp(11px,1.5dvh,17px) 14px;
+  }
+  .recommend-category{font-size:10px;line-height:1.35;}
+  .recommend-venue{font-size:clamp(15px,3.9vw,17px);line-height:1.45;}
+  .recommend-reason{font-size:clamp(11px,3vw,12px);line-height:1.48;}
+  .recommend-card-footer{margin-top:4px;}
+}
+@media(max-width:600px) and (min-height:760px) and (max-height:820px){
+  .recommend-results{max-height:53dvh;}
+}

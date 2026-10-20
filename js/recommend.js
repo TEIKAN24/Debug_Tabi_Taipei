@@ -61,7 +61,9 @@
     if(/スイーツ|デザート/.test(group))return 'sweet';
     if(/タピオカ|ティースタンド|ジュース|お茶専門/.test(group))return 'drink';
     if(/カフェ|喫茶/.test(group))return 'cafe';
-    return 'meal';
+    // The area directory's broad 「グルメ」 category is not a portion size
+    // and must never automatically become a rice/hearty meal.
+    return 'other';
   };
   const panelLabel=panel=>document.getElementById(panel?.getAttribute('aria-labelledby')||'')?.textContent.trim()||'';
   let catalog=null;
@@ -97,7 +99,10 @@
       });
     }
     read(foodRoot,false);read(areaRoot,true);
-    catalog=[...found.values()];return catalog;
+    // Venue metadata is independent of the legacy navigation category.
+    // Uncertain tags are left absent rather than fabricated from 「グルメ」.
+    catalog=[...found.values()].map(item=>Object.assign(item,inferVenueTags(item)));
+    return catalog;
   }
   function eligibleTime(item,time){
     const c=item.category,s=item.details;
@@ -107,32 +112,60 @@
     if(time==='night')return c!=='breakfast';
     return ['bar','izakaya'].includes(c)||/24h|24時間|深夜まで|夜カフェ/.test(s);
   }
-  // Categories describe the dishes; volume and eating scene are editorial
-  // estimates, not guarantees of actual portion size or venue facilities.
-  function genreMatch(item,genre){
-    const c=item.category,s=item.name+' '+item.details;
-    if(genre==='taiwan')return ['breakfast','nightmarket','dumpling','rice','noodle','hotpot','meal','izakaya'].includes(c)||/台湾|魯肉|滷肉|豆花|小籠包/.test(s);
-    if(genre==='rice')return c==='rice'||/飯|米糕|飯糰|米粉炒/.test(s)&&!['drink','sweet','cafe'].includes(c);
-    if(genre==='noodle')return c==='noodle'||/麵|麺|涼麵|米粉湯/.test(s)&&!['drink','sweet','cafe'].includes(c);
-    if(genre==='dumpling')return c==='dumpling'||/餃子|小籠包|湯包|鍋貼/.test(s);
-    if(genre==='hotpot')return c==='hotpot'||/火鍋|鍋物|麻辣鍋/.test(s);
-    if(genre==='sweet')return c==='sweet'||/豆花|かき氷|スイーツ|甘味|仙草|タロイモ/.test(s);
-    if(genre==='drink')return c==='drink'||/タピオカ|ミルクティー|果汁|ドリンク|茶葉/.test(s);
-    return false;
+  // The three recommendation dimensions are independent and may contain
+  // multiple values. They are editorial estimates, not verified portion sizes.
+  // Specific known food signals override broad directory categories.
+  function inferVenueTags(item){
+    const c=item.category;
+    const source=item.name+' '+(item.details||'');
+    const genre=new Set(), volume=new Set(), scene=new Set();
+    const contains=rx=>rx.test(source);
+    const pancake=contains(/葱抓餅|蔥抓餅|葱油餅|蔥油餅|蛋餅|焼餅|燒餅/);
+    const streetFood=contains(/胡椒餅|葱抓餅|蔥抓餅|葱油餅|蔥油餅|雞蛋糕|鶏蛋糕|車輪餅|地瓜球|雞排|鶏排|鹽酥雞|塩酥雞|水煎包|割包|刈包|大腸包小腸|甜不辣|肉圓/);
+    const isSweet=contains(/豆花|雪花冰|かき氷|刨冰|粉圓|湯圓|仙草|甜品|デザート|スイーツ|パンケーキ|ケーキ/);
+    const isDrink=contains(/手搖|手揺|奶茶|ミルクティー|タピオカ|ジュース|果汁|咖啡|コーヒー|珈琲|ドリンク|ティースタンド/);
+    const isNoodle=contains(/牛肉麵|牛肉麺|涼麵|涼麺|乾麵|乾麺|担仔麺|擔仔麵|ラーメン|拉麵|拉麺|米粉湯|麺線|麵線/);
+    const isRice=contains(/魯肉飯|滷肉飯|肉燥飯|排骨飯|雞肉飯|鶏肉飯|炒飯|米糕|飯糰|飯團|弁当|便當|丼飯|おこわ/);
+    const isDumpling=contains(/小籠包|小籠湯包|蒸餃|鍋貼|水餃|餃子|水煎包/);
+    const isHotpot=contains(/火鍋|麻辣鍋|しゃぶしゃぶ|鍋物|羊肉爐/);
+    const isHearty=contains(/定食|セットメニュー|食べ放題|吃到飽|便當|弁当|焼肉|燒肉|熱炒|合菜|丼飯|排骨飯/);
+    // Categories from the food-specific directory carry narrower meaning.
+    if(c==='rice'||isRice)genre.add('rice');
+    if(c==='noodle'||isNoodle)genre.add('noodle');
+    if(c==='dumpling'||isDumpling)genre.add('dumpling');
+    if(c==='hotpot'||isHotpot)genre.add('hotpot');
+    if(c==='sweet'||isSweet)genre.add('sweet');
+    if(c==='drink'||isDrink||c==='cafe')genre.add('drink');
+    if(c==='breakfast'||c==='nightmarket'||c==='dumpling'||c==='rice'||c==='hotpot'||pancake||streetFood||contains(/臺灣料理|台湾料理|滷味|魯味|伝統小吃|台式/))genre.add('taiwan');
+    if(c==='noodle'&&!contains(/ラーメン|日本式/))genre.add('taiwan');
+
+    if(['drink','sweet','cafe','nightmarket'].includes(c)||isSweet||isDrink||pancake||streetFood)volume.add('light');
+    if(['rice','noodle','hotpot','izakaya'].includes(c)||isRice||isNoodle||isHotpot||isHearty)volume.add('hearty');
+    if(c==='dumpling'||isDumpling){volume.add('light');volume.add('hearty');}
+    // Breakfast sets may be filling, but snacks are not automatically so.
+    if(c==='breakfast'&&!pancake){volume.add('light');if(contains(/飯糰|飯團|朝食セット|定食/))volume.add('hearty');}
+    if(streetFood||c==='nightmarket'||contains(/食べ歩き|屋台/))scene.add('walk');
+    if(c==='nightmarket'||contains(/夜市|ナイトマーケット/))scene.add('nightmarket');
+    if(['drink','sweet','cafe'].includes(c)||isSweet||isDrink)scene.add('rest');
+    // Specific street-food form takes precedence over generic directory name.
+    let displayType='グルメ';
+    if(streetFood||pancake)displayType='台湾小吃';
+    else if(genre.has('sweet'))displayType='スイーツ';
+    else if(genre.has('dumpling'))displayType='小籠包・点心';
+    else if(genre.has('hotpot'))displayType='鍋料理';
+    else if(genre.has('noodle'))displayType='麺類';
+    else if(genre.has('rice'))displayType='ごはん料理';
+    else if(c==='breakfast')displayType='朝ごはん';
+    else if(c==='nightmarket')displayType='夜市';
+    else if(c==='cafe')displayType='カフェ';
+    else if(genre.has('drink'))displayType='ドリンク';
+    else if(c==='izakaya')displayType='熱炒';
+    else if(c==='bar')displayType='バー';
+    return {genre:[...genre],volume:[...volume],scene:[...scene],displayType};
   }
-  function volumeMatch(item,volume){
-    const c=item.category,s=item.name+' '+item.details;
-    if(volume==='light')return ['drink','sweet','cafe','dumpling','nightmarket'].includes(c)||/小吃|軽食|焼餅|胡椒餅|鹽酥雞|雞排/.test(s);
-    if(volume==='hearty')return ['rice','noodle','hotpot','meal','izakaya'].includes(c)||/定食|丼|食べ放題|牛肉麺|牛肉麵/.test(s);
-    return false;
-  }
-  function sceneMatch(item,scene){
-    const c=item.category,s=item.name+' '+item.details;
-    if(scene==='walk')return c==='nightmarket'||/食べ歩き|屋台|胡椒餅|地瓜球|雞排|塩酥鶏|鹽酥雞|テイクアウト/.test(s);
-    if(scene==='nightmarket')return c==='nightmarket'||/夜市/.test(s);
-    if(scene==='rest')return ['cafe','sweet','drink'].includes(c)||/喫茶|カフェ|ティー|豆花/.test(s);
-    return false;
-  }
+  function genreMatch(item,genre){return item.genre.includes(genre);}
+  function volumeMatch(item,volume){return item.volume.includes(volume);}
+  function sceneMatch(item,scene){return item.scene.includes(scene);}
   // Reviewed descriptions for a small set of identifiable venues. Other
   // entries use the guide's own editorial notes, never generic "おすすめが特徴".
   // Some examples use publicly reported visitor impressions and menu details;
@@ -217,7 +250,7 @@
       sweet:'台湾スイーツで甘いひと休みを。',
       drink:'台湾のドリンクを試したいときに。',
       cafe:'街歩きの合間にカフェでひと休み。',
-      meal:'台湾のごはん料理を楽しみたいときに。'
+      meal:'旅の途中に立ち寄れる一軒。',other:'街歩きの途中で立ち寄りたい一軒。'
     };
     return defaults[item.category]||'旅の途中に立ち寄れる一軒。';
   }
@@ -312,7 +345,7 @@
       if(/豆花/.test(s))return 'tofu-pudding';
       if(/かき氷|冰/.test(s))return 'ice';
     }
-    return item.category;
+    return item.genre.find(g=>g!=='taiwan')||item.displayType||'グルメ';
   }
   const typeLabel={breakfast:'朝食',nightmarket:'夜市',dumpling:'小籠包・餃子',rice:'ごはん',noodle:'麺',hotpot:'鍋',bar:'バー',drink:'ドリンク',sweet:'スイーツ',cafe:'カフェ',meal:'ごはん',izakaya:'熱炒'};
   function el(tag,cls,txt){const node=document.createElement(tag);if(cls)node.className=cls;if(txt!==undefined)node.textContent=txt;return node;}
@@ -443,7 +476,7 @@
     slice.forEach(item=>{
       const card=el('article','recommend-card');
       const top=el('div','recommend-card-top');
-      top.append(el('span','recommend-category',typeLabel[item.category]||'ローカル'));
+      top.append(el('span','recommend-category',item.displayType||typeLabel[item.category]||'グルメ'));
       card.append(top);
       const a=el('a','recommend-venue',item.name);a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';card.append(a);
       card.append(el('p','recommend-reason',reason(item)));
@@ -453,7 +486,7 @@
       results.append(card);
     });
     more.hidden=ordered.length<=3;
-    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}時間帯・ボリュームは料理ジャンルからの目安です。現在営業中とは限りません。来店前に営業時間をご確認ください。`;
+    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}時間帯・ボリュームは料理・店舗情報からの目安です。現在営業中とは限りません。来店前に営業時間をご確認ください。`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
   syncUI();renderResults();
