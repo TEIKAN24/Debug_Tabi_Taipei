@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.69 — optional on-device nearby distance for verified venues. */
+/* TAIPEI CITY GUIDE v30.9.75 — optional on-device nearby distance for verified venues. */
 (() => {
   'use strict';
   const drawer = document.getElementById('taipei-recommender');
@@ -42,25 +42,53 @@
   // Recognizable Taiwanese chains present in this guide. A convenience bonus
   // is NOT a claim that a branch is near the selected station.
   const CHAIN_NAMES=/50嵐|迷客夏|八方雲集|鼎泰豊|鼎泰豐|可不可|茶湯會|清心福全|大苑子|鮮茶道|COMEBUY|CoCo都可|路易莎|LOUISA|85度C|貢茶|春水堂|一芳|珍煮丹|すき家|壽司郎|すしろー|マクドナルド|星巴克|スターバックス|ミスタードーナツ|摩斯漢堡|MOS BURGER/i;
+  // Deduplicate storefronts of the same recognized chain in nearby mode.
+  // A chain appears only once, represented by its closest VERIFIED branch.
+  const CHAIN_BRANDS=[
+    ['50嵐',/50嵐/i],['迷客夏',/迷客夏/i],['八方雲集',/八方雲集/i],
+    ['鼎泰豐',/鼎泰豊|鼎泰豐/i],['可不可',/可不可/i],['茶湯會',/茶湯會/i],
+    ['清心福全',/清心福全/i],['大苑子',/大苑子/i],['鮮茶道',/鮮茶道/i],
+    ['COMEBUY',/COMEBUY/i],['CoCo都可',/CoCo都可/i],
+    ['路易莎',/路易莎|LOUISA/i],['85度C',/85度C/i],['貢茶',/貢茶/i],
+    ['春水堂',/春水堂/i],['一芳',/一芳/i],['珍煮丹',/珍煮丹/i],
+    ['すき家',/すき家/i],['壽司郎',/壽司郎|すしろー/i],
+    ['マクドナルド',/マクドナルド/i],['星巴克',/星巴克|スターバックス/i],
+    ['ミスタードーナツ',/ミスタードーナツ/i],['摩斯漢堡',/摩斯漢堡|MOS BURGER/i]
+  ];
+  function nearbyBrandKey(item){
+    if(item.brandId)return `brand:${item.brandId}`;
+    const brand=CHAIN_BRANDS.find(([,pattern])=>pattern.test(item.name));
+    return brand?`brand:${brand[0]}`:`venue:${normalize(item.name)}`;
+  }
+  function closestPerBrand(items){
+    const best=new Map();
+    for(const item of items){
+      const key=nearbyBrandKey(item),old=best.get(key);
+      if(!old||item.distanceMeters<old.distanceMeters)best.set(key,item);
+    }
+    return [...best.values()];
+  }
   const AREA_MATCH=[['nakayama',/赤峰|中山駅/],['dihua',/迪化|大稻埕/],['dongmen',/永康|東門/],['xinyi',/信義/],['taipei',/台北駅/],['ximen',/西門/],['gongguan',/公館/],['east',/東区/]];
   function taipeiNow(){return new Date();}
   function taipeiTimeLabel(){return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(taipeiNow());}
   function taipeiHour(){return Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hourCycle:'h23'}).formatToParts(taipeiNow()).find(p=>p.type==='hour')?.value??12);}
   function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<14?'lunch':h>=14&&h<17?'afternoon':h>=17&&h<23?'night':'late';}
   const state={timeMode:'current',time:defaultBand(),areaMode:'all',area:'',genre:'',volume:'',scene:'',page:0,locationStatus:'idle',geoRequested:false,position:null};
-  const GEO_MAX_METERS=4000; // Honest straight-line radius for the first verified batch.
+  const GEO_MAX_METERS=500; // Honest straight-line radius for the first verified batch.
   let coordinates=new Map(),coordinatesReady=false,coordinatesFailed=false;
   // Static same-origin JSON; no key, request to mapping APIs, or GPS upload.
   async function loadCoordinates(){
     try{
-      const reply=await fetch('food/venues.json?v=30.9.68',{cache:'no-store'});
+      const reply=await fetch('food/venues.json?v=30.9.75',{cache:'no-store'});
       if(!reply.ok)throw new Error('venue file unavailable');
       const data=await reply.json();
       if(data.schemaVersion!==1||!data.venues||typeof data.venues!=='object')throw new Error('venue file invalid');
       const clean=new Map();
       for(const [name,entry] of Object.entries(data.venues)){
-        if(!entry||!Number.isFinite(entry.lat)||!Number.isFinite(entry.lng)||entry.lat<24.7||entry.lat>25.4||entry.lng<121.2||entry.lng>122||!/^https:\/\//.test(entry.mapUrl||''))continue;
-        clean.set(name,entry);
+        if(!entry)continue;
+        const valid=point=>point&&Number.isFinite(point.lat)&&Number.isFinite(point.lng)&&point.lat>=24.7&&point.lat<=25.4&&point.lng>=121.2&&point.lng<=122&&/^https:\/\//.test(point.mapUrl||'');
+        if(Array.isArray(entry.branches)){const branches=entry.branches.filter(valid);if(branches.length)clean.set(name,{...entry,branches});}
+        else if(valid(entry))clean.set(name,entry);
       }
       coordinates=clean;coordinatesReady=true;catalog=null;
     }catch(_){coordinatesFailed=true;}
@@ -123,7 +151,7 @@
     catalog=[...found.values()].map(item=>{
       const stored=coordinates.get(item.name);
       // Never attach a location if this guide's Maps destination changed.
-      const location=stored&&(stored.mapUrl===item.url||stored.searchUrl===item.url)?{lat:stored.lat,lng:stored.lng}:{};
+      const location=stored&&(stored.mapUrl===item.url||stored.searchUrl===item.url)?(stored.branches?{branches:stored.branches,brandId:stored.brandId||null}:{lat:stored.lat,lng:stored.lng,brandId:stored.brandId||null}):{};
       return Object.assign(item,inferVenueTags(item),location);
     });
     return catalog;
@@ -295,15 +323,19 @@
       state.genre,state.volume,state.scene].join('|');
   }
   function recommendedPool(){
-    const timeCandidates=readCatalog().filter(item=>eligibleTime(item,state.time));
+    const timeCandidates=readCatalog().filter(item=>!['bar','izakaya'].includes(item.category)&&eligibleTime(item,state.time));
     const useGPS=state.areaMode==='current'&&state.locationStatus==='success'&&!!state.position&&coordinatesReady;
     // Only verified, specifically matched storefronts take part in GPS ranking.
     // An unknown location is never assumed to be at a neighborhood midpoint.
-    const withinRange=useGPS?timeCandidates.filter(item=>Number.isFinite(item.lat)&&Number.isFinite(item.lng))
-      .map(item=>({...item,distanceMeters:distanceMeters(state.position.lat,state.position.lng,item.lat,item.lng)}))
-      .filter(item=>item.distanceMeters<=GEO_MAX_METERS):[];
-    const nearbyFallback=useGPS&&withinRange.length===0;
-    const byTime=useGPS&&!nearbyFallback?withinRange:timeCandidates;
+    const withinRange=useGPS?closestPerBrand(timeCandidates.map(item=>{
+      const candidates=Array.isArray(item.branches)?item.branches:[item];
+      const nearest=candidates.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng))
+        .map(p=>({...p,distanceMeters:distanceMeters(state.position.lat,state.position.lng,p.lat,p.lng)}))
+        .sort((a,b)=>a.distanceMeters-b.distanceMeters)[0];
+      return nearest?{...item,distanceMeters:nearest.distanceMeters,nearestMapUrl:Array.isArray(item.branches)?nearest.mapUrl:null}:null;
+    }).filter(item=>item&&item.distanceMeters<=GEO_MAX_METERS)):[];
+    const nearbyFallback=false;
+    const byTime=useGPS?withinRange:timeCandidates;
     const criteria=[];
     if(state.area)criteria.push({label:'エリア',weight:35,fn:item=>item.area===state.area});
     if(state.genre)criteria.push({label:'料理ジャンル',weight:30,fn:item=>genreMatch(item,state.genre)});
@@ -454,7 +486,7 @@
     for(const b of genreControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.genre));
     for(const b of volumeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.volume));
     for(const b of sceneControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.scene));
-    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:coordinatesFailed?'店舗の座標データを読み込めませんでした。通常のおすすめを表示します。':!coordinatesReady?'登録店の位置情報を読み込んでいます…':`現在地から直線${(GEO_MAX_METERS/1000).toFixed(0)}km以内・座標登録${coordinates.size}軒の中からご案内します。`};
+    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:coordinatesFailed?'店舗の座標データを読み込めませんでした。通常のおすすめを表示します。':!coordinatesReady?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${coordinates.size}店・ブランドからご案内します。`};
     locationStatus.textContent=state.areaMode==='current'?messages[state.locationStatus]||'': '';
     locationStatus.hidden=!locationStatus.textContent;
   }
@@ -462,6 +494,7 @@
   // No coordinates are stored, sent to any service, or persisted.
   const rad=n=>n*Math.PI/180;
   function distanceMeters(lat1,lng1,lat2,lng2){const dLat=rad(lat2-lat1),dLng=rad(lng2-lng1);const a=Math.sin(dLat/2)**2+Math.cos(rad(lat1))*Math.cos(rad(lat2))*Math.sin(dLng/2)**2;return 6371000*2*Math.asin(Math.min(1,Math.sqrt(a)));}
+  let geoRun=0; // Initialized before persisted debug position can be restored.
   // Debug-only location override, enabled solely by ?debugLocation=1.
   const debugEnabled=new URLSearchParams(location.search).get('debugLocation')==='1';
   const debugPoints=[['station','台北車站',25.0478,121.5170],['ximen','西門町',25.0421,121.5081],['zhongshan','中山站',25.0526,121.5204]];
@@ -498,7 +531,6 @@
       setDebugPosition(saved.lat,saved.lng);
     }}catch(e){}
   }
-  let geoRun=0;
   function requestLocation(force=false){
     if(state.areaMode!=='current')return;
     if(debugEnabled&&debugPosition){setDebugPosition(debugPosition.lat,debugPosition.lng);return;}
@@ -537,7 +569,7 @@
     if(!ordered.length){
       more.hidden=true;
       relaxed.hidden=false;
-      relaxed.textContent=timeCount===0?'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。':'該当店が見つかりません。';
+      relaxed.textContent=timeCount===0?(useGPS?'直線500m以内に位置確認済みの該当店はありません。':'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。'):'該当店が見つかりません。';
       results.append(el('p','recommend-no-data','おすすめ情報を準備中です。'));
       count.textContent='0軒';return;
     }
@@ -546,13 +578,13 @@
     const slice=ordered.slice(state.page*3,state.page*3+3);
     count.textContent=`${slice.length}軒をピックアップ`;
     relaxed.hidden=!lifted.length&&!nearbyFallback;
-    relaxed.textContent=nearbyFallback?'この時間帯は近くに位置確認済みのお店がありません。位置が未登録のお店も含む通常のおすすめを表示しています。':lifted.length?`条件を少しゆるめました（${lifted.join('・')}）。時間帯は変更していません。`:'';
+    relaxed.textContent=lifted.length?`条件を少しゆるめました（${lifted.join('・')}）。時間帯は変更していません。`:'';
     if(useGPS&&nearbyFallback){
-      locationStatus.textContent='この時間帯は直線4km以内に位置確認済みの店がありません。';
+      locationStatus.textContent='この時間帯は直線500m以内に位置確認済みの店がありません。';
       locationStatus.hidden=false;
     }
     if(useGPS&&!nearbyFallback){
-      locationStatus.textContent=`現在地から直線4km以内の位置確認済み${nearbyCount}軒を検索中（登録全${coordinates.size}軒）。`;
+      locationStatus.textContent=`現在地から直線500m以内の位置確認済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size}店・ブランド）。`;
       locationStatus.hidden=false;
     }
     slice.forEach(item=>{
@@ -574,7 +606,7 @@
         top.append(location);
       }
       card.append(top);
-      const a=el('a','recommend-venue',item.name);a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';card.append(a);
+      const a=el('a','recommend-venue',item.name);a.href=item.nearestMapUrl||item.url;a.target='_blank';a.rel='noopener noreferrer';card.append(a);
       card.append(el('p','recommend-reason',reason(item)));
       results.append(card);
     });
