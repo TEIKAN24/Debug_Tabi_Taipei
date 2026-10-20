@@ -315,12 +315,56 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
 .recommend-card-top .recommend-distance-badge{display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;border:1px solid currentColor;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:650;line-height:1.25;letter-spacing:.015em;opacity:.92}
 .recommend-distance-badge .recommend-place-pin{display:inline-flex;align-items:center}
 .recommend-distance-badge .recommend-place-pin svg{width:11px;height:11px}
-#recommend-debug-location{display:grid;gap:9px;margin:12px 0;padding:14px;border:1px dashed currentColor;border-radius:14px;font-size:13px}
-#recommend-debug-location label,#recommend-debug-location small{font-size:11px;opacity:.75}
-#recommend-debug-location select,#recommend-debug-location input,#recommend-debug-location button{width:100%;padding:9px 11px;border:1px solid #8888;border-radius:9px;background:transparent;color:inherit;font:inherit}
-#recommend-debug-location option{color:#222;background:#fff}
-#recommend-debug-custom:not([hidden]){display:grid;gap:8px}
-#recommend-debug-location button{cursor:pointer;font-weight:650;border-color:currentColor}
+
+/* v30.9.80 — collapsed debug-location floating control (debug URL only). */
+#recommend-debug-fab{
+  position:absolute;right:16px;bottom:calc(28px + env(safe-area-inset-bottom,0px));
+  z-index:20;display:grid;place-items:center;width:44px;height:44px;
+  margin:0;padding:0;border:1px solid #82739b;border-radius:50%;
+  color:#f4eaff;background:rgba(39,33,49,.94);
+  box-shadow:0 4px 14px rgba(0,0,0,.29);cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+#recommend-debug-fab svg{width:20px;height:20px;display:block;}
+#recommend-debug-fab.is-active{background:#6a538b;color:#fff;border-color:#b79eda;}
+#recommend-debug-fab:focus-visible,#recommend-debug-location button:focus-visible,#recommend-debug-location select:focus-visible,#recommend-debug-location input:focus-visible{outline:2px solid #c9aaff;outline-offset:3px;}
+#recommend-debug-location{
+  position:absolute;z-index:21;right:16px;
+  bottom:calc(83px + env(safe-area-inset-bottom,0px));
+  box-sizing:border-box;width:min(350px,calc(100% - 32px));
+  max-height:min(69dvh,550px);overflow-y:auto;
+  display:flex;flex-direction:column;gap:10px;
+  padding:16px;border:1px solid #70627f;border-radius:16px;
+  background:#17141d;color:#f4eff8;
+  box-shadow:0 16px 42px rgba(0,0,0,.46);
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+}
+#recommend-debug-location[hidden],#recommend-debug-custom[hidden]{display:none!important;}
+#recommend-debug-location .recommend-debug-header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+#recommend-debug-location .recommend-debug-header strong{font-size:15px;line-height:1.4;}
+#recommend-debug-location .recommend-debug-header button{width:29px;min-width:29px;height:29px;padding:0;border:1px solid #746881;border-radius:50%;background:transparent;color:inherit;font-size:20px;line-height:1;}
+#recommend-debug-location label,#recommend-debug-location small{font-size:12px;color:#c7bed2;line-height:1.45;}
+#recommend-debug-location select,#recommend-debug-location input,#recommend-debug-location #recommend-debug-apply{
+  width:100%;box-sizing:border-box;min-height:42px;padding:9px 12px;
+  border:1px solid #746881;border-radius:10px;color:inherit;
+  background:#292332;font:inherit;font-size:14px;
+}
+#recommend-debug-location option{background:#292332;color:#fff;}
+#recommend-debug-custom:not([hidden]){display:grid;gap:8px;}
+#recommend-debug-location #recommend-debug-apply{background:#d4beff;color:#24162f;border-color:#d4beff;font-weight:700;cursor:pointer;}
+#recommend-debug-diagnostics{
+  box-sizing:border-box;white-space:pre-wrap;overflow-wrap:anywhere;
+  font:11px/1.6 ui-monospace,SFMono-Regular,monospace;color:#bce9c5;
+  margin:2px 0 0;padding:10px;border:1px solid #41584d;border-radius:9px;
+  background:#13251b;
+}
+html[data-theme="light"] #recommend-debug-fab{background:#fff;color:#51396e;border-color:#cab9dc;}
+html[data-theme="light"] #recommend-debug-location{background:#fff;color:#2e2934;border-color:#d5cbdf;box-shadow:0 16px 40px rgba(30,23,40,.19);}
+html[data-theme="light"] #recommend-debug-location label,html[data-theme="light"] #recommend-debug-location small{color:#676070;}
+html[data-theme="light"] #recommend-debug-location select,html[data-theme="light"] #recommend-debug-location input{background:#f7f4fa;color:#32293a;border-color:#cfc5da;}
+html[data-theme="light"] #recommend-debug-location option{background:#fff;color:#32293a;}
+html[data-theme="light"] #recommend-debug-diagnostics{background:#f3f8f4;color:#244331;border-color:#bfd5c6;}
+@media(max-height:560px){#recommend-debug-fab{bottom:calc(14px + env(safe-area-inset-bottom,0px));}#recommend-debug-location{bottom:calc(65px + env(safe-area-inset-bottom,0px));max-height:65dvh;}}
 </style>
-<script src="js/recommend_v30_9_79.js?v=30.9.79"></script>
+<script src="js/recommend_v30_9_80.js?v=30.9.80"></script>
 </body></html>
