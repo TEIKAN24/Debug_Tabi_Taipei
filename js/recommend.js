@@ -272,7 +272,7 @@
   let openGeneration=0;
   function syncChrome(active){
     const meta=document.querySelector('meta[name="theme-color"]');
-    if(meta)meta.setAttribute('content',active?(document.documentElement.dataset.theme==='light'?'#F7F8F7':'#14191C'):(document.documentElement.dataset.theme==='light'?'#F7F8F7':'#111417'));
+    if(meta)meta.setAttribute('content',active?(document.documentElement.dataset.theme==='light'?'#F7F8F7':'#0D0D0D'):(document.documentElement.dataset.theme==='light'?'#F7F8F7':'#111417'));
   }
   function settle(open){
     isOpen=open;

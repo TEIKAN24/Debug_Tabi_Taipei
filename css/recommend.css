@@ -124,3 +124,47 @@ html[data-theme="light"] body.recommend-swipe-active {background:#f7f8f7!importa
   body.recommend-swipe-active #guide > .page-body,
   body.recommend-swipe-active > footer {transition:none!important;}
 }
+
+
+/* v30.9.58 — neutral K95 left drawer; blend the scroll edges into the
+   underlying surface, never cover its active controls or move the document. */
+html:not([data-theme="light"]) .recommend-drawer {
+  --recommend-edge-color:#0D0D0D;
+  background:#0D0D0D;
+  color:#F3F3F3;
+  border-right-color:#353535;
+}
+html:not([data-theme="light"]) .recommend-card {background:#1C1C1C;border-color:#404040;}
+html:not([data-theme="light"]) .recommend-card-primary {background:#202420;border-color:#64766C;}
+html:not([data-theme="light"]) .recommend-control {background:#212121;border-color:#484848;}
+html:not([data-theme="light"]) .recommend-options {background:#222;border-color:#535353;}
+html:not([data-theme="light"]) .recommend-option:hover:not([aria-pressed="true"]) {background:#333;}
+html:not([data-theme="light"]) .recommend-pill {border-color:#484848;}
+html:not([data-theme="light"]) .recommend-tuning,
+html:not([data-theme="light"]) .recommend-advanced {border-color:#3A3A3A;}
+html:not([data-theme="light"]) .recommend-more {border-color:#4A4A4A;}
+html[data-theme="light"] .recommend-drawer {--recommend-edge-color:#F7F8F7;}
+/* Stationary overlays fade scrolling items near the safe-area edges;
+   the drawer itself remains a solid, consistent background tone. */
+.recommend-drawer::before,
+.recommend-drawer::after {
+  content:"";
+  display:block;
+  position:absolute;
+  left:0;right:0;
+  z-index:10;
+  pointer-events:none;
+  height:calc(22px + env(safe-area-inset-top, 0px));
+  background:linear-gradient(to bottom,var(--recommend-edge-color,#0D0D0D) 0%,transparent 100%);
+}
+.recommend-drawer::before {top:0;}
+.recommend-drawer::after {
+  top:auto;bottom:0;
+  height:calc(26px + env(safe-area-inset-bottom, 0px));
+  background:linear-gradient(to top,var(--recommend-edge-color,#0D0D0D) 0%,transparent 100%);
+}
+/* The root canvas is visible during drawer interaction on iOS Safari. */
+html:has(body.recommend-swipe-active),
+body.recommend-swipe-active {background:#0D0D0D!important;}
+html[data-theme="light"]:has(body.recommend-swipe-active),
+html[data-theme="light"] body.recommend-swipe-active {background:#F7F8F7!important;}

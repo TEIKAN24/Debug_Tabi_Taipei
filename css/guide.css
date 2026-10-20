@@ -6207,3 +6207,32 @@ html:has(body.food-swipe-active),
 body.food-swipe-active {background:#0d0d0d!important;}
 html[data-theme="light"]:has(body.food-swipe-active),
 html[data-theme="light"] body.food-swipe-active {background:#f7f8f7!important;}
+
+
+/* v30.9.58 — Food Index safe-area edge fades, matching its background.
+   Earlier versions suppress ::before/::after on the drawer, so explicitly
+   restore the two non-interactive gradient layers here. */
+#guide #food-search.food-drawer::before,
+#guide #food-search.food-drawer::after {
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  left:0!important;right:0!important;
+  z-index:10!important;
+  pointer-events:none!important;
+  width:auto!important;
+  height:calc(22px + env(safe-area-inset-top, 0px))!important;
+  background:linear-gradient(to bottom,#0D0D0D 0%,transparent 100%)!important;
+}
+#guide #food-search.food-drawer::before {top:0!important;bottom:auto!important;}
+#guide #food-search.food-drawer::after {
+  top:auto!important;bottom:0!important;
+  height:calc(26px + env(safe-area-inset-bottom, 0px))!important;
+  background:linear-gradient(to top,#0D0D0D 0%,transparent 100%)!important;
+}
+html[data-theme="light"] #guide #food-search.food-drawer::before {
+  background:linear-gradient(to bottom,#F7F8F7 0%,transparent 100%)!important;
+}
+html[data-theme="light"] #guide #food-search.food-drawer::after {
+  background:linear-gradient(to top,#F7F8F7 0%,transparent 100%)!important;
+}
