@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.75 — optional on-device nearby distance for verified venues. */
+/* TAIPEI CITY GUIDE v30.9.76 — optional on-device nearby distance for verified venues. */
 (() => {
   'use strict';
   const drawer = document.getElementById('taipei-recommender');
@@ -79,7 +79,7 @@
   // Static same-origin JSON; no key, request to mapping APIs, or GPS upload.
   async function loadCoordinates(){
     try{
-      const reply=await fetch('food/venues.json?v=30.9.75',{cache:'no-store'});
+      const reply=await fetch('food/venues.json?v=30.9.76',{cache:'no-store'});
       if(!reply.ok)throw new Error('venue file unavailable');
       const data=await reply.json();
       if(data.schemaVersion!==1||!data.venues||typeof data.venues!=='object')throw new Error('venue file invalid');
@@ -121,8 +121,10 @@
     const found=new Map();
     function read(root,isArea){
       if(!root)return;
-      root.querySelectorAll('li.venue-row').forEach(li=>{
-        const a=li.querySelector('a.venue-main-link[href]');
+      root.querySelectorAll('li.venue-list-item, li.venue-row').forEach(li=>{
+        // Match the actual published guide markup. The legacy class names
+        // venue-row/venue-main-link were never present on the static HTML.
+        const a=li.querySelector('a.venue-main-link[href], a[href^="https://maps.app.goo.gl/"], a[href^="https://www.google.com/maps/"]');
         if(!a||!/^https:\/\/(?:maps\.app\.goo\.gl|www\.google\.com\/maps)/.test(a.href))return;
         const tab=panelLabel(li.closest('.tab-panel'));
         const group=li.closest('details.nested-accordion')?.querySelector(':scope > summary')?.textContent.trim()||'';
