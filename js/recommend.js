@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.57 — instant local picks, no questionnaire. */
+/* TAIPEI CITY GUIDE v30.9.59 — instant local picks, no questionnaire. */
 (() => {
   'use strict';
   const drawer = document.getElementById('taipei-recommender');
@@ -40,7 +40,7 @@
   function taipeiTimeLabel(){return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(taipeiNow());}
   function taipeiHour(){return Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hourCycle:'h23'}).formatToParts(taipeiNow()).find(p=>p.type==='hour')?.value??12);}
   function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<17?'lunch':h>=17&&h<23?'night':'late';}
-  const state={timeMode:'current',time:defaultBand(),areaMode:'current',area:'',mood:'',avoid:new Set(),page:0,locationStatus:'idle',locationName:'',geoRequested:false};
+  const state={timeMode:'current',time:defaultBand(),areaMode:'all',area:'',mood:'',avoid:new Set(),page:0,locationStatus:'idle',locationName:'',geoRequested:false};
   const normalize=t=>String(t||'').replace(/\s+/g,'').toLowerCase();
   const categoryOf=(tab,group)=>{
     if(/朝ごはん/.test(tab))return 'breakfast';
@@ -171,11 +171,16 @@
     state.avoid.has(value)?state.avoid.delete(value):state.avoid.add(value);
     state.page=0;syncUI();renderResults();
   });
+  const advanced=document.getElementById('recommend-advanced');
   function closeOptions(){for(const [b,options] of [[timeButton,timeOptions],[areaButton,areaOptions]]){options.hidden=true;b.setAttribute('aria-expanded','false');}}
-  function toggleOptions(button,options){const shouldOpen=options.hidden;closeOptions();if(shouldOpen){options.hidden=false;button.setAttribute('aria-expanded','true');}}
+  function toggleOptions(button,options){const shouldOpen=options.hidden;closeOptions();advanced.open=false;if(shouldOpen){options.hidden=false;button.setAttribute('aria-expanded','true');}}
   timeButton.addEventListener('click',()=>toggleOptions(timeButton,timeOptions));
   areaButton.addEventListener('click',()=>toggleOptions(areaButton,areaOptions));
-  drawer.addEventListener('click',e=>{if(!e.target.closest('.recommend-control-wrap'))closeOptions();});
+  advanced.addEventListener('toggle',()=>{if(advanced.open)closeOptions();});
+  drawer.addEventListener('click',e=>{
+    if(!e.target.closest('.recommend-control-wrap'))closeOptions();
+    if(!e.target.closest('.recommend-control-advanced-wrap'))advanced.open=false;
+  });
   function syncUI(){
     const timeName=TIME.find(([value])=>value===state.time)?.[1]||'昼';
     timeLabel.textContent=state.timeMode==='current'?`現時刻 · ${timeName}`:timeName;
@@ -220,7 +225,8 @@
   function refreshContextOnOpen(){
     if(state.timeMode==='current'){state.time=defaultBand();state.page=0;}
     syncUI();renderResults();
-    if(state.areaMode==='current')requestLocation(true);
+    // Never request geolocation on drawer open or reopen. Only a direct tap on
+    // 「現在地」 inside the area chooser may ask for permission.
   }
   function renderResults(){
     const {ordered,lifted,timeCount}=recommendedPool();
@@ -276,6 +282,7 @@
   }
   function settle(open){
     isOpen=open;
+    if(!open){closeOptions();advanced.open=false;}
     if(open){
       lock();
       // The first three picks are rendered before opening. Defer costly

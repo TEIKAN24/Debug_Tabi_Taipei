@@ -6236,3 +6236,47 @@ html[data-theme="light"] #guide #food-search.food-drawer::before {
 html[data-theme="light"] #guide #food-search.food-drawer::after {
   background:linear-gradient(to top,#F7F8F7 0%,transparent 100%)!important;
 }
+
+
+/* v30.9.59 — full-viewport Safari drawer chrome bridge.
+   Safari can sample the root canvas and the exposed/dimmed home page for its
+   translucent top/bottom chrome. During either drawer gesture use one canvas
+   color and paint non-interactive, viewport-wide fades ABOVE the scrim.
+   The layers are removed automatically when the swipe-active class clears. */
+html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active)) {
+  --drawer-chrome-edge:#0D0D0D;
+  background-color:#0D0D0D!important;
+  color-scheme:dark;
+}
+html[data-theme="light"]:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active)) {
+  --drawer-chrome-edge:#F7F8F7;
+  background-color:#F7F8F7!important;
+  color-scheme:light;
+}
+body:is(.recommend-swipe-active,.food-swipe-active) {
+  background-color:var(--drawer-chrome-edge,#0D0D0D)!important;
+}
+/* Positioned on html rather than on the scroll-locked body, these stay
+   attached to the visual viewport as the body is fixed at -scrollY. */
+html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::before,
+html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::after {
+  content:"";position:fixed;left:0;right:0;width:100%;
+  pointer-events:none;z-index:210;
+  height:calc(20px + env(safe-area-inset-top,0px));
+  background:linear-gradient(to bottom,var(--drawer-chrome-edge,#0D0D0D),transparent);
+}
+html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::before {top:0;}
+html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::after {
+  top:auto;bottom:0;height:calc(26px + env(safe-area-inset-bottom,0px));
+  background:linear-gradient(to top,var(--drawer-chrome-edge,#0D0D0D),transparent);
+}
+/* Avoid doubling the existing per-drawer fades when the viewport-wide bridge
+   is visible. Keep the drawer's own solid K95/light canvas unchanged. */
+body.recommend-swipe-active .recommend-drawer::before,
+body.recommend-swipe-active .recommend-drawer::after {opacity:0;}
+body.food-swipe-active #guide #food-search.food-drawer::before,
+body.food-swipe-active #guide #food-search.food-drawer::after {opacity:0!important;}
+@media(prefers-reduced-motion:reduce){
+ html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::before,
+ html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::after {transition:none;}
+}
