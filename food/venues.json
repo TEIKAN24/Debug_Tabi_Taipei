@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-10-20",
+  "note": "Only identified venue coordinates; mapUrl binds each record to the corresponding existing guide link. Remaining guide venues are unlocated, not assigned area-centroid coordinates. Coordinates represent approximate storefront point, not route distance.",
+  "venues": {
+    "阜杭豆漿": {
+      "lat": 25.044195,
+      "lng": 121.524847,
+      "address": "臺北市中正區忠孝東路一段108號2樓",
+      "mapUrl": "https://maps.app.goo.gl/U1DmXgdb8nML7UGS9",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E9%98%9C%E6%9D%AD%E8%B1%86%E6%BC%BF",
+      "source": "https://taipei.fun-taiwan.com/fnf-item.aspx?npage=2&pid=G20110111103730"
+    },
+    "天津蔥抓餅": {
+      "lat": 25.0326689,
+      "lng": 121.5297056,
+      "address": "臺北市大安區永康街6巷1號",
+      "mapUrl": "https://maps.app.goo.gl/3bpq6EN96bQ3LfYk7",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E5%A4%A9%E6%B4%A5%E8%94%A5%E6%8A%93%E9%A4%85",
+      "source": "https://www.backpackers.com.tw/forum/map.php?discover=&gid=54027&gtype=spot"
+    },
+    "金峰魯肉飯": {
+      "lat": 25.032056,
+      "lng": 121.518524,
+      "address": "臺北市中正區羅斯福路一段10-1號",
+      "mapUrl": "https://maps.app.goo.gl/dVgfAnxJTfrpf2uM8",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E9%87%91%E5%B3%B0%E9%AD%AF%E8%82%89%E9%A3%AF",
+      "source": "https://www.backpackers.com.tw/forum/map.php?discover=&gid=6650&gtype=spot"
+    },
+    "阿城鵝肉": {
+      "lat": 25.056377,
+      "lng": 121.530306,
+      "address": "臺北市中山區吉林路105號",
+      "mapUrl": "https://maps.app.goo.gl/UMxzt8oATwy7gZsW7",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E9%98%BF%E5%9F%8E%E9%B5%9D%E8%82%89",
+      "source": "https://r923e.blog109.fc2.com/blog-entry-1903.html"
+    },
+    "藍家割包": {
+      "lat": 25.015725,
+      "lng": 121.532554,
+      "address": "臺北市中正區羅斯福路三段316巷8弄3號",
+      "mapUrl": "https://maps.app.goo.gl/Fs4HYsyRscQWFyhD7",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E8%97%8D%E5%AE%B6%E5%89%B2%E5%8C%85",
+      "source": "https://www.backpackers.com.tw/forum/map.php?discover=&gid=6662&gtype=spot"
+    },
+    "京鼎樓": {
+      "lat": 25.055016,
+      "lng": 121.526038,
+      "address": "臺北市中山區長春路47號",
+      "mapUrl": "https://maps.app.goo.gl/8dsiwQN6UDboU8KG6",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E4%BA%AC%E9%BC%8E%E6%A8%93",
+      "source": "https://www.backpackers.com.tw/forum/map.php?discover=&gid=50204&gtype=spot"
+    },
+    "富宏牛肉麵": {
+      "lat": 25.0476248,
+      "lng": 121.507677,
+      "address": "臺北市萬華區洛陽街69號",
+      "mapUrl": "https://maps.app.goo.gl/kBsJumShrCR7CcuZA",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E5%AF%8C%E5%AE%8F%E7%89%9B%E8%82%89%E9%BA%B5",
+      "source": "https://www.backpackers.com.tw/forum/map.php?discover=&gid=45058&gtype=spot"
+    },
+    "蜂大咖啡": {
+      "lat": 25.042621,
+      "lng": 121.506383,
+      "address": "臺北市萬華區成都路42號",
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=%E8%9C%82%E5%A4%A7%E5%92%96%E5%95%A1%20%E5%8F%B0%E5%8C%97%E5%B8%82%E8%90%AC%E8%8F%AF%E5%8D%80%E6%88%90%E9%83%BD%E8%B7%AF42%E8%99%9F",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E8%9C%82%E5%A4%A7%E5%92%96%E5%95%A1",
+      "source": "https://johorkaki.blogspot.com/2017/10/fong-da-coffee-in-ximending-coffee.html"
+    },
+    "阿宗麵線": {
+      "lat": 25.04339,
+      "lng": 121.507583,
+      "address": "臺北市萬華區峨眉街8-1號",
+      "mapUrl": "https://maps.app.goo.gl/FtfvHN6yJoX1Fbng7",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E9%98%BF%E5%AE%97%E9%BA%B5%E7%B7%9A",
+      "source": "https://johorkaki.blogspot.com/2017/10/ay-chung-mee-sua-at-ximenting.html"
+    },
+    "冰讃": {
+      "lat": 25.057726,
+      "lng": 121.519099,
+      "address": "臺北市大同區雙連街2號",
+      "mapUrl": "https://maps.app.goo.gl/BGZk4g473LLzqpi69",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E5%86%B0%E8%AE%83",
+      "source": "https://r923e.blog109.fc2.com/blog-entry-2737.html"
+    },
+    "臺一牛奶大王": {
+      "lat": 25.01895,
+      "lng": 121.533538,
+      "address": "臺北市大安區新生南路三段82號",
+      "mapUrl": "https://maps.app.goo.gl/MhMrDtvAcZxgZWx87",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E8%87%BA%E4%B8%80%E7%89%9B%E5%A5%B6%E5%A4%A7%E7%8E%8B",
+      "source": "https://r923e.blog109.fc2.com/blog-entry-1032.html"
+    },
+    "小王煮瓜": {
+      "lat": 25.03929,
+      "lng": 121.49857,
+      "address": "臺北市萬華區華西街17-4號",
+      "mapUrl": "https://maps.app.goo.gl/KLn1EHzsx4WJcr7C6",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E5%B0%8F%E7%8E%8B%E7%85%AE%E7%93%9C",
+      "source": "https://mapcarta.com/N7497601385"
+    },
+    "劉山東牛肉麺": {
+      "lat": 25.0457222,
+      "lng": 121.5137778,
+      "address": "臺北市中正區開封街一段14巷2號",
+      "mapUrl": "https://maps.app.goo.gl/ZFB7tPostr5Wr5bt7",
+      "searchUrl": "https://www.google.com/maps/search/?api=1&query=%E5%8A%89%E5%B1%B1%E6%9D%B1%E7%89%9B%E8%82%89%E9%BA%BA",
+      "source": "https://johorkaki.blogspot.com/2018/03/liu-shandong-beef-noodles-70-years-of.html"
+    }
+  }
+}
