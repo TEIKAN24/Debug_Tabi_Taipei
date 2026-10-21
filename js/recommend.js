@@ -5,7 +5,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.83';
+  const VERSION='30.9.85';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -81,6 +81,7 @@
   const state={timeMode:'current',time:defaultBand(),areaMode:'all',area:'',genre:'',volume:'',scene:'',page:0,locationStatus:'idle',geoRequested:false,position:null};
   const GEO_MAX_METERS=500; // Honest straight-line radius for the first verified batch.
   let coordinates=new Map(),markets=new Map(),coordinatesReady=false,coordinatesFailed=false;
+  let nearbyVenues=[],nearbyReady=false,nearbyCatalog=null;
   // Static same-origin JSON; no key, request to mapping APIs, or GPS upload.
   async function loadCoordinates(){
     try{
@@ -108,6 +109,44 @@
     if(state.areaMode==='current'){syncUI();renderResults();}
   }
   const FEATURED=/おすすめ|ミシュラン|ビブグルマン|孤独のグルメ|超行列|行列店|一番人気|高人気|人気店|人気老舗/;
+  // v30.9.85: separate award-sourced venue index, included only in 500m GPS mode.
+  // No geolocation is sent to a server; all distance checks run locally.
+  async function loadNearbyVenues(){
+    try{
+      const response=await fetch(`food/nearby.json?v=${VERSION}`,{cache:'no-store'});
+      if(!response.ok)throw new Error('nearby dataset unavailable');
+      const data=await response.json();
+      if(data.schemaVersion!==1||!Array.isArray(data.venues))throw new Error('nearby schema invalid');
+      nearbyVenues=data.venues.filter(r=>r&&typeof r.name==='string'&&
+        Number.isFinite(r.lat)&&Number.isFinite(r.lng)&&
+        r.lat>24.95&&r.lat<25.25&&r.lng>121.35&&r.lng<121.72&&
+        /^https:\/\/www\.google\.com\/maps\/|^https:\/\/maps\.app\.goo\.gl\//.test(r.mapUrl||''));
+      nearbyCatalog=null;nearbyReady=true;
+    }catch(e){nearbyReady=false;nearbyVenues=[];}
+    if(state.areaMode==='current'){syncUI();renderResults();}
+  }
+  function readNearbyCatalog(){
+    if(nearbyCatalog)return nearbyCatalog;
+    nearbyCatalog=nearbyVenues.map((r,index)=>{
+      // Separate from the static guide's editorial rankings. Curated original
+      // guide venues still receive their established priority where relevant.
+      const row={name:r.name,url:r.mapUrl,sourceMapUrls:[r.mapUrl],
+        category:r.category||'meal',details:r.specialty||'',
+        curated:0,featured:false,chain:CHAIN_NAMES.test(r.name),
+        area:'',order:10000+index,lat:r.lat,lng:r.lng,
+        brandId:null,nearbySource:true,locationConfidence:r.locationConfidence,
+        address:r.address||'',district:r.district||'',hours:r.time||'',
+        awards:r.awards||{},specialty:r.specialty||'',
+        displayType:r.displayType||'グルメ'};
+      const inferred=inferVenueTags(row);
+      // Award-winning desserts at a regular restaurant do not turn that
+      // restaurant into a dedicated sweets venue.
+      if(row.category!=='sweet'&&row.category!=='cafe')inferred.genre=inferred.genre.filter(g=>g!=='sweet');
+      if(row.category==='meal'){inferred.volume=['hearty'];inferred.scene=[];}
+      return {...row,...inferred,displayType:r.displayType||inferred.displayType};
+    });
+    return nearbyCatalog;
+  }
   const normalize=t=>String(t||'').replace(/\s+/g,'').toLowerCase();
   const categoryOf=(tab,group)=>{
     if(/朝ごはん/.test(tab))return 'breakfast';
@@ -299,6 +338,14 @@
     [/老舗/, '昔ながらの台湾の味をたどる一軒。'],
   ];
   function reason(item){
+    if(item.nearbySource){
+      const dish=String(item.specialty||'').split(/[；;、]/)[0].replace(/^(?:500碗|500甜|500盤)\s*\d{4}\s*[:：]\s*/, '').trim();
+      if(dish&&dish.length<=43)return `受賞・推薦で紹介された「${dish}」をチェック。`;
+      const michelin=String(item.awards?.michelin||'');
+      if(michelin)return `ミシュランガイド掲載の一軒。営業時間・予約条件は要確認。`;
+      if(item.awards?.summary)return `現地のグルメ企画で紹介された一軒。`;
+      return '街歩きの途中に立ち寄りたい一軒。';
+    }
     const precise=venueReasons.get(item.name);
     if(precise)return precise;
     const details=item.details||'';
@@ -351,8 +398,10 @@
   }
   const MAIN_SHARE=.4;
   function recommendedPool(){
-    const timeCandidates=readCatalog().filter(item=>eligibleTime(item,state.time));
-    const useGPS=state.areaMode==='current'&&state.locationStatus==='success'&&!!state.position&&coordinatesReady;
+    const useGPS=state.areaMode==='current'&&state.locationStatus==='success'&&!!state.position&&(coordinatesReady||nearbyReady);
+    // Nearby import must not contaminate non-GPS area browsing.
+    const sourceItems=useGPS?[...readCatalog(),...readNearbyCatalog()]:readCatalog();
+    const timeCandidates=sourceItems.filter(item=>eligibleTime(item,state.time));
     // Only verified, specifically matched storefronts take part in GPS ranking.
     // An unknown location is never assumed to be at a neighborhood midpoint.
     const withinRange=useGPS?closestPerBrand(timeCandidates.map(item=>{
@@ -388,6 +437,7 @@
       const matched=criteria.filter(c=>c.fn(item));
       const score=matched.reduce((sum,c)=>sum+c.weight,0)
         +(item.featured?1:0) // visibility comes from the rotating slot-1 rule below
+        +(item.nearbySource?(item.locationConfidence==='high'?0:item.locationConfidence==='medium'?-3:-10):0)
         +(state.area&&state.areaMode!=='current'&&item.chain?6:0) // not a proxy for branch proximity
         // Distance in bands (≈0–170 / 170–340 / 340–500 m): shops at a similar
         // walk rotate daily instead of the single nearest one always winning.
@@ -525,7 +575,7 @@
     for(const b of genreControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.genre));
     for(const b of volumeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.volume));
     for(const b of sceneControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.scene));
-    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:coordinatesFailed?'店舗の座標データを読み込めませんでした。通常のおすすめを表示します。':!coordinatesReady?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${coordinates.size}店・ブランドからご案内します。`};
+    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!coordinatesReady&&!nearbyReady)?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${coordinates.size+nearbyVenues.length}候補からご案内します。`};
     locationStatus.textContent=state.areaMode==='current'?messages[state.locationStatus]||'': '';
     locationStatus.hidden=!locationStatus.textContent;
   }
@@ -646,7 +696,7 @@
     const target=document.getElementById('recommend-debug-diagnostics');
     if(!target)return;
     try{
-      const rows=readCatalog();
+      const rows=[...readCatalog(),...readNearbyCatalog()];
       const positioned=rows.filter(x=>Array.isArray(x.branches)?x.branches.length:(Number.isFinite(x.lat)&&Number.isFinite(x.lng))||!!x.marketPoint);
       let near=0,eligible=0;
       if(state.position){
@@ -676,7 +726,7 @@
     if(!ordered.length){
       more.hidden=true;
       relaxed.hidden=false;
-      relaxed.textContent=timeCount===0?(useGPS?'直線500m以内に位置確認済みの該当店はありません。':'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。'):'該当店が見つかりません。';
+      relaxed.textContent=timeCount===0?(useGPS?'直線500m以内に位置データ登録済みの該当店はありません。':'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。'):'該当店が見つかりません。';
       results.append(el('p','recommend-no-data','おすすめ情報を準備中です。'));
       count.textContent='0軒';reportDebug(0);return;
     }
@@ -687,11 +737,11 @@
     relaxed.hidden=!lifted.length&&!nearbyFallback;
     relaxed.textContent=lifted.length?`条件を少しゆるめました（${lifted.join('・')}）。時間帯は変更していません。`:'';
     if(useGPS&&nearbyFallback){
-      locationStatus.textContent='この時間帯は直線500m以内に位置確認済みの店がありません。';
+      locationStatus.textContent='この時間帯は直線500m以内に位置データ登録済みの店がありません。';
       locationStatus.hidden=false;
     }
     if(useGPS&&!nearbyFallback){
-      locationStatus.textContent=`現在地から直線500m以内の位置確認済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size}店・ブランド）。`;
+      locationStatus.textContent=`現在地から直線500m以内の位置データ登録済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size+nearbyVenues.length}候補）。`;
       locationStatus.hidden=false;
     }
     reportDebug(ordered.length);
@@ -722,10 +772,10 @@
       results.append(card);
     });
     more.hidden=ordered.length<=3;
-    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useGPS&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useGPS&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。`;
+    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useGPS&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useGPS&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。${slice.some(x=>x.nearbySource&&!x.address)?'住所未確認の店舗は、地図上で店名と場所をご確認ください。':''}`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
-  syncUI();renderResults();loadCoordinates();
+  syncUI();renderResults();loadCoordinates();loadNearbyVenues();
   // Safari often restores a previous page snapshot from the Back/Forward cache.
   // Recompute results from current DOM, without requesting location.
   window.addEventListener('pageshow',event=>{
