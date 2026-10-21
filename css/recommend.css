@@ -1020,3 +1020,83 @@ html[data-theme="light"] .recommend-sort-option[aria-pressed="true"]{color:#5A3D
   .recommend-intro{margin-bottom:18px;}
   .recommend-result-head{margin-top:20px;}
 }
+
+/* v30.9.96 — original 食べる・飲む labels, instead of generated restaurant prose. */
+.recommend-guide-tags{
+  display:flex;align-items:center;flex-wrap:wrap;gap:4px 5px;
+  margin-top:8px;min-width:0;max-width:100%;
+}
+.recommend-guide-tag{
+  display:inline-flex;align-items:center;max-width:100%;min-width:0;
+  padding:3px 7px;border:1px solid #484553;border-radius:5px;
+  background:#2A2930;color:#D8D3DE;
+  font:550 10px/1.3 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.recommend-guide-tag-featured{color:#EBC489;background:#423A2D;border-color:#66533B;}
+.recommend-guide-tag-caution{color:#F4A89B;background:#3F3032;border-color:#725252;}
+html[data-theme="light"] .recommend-guide-tag{color:#52636C;background:#F4F5F7;border-color:#CCD6DA;}
+html[data-theme="light"] .recommend-guide-tag-featured{color:#815A1B;background:#F8EEDB;border-color:#DDC79E;}
+html[data-theme="light"] .recommend-guide-tag-caution{color:#A94338;background:#FFF1EF;border-color:#DBB7B3;}
+@media(max-width:600px){
+  .recommend-guide-tags{margin-top:6px;gap:4px;max-height:43px;overflow:hidden;}
+  .recommend-guide-tag{font-size:9.5px;padding:3px 6px;max-width:100%;}
+  .recommend-card{min-width:0;}
+}
+@media(max-width:600px) and (max-height:720px){
+  .recommend-guide-tags{margin-top:4px;max-height:38px;}
+  .recommend-guide-tag{font-size:9px;padding:2px 6px;}
+}
+
+
+/* v30.9.97 — redesigned recommendation card to match the provided comp. */
+.recommend-card{padding:0!important;border-radius:20px!important;border:1px solid #57525d!important;background:linear-gradient(90deg,#2B2B2E 0%,#2E2D31 100%)!important;overflow:hidden;box-shadow:none!important;min-height:142px!important;}
+.recommend-card-shell{display:grid;grid-template-columns:minmax(0,1fr) 156px;gap:14px;align-items:stretch;min-height:142px;padding:18px 22px 16px;box-sizing:border-box;}
+.recommend-card-main{min-width:0;display:flex;flex-direction:column;justify-content:flex-start;}
+.recommend-card-type{font:760 14px/1.2 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;color:#F1EEF6;letter-spacing:.01em;}
+.recommend-venue{margin-top:8px;color:#FBF8FF!important;text-decoration:none;font-size:clamp(17px,5.6vw,24px)!important;font-weight:790;line-height:1.12!important;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-wrap:balance;}
+.recommend-reason{margin:16px 0 0;font-size:12px!important;line-height:1.45!important;color:#9892A1!important;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;max-width:100%;}
+.recommend-card-side{min-width:0;display:grid;grid-template-rows:auto 1fr auto;justify-items:end;align-items:start;gap:10px;}
+.recommend-distance-pill,.recommend-distance-pill-empty{display:inline-flex;align-items:center;gap:7px;max-width:100%;padding:8px 13px;border-radius:999px;border:1px solid #66616B;background:rgba(34,34,36,.45);color:#FBF8FF;font:650 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;white-space:nowrap;}
+.recommend-distance-pill-empty{visibility:hidden;}
+.recommend-distance-pill-icon{display:inline-flex;width:16px;height:16px;align-items:center;justify-content:center;flex:0 0 16px;color:#FBF8FF;}
+.recommend-distance-pill-icon svg{display:block;width:100%;height:100%;}
+.recommend-distance-pill-label{overflow:hidden;text-overflow:ellipsis;}
+.recommend-card-stars{min-height:28px;display:flex;align-items:center;justify-content:flex-end;gap:6px;align-self:center;color:#7A674C;}
+.recommend-card-star{display:inline-flex;align-items:center;justify-content:center;font-size:20px;line-height:1;font-weight:400;transform:translateY(-1px);}
+.recommend-guide-tags{display:flex;justify-content:flex-end;align-items:flex-end;align-content:flex-end;flex-wrap:wrap;gap:7px 8px;margin-top:0!important;min-width:0;max-width:100%;}
+.recommend-guide-tag{padding:8px 13px!important;border-radius:14px!important;border:1px solid #66616B!important;background:#2E2D31!important;color:#F4F0F9!important;font:700 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif!important;white-space:nowrap;}
+.recommend-guide-tag-featured{color:#E4C38D!important;background:#89704A55!important;border-color:#B58B49!important;}
+.recommend-guide-tag-caution{color:#F4B2A7!important;background:#6E403F55!important;border-color:#8E5D58!important;}
+html[data-theme="light"] .recommend-card{background:linear-gradient(90deg,#FFFFFF 0%,#FBF8FD 100%)!important;border-color:#D8D0DF!important;}
+html[data-theme="light"] .recommend-card-type{color:#46365B;}
+html[data-theme="light"] .recommend-venue{color:#2F2340!important;}
+html[data-theme="light"] .recommend-reason{color:#7F748E!important;}
+html[data-theme="light"] .recommend-distance-pill{background:#FFFFFF;color:#3B2F4E;border-color:#D0C6DD;}
+html[data-theme="light"] .recommend-distance-pill-icon{color:#6D57A3;}
+html[data-theme="light"] .recommend-card-stars{color:#AF8A4D;}
+html[data-theme="light"] .recommend-guide-tag{background:#F7F4FA!important;color:#4B3E5D!important;border-color:#D7CDDF!important;}
+html[data-theme="light"] .recommend-guide-tag-featured{background:#F6EDD9!important;color:#8A6428!important;border-color:#D7B67B!important;}
+html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!important;color:#A84C43!important;border-color:#E0B7B2!important;}
+@media(max-width:600px){
+ .recommend-card{min-height:132px!important;border-radius:18px!important;}
+ .recommend-card-shell{grid-template-columns:minmax(0,1fr) 132px;gap:10px;min-height:132px;padding:14px 15px 13px;}
+ .recommend-card-type{font-size:11px;line-height:1.2;}
+ .recommend-venue{margin-top:6px;font-size:clamp(14px,6vw,18px)!important;line-height:1.1!important;}
+ .recommend-reason{margin-top:12px;font-size:10.5px!important;line-height:1.35!important;-webkit-line-clamp:2;}
+ .recommend-distance-pill{padding:7px 10px;font-size:10px;gap:5px;}
+ .recommend-distance-pill-icon{width:13px;height:13px;flex-basis:13px;}
+ .recommend-card-stars{min-height:22px;gap:4px;}
+ .recommend-card-star{font-size:16px;}
+ .recommend-guide-tags{gap:5px 6px;}
+ .recommend-guide-tag{padding:7px 10px!important;border-radius:12px!important;font-size:10px!important;}
+}
+@media(max-width:360px){
+ .recommend-card-shell{grid-template-columns:minmax(0,1fr) 116px;padding:12px 12px 11px;gap:8px;}
+ .recommend-card{min-height:124px!important;}
+ .recommend-card-type{font-size:10px;}
+ .recommend-venue{font-size:13px!important;}
+ .recommend-reason{font-size:10px!important;}
+ .recommend-distance-pill{padding:6px 9px;font-size:9.5px;}
+ .recommend-guide-tag{padding:6px 8px!important;font-size:9px!important;}
+}

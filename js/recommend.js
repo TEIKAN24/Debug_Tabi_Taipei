@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.90 — same-page location/station switching with custom readable line and station menus.
+/* TAIPEI CITY GUIDE v30.9.96 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
    v30.9.83: venues.json — coordinates for the 6 bars.
@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.95';
+  const VERSION='30.9.97';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -90,7 +90,15 @@
       const key=nearbyBrandKey(item),old=best.get(key);
       if(!old||item.distanceMeters<old.distanceMeters)best.set(key,item);
     }
-    return [...best.values()];
+    // A guide coordinate and an award-imported coordinate may use different
+    // brand keys even for the identical storefront. Deduplicate display names
+    // once more before ranking, keeping the nearest known storefront.
+    const unique=new Map();
+    for(const item of best.values()){
+      const key=normalizeNoteName(item.name),previous=unique.get(key);
+      if(!previous||item.distanceMeters<previous.distanceMeters)unique.set(key,item);
+    }
+    return [...unique.values()];
   }
   const AREA_MATCH=[['nakayama',/赤峰|中山駅/],['dihua',/迪化|大稻埕/],['dongmen',/永康|東門/],['xinyi',/信義/],['taipei',/台北駅/],['ximen',/西門/],['gongguan',/公館/],['east',/東区/]];
   function taipeiNow(){return new Date();}
@@ -187,7 +195,7 @@
         if(point&&Number.isFinite(point.lat)&&Number.isFinite(point.lng)&&point.lat>=24.7&&point.lat<=25.4&&point.lng>=121.2&&point.lng<=122)
           marketPoints.set(name,{lat:point.lat,lng:point.lng});
       }
-      coordinates=clean;markets=marketPoints;coordinatesReady=true;catalog=null;
+      coordinates=clean;markets=marketPoints;coordinatesReady=true;catalog=null;nearbyCatalog=null;
     }catch(_){coordinatesFailed=true;}
     // Updating metadata never requests location or stores the user's coordinates.
     if(state.areaMode==='current'||state.areaMode==='station'){syncUI();renderResults();}
@@ -211,10 +219,42 @@
   }
   function readNearbyCatalog(){
     if(nearbyCatalog)return nearbyCatalog;
+    // Match nearby records to the human-curated food directory. An exact
+    // name can be reused at a different branch, so coordinate conflicts are
+    // checked rather than blindly transplanting a shop's labels.
+    const guideByName=new Map();
+    const guideByMap=new Map();
+    const foodPicks=readCatalog().filter(item=>item.guidePick);
+    for(const pick of foodPicks){
+      const key=normalizeNoteName(pick.name);
+      if(!guideByName.has(key))guideByName.set(key,[]);
+      guideByName.get(key).push(pick);
+      for(const url of pick.sourceMapUrls||[])guideByMap.set(url,pick);
+    }
     nearbyCatalog=nearbyVenues.map((r,index)=>{
-      // Separate from the static guide's editorial rankings. Curated original
-      // guide venues still receive their established priority where relevant.
+      const candidates=guideByName.get(normalizeNoteName(r.name))||[];
+      let guidePick=guideByMap.get(r.mapUrl)||null;
+      if(!guidePick&&candidates.length===1){
+        const match=candidates[0];
+        const points=match.branches||((Number.isFinite(match.lat)&&Number.isFinite(match.lng))?[match]:[]);
+        // Unknown guide coordinates: exact unique name is sufficient.
+        // Known coordinates: do not attach tags to an unrelated branch.
+        if(!points.length||points.some(p=>distanceMeters(p.lat,p.lng,r.lat,r.lng)<=250))guidePick=match;
+      }
+      // Nearby aliases may contain an extra branch/designator; only match
+      // when the guide venue actually has a verified nearby coordinate.
+      if(!guidePick){
+        const rn=normalizeNoteName(r.name);
+        const aliases=foodPicks.filter(p=>{
+          const pn=normalizeNoteName(p.name);
+          if(Math.min(pn.length,rn.length)<5||!(pn.includes(rn)||rn.includes(pn)))return false;
+          const points=p.branches||((Number.isFinite(p.lat)&&Number.isFinite(p.lng))?[p]:[]);
+          return points.some(q=>distanceMeters(q.lat,q.lng,r.lat,r.lng)<=100);
+        });
+        if(aliases.length===1)guidePick=aliases[0];
+      }
       const row={name:r.name,url:r.mapUrl,sourceMapUrls:[r.mapUrl],
+        guidePick:!!guidePick,guideTags:guidePick?.guideTags||[],
         category:r.category||'meal',details:r.specialty||'',
         curated:0,featured:false,chain:CHAIN_NAMES.test(r.name),
         area:'',order:10000+index,lat:r.lat,lng:r.lng,
@@ -266,7 +306,8 @@
         const group=li.closest('details.nested-accordion')?.querySelector(':scope > summary')?.textContent.trim()||'';
         if(isArea&&!/グルメ|カフェ|スイーツ/.test(group))return;
         const name=a.textContent.trim();if(!name)return;
-        const tags=[...li.querySelectorAll('.venue-tag')].map(n=>n.textContent.trim()).filter(Boolean);
+        const tagNodes=[...li.querySelectorAll('.venue-tag')];
+        const tags=tagNodes.map(n=>n.textContent.trim()).filter(Boolean);
         const notes=li.querySelector('.venue-extra-note')?.textContent.trim()||'';
         // The published guide stores the user's editorial text as a bare text
         // node directly after the map link, e.g. <a>店名</a>（冷麺、ローカル）.
@@ -275,6 +316,23 @@
         const inlineNote=[...li.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE)
           .map(n=>n.textContent.trim()).join(' ').trim();
         const guideNote=[inlineNote,notes].filter(Boolean).join('、').trim();
+        // Reuse the labels from the author's original 食べる・飲む directory.
+        // On the published page guide.js creates .venue-tag elements; the
+        // fallback also works if this module is tested without guide.js.
+        const rawGuideTags=tags.length?tags:
+          (inlineNote.match(/^[（(]([^）)]*)[）)]$/)?.[1]||'')
+            .split(/[、，,]/).map(t=>t.trim()).filter(t=>t&&t.length<=22&&!/[。！？]/.test(t));
+        const extraGuideTags=(li.dataset.curatedTags||'').split('、').map(t=>t.trim()).filter(Boolean);
+        const editorialTags=[];
+        if(!isArea){
+          for(const text of [...rawGuideTags,...extraGuideTags]){
+            if(editorialTags.some(t=>t.text===text))continue;
+            const node=tagNodes.find(n=>n.textContent.trim()===text);
+            const tone=node?.classList.contains('venue-tag--caution')||/八角なし|注意|臭い|⚠/.test(text)?'caution':
+              node?.classList.contains('venue-tag--featured')||/おすすめ|ミシュラン|孤独のグルメ|超行列|一番人気|高人気|ビブグルマン|人気店|行列店|水出し珈琲/.test(text)?'featured':'normal';
+            editorialTags.push({text,tone});
+          }
+        }
         const info=[...tags,guideNote].filter(Boolean).join('、');
         const key=normalize(name);
         const area=isArea?(AREA_MATCH.find(([code,rx])=>rx.test(tab))?.[0]||''):'';
@@ -288,12 +346,15 @@
         const sourceMapUrl=a.dataset.originalMapsUrl || a.href;
         // Night-market stalls are grouped under 「〇〇夜市おすすめ…」.
         const market=category==='nightmarket'?(group.match(/^(.+?夜市)/)?.[1]||''):'';
-        const record={name,url:a.href,sourceMapUrls:[sourceMapUrl],market,area,category,details:info,guideNote,featured,chain:CHAIN_NAMES.test(name),order:found.size};
+        const record={name,url:a.href,sourceMapUrls:[sourceMapUrl],market,area,category,details:info,guideNote,
+          guidePick:!isArea,guideTags:editorialTags,featured,chain:CHAIN_NAMES.test(name),order:found.size};
         const existing=found.get(key);
         if(!existing){found.set(key,record);return;}
         if(isArea){existing.area=area;existing.url=a.href;}
         if(!existing.sourceMapUrls.includes(sourceMapUrl))existing.sourceMapUrls.push(sourceMapUrl);
         existing.featured||=featured;
+        existing.guidePick||=record.guidePick;
+        if(!existing.guideTags?.length&&record.guideTags?.length)existing.guideTags=record.guideTags;
         existing.chain||=record.chain;
         existing.details=[...new Set([existing.details,info].filter(Boolean))].join('、').slice(0,135);
         if(!existing.guideNote&&guideNote)existing.guideNote=guideNote;
@@ -447,6 +508,24 @@
     // than suggesting an actual visitor opinion we do not have evidence for.
     return '';
   }
+  function michelinStars(item){
+    const parts=[item?.awards?.michelin,item?.awards?.summary,item?.details,(item?.guideTags||[]).map(t=>t.text).join('、')].filter(Boolean).join(' ');
+    if(/(?:米其林|ミシュラン).{0,3}(?:三つ星|三星|3星|★★★|\*\*\*)/.test(parts))return 3;
+    if(/(?:米其林|ミシュラン).{0,3}(?:二つ星|二星|2星|★★|\*\*)/.test(parts))return 2;
+    if(/(?:米其林|ミシュラン).{0,3}(?:一つ星|一星|1星|★|\*)/.test(parts))return 1;
+    return 0;
+  }
+  function cardTags(item){
+    const omit=/^(?:チェーン店|連鎖店|チェーン|ドリンク|カフェ|スイーツ|麺類|ごはん系|ごはん料理|小籠包・点心|鍋料理|夜市|台湾小吃|朝ごはん|熱炒|バー|グルメ)$/;
+    const tags=[];
+    for(const tag of item.guideTags||[]){
+      if(!tag?.text||omit.test(tag.text))continue;
+      if(tags.some(x=>x.text===tag.text))continue;
+      tags.push(tag);
+    }
+    return tags;
+  }
+
 
   // Stable seeded PRNG and date in Taipei: shareable daily picks that change
   // only when the local Taipei date or explicitly selected conditions change.
@@ -514,6 +593,7 @@
     const scored=pool.map(item=>{
       const matched=criteria.filter(c=>c.fn(item));
       const score=matched.reduce((sum,c)=>sum+c.weight,0)
+        +(item.guidePick?(item.chain?12:26):0) // original food picks rank ahead; everyday chains get a smaller boost
         +(item.featured?1:0) // visibility comes from the rotating slot-1 rule below
         +(item.nearbySource?(item.locationConfidence==='high'?0:item.locationConfidence==='medium'?-3:-10):0)
         +(state.area&&state.areaMode==='all'&&item.chain?6:0) // not a proxy for branch proximity
@@ -554,6 +634,7 @@
         const v=item.score+7*noise(item,step)-4*recent.filter(k=>k===item.diversityKey).length;
         if(v>value){pick=item;value=v;}
       }
+      if(!pick)break; // Exhausted unique venues; no repeated cards or null item.
       take(pick);
     }
     // Distance order is strictly ascending straight-line metres. Reuse the
@@ -965,29 +1046,46 @@
     reportDebug(ordered.length);
     slice.forEach(item=>{
       const card=el('article','recommend-card');
-      const top=el('div','recommend-card-top');
-      top.append(el('span','recommend-category',item.displayType||typeLabel[item.category]||'グルメ'));
-      // Area sits beside the genre on the upper right. Reuse the exact SVG
-      // path of the area selector, scaled for the compact card eyebrow.
+      const shell=el('div','recommend-card-shell');
+      const main=el('div','recommend-card-main');
+      const side=el('div','recommend-card-side');
+      main.append(el('div','recommend-card-type',item.displayType||typeLabel[item.category]||'グルメ'));
+      const a=el('a','recommend-venue',item.name);a.href=item.nearestMapUrl||item.url;a.target='_blank';a.rel='noopener noreferrer';main.append(a);
+      const note=reason(item);
+      if(note){
+        const noteEl=el('p','recommend-reason',note);
+        noteEl.title=note;
+        main.append(noteEl);
+      }
       const distanceText=Number.isFinite(item.distanceMeters)?`約${formatDistance(item.distanceMeters)}`:'';
-      const locationText=item.market?(distanceText?`${item.market}内・${distanceText}`:`${item.market}内`):
-        (distanceText||AREAS.find(([code])=>code===item.area)?.[1]||'');
-      if(locationText){
-        const location=el('span','recommend-place');
-        if(Number.isFinite(item.distanceMeters))location.classList.add('recommend-distance-badge');
-        if(distanceText)location.setAttribute('aria-label',item.market
-          ?`${item.market}内。${item.distanceToMarket?'夜市まで':state.areaMode==='station'?'選択駅から':'現在地から'}の直線距離 ${distanceText}`
-          :`${state.areaMode==='station'?'選択駅':'現在地'}からの直線距離 ${distanceText}`);
-        const pin=el('span','recommend-place-pin');
+      if(distanceText){
+        const badge=el('span','recommend-distance-pill');
+        badge.setAttribute('aria-label',`${state.areaMode==='station'?'選択駅':'現在地'}からの直線距離 ${distanceText}`);
+        const pin=el('span','recommend-distance-pill-icon');
         pin.setAttribute('aria-hidden','true');
         pin.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
-        location.append(pin,el('span','recommend-place-label',locationText));
-        top.append(location);
+        badge.append(pin,el('span','recommend-distance-pill-label',distanceText));
+        side.append(badge);
+      }else side.append(el('span','recommend-distance-pill recommend-distance-pill-empty',''));
+      const starsCount=Math.min(3,michelinStars(item));
+      const starsWrap=el('div','recommend-card-stars');
+      starsWrap.setAttribute('aria-label',starsCount?`ミシュラン${starsCount}つ星`:'ミシュラン評価なし');
+      if(starsCount){for(let i=0;i<starsCount;i++)starsWrap.append(el('span','recommend-card-star','✿'));}
+      side.append(starsWrap);
+      const tags=cardTags(item);
+      if(tags.length){
+        const tagList=el('div','recommend-guide-tags');
+        tagList.setAttribute('aria-label','ガイドの店情報');
+        for(const tag of tags){
+          const chip=el('span','recommend-guide-tag',tag.text);
+          if(tag.tone==='featured')chip.classList.add('recommend-guide-tag-featured');
+          if(tag.tone==='caution')chip.classList.add('recommend-guide-tag-caution');
+          tagList.append(chip);
+        }
+        side.append(tagList);
       }
-      card.append(top);
-      const a=el('a','recommend-venue',item.name);a.href=item.nearestMapUrl||item.url;a.target='_blank';a.rel='noopener noreferrer';card.append(a);
-      const description=reason(item);
-      if(description)card.append(el('p','recommend-reason',description));
+      shell.append(main,side);
+      card.append(shell);
       results.append(card);
     });
     more.hidden=ordered.length<=3;
