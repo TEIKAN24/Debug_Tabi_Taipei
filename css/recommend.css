@@ -894,9 +894,9 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
 
 
 /* v30.9.89 — station menu readability, slimmer corners, editorial spacing. */
-/* Keep the station selector shape consistent with the time and pin controls. */
+/* v30.9.91 — match the current-location district frame corners to the station selector. */
 .recommend-controls{z-index:45;}
-.recommend-picker-station{border-radius:9px;}
+.recommend-picker-location,.recommend-picker-station{border-radius:9px;}
 .recommend-native-field{border-radius:6px;}
 .recommend-native-line{border-radius:7px 7px 2px 2px;}
 .recommend-native-field + .recommend-native-field{border-radius:0 0 7px 7px;}
