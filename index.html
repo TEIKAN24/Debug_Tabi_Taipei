@@ -65,7 +65,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
   });
  });
 })();</script><link rel="stylesheet" href="css/guide.css?v=30.9.81"/>
-<link rel="stylesheet" href="css/recommend.css?v=30.9.91"/>
+<link rel="stylesheet" href="css/recommend.css?v=30.9.94"/>
 
 
 
@@ -184,7 +184,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
     <details class="recommend-advanced" id="recommend-advanced">
      <summary class="recommend-control recommend-advanced-trigger" aria-label="さらに条件を指定"><span class="recommend-advanced-label">さらに条件を指定</span><span class="recommend-advanced-plus" aria-hidden="true"></span></summary>
      <div class="recommend-advanced-panel">
-      <h3 id="recommend-mood-title">料理ジャンル</h3>
+      <h3 id="recommend-mood-title">料理</h3>
       <div class="recommend-choices" id="recommend-mood-options" role="group" aria-labelledby="recommend-mood-title"></div>
       <h3 class="recommend-volume-heading" id="recommend-volume-title">ボリューム</h3>
       <div class="recommend-choices" id="recommend-volume-options" role="group" aria-labelledby="recommend-volume-title"></div>
@@ -196,6 +196,10 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
    </div>
   </div>
 <span class="recommend-count" id="recommend-count">3軒をピックアップ</span></div>
+ <div class="recommend-sort" role="group" aria-label="おすすめの表示順">
+  <button type="button" id="recommend-sort-recommended" class="recommend-sort-option" aria-pressed="true">おすすめ順</button>
+  <button type="button" id="recommend-sort-distance" class="recommend-sort-option" aria-pressed="false" disabled title="現在地を取得するか、駅を選択すると使えます">距離順</button>
+ </div>
  <p class="recommend-relaxed" id="recommend-relaxed" role="status" aria-live="polite" hidden></p>
  <div id="recommend-results" class="recommend-results" aria-live="polite"></div>
  <button class="recommend-more" id="recommend-more" type="button"><span aria-hidden="true">↻</span> ほかの3軒を見る</button>
@@ -386,5 +390,5 @@ html[data-theme="light"] #recommend-debug-location option{background:#fff;color:
 html[data-theme="light"] #recommend-debug-diagnostics{background:#f3f8f4;color:#244331;border-color:#bfd5c6;}
 @media(max-height:560px){#recommend-debug-fab{bottom:calc(14px + env(safe-area-inset-bottom,0px));}#recommend-debug-location{bottom:calc(65px + env(safe-area-inset-bottom,0px));max-height:65dvh;}}
 </style>
-<script src="js/recommend.js?v=30.9.93"></script>
+<script src="js/recommend.js?v=30.9.94"></script>
 </body></html>

@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.93';
+  const VERSION='30.9.94';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -15,6 +15,8 @@
   const relaxed=document.getElementById('recommend-relaxed');
   const disclaimer=document.getElementById('recommend-disclaimer');
   const more=document.getElementById('recommend-more');
+  const sortRecommend=document.getElementById('recommend-sort-recommended');
+  const sortDistance=document.getElementById('recommend-sort-distance');
   const timeButton=document.getElementById('recommend-time-trigger');
   const timeLabel=document.getElementById('recommend-time-label');
   const timeCaption=document.getElementById('recommend-time-caption');
@@ -50,7 +52,7 @@
   const body=document.body;
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const TIME=[['current','現在時刻'],['morning','朝'],['lunch','昼'],['afternoon','午後'],['night','夜'],['late','深夜']];
-  const GENRES=[['taiwan','🇹🇼 台湾料理'],['rice','🍚 ごはん系'],['noodle','🍜 麺類'],['dumpling','🥟 小籠包・点心'],['hotpot','🍲 鍋料理'],['sweet','🍧 スイーツ'],['drink','🧋 ドリンク']];
+  const GENRES=[['rice','🍚 ごはん系'],['noodle','🍜 麺類'],['dumpling','🥟 小籠包・点心'],['sweet','🍧 スイーツ'],['drink','🧋 ドリンク'],['cafe','☕️ カフェ']];
   const VOLUMES=[['light','🥟 軽く'],['hearty','🍜 がっつり']];
   const SCENES=[['walk','🚶 食べ歩き'],['nightmarket','🌙 夜市を楽しむ'],['rest','☕ ひと休み']];
   const AREAS=[
@@ -96,8 +98,9 @@
   function taipeiNow(){return new Date();}
   function taipeiTimeLabel(){return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(taipeiNow());}
   function taipeiHour(){return Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hourCycle:'h23'}).formatToParts(taipeiNow()).find(p=>p.type==='hour')?.value??12);}
+  // Taipei time bands: 朝 05–10:59, 昼 11–13:59, 午後 14–16:59, 夜 17–22:59, 深夜 23–04:59.
   function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<14?'lunch':h>=14&&h<17?'afternoon':h>=17&&h<23?'night':'late';}
-  const state={timeMode:'current',time:defaultBand(),areaMode:'current',area:'',line:'',stationCode:'',genre:'',volume:'',scene:'',page:0,locationStatus:'idle',geoRequested:false,position:null};
+  const state={timeMode:'current',time:defaultBand(),areaMode:'current',area:'',line:'',stationCode:'',genre:'',volume:'',scene:'',sortMode:'recommend',page:0,locationStatus:'idle',geoRequested:false,position:null};
   // Static station coordinates are used on-device: no geolocation permission,
   // API key, third-party request or location upload in station mode.
   let metroLines=[],metroStations=[],stationsReady=false,stationsFailed=false;
@@ -289,7 +292,8 @@
     if(time==='lunch')return !['breakfast','nightmarket','bar','izakaya'].includes(c);
     if(time==='afternoon')return !['breakfast','nightmarket','bar','izakaya'].includes(c);
     if(time==='night')return c!=='breakfast';
-    return ['bar','izakaya'].includes(c)||/24h|24時間|深夜まで|夜カフェ/.test(s);
+    if(time==='late')return ['bar','izakaya'].includes(c)||/24h|24時間|深夜まで|夜カフェ/.test(s);
+    return false;
   }
   // The three recommendation dimensions are independent and may contain
   // multiple values. They are editorial estimates, not verified portion sizes.
@@ -302,7 +306,8 @@
     const pancake=contains(/葱抓餅|蔥抓餅|葱油餅|蔥油餅|蛋餅|焼餅|燒餅/);
     const streetFood=contains(/胡椒餅|葱抓餅|蔥抓餅|葱油餅|蔥油餅|雞蛋糕|鶏蛋糕|車輪餅|地瓜球|雞排|鶏排|鹽酥雞|塩酥雞|水煎包|割包|刈包|大腸包小腸|甜不辣|肉圓/);
     const isSweet=contains(/豆花|雪花冰|かき氷|刨冰|粉圓|湯圓|仙草|甜品|デザート|スイーツ|パンケーキ|ケーキ/);
-    const isDrink=contains(/手搖|手揺|奶茶|ミルクティー|タピオカ|ジュース|果汁|咖啡|コーヒー|珈琲|ドリンク|ティースタンド/);
+    const isDrink=contains(/手搖|手揺|奶茶|ミルクティー|タピオカ|ジュース|果汁|ドリンク|ティースタンド|飲料|茶飲|手沖茶/);
+    const isCafe=c==='cafe'||contains(/カフェ|喫茶|咖啡|珈琲|コーヒー|coffee|café|cafe/i);
     const isNoodle=contains(/牛肉麵|牛肉麺|涼麵|涼麺|乾麵|乾麺|担仔麺|擔仔麵|ラーメン|拉麵|拉麺|米粉湯|麺線|麵線/);
     const isRice=contains(/魯肉飯|滷肉飯|肉燥飯|排骨飯|雞肉飯|鶏肉飯|炒飯|米糕|飯糰|飯團|弁当|便當|丼飯|おこわ/);
     const isDumpling=contains(/小籠包|小籠湯包|蒸餃|鍋貼|水餃|餃子|水煎包/);
@@ -314,7 +319,8 @@
     if(c==='dumpling'||isDumpling)genre.add('dumpling');
     if(c==='hotpot'||isHotpot)genre.add('hotpot');
     if(c==='sweet'||isSweet)genre.add('sweet');
-    if(c==='drink'||isDrink||c==='cafe')genre.add('drink');
+    if(c==='drink'||isDrink)genre.add('drink');
+    if(isCafe)genre.add('cafe');
     if(c==='breakfast'||c==='nightmarket'||c==='dumpling'||c==='rice'||c==='hotpot'||pancake||streetFood||contains(/臺灣料理|台湾料理|滷味|魯味|伝統小吃|台式/))genre.add('taiwan');
     if(c==='noodle'&&!contains(/ラーメン|日本式/))genre.add('taiwan');
 
@@ -336,7 +342,7 @@
     else if(genre.has('rice'))displayType='ごはん料理';
     else if(c==='breakfast')displayType='朝ごはん';
     else if(c==='nightmarket')displayType='夜市';
-    else if(c==='cafe')displayType='カフェ';
+    else if(genre.has('cafe'))displayType='カフェ';
     else if(genre.has('drink'))displayType='ドリンク';
     else if(c==='izakaya')displayType='熱炒';
     else if(c==='bar')displayType='バー';
@@ -551,6 +557,12 @@
       }
       take(pick);
     }
+    // Distance order is strictly ascending straight-line metres. Reuse the
+    // same time, radius and user filters, but not recommendation score.
+    // Fall back to recommended order while GPS/station location is unavailable.
+    if(state.sortMode==='distance'&&useDistance){
+      ordered.sort((a,b)=>(a.distanceMeters-b.distanceMeters)||b.score-a.score||a.name.localeCompare(b.name,'ja'));
+    }
     return {ordered,timeCount:byTime.length,criteria,lifted,nearbyFallback,useDistance,nearbyCount:withinRange.length};
   }
   function diversityKey(item,genre){
@@ -591,6 +603,7 @@
   function activateMode(mode){
     const switching=state.areaMode!==mode;
     state.areaMode=mode;state.area='';state.page=0;
+    if(mode==='current'&&state.sortMode==='distance')state.sortMode='recommend';
     closeOptions();closeStationMenus();advanced.open=false;
     if(mode==='current'){
       // The pinned button always returns to GPS mode and requests a fresh fix.
@@ -905,7 +918,26 @@
 模擬座標：${state.position?state.position.lat.toFixed(4)+', '+state.position.lng.toFixed(4):'尚未設定'}`;
     }catch(e){target.textContent='推薦診斷錯誤：'+e.message;}
   }
+  function updateSortControls(){
+    const origin=state.areaMode==='station'?stationOrigin():
+      state.areaMode==='current'&&state.locationStatus==='success'?state.position:null;
+    const distanceAvailable=!!origin&&(coordinatesReady||nearbyReady);
+    sortDistance.disabled=!distanceAvailable;
+    sortDistance.title=distanceAvailable?'直線距離が近い順に表示します':'現在地を取得するか、駅を選択すると使えます';
+    sortRecommend.setAttribute('aria-pressed',String(state.sortMode==='recommend'));
+    sortDistance.setAttribute('aria-pressed',String(state.sortMode==='distance'));
+  }
+  function setSortMode(mode){
+    if(mode==='distance'&&sortDistance.disabled)return;
+    if(state.sortMode===mode)return;
+    state.sortMode=mode;state.page=0;
+    closeOptions();closeStationMenus();advanced.open=false;
+    renderResults();
+  }
+  sortRecommend.addEventListener('click',()=>setSortMode('recommend'));
+  sortDistance.addEventListener('click',()=>setSortMode('distance'));
   function renderResults(){
+    updateSortControls();
     if(state.areaMode==='station'&&(!currentStation()||(!coordinatesReady&&!nearbyReady))){
       results.replaceChildren(el('p','recommend-no-data',stationsFailed?'駅データを読み込めませんでした。':currentStation()?'位置データを読み込み中です。':'路線と駅を選ぶと、駅から800m以内のおすすめを表示します。'));
       count.textContent='駅を選択';more.hidden=true;relaxed.hidden=true;

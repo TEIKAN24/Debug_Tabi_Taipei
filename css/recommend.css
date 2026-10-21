@@ -983,3 +983,31 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
   .recommend-result-head h3{font-size:14px;}
   .recommend-result-head .recommend-advanced-trigger{font-size:9px;padding-inline:6px;}
 }
+
+/* v30.9.94 — compact, accessible result-order tabs. */
+.recommend-sort{
+  display:flex;align-items:center;gap:13px;
+  margin:-3px 0 10px;min-width:0;
+}
+.recommend-sort-option{
+  appearance:none;-webkit-appearance:none;
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  min-height:30px;max-width:100%;padding:4px 2px 7px;
+  border:0;border-bottom:2px solid transparent;border-radius:0;
+  background:transparent;color:#A6A0B0;
+  font:650 11px/1.25 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
+  white-space:nowrap;cursor:pointer;
+}
+.recommend-sort-option[aria-pressed="true"]{color:#F2E9FF;border-bottom-color:#BDA0EA;font-weight:760;}
+.recommend-sort-option:disabled{opacity:.43;cursor:not-allowed;}
+.recommend-sort-option:focus-visible{outline:2px solid #C4A6FF;outline-offset:3px;border-radius:3px;}
+html[data-theme="light"] .recommend-sort-option{color:#6B6870;}
+html[data-theme="light"] .recommend-sort-option[aria-pressed="true"]{color:#5A3D78;border-bottom-color:#8761AD;}
+@media(max-width:600px){
+  .recommend-sort{flex:0 0 auto;gap:15px;margin:-4px 0 9px;}
+  .recommend-sort-option{min-height:27px;font-size:10.5px;padding-top:3px;padding-bottom:6px;}
+}
+@media(max-width:600px) and (max-height:720px){
+  .recommend-sort{margin:-2px 0 6px;}
+  .recommend-sort-option{min-height:24px;}
+}
