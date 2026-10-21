@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.89 — same-page location/station switching with custom readable line and station menus.
+/* TAIPEI CITY GUIDE v30.9.90 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
    v30.9.83: venues.json — coordinates for the 6 bars.
@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.89';
+  const VERSION='30.9.93';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -140,7 +140,7 @@
     }catch(_){stationsFailed=true;metroLines=[];metroStations=[];}
     buildMetroLineOptions();renderStationOptions();syncUI();renderResults();
   }
-  const GEO_MAX_METERS=500; // Honest straight-line radius for the first verified batch.
+  const GEO_MAX_METERS=800; // Straight-line radius for GPS and selected-station recommendations.
   let coordinates=new Map(),markets=new Map(),coordinatesReady=false,coordinatesFailed=false;
   let nearbyVenues=[],nearbyReady=false,nearbyCatalog=null;
   // Static same-origin JSON; no key, request to mapping APIs, or GPS upload.
@@ -170,7 +170,7 @@
     if(state.areaMode==='current'||state.areaMode==='station'){syncUI();renderResults();}
   }
   const FEATURED=/おすすめ|ミシュラン|ビブグルマン|孤独のグルメ|超行列|行列店|一番人気|高人気|人気店|人気老舗/;
-  // v30.9.85: separate award-sourced venue index, included only in 500m GPS mode.
+  // v30.9.85: separate award-sourced venue index, included only in distance-based GPS/station mode.
   // No geolocation is sent to a server; all distance checks run locally.
   async function loadNearbyVenues(){
     try{
@@ -493,6 +493,15 @@
       pool=byTime.filter(item=>active.every(c=>c.fn(item)));
     }
     const seed=recommendationSeed();
+    const newestAwardBonus=item=>{
+      // 500盤 and 500碗 both follow 2026 > 2025 > 2024;
+      // don't award double points to restaurants included in both lists.
+      const years=String(item.awards?.plates||'')+'；'+String(item.awards?.bowls||'');
+      if(/2026\s*[:：]\s*\d+\s*[盤碗]/.test(years))return 9;
+      if(/2025\s*[:：]\s*\d+\s*[盤碗]/.test(years))return 6;
+      if(/2024\s*[:：]\s*\d+\s*[盤碗]/.test(years))return 3;
+      return 0;
+    };
     const mealBonus=item=>state.time==='morning'&&item.category==='breakfast'?6:
       state.time==='night'&&item.category==='nightmarket'?5:
       state.time==='afternoon'&&['sweet','drink','cafe'].includes(item.category)?5:
@@ -503,10 +512,10 @@
         +(item.featured?1:0) // visibility comes from the rotating slot-1 rule below
         +(item.nearbySource?(item.locationConfidence==='high'?0:item.locationConfidence==='medium'?-3:-10):0)
         +(state.area&&state.areaMode==='all'&&item.chain?6:0) // not a proxy for branch proximity
-        // Distance in bands (≈0–170 / 170–340 / 340–500 m): shops at a similar
+        // Distance in bands (≈0–270 / 270–540 / 540–800 m): shops at a similar
         // walk rotate daily instead of the single nearest one always winning.
-        +(Number.isFinite(item.distanceMeters)?40-12*Math.min(2,Math.floor(item.distanceMeters/170)):0)
-        +mealBonus(item);
+        +(Number.isFinite(item.distanceMeters)?40-12*Math.min(2,Math.floor(item.distanceMeters/270)):0)
+        +mealBonus(item)+newestAwardBonus(item);
       return {...item,matchScore:matched.reduce((sum,c)=>sum+c.weight,0),score,
         fullMatch:matched.length===criteria.length,matched:matched.map(c=>c.label),
         diversityKey:diversityKey(item,state.genre),
@@ -888,7 +897,7 @@
 座標 JSON：${coordinatesReady?'已載入 '+coordinates.size+' 筆':coordinatesFailed?'載入失敗':'載入中'}
 網頁餐飲清單：${rows.length} 筆
 配對成功：${positioned.length} 筆
-500m 內：${near} 筆
+800m 內：${near} 筆
 符合時段：${eligible} 筆
 實際推薦：${orderedCount} 筆
 定位狀態：${state.locationStatus}
@@ -898,7 +907,7 @@
   }
   function renderResults(){
     if(state.areaMode==='station'&&(!currentStation()||(!coordinatesReady&&!nearbyReady))){
-      results.replaceChildren(el('p','recommend-no-data',stationsFailed?'駅データを読み込めませんでした。':currentStation()?'位置データを読み込み中です。':'路線と駅を選ぶと、駅から500m以内のおすすめを表示します。'));
+      results.replaceChildren(el('p','recommend-no-data',stationsFailed?'駅データを読み込めませんでした。':currentStation()?'位置データを読み込み中です。':'路線と駅を選ぶと、駅から800m以内のおすすめを表示します。'));
       count.textContent='駅を選択';more.hidden=true;relaxed.hidden=true;
       disclaimer.textContent='※ 選択駅からの直線距離を基準にご案内します。';
       return;
@@ -908,7 +917,7 @@
     if(!ordered.length){
       more.hidden=true;
       relaxed.hidden=false;
-      relaxed.textContent=timeCount===0?(useDistance?'選択地点から直線500m以内に該当する登録店はありません。':'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。'):'該当店が見つかりません。';
+      relaxed.textContent=timeCount===0?(useDistance?'選択地点から直線800m以内に該当する登録店はありません。':'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。'):'該当店が見つかりません。';
       results.append(el('p','recommend-no-data','おすすめ情報を準備中です。'));
       count.textContent='0軒';reportDebug(0);return;
     }
@@ -919,11 +928,11 @@
     relaxed.hidden=!lifted.length&&!nearbyFallback;
     relaxed.textContent=lifted.length?`条件を少しゆるめました（${lifted.join('・')}）。時間帯は変更していません。`:'';
     if(useDistance&&nearbyFallback){
-      locationStatus.textContent='この時間帯は直線500m以内に位置データ登録済みの店がありません。';
+      locationStatus.textContent='この時間帯は直線800m以内に位置データ登録済みの店がありません。';
       locationStatus.hidden=false;
     }
     if(useDistance&&!nearbyFallback){
-      locationStatus.textContent=`${state.areaMode==='station'?'選択駅':'現在地'}から直線500m以内の位置データ登録済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size+nearbyVenues.length}候補）。`;
+      locationStatus.textContent=`${state.areaMode==='station'?'選択駅':'現在地'}から直線800m以内の位置データ登録済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size+nearbyVenues.length}候補）。`;
       locationStatus.hidden=false;
     }
     reportDebug(ordered.length);
