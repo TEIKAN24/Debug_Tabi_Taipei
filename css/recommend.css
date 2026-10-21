@@ -1100,3 +1100,48 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
  .recommend-distance-pill{padding:6px 9px;font-size:9.5px;}
  .recommend-guide-tag{padding:6px 8px!important;font-size:9px!important;}
 }
+
+/* v30.9.98 — locked card proportions at real phone widths. */
+.recommend-card{box-sizing:border-box!important;min-width:0!important;max-width:100%;}
+.recommend-card-shell{width:100%;min-width:0;overflow:hidden;}
+.recommend-card-main{min-width:0;overflow:hidden;}
+.recommend-card-side{min-width:0;overflow:hidden;}
+.recommend-guide-tags{width:100%;max-width:100%;min-height:0;max-height:52px!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none;align-content:end;}
+.recommend-guide-tags::-webkit-scrollbar{display:none;}
+.recommend-card-stars:empty{visibility:hidden;}
+@media(max-width:600px){
+ .recommend-results{grid-template-rows:repeat(3, minmax(0, 154px))!important;flex:0 0 auto!important;max-height:none!important;align-content:start!important;}
+ .recommend-card{display:block!important;height:154px!important;min-height:0!important;max-height:154px!important;flex:none!important;padding:0!important;}
+ .recommend-card-shell{height:100%!important;min-height:0!important;grid-template-columns:minmax(0,56%) minmax(0,44%)!important;gap:0!important;padding:14px 15px 13px!important;}
+ .recommend-card-main{padding-right:12px;}
+ .recommend-card-side{height:100%;gap:3px!important;grid-template-rows:32px minmax(15px,1fr) auto!important;}
+ .recommend-card-type{font-size:11px!important;line-height:1.3!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+ .recommend-venue{font-size:clamp(15px,4.8vw,19px)!important;line-height:1.22!important;-webkit-line-clamp:2!important;overflow-wrap:anywhere;letter-spacing:-.02em;}
+ .recommend-reason{font-size:10px!important;line-height:1.35!important;margin:10px 0 0!important;-webkit-line-clamp:2!important;max-height:2.8em;}
+ .recommend-distance-pill{font-size:10px!important;padding:6px 8px!important;min-height:27px;}
+ .recommend-guide-tags{max-height:53px!important;gap:4px!important;justify-content:flex-end!important;}
+ .recommend-guide-tag{flex:0 0 auto;max-width:100%;font-size:9px!important;line-height:1.1!important;padding:5px 7px!important;border-radius:7px!important;}
+ .recommend-card-stars{min-height:0!important;align-self:center!important;gap:3px!important;}
+ .recommend-card-star{font-size:18px!important;}
+}
+@media(max-width:360px){
+ .recommend-results{grid-template-rows:repeat(3,minmax(0,140px))!important;}
+ .recommend-card{height:140px!important;max-height:140px!important;}
+ .recommend-card-shell{padding:12px 11px!important;grid-template-columns:minmax(0,56%) minmax(0,44%)!important;}
+ .recommend-card-main{padding-right:8px;}
+ .recommend-venue{font-size:14px!important;}
+ .recommend-card-type{font-size:10px!important;}
+ .recommend-reason{font-size:9px!important;}
+ .recommend-guide-tag{font-size:8.5px!important;padding:5px 6px!important;}
+ .recommend-distance-pill{font-size:9.5px!important;padding:5px 7px!important;}
+ .recommend-guide-tags{max-height:50px!important;}
+}
+
+@media(min-width:601px){
+ .recommend-card{height:154px!important;max-height:154px!important;min-height:0!important;}
+ .recommend-card-shell{height:100%;min-height:0;}
+}
+@media(max-width:600px){
+ .recommend-drawer-inner{overflow-y:auto!important;overscroll-behavior:contain;}
+ .recommend-more{margin-top:12px!important;}
+}

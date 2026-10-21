@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"><link rel="stylesheet" href="../css/recommend.css?v=30.9.98"><style>
+html,body{margin:0;width:100%;min-width:0;overflow-x:hidden;box-sizing:border-box;}*,*::before,*::after{box-sizing:border-box;}
+body{background:#0D0D0D;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;padding:18px 13px;}
+#preview-results{display:grid;grid-template-rows:none!important;max-height:none!important;flex:none!important;gap:14px;min-height:0;}
+#preview-results .recommend-card{animation:none!important;}
+#preview-results .recommend-card-shell{display:grid;}
+.preview-caption{margin:0 0 12px;color:#A69EB0;font:600 11px/1.4 sans-serif;letter-spacing:.06em;}
+.preview-more{border:1px solid #4B4651;border-radius:12px;margin-top:13px;padding:11px;text-align:center;font-size:11px;color:#ACA5B7;}
+</style></head><body>
+<p class="preview-caption">今、どこで食べよう。 — 実際のカード表示</p>
+<div id="preview-results" class="recommend-results" aria-live="polite"></div>
+<div class="preview-more">↻ ほかの3軒を見る</div>
+<script>
+(function(){'use strict';
+const root=document.getElementById('preview-results');
+const pin='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
+const omitted=/^(?:チェーン店|連鎖店|チェーン|ドリンク|カフェ|スイーツ|麺類|ごはん系|ごはん料理|小籠包・点心|鍋料理|夜市|台湾小吃|朝ごはん|熱炒|バー|グルメ)$/;
+function elt(tag,cls,value){const x=document.createElement(tag);if(cls)x.className=cls;if(value!=null)x.textContent=value;return x;}
+function render(item){root.replaceChildren();const card=elt('article','recommend-card');const shell=elt('div','recommend-card-shell');
+const main=elt('div','recommend-card-main'); main.append(elt('div','recommend-card-type',item.displayType||'グルメ'));
+const name=elt('a','recommend-venue',item.name||'店家名稱');name.href='#';name.addEventListener('click',e=>e.preventDefault());main.append(name);
+if(item.shortNote){const note=elt('p','recommend-reason',item.shortNote);note.title=item.shortNote;main.append(note);}
+const side=elt('div','recommend-card-side');const badge=elt('span','recommend-distance-pill');const icon=elt('span','recommend-distance-pill-icon');icon.innerHTML=pin;icon.setAttribute('aria-hidden','true');badge.append(icon,elt('span','recommend-distance-pill-label','約100m'));side.append(badge);
+const stars=elt('div','recommend-card-stars');let starsNum=Math.min(3,Math.max(0,Number(item.michelinStars)||0));stars.setAttribute('aria-label',starsNum?`ミシュラン${starsNum}つ星`:'ミシュラン評価なし');for(let i=0;i<starsNum;i++)stars.append(elt('span','recommend-card-star','✿'));side.append(stars);
+let tags=(Array.isArray(item.tags)?item.tags:[]).filter(t=>t&&t.text&&!omitted.test(t.text));if(tags.length){const list=elt('div','recommend-guide-tags');list.setAttribute('aria-label','ガイドの店情報');for(const t of tags){const chip=elt('span','recommend-guide-tag',t.text);if(t.tone==='featured')chip.classList.add('recommend-guide-tag-featured');if(t.tone==='caution')chip.classList.add('recommend-guide-tag-caution');list.append(chip);}side.append(list);}
+shell.append(main,side);card.append(shell);root.append(card);}
+window.addEventListener('message',e=>{if(e.data&&e.data.type==='taipei-preview')render(e.data.item||{});});
+render({name:'店家名稱',displayType:'料理種類',shortNote:'説明文（あれば）',michelinStars:3,tags:[{text:'伝統',tone:'normal'},{text:'超行列店',tone:'featured'},{text:'おすすめ',tone:'featured'}]});
+window.parent.postMessage({type:'taipei-preview-ready'},'*');
+})();
+</script></body></html>
