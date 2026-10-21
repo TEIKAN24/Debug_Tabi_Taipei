@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.102';
+  const VERSION='30.9.103';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -1114,9 +1114,9 @@ ${GEO_MAX_METERS}m 內：${near} 筆
         }
         tagList.append(tagTrack);
         tagList.addEventListener('scroll',()=>updateTagFade(tagList),{passive:true});
-        side.append(tagList);
+        shell.append(tagList);
       }
-      shell.append(main,side);
+      shell.prepend(main,side);
       card.append(shell);
       results.append(card);
     });

@@ -1364,3 +1364,180 @@ html[data-theme="light"] .recommend-distance-pill-outer{
   /* When Safari chrome reduces usable height, keep the footer text reachable. */
   .recommend-drawer-inner{overflow-y:auto!important;overscroll-behavior:contain;}
 }
+
+/* v30.9.103 — warm gold recommender, complete light-mode controls, full-width tag strip.
+   Kept deliberately scoped to the recommendation drawer; do not recolor the guide. */
+.recommend-drawer{
+  --reco-purple:#D8B675;
+  --reco-accent:#E5C58C;
+  --reco-line:#8A7350;
+  --reco-muted:#BDB09B;
+}
+.recommend-drawer .recommend-source-caption{color:#CFC1A8;}
+.recommend-drawer .recommend-caption-icon,
+.recommend-drawer .recommend-location-pin,
+.recommend-drawer .recommend-native-chevron,
+.recommend-drawer .recommend-control-arrow{color:#DCC18C!important;}
+.recommend-drawer .recommend-control,
+.recommend-drawer .recommend-pill,
+.recommend-drawer .recommend-mode-button{
+  background:#272622;border-color:#655B4D;color:#F4E9D8;
+}
+.recommend-drawer .recommend-mode-button,
+.recommend-drawer .recommend-mode-return{color:#E7C990!important;}
+.recommend-drawer .recommend-picker-location,
+.recommend-drawer .recommend-picker-station{background:#272622;border-color:#686052;color:#F6F0E5;}
+.recommend-drawer .recommend-picker-station[data-active="line"] .recommend-native-line,
+.recommend-drawer .recommend-picker-station[data-active="station"] .recommend-native-station{background:#373126;}
+.recommend-drawer .recommend-native-field + .recommend-native-field{border-top-color:#655A4A;}
+.recommend-drawer .recommend-native-copy strong,
+.recommend-drawer .recommend-location-copy strong{color:#FFF9EC;}
+.recommend-drawer .recommend-native-copy small,
+.recommend-drawer .recommend-location-copy small{color:#CABEA9;}
+.recommend-drawer .recommend-native-code.is-empty{background:#5D5549;color:#F4D8A2;}
+.recommend-drawer .recommend-native-field.is-open{box-shadow:0 0 0 1px rgba(219,180,105,.58) inset;}
+.recommend-drawer .recommend-options,
+.recommend-drawer .recommend-advanced-panel,
+.recommend-drawer .recommend-native-menu{background:#292720;border-color:#78684D;}
+.recommend-drawer .recommend-option:hover:not([aria-pressed="true"]),
+.recommend-drawer .recommend-native-option:hover{background:#403728;}
+.recommend-drawer .recommend-option[aria-pressed="true"],
+.recommend-drawer .recommend-pill[aria-pressed="true"]{
+  background:#DABB80;color:#292117;border-color:#DABB80;
+}
+.recommend-drawer .recommend-native-option{background:#282621;color:#F3EADC;}
+.recommend-drawer .recommend-native-option[aria-selected="true"]{background:#493E2D;border-color:#D4AE6B;}
+.recommend-drawer .recommend-native-option-copy strong{color:#F5EDE0;}
+.recommend-drawer .recommend-native-option-copy small{color:#D2C3AE;}
+.recommend-drawer .recommend-advanced-panel h3,
+.recommend-drawer .recommend-result-head h3{color:#F6F0E6;}
+.recommend-drawer .recommend-advanced-panel .recommend-help,
+.recommend-drawer .recommend-count{color:#BBAD96;}
+.recommend-drawer .recommend-active-chip{background:#3B3429;border-color:#96774E;color:#F1DEBE;}
+.recommend-drawer .recommend-advanced-trigger[aria-expanded="true"],
+.recommend-drawer .recommend-control[aria-expanded="true"],
+.recommend-drawer .recommend-advanced[open] .recommend-advanced-trigger{border-color:#C9A66B;}
+.recommend-drawer .recommend-sort-option[aria-pressed="true"]{color:#E9D2A7;border-bottom-color:#D9B36D;}
+.recommend-drawer .recommend-sort-option:focus-visible,
+.recommend-drawer .recommend-control:focus-visible,
+.recommend-drawer .recommend-option:focus-visible,
+.recommend-drawer .recommend-venue:focus-visible,
+.recommend-drawer .recommend-more:focus-visible,
+.recommend-drawer .recommend-advanced summary:focus-visible,
+.recommend-drawer .recommend-mode-button:focus-visible,
+.recommend-drawer .recommend-native-trigger:focus-visible{outline-color:#D4B16D!important;}
+.recommend-drawer .recommend-more{color:#E6D5B7;border-color:#81725C;}
+
+/* White surfaces must remain white in light mode, even where legacy styles
+   deliberately forced dark control backgrounds. Route-code accent colors are
+   intentionally preserved from the MRT line data. */
+html[data-theme="light"] .recommend-drawer{
+  --reco-purple:#8B661F;--reco-accent:#967022;
+  --reco-line:#D6BD91;--reco-muted:#786B56;
+}
+html[data-theme="light"] .recommend-drawer .recommend-picker-location,
+html[data-theme="light"] .recommend-drawer .recommend-picker-station{
+  background:#FFFDF9!important;border-color:#D9CDB9!important;color:#33291A!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-picker-station[data-active="line"] .recommend-native-line,
+html[data-theme="light"] .recommend-drawer .recommend-picker-station[data-active="station"] .recommend-native-station{
+  background:#F9EFDE!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-picker-station .recommend-native-field + .recommend-native-field{border-top-color:#E0D5C2!important;}
+html[data-theme="light"] .recommend-drawer .recommend-native-copy strong,
+html[data-theme="light"] .recommend-drawer .recommend-location-copy strong{color:#32291D!important;}
+html[data-theme="light"] .recommend-drawer .recommend-native-copy small,
+html[data-theme="light"] .recommend-drawer .recommend-location-copy small{color:#77664C!important;opacity:1!important;}
+html[data-theme="light"] .recommend-drawer .recommend-location-pin,
+html[data-theme="light"] .recommend-drawer .recommend-native-chevron,
+html[data-theme="light"] .recommend-drawer .recommend-caption-icon,
+html[data-theme="light"] .recommend-drawer .recommend-control-arrow{color:#9C762B!important;}
+html[data-theme="light"] .recommend-drawer .recommend-control,
+html[data-theme="light"] .recommend-drawer .recommend-pill,
+html[data-theme="light"] .recommend-drawer .recommend-mode-button{
+  background:#FFFDF9!important;color:#58452A!important;border-color:#D8C9B0!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-mode-button,
+html[data-theme="light"] .recommend-drawer .recommend-mode-return{color:#79571A!important;}
+html[data-theme="light"] .recommend-drawer .recommend-options,
+html[data-theme="light"] .recommend-drawer .recommend-native-menu,
+html[data-theme="light"] .recommend-drawer .recommend-advanced-panel{
+  background:#FFFEFB!important;border-color:#DCCBB1!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-native-option{background:#FFFDF8;color:#352919;}
+html[data-theme="light"] .recommend-drawer .recommend-native-option:hover,
+html[data-theme="light"] .recommend-drawer .recommend-option:hover:not([aria-pressed="true"]){background:#F7EFDF;}
+html[data-theme="light"] .recommend-drawer .recommend-native-option[aria-selected="true"]{background:#F5E8D1;border-color:#C8A36B;}
+html[data-theme="light"] .recommend-drawer .recommend-native-option-copy strong,
+html[data-theme="light"] .recommend-drawer .recommend-advanced-panel h3{color:#3A2C1A;}
+html[data-theme="light"] .recommend-drawer .recommend-native-option-copy small{color:#746046;}
+html[data-theme="light"] .recommend-drawer .recommend-native-code.is-empty{background:#E9E0D0;color:#6C5B41;}
+html[data-theme="light"] .recommend-drawer .recommend-option[aria-pressed="true"],
+html[data-theme="light"] .recommend-drawer .recommend-pill[aria-pressed="true"]{
+  background:#A67D37!important;color:#FFFFFF!important;border-color:#A67D37!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-active-chip{background:#F9F0DF;border-color:#D8BE91;color:#6B4B1B;}
+html[data-theme="light"] .recommend-drawer .recommend-advanced-panel .recommend-help{color:#716550;}
+html[data-theme="light"] .recommend-drawer .recommend-result-head h3{color:#382D21;}
+html[data-theme="light"] .recommend-drawer .recommend-sort-option[aria-pressed="true"]{color:#8A641C;border-bottom-color:#B68A43;}
+html[data-theme="light"] .recommend-drawer .recommend-more{color:#71562E;border-color:#C7AF89;}
+html[data-theme="light"] .recommend-drawer .recommend-card{
+  background:linear-gradient(90deg,#FFFFFF,#FCFAF5)!important;border-color:#D9CEBE!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-card-type{color:#655137;}
+html[data-theme="light"] .recommend-drawer .recommend-venue{color:#30271B!important;}
+html[data-theme="light"] .recommend-drawer .recommend-guide-tag{
+  background:#FBF7EE!important;color:#5A4A35!important;border-color:#DDD0BC!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-guide-tag-featured{
+  background:#F8EAD1!important;color:#8A5A18!important;border-color:#D5AE70!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
+  background:#FFF1EB!important;color:#A44935!important;border-color:#DBAF9F!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-distance-pill{
+  color:#382B1C;border-color:#CABBA4;background:#FFFEFA;
+}
+
+/* Single horizontal tag rail across the entire card, aligned with the name's
+   left edge. Top row reserves space for the name, distance and Michelin mark. */
+.recommend-card-shell{grid-template-rows:minmax(0,1fr) auto;}
+.recommend-card-shell > .recommend-card-main{grid-column:1;grid-row:1;min-height:0;}
+.recommend-card-shell > .recommend-card-side{grid-column:2;grid-row:1;min-height:0;}
+.recommend-card-shell > .recommend-guide-tags{
+  grid-column:1 / -1;grid-row:2;justify-self:stretch;align-self:end;
+  min-width:0;width:100%;box-sizing:border-box;margin:0!important;
+}
+.recommend-card-side{grid-template-rows:auto 1fr!important;}
+@media(max-width:600px){
+  /* Change only the filter pill's painted position; not the surrounding layout. */
+  .recommend-result-head .recommend-advanced-trigger{top:5px;position:relative;}
+  /* 1pt is 1.333 CSS px, rounded to 1.3px for mobile. */
+  .recommend-mode-button .recommend-mode-text{font-size:10.8px!important;}
+  .recommend-main-picker.is-station .recommend-mode-button .recommend-mode-return{font-size:11.8px!important;}
+  .recommend-card-shell{grid-template-rows:minmax(0,1fr) auto!important;row-gap:2px!important;}
+  .recommend-card-shell > .recommend-guide-tags{margin:0!important;align-self:end!important;}
+  .recommend-card-side{grid-template-rows:auto 1fr!important;}
+  .recommend-guide-tags{max-width:100%!important;}
+}
+@media(max-width:360px){
+  .recommend-mode-button .recommend-mode-text{font-size:9.8px!important;}
+  .recommend-main-picker.is-station .recommend-mode-button .recommend-mode-return{font-size:11.3px!important;}
+}
+/* Finish the graphite-to-gold shift without recoloring the distance warning. */
+.recommend-drawer .recommend-card{
+  background:linear-gradient(90deg,#2B2B29,#302F2B)!important;border-color:#59564F!important;
+}
+.recommend-drawer .recommend-venue{color:#FAF7F0!important;}
+.recommend-drawer .recommend-card-type{color:#E5DDCF;}
+.recommend-drawer .recommend-guide-tag{
+  background:#322F2A!important;border-color:#6F675B!important;color:#F3ECDD!important;
+}
+.recommend-drawer .recommend-guide-tag-featured{
+  background:#594A34!important;border-color:#AD8B52!important;color:#F0D198!important;
+}
+.recommend-drawer .recommend-guide-tag-caution{
+  background:#533B37!important;border-color:#98665A!important;color:#F7B3A8!important;
+}
+.recommend-drawer .recommend-distance-pill-icon{color:#E0C48E;}
+html[data-theme="light"] .recommend-drawer .recommend-distance-pill-icon{color:#98712A;}
