@@ -891,3 +891,95 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
  .recommend-location-copy strong{font-size:12px;}
  .recommend-location-copy small{font-size:8px;}
 }
+
+
+/* v30.9.89 — station menu readability, slimmer corners, editorial spacing. */
+/* Keep the station selector shape consistent with the time and pin controls. */
+.recommend-controls{z-index:45;}
+.recommend-picker-station{border-radius:9px;}
+.recommend-native-field{border-radius:6px;}
+.recommend-native-line{border-radius:7px 7px 2px 2px;}
+.recommend-native-field + .recommend-native-field{border-radius:0 0 7px 7px;}
+/* Compact native-like list, with no sideways panning even for long English names. */
+.recommend-native-menu{
+  right:-49px;left:auto;width:min(292px,calc(100vw - 46px));
+  min-width:0;max-width:calc(100vw - 46px);max-height:min(315px,46dvh);
+  padding:6px;gap:3px;border-radius:11px;overflow-x:hidden;overflow-y:auto;
+  overscroll-behavior-x:none;box-sizing:border-box;
+}
+.recommend-native-option{
+  box-sizing:border-box;width:100%;min-width:0;min-height:43px;
+  padding:6px 8px;gap:7px;border-radius:7px;overflow:hidden;
+}
+.recommend-native-option-code{
+  box-sizing:border-box;flex:0 0 25px;min-width:25px;width:25px;height:23px;
+  padding:0;font-size:11px;border-radius:4px;
+}
+.recommend-native-option-station .recommend-native-option-code{font-size:10px;border-width:1px;}
+.recommend-native-option-copy{
+  display:flex;flex-direction:row;align-items:baseline;
+  flex:1 1 auto;min-width:0;max-width:100%;gap:6px;overflow:hidden;
+}
+.recommend-native-option-copy strong{
+  display:block;flex:0 1 auto;min-width:0;max-width:62%;
+  font-size:clamp(12px,3.55vw,14px);font-weight:730;
+  line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.recommend-native-option-copy small{
+  display:block;flex:1 1 auto;min-width:0;
+  font-size:clamp(9px,2.65vw,10.5px);font-weight:610;
+  line-height:1.3;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+/* The active station header remains fixed: only internal choice proportions change. */
+.recommend-native-field.is-open{border-radius:6px;}
+/* Bring advanced filters back beside the recommendations heading. */
+.recommend-result-head{position:relative;z-index:31;align-items:center;flex-wrap:nowrap;gap:9px;}
+.recommend-result-head h3{min-width:0;flex:0 0 auto;white-space:nowrap;}
+.recommend-result-head .recommend-controls-secondary{min-width:0;max-width:100%;flex:0 1 auto;margin-left:auto;justify-content:flex-end;gap:4px;}
+.recommend-result-head .recommend-control-advanced-wrap{position:static;flex:0 0 auto;}
+.recommend-result-head .recommend-advanced-panel{
+  position:absolute;top:calc(100% + 8px);left:0;right:0;
+  width:auto;max-width:100%;box-sizing:border-box;
+}
+.recommend-result-head .recommend-count{display:none;}
+@media(max-width:600px){
+  /* Reference screenshot: larger pause after the subtitle and before the results. */
+  .recommend-intro{margin-bottom:clamp(23px,3.3dvh,32px);}
+  .recommend-controls{gap:6px;flex:0 0 auto;}
+  .recommend-location-status{
+    flex:0 0 auto;margin:22px 0 0;
+    font-size:10.5px;line-height:1.65;
+  }
+  .recommend-result-head{flex:0 0 auto;margin:clamp(23px,3.6dvh,32px) 0 12px;}
+  .recommend-result-head h3{font-size:15px;}
+  .recommend-result-head .recommend-advanced-trigger{min-height:29px;font-size:10px;padding:3px 9px;}
+  .recommend-result-head .recommend-advanced-plus{transform:scale(.82);transform-origin:center;}
+  /* Keep compact cards like the reference, and put extra vertical air above More. */
+  .recommend-results{
+    flex:0 1 auto;min-height:0;max-height:none;
+    grid-template-rows:repeat(3,minmax(0,1fr));gap:clamp(9px,1.3dvh,12px);
+  }
+  .recommend-card{
+    height:auto;min-height:clamp(83px,11dvh,102px);
+    padding:8px 11px;border-radius:10px;
+  }
+  .recommend-more{margin: auto 0 0;min-height:30px;}
+  .recommend-disclaimer{margin-top:7px;}
+}
+@media(max-width:600px) and (max-height:720px){
+  .recommend-intro{margin-bottom:11px;}
+  .recommend-location-status{margin-top:10px;}
+  .recommend-result-head{margin:12px 0 7px;}
+  .recommend-card{min-height:76px;padding:6px 10px;}
+  .recommend-more{margin-top:5px;}
+}
+@media(max-width:360px){
+  .recommend-native-menu{right:-46px;width:calc(100vw - 42px);max-width:calc(100vw - 42px);}
+  .recommend-native-option{min-height:42px;padding:6px 7px;gap:6px;}
+  .recommend-native-option-code{flex-basis:23px;min-width:23px;width:23px;height:22px;font-size:10px;}
+  .recommend-native-option-copy{gap:5px;}
+  .recommend-native-option-copy strong{font-size:12px;}
+  .recommend-native-option-copy small{font-size:9px;}
+  .recommend-result-head h3{font-size:14px;}
+  .recommend-result-head .recommend-advanced-trigger{font-size:9px;padding-inline:6px;}
+}
