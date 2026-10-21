@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.101';
+  const VERSION='30.9.102';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -149,7 +149,8 @@
     }catch(_){stationsFailed=true;metroLines=[];metroStations=[];}
     buildMetroLineOptions();renderStationOptions();syncUI();renderResults();
   }
-  const GEO_MAX_METERS=800; // Straight-line radius for GPS and selected-station recommendations.
+  const GEO_MAX_METERS=1200;
+  const GEO_PRIORITY_METERS=800; // Straight-line radius for GPS and selected-station recommendations.
   let coordinates=new Map(),markets=new Map(),coordinatesReady=false,coordinatesFailed=false;
   let nearbyVenues=[],nearbyReady=false,nearbyCatalog=null;
   // v30.9.95 — editorial descriptions: provenance lives in a separate static
@@ -598,9 +599,10 @@
         +(item.featured?1:0) // visibility comes from the rotating slot-1 rule below
         +(item.nearbySource?(item.locationConfidence==='high'?0:item.locationConfidence==='medium'?-3:-10):0)
         +(state.area&&state.areaMode==='all'&&item.chain?6:0) // not a proxy for branch proximity
-        // Distance in bands (≈0–270 / 270–540 / 540–800 m): shops at a similar
-        // walk rotate daily instead of the single nearest one always winning.
-        +(Number.isFinite(item.distanceMeters)?40-12*Math.min(2,Math.floor(item.distanceMeters/270)):0)
+        // Preserve distance-aware recommendations within the expanded 1,200m radius.
+        // Places beyond 800m stay available, but fall behind closer candidates.
+        +(Number.isFinite(item.distanceMeters)?40-12*Math.min(4,Math.floor(item.distanceMeters/270))
+          -(item.distanceMeters>GEO_PRIORITY_METERS?26:0):0)
         +mealBonus(item)+newestAwardBonus(item);
       return {...item,matchScore:matched.reduce((sum,c)=>sum+c.weight,0),score,
         fullMatch:matched.length===criteria.length,matched:matched.map(c=>c.label),
@@ -1003,7 +1005,7 @@
 座標 JSON：${coordinatesReady?'已載入 '+coordinates.size+' 筆':coordinatesFailed?'載入失敗':'載入中'}
 網頁餐飲清單：${rows.length} 筆
 配對成功：${positioned.length} 筆
-800m 內：${near} 筆
+${GEO_MAX_METERS}m 內：${near} 筆
 符合時段：${eligible} 筆
 實際推薦：${orderedCount} 筆
 定位狀態：${state.locationStatus}
@@ -1029,10 +1031,18 @@
   }
   sortRecommend.addEventListener('click',()=>setSortMode('recommend'));
   sortDistance.addEventListener('click',()=>setSortMode('distance'));
+  function updateTagFade(node){
+    const maxScroll=Math.max(0,node.scrollWidth-node.clientWidth);
+    node.dataset.fade=maxScroll<2?'none':node.scrollLeft<2?'right':node.scrollLeft>=maxScroll-2?'left':'both';
+    node.tabIndex=maxScroll>=2?0:-1;
+  }
+  window.addEventListener('resize',()=>{
+    document.querySelectorAll('.recommend-guide-tags').forEach(updateTagFade);
+  },{passive:true});
   function renderResults(){
     updateSortControls();
     if(state.areaMode==='station'&&(!currentStation()||(!coordinatesReady&&!nearbyReady))){
-      results.replaceChildren(el('p','recommend-no-data',stationsFailed?'駅データを読み込めませんでした。':currentStation()?'位置データを読み込み中です。':'路線と駅を選ぶと、駅から800m以内のおすすめを表示します。'));
+      results.replaceChildren(el('p','recommend-no-data',stationsFailed?'駅データを読み込めませんでした。':currentStation()?'位置データを読み込み中です。':`路線と駅を選ぶと、駅から${GEO_MAX_METERS}m以内のおすすめを表示します。`));
       count.textContent='駅を選択';more.hidden=true;relaxed.hidden=true;
       disclaimer.textContent='※ 選択駅からの直線距離を基準にご案内します。';
       return;
@@ -1042,7 +1052,7 @@
     if(!ordered.length){
       more.hidden=true;
       relaxed.hidden=false;
-      relaxed.textContent=timeCount===0?(useDistance?'選択地点から直線800m以内に該当する登録店はありません。':'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。'):'該当店が見つかりません。';
+      relaxed.textContent=timeCount===0?(useDistance?`選択地点から直線${GEO_MAX_METERS}m以内に該当する登録店はありません。`:'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。'):'該当店が見つかりません。';
       results.append(el('p','recommend-no-data','おすすめ情報を準備中です。'));
       count.textContent='0軒';reportDebug(0);return;
     }
@@ -1053,11 +1063,11 @@
     relaxed.hidden=!lifted.length&&!nearbyFallback;
     relaxed.textContent=lifted.length?`条件を少しゆるめました（${lifted.join('・')}）。時間帯は変更していません。`:'';
     if(useDistance&&nearbyFallback){
-      locationStatus.textContent='この時間帯は直線800m以内に位置データ登録済みの店がありません。';
+      locationStatus.textContent=`この時間帯は直線${GEO_MAX_METERS}m以内に位置データ登録済みの店がありません。`;
       locationStatus.hidden=false;
     }
     if(useDistance&&!nearbyFallback){
-      locationStatus.textContent=`${state.areaMode==='station'?'選択駅':'現在地'}から直線800m以内の位置データ登録済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size+nearbyVenues.length}候補）。`;
+      locationStatus.textContent=`${state.areaMode==='station'?'選択駅':'現在地'}から直線${GEO_MAX_METERS}m以内の位置データ登録済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size+nearbyVenues.length}候補）。`;
       locationStatus.hidden=false;
     }
     reportDebug(ordered.length);
@@ -1072,6 +1082,7 @@
       const distanceText=Number.isFinite(item.distanceMeters)?`約${formatDistance(item.distanceMeters)}`:'';
       if(distanceText){
         const badge=el('span','recommend-distance-pill');
+        if(item.distanceMeters>GEO_PRIORITY_METERS)badge.classList.add('recommend-distance-pill-outer');
         badge.setAttribute('aria-label',`${state.areaMode==='station'?'選択駅':'現在地'}からの直線距離 ${distanceText}`);
         const pin=el('span','recommend-distance-pill-icon');
         pin.setAttribute('aria-hidden','true');
@@ -1093,19 +1104,23 @@
       const tags=cardTags(item);
       if(tags.length){
         const tagList=el('div','recommend-guide-tags');
-        tagList.setAttribute('aria-label','ガイドの店情報');
+        tagList.setAttribute('aria-label','ガイドの店情報（横方向にスクロールできます）');
+        const tagTrack=el('div','recommend-tag-track');
         for(const tag of tags){
           const chip=el('span','recommend-guide-tag',tag.text);
           if(tag.tone==='featured')chip.classList.add('recommend-guide-tag-featured');
           if(tag.tone==='caution')chip.classList.add('recommend-guide-tag-caution');
-          tagList.append(chip);
+          tagTrack.append(chip);
         }
+        tagList.append(tagTrack);
+        tagList.addEventListener('scroll',()=>updateTagFade(tagList),{passive:true});
         side.append(tagList);
       }
       shell.append(main,side);
       card.append(shell);
       results.append(card);
     });
+    requestAnimationFrame(()=>results.querySelectorAll('.recommend-guide-tags').forEach(updateTagFade));
     more.hidden=ordered.length<=3;
     disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useDistance&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useDistance&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。${slice.some(x=>x.nearbySource&&!x.address)?'住所未確認の店舗は、地図上で店名と場所をご確認ください。':''}`;
   }
@@ -1162,7 +1177,8 @@
     return false;
   }
   function begin(x,y,target,kind){
-    if(target instanceof Element && target.closest('#recommend-debug-fab,#recommend-debug-location'))return;
+    // Let restaurant tag chips scroll horizontally without activating the drawer swipe.
+    if(target instanceof Element && target.closest('.recommend-guide-tags,#recommend-debug-fab,#recommend-debug-location'))return;
     if(dragging||body.classList.contains('food-drawer-open')||body.classList.contains('food-swipe-active'))return;
     if(!isOpen&&blocked(target))return;
     dragging={x,y,px:x,t:performance.now(),velocity:0,axis:'unset',activated:false,start:isOpen?1:0,kind};
