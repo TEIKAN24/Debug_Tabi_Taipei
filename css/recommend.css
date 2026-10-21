@@ -1055,6 +1055,8 @@ html[data-theme="light"] .recommend-guide-tag-caution{color:#A94338;background:#
 .recommend-card-main{min-width:0;display:flex;flex-direction:column;justify-content:flex-start;}
 .recommend-card-type{font:760 14px/1.2 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;color:#F1EEF6;letter-spacing:.01em;}
 .recommend-venue{margin-top:8px;color:#FBF8FF!important;text-decoration:none;font-size:clamp(17px,5.6vw,24px)!important;font-weight:790;line-height:1.12!important;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-wrap:balance;}
+.recommend-reason{display:none!important;}
+.recommend-card-main{justify-content:flex-start;gap:0;}
 .recommend-reason{margin:16px 0 0;font-size:12px!important;line-height:1.45!important;color:#9892A1!important;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;max-width:100%;}
 .recommend-card-side{min-width:0;display:grid;grid-template-rows:auto 1fr auto;justify-items:end;align-items:start;gap:10px;}
 .recommend-distance-pill,.recommend-distance-pill-empty{display:inline-flex;align-items:center;gap:7px;max-width:100%;padding:8px 13px;border-radius:999px;border:1px solid #66616B;background:rgba(34,34,36,.45);color:#FBF8FF;font:650 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;white-space:nowrap;}
@@ -1063,7 +1065,7 @@ html[data-theme="light"] .recommend-guide-tag-caution{color:#A94338;background:#
 .recommend-distance-pill-icon svg{display:block;width:100%;height:100%;}
 .recommend-distance-pill-label{overflow:hidden;text-overflow:ellipsis;}
 .recommend-card-stars{min-height:28px;display:flex;align-items:center;justify-content:flex-end;gap:6px;align-self:center;color:#7A674C;}
-.recommend-card-star{display:inline-flex;align-items:center;justify-content:center;font-size:20px;line-height:1;font-weight:400;transform:translateY(-1px);}
+.recommend-card-star{display:inline-flex;align-items:center;justify-content:center;width:17px;height:18px;line-height:0;flex:0 0 17px;}.recommend-card-star svg{display:block;width:100%;height:100%;}
 .recommend-guide-tags{display:flex;justify-content:flex-end;align-items:flex-end;align-content:flex-end;flex-wrap:wrap;gap:7px 8px;margin-top:0!important;min-width:0;max-width:100%;}
 .recommend-guide-tag{padding:8px 13px!important;border-radius:14px!important;border:1px solid #66616B!important;background:#2E2D31!important;color:#F4F0F9!important;font:700 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif!important;white-space:nowrap;}
 .recommend-guide-tag-featured{color:#E4C38D!important;background:#89704A55!important;border-color:#B58B49!important;}
@@ -1087,7 +1089,7 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
  .recommend-distance-pill{padding:7px 10px;font-size:10px;gap:5px;}
  .recommend-distance-pill-icon{width:13px;height:13px;flex-basis:13px;}
  .recommend-card-stars{min-height:22px;gap:4px;}
- .recommend-card-star{font-size:16px;}
+ .recommend-card-star{width:14px;height:15px;flex-basis:14px;}
  .recommend-guide-tags{gap:5px 6px;}
  .recommend-guide-tag{padding:7px 10px!important;border-radius:12px!important;font-size:10px!important;}
 }
@@ -1238,7 +1240,7 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
   .recommend-distance-pill,.recommend-distance-pill-empty{font-size:10px!important;gap:4px!important;padding:4px 8px!important;min-height:22px!important;box-sizing:border-box!important;}
   .recommend-distance-pill-icon{width:11px!important;height:11px!important;flex:0 0 11px!important;}
   .recommend-card-stars{min-height:15px!important;gap:3px!important;align-self:center!important;}
-  .recommend-card-star{font-size:14px!important;}
+  .recommend-card-star{width:13px!important;height:14px!important;flex-basis:13px!important;}
   .recommend-guide-tags{display:flex!important;justify-content:flex-end!important;align-items:flex-end!important;align-content:flex-end!important;flex-wrap:wrap!important;gap:3px 4px!important;}
   .recommend-guide-tag{font-size:9px!important;padding:4px 5px!important;border-radius:7px!important;line-height:1.1!important;}
   .recommend-more{

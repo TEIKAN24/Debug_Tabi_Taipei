@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.100';
+  const VERSION='30.9.101';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -201,6 +201,7 @@
     if(state.areaMode==='current'||state.areaMode==='station'){syncUI();renderResults();}
   }
   const FEATURED=/おすすめ|ミシュラン|ビブグルマン|孤独のグルメ|超行列|行列店|一番人気|高人気|人気店|人気老舗/;
+  const MICHELIN_FLOWER_SVG='<svg viewBox="0 0 18.96 20.63" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="#594f41" d="M12.82 4.38c.1.09.72-.4.89-.48 1.77-.91 3.68-.55 4.72 1.2 1.32 2.23.01 4.29-2.13 5.22.49.32 1.06.55 1.51.92 2.9 2.4-.11 7.49-4.1 5.5l-.88-.55c.44 2.54-1.04 4.61-3.74 4.43-2.28-.16-3.37-2.34-2.99-4.43-.04-.04-.88.52-1.01.58-3.84 1.89-6.9-3.04-3.8-5.63.4-.34.88-.55 1.33-.81C.78 9.41-.51 8.02.19 5.82c.86-2.68 3.88-3.04 5.91-1.37-.98-5.85 7.64-6 6.73-.07ZM11.19 7.99l-.57-.32c.94-1.68 2.25-5.63-.34-6.46-.63-.2-1.17-.19-1.79.06-2.39.97-1.07 4.74-.18 6.4l-.57.32c-1-1.63-3.58-4.68-5.66-3.02-.95.76-1.33 2.19-.55 3.21 1.06 1.38 3.47 1.69 5.1 1.81v.58c-1.58.19-4.61.59-5.33 2.25-.47 1.06.07 2.46 1.07 3.01 2.1 1.15 4.34-1.62 5.37-3.15l.59.19c-.66 1.48-1.55 3.52-1.06 5.15.59 1.94 3.56 2.09 4.32.21.67-1.64-.28-3.85-.97-5.36l.59-.19c.99 1.48 3.11 4.06 5.14 3.29.76-.29 1.42-1.24 1.5-2.04.29-2.59-3.67-3.18-5.53-3.36v-.58c2.24.02 7.14-1.27 5.08-4.45-1.82-2.8-5.17.62-6.2 2.45Z"/></svg>';
   // v30.9.85: separate award-sourced venue index, included only in distance-based GPS/station mode.
   // No geolocation is sent to a server; all distance checks run locally.
   async function loadNearbyVenues(){
@@ -666,7 +667,23 @@
       if(/蛋餅|焼餅|燒餅/.test(s))return 'breakfast-bing';
       return 'breakfast';
     }
-    return item.genre.find(g=>g!=='taiwan')||item.displayType||'グルメ';
+    return item.genre.find(g=>g!=='taiwan')||item.displayType||'';
+  }
+  function cardCuisine(item){
+    if(item.displayType&&item.displayType!=='グルメ')return item.displayType;
+    const parts=[item.name,item.details,(item.guideTags||[]).map(t=>t.text).join('、')].filter(Boolean).join(' ');
+    if(/バー|ウイスキー|カクテル|酒場|酒吧/i.test(parts)||item.category==='bar')return 'バー';
+    if(/咖啡|コーヒー|珈琲|喫茶|カフェ/i.test(parts)||item.category==='cafe')return 'カフェ';
+    if(/豆花|かき氷|冰|甜點|甜品|スイーツ/i.test(parts)||item.category==='sweet')return 'スイーツ';
+    if(/奶茶|茶|ドリンク|豆漿|ミルク|ジュース/i.test(parts)||item.category==='drink')return 'ドリンク';
+    if(/小籠包|蒸餃|鍋貼|水餃|餃子|点心/i.test(parts)||item.category==='dumpling')return '小籠包・点心';
+    if(/火鍋|鍋|麻辣/.test(parts)||item.category==='hotpot')return '鍋料理';
+    if(/牛肉麵|牛肉麺|麺線|麵線|麺|麵|米粉/.test(parts)||item.category==='noodle')return '麺類';
+    if(/魯肉飯|滷肉飯|雞肉飯|鶏肉飯|排骨飯|炒飯|米糕|便當|弁当|ごはん|飯/.test(parts)||item.category==='rice'||item.category==='meal')return 'ごはん料理';
+    if(item.category==='breakfast')return '朝ごはん';
+    if(item.market||item.category==='nightmarket')return '夜市';
+    if(item.category==='izakaya')return '熱炒';
+    return '台湾料理';
   }
   const typeLabel={breakfast:'朝食',nightmarket:'夜市',dumpling:'小籠包・餃子',rice:'ごはん',noodle:'麺',hotpot:'鍋',bar:'バー',drink:'ドリンク',sweet:'スイーツ',cafe:'カフェ',meal:'ごはん',izakaya:'熱炒'};
   function el(tag,cls,txt){const node=document.createElement(tag);if(cls)node.className=cls;if(txt!==undefined)node.textContent=txt;return node;}
@@ -1049,14 +1066,9 @@
       const shell=el('div','recommend-card-shell');
       const main=el('div','recommend-card-main');
       const side=el('div','recommend-card-side');
-      main.append(el('div','recommend-card-type',item.displayType||typeLabel[item.category]||'グルメ'));
+      const cuisine=cardCuisine(item);
+      if(cuisine)main.append(el('div','recommend-card-type',cuisine));
       const a=el('a','recommend-venue',item.name);a.href=item.nearestMapUrl||item.url;a.target='_blank';a.rel='noopener noreferrer';main.append(a);
-      const note=reason(item);
-      if(note){
-        const noteEl=el('p','recommend-reason',note);
-        noteEl.title=note;
-        main.append(noteEl);
-      }
       const distanceText=Number.isFinite(item.distanceMeters)?`約${formatDistance(item.distanceMeters)}`:'';
       if(distanceText){
         const badge=el('span','recommend-distance-pill');
@@ -1070,7 +1082,13 @@
       const starsCount=Math.min(3,michelinStars(item));
       const starsWrap=el('div','recommend-card-stars');
       starsWrap.setAttribute('aria-label',starsCount?`ミシュラン${starsCount}つ星`:'ミシュラン評価なし');
-      if(starsCount){for(let i=0;i<starsCount;i++)starsWrap.append(el('span','recommend-card-star','✿'));}
+      if(starsCount){
+        for(let i=0;i<starsCount;i++){
+          const star=el('span','recommend-card-star');
+          star.innerHTML=MICHELIN_FLOWER_SVG;
+          starsWrap.append(star);
+        }
+      }
       side.append(starsWrap);
       const tags=cardTags(item);
       if(tags.length){
