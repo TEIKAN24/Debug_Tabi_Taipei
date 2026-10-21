@@ -3142,6 +3142,78 @@
         }
       ],
       "source": "User-supplied Google Maps place links (2026-10-20)"
+    },
+    "Bar Pine松": {
+      "mapUrl": "https://maps.app.goo.gl/avjS8xy6dTQozGvw6",
+      "branches": [
+        {
+          "name": "Bar Pine松",
+          "lat": 25.0325173,
+          "lng": 121.5530237,
+          "mapUrl": "https://www.google.com/maps/place/Bar+Pine%E6%9D%BE/@25.0325221,121.5504434,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ab643d29a831:0x58599d71d86fa2d0!8m2!3d25.0325173!4d121.5530237!16s%2Fg%2F11t7dq454x?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAxNC4wIKXMDSoASAFQAw%3D%3D"
+        }
+      ],
+      "source": "User-supplied Google Maps place links (TAIPEI_店家資料 2026-10-20)"
+    },
+    "Alchemy Bar Taipei": {
+      "mapUrl": "https://maps.app.goo.gl/yb8gbT3nyEi2weht5",
+      "branches": [
+        {
+          "name": "Alchemy Speakeasy Bar Taipei",
+          "lat": 25.032519,
+          "lng": 121.56321,
+          "mapUrl": "https://www.google.com/maps/place/Alchemy+Speakeasy+Bar+Taipei/@25.0325238,121.5606297,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abb688a5e54d:0x53025522bafa3ee7!8m2!3d25.032519!4d121.56321!16s%2Fg%2F11b637tc28?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAxNC4wIKXMDSoASAFQAw%3D%3D"
+        }
+      ],
+      "source": "User-supplied Google Maps place links (TAIPEI_店家資料 2026-10-20)"
+    },
+    "台虎信義": {
+      "mapUrl": "https://maps.app.goo.gl/gzpYz2tvgFWr4NyXA",
+      "branches": [
+        {
+          "name": "台虎信義",
+          "lat": 25.040247,
+          "lng": 121.566773,
+          "mapUrl": "https://www.google.com/maps/place/%E5%8F%B0%E8%99%8E%E4%BF%A1%E7%BE%A9/@25.0381988,121.5650879,18z/data=!3m1!5s0x3442abc6ea5040a3:0x8a651582bdd48b17!4m10!1m2!2m1!1z5Y-w6JmO5L-h576p!3m6!1s0x3442abbbc0632e07:0x5836c1f514fd0ff4!8m2!3d25.040247!4d121.566773!15sCgzlj7DomY7kv6HnvqlaECIO5Y-wIOiZjiDkv6HnvqmSAQNiYXKaASNDaFpEU1VoTk1HOW5TMFZKUTBGblNVTXhPV1ppYldOQkVBReABAPoBBAgAECI!16s%2Fg%2F11cm05ybr4?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAxNC4wIKXMDSoASAFQAw%3D%3D"
+        }
+      ],
+      "source": "User-supplied Google Maps place links (TAIPEI_店家資料 2026-10-20)"
+    },
+    "Draft Land": {
+      "mapUrl": "https://maps.app.goo.gl/JKxAFBVhuNNvonSv7",
+      "branches": [
+        {
+          "name": "Draft Land Xinyi",
+          "lat": 25.0400176,
+          "lng": 121.5663109,
+          "mapUrl": "https://www.google.com/maps/place/Draft+Land+Xinyi/@25.0382203,121.5560515,15z/data=!4m10!1m2!2m1!1sDraft+Land!3m6!1s0x3442abc86ba60fef:0x80b45f873d16a92e!8m2!3d25.0400176!4d121.5663109!15sCgpEcmFmdCBMYW5kWgwiCmRyYWZ0IGxhbmSSAQxjb2NrdGFpbF9iYXLgAQA!16s%2Fg%2F11r49wlh9s?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAxNC4wIKXMDSoASAFQAw%3D%3D"
+        }
+      ],
+      "source": "User-supplied Google Maps place links (TAIPEI_店家資料 2026-10-20)"
+    },
+    "ocean Taipei Bar": {
+      "mapUrl": "https://maps.app.goo.gl/9uKCgZcxRr2ZfAdu8",
+      "branches": [
+        {
+          "name": "ocean Taipei Bar",
+          "lat": 25.0267429,
+          "lng": 121.5229122,
+          "mapUrl": "https://www.google.com/maps/place/ocean+Taipei+Bar/@25.0267477,121.5203319,17z/data=!3m2!4b1!5s0x3442a99a5fceb551:0xdc65d1adbd6d7896!4m6!3m5!1s0x3442a900194e46fb:0xebde70e5b85572f2!8m2!3d25.0267429!4d121.5229122!16s%2Fg%2F11ld8pbp7s?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAxNC4wIKXMDSoASAFQAw%3D%3D"
+        }
+      ],
+      "source": "User-supplied Google Maps place links (TAIPEI_店家資料 2026-10-20)"
+    },
+    "Kavalan Whisky Bar": {
+      "mapUrl": "https://maps.app.goo.gl/vGFLaH7BCg2qAfBCA",
+      "branches": [
+        {
+          "name": "Kavalan Whisky Bar",
+          "lat": 25.0523303,
+          "lng": 121.5279494,
+          "mapUrl": "https://www.google.com/maps/place/Kavalan+Whisky+Bar/@25.0523351,121.5253691,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a92238576525:0xdaa75acbfff64cb6!8m2!3d25.0523303!4d121.5279494!16s%2Fg%2F11h7n9vw14?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAxNC4wIKXMDSoASAFQAw%3D%3D"
+        }
+      ],
+      "source": "User-supplied Google Maps place links (TAIPEI_店家資料 2026-10-20)"
     }
   },
   "nightMarkets": {

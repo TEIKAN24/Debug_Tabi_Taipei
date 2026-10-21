@@ -1,10 +1,11 @@
-/* TAIPEI CITY GUIDE v30.9.82 — optional on-device nearby distance for verified venues.
+/* TAIPEI CITY GUIDE v30.9.83 — optional on-device nearby distance for verified venues.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
+   v30.9.83: venues.json — coordinates for the 6 bars.
    v30.9.81: match every listed map link; night-market stalls use their market;
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.82';
+  const VERSION='30.9.83';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
