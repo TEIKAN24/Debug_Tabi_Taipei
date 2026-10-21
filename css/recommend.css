@@ -1,4 +1,4 @@
-/* v30.9.86: mirrored left drawer, area/time reorder and route-first station picker. */
+/* v30.9.87: one-page compact location and native station selection. */
 .recommend-drawer-backdrop {position:fixed;inset:0;z-index:123;pointer-events:none;background:rgba(0,0,0,.62);opacity:0;transition:opacity .3s ease;}
 .recommend-drawer {position:fixed;z-index:124;top:0;bottom:0;left:0;width:min(100vw,480px);max-width:100vw;overflow:hidden;visibility:hidden;transform:translate3d(var(--recommend-offset,-480px),0,0);transition:transform .32s cubic-bezier(.2,.72,.22,1);background:#14191c;color:#f0f3f2;border-right:1px solid #343d3f;overscroll-behavior:contain;}
 body.recommend-swipe-active .recommend-drawer,body.recommend-drawer-open .recommend-drawer{visibility:visible;}
@@ -631,3 +631,71 @@ html[data-theme="light"] .recommend-station-option[aria-pressed="true"] .recomme
 
 /* Avoid iPhone Safari auto-zoom when the optional station search gets focus. */
 .recommend-station-search{font-size:16px;}
+
+/* v30.9.87 — compact same-page modes matching the supplied mockup. */
+#recommend-title button{display:inline;color:inherit;font:inherit;letter-spacing:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left;max-width:100%;}
+#recommend-title button:focus-visible{outline:2px solid var(--reco-accent,#bda5f3);outline-offset:3px;border-radius:4px;}
+.recommend-source-captions{display:grid;grid-template-columns:clamp(75px,27%,105px) minmax(0,1fr);align-items:center;gap:8px;min-width:0;}
+.recommend-source-caption{display:inline-flex;align-items:center;gap:5px;min-width:0;color:#c7bad8;font-size:10.5px;font-weight:690;white-space:nowrap;}
+.recommend-caption-icon{display:inline-flex;justify-content:center;align-items:center;width:14px;height:14px;flex:none;color:var(--reco-accent,#d2bdff);}
+.recommend-caption-icon svg{width:14px;height:14px;}
+.recommend-main-picker{display:grid;grid-template-columns:clamp(75px,27%,105px) minmax(0,1fr) 44px;gap:5px;align-items:stretch;min-width:0;height:57px;}
+.recommend-main-picker .recommend-control-wrap{min-width:0;position:relative;}
+.recommend-main-picker .recommend-control-time-wrap>.recommend-control{height:100%;max-width:100%;width:100%;justify-content:space-between;align-items:center;padding:7px 9px;border-radius:12px;font-size:clamp(13px,3.75vw,19px);font-weight:730;}
+.recommend-main-picker .recommend-control-time-wrap .recommend-control-arrow{flex:0 0 13px;width:13px;margin-left:1px;}
+.recommend-main-picker .recommend-control-time-wrap .recommend-options{min-width:155px;}
+.recommend-picker-location,.recommend-picker-station{box-sizing:border-box;min-width:0;min-height:0;width:100%;height:57px;border:1px solid #48424d;border-radius:12px;background:#212121;}
+.recommend-picker-location{display:flex;align-items:center;gap:10px;padding:6px 10px;}
+.recommend-picker-location[hidden],.recommend-picker-station[hidden]{display:none!important;}
+.recommend-location-pin{display:flex;flex:0 0 22px;align-items:center;justify-content:center;color:#c7b6ed;}
+.recommend-location-copy,.recommend-native-copy{display:flex;flex-direction:column;min-width:0;justify-content:center;gap:2px;}
+.recommend-location-copy strong{font-size:clamp(14px,4vw,19px);line-height:1.1;font-weight:740;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.recommend-location-copy small{font-size:9px;line-height:1.2;color:#c9c0d0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.recommend-mode-button{display:flex;align-items:center;justify-content:center;min-width:0;width:44px;height:57px;border:1px solid #514b58;border-radius:12px;color:#f0e7ff;background:#262629;padding:2px;cursor:pointer;font:700 10px/1.25 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;}
+.recommend-mode-button:focus-visible,.recommend-native-field select:focus-visible{outline:2px solid var(--reco-accent,#C4A6FF);outline-offset:2px;}
+.recommend-mode-button .recommend-mode-pin{display:none;}
+.recommend-main-picker.is-station .recommend-mode-button .recommend-mode-text{display:none;}
+.recommend-main-picker.is-station .recommend-mode-button .recommend-mode-pin{display:inline-flex;color:#c7b6ed;}
+.recommend-picker-station{display:flex;flex-direction:column;position:relative;overflow:hidden;padding:2px 4px;transition:none;}
+.recommend-native-field{display:flex;flex:1 1 0;min-height:0;min-width:0;position:relative;border-radius:7px;transition:flex-grow .18s ease,background-color .18s ease;}
+.recommend-native-field + .recommend-native-field{border-top:1px solid #46414d;border-radius:0 0 7px 7px;}
+.recommend-native-field .recommend-native-display{display:flex;align-items:center;gap:5px;min-width:0;min-height:0;width:100%;padding:1px 4px;pointer-events:none;}
+.recommend-native-code{flex:0 0 auto;display:inline-flex;justify-content:center;align-items:center;min-width:17px;max-width:32px;min-height:15px;padding:1px 3px;border-radius:3px;background:#4288c9;color:white;font-size:8px;font-weight:760;line-height:1;}
+.recommend-native-code.is-empty{background:#424049;color:#c6bbd6;}
+.recommend-native-copy{flex:1 1 auto;gap:0;}
+.recommend-native-copy strong{font-size:clamp(11px,3.3vw,13px);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.recommend-native-copy small{font-size:8px;line-height:1.2;color:#bfb3d0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.recommend-native-chevron{flex:0 0 10px;height:10px;margin:auto 1px auto auto;position:relative;color:#c8b2ef;}
+.recommend-native-chevron::after{content:'';display:block;width:6px;height:6px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);}
+.recommend-native-field select{position:absolute;inset:0;width:100%;height:100%;border:0;opacity:0;cursor:pointer;z-index:2;font-size:16px;}
+.recommend-native-field select:disabled{cursor:not-allowed;}
+.recommend-native-field:has(select:disabled){opacity:.65;}
+.recommend-picker-station[data-active="line"] .recommend-native-line,
+.recommend-picker-station[data-active="station"] .recommend-native-station{flex-grow:3;background:#30293a;}
+.recommend-picker-station[data-active="line"] .recommend-native-station,
+.recommend-picker-station[data-active="station"] .recommend-native-line{flex-grow:.75;}
+.recommend-picker-station[data-active="line"] .recommend-native-line .recommend-native-copy strong,
+.recommend-picker-station[data-active="station"] .recommend-native-station .recommend-native-copy strong{font-size:14px;}
+.recommend-picker-station[data-active="line"] .recommend-native-station .recommend-native-display,
+.recommend-picker-station[data-active="station"] .recommend-native-line .recommend-native-display{padding-block:0;}
+.recommend-picker-station[data-active="line"] .recommend-native-station .recommend-native-copy small,
+.recommend-picker-station[data-active="station"] .recommend-native-line .recommend-native-copy small{display:none;}
+.recommend-picker-station[data-active="line"] .recommend-native-station .recommend-native-copy strong,
+.recommend-picker-station[data-active="station"] .recommend-native-line .recommend-native-copy strong{font-size:9px;}
+.recommend-picker-station[data-active="line"] .recommend-native-station .recommend-native-code,
+.recommend-picker-station[data-active="station"] .recommend-native-line .recommend-native-code{font-size:7px;min-height:11px;}
+html[data-theme="light"] .recommend-picker-location,html[data-theme="light"] .recommend-picker-station,html[data-theme="light"] .recommend-mode-button{background:#fff;border-color:#c9c1d0;color:#453753;}
+html[data-theme="light"] .recommend-location-copy small,html[data-theme="light"] .recommend-native-copy small,html[data-theme="light"] .recommend-source-caption{color:#786888;}
+html[data-theme="light"] .recommend-native-field + .recommend-native-field{border-top-color:#e5dfeb;}
+html[data-theme="light"] .recommend-picker-station[data-active="line"] .recommend-native-line,
+html[data-theme="light"] .recommend-picker-station[data-active="station"] .recommend-native-station{background:#f0e8fa;}
+@media(max-width:360px){
+ .recommend-source-captions,.recommend-main-picker{gap:4px;}
+ .recommend-main-picker{grid-template-columns:73px minmax(0,1fr) 43px;}
+ .recommend-picker-location{padding-inline:6px;gap:6px;}
+ .recommend-location-copy strong{font-size:14px;}
+ .recommend-native-code{min-width:14px;font-size:7px;}
+ .recommend-native-display{gap:3px!important;padding-inline:2px!important;}
+ .recommend-native-copy strong{font-size:11px;}
+}
+@media(prefers-reduced-motion:reduce){.recommend-native-field{transition:none;}}

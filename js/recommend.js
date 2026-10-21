@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.86 — searchable MRT line/station picker and 500m station-radius recommendations.
+/* TAIPEI CITY GUIDE v30.9.87 — one-page location/station switching and native compact station selects.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
    v30.9.83: venues.json — coordinates for the 6 bars.
@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.86';
+  const VERSION='30.9.87';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -17,21 +17,27 @@
   const more=document.getElementById('recommend-more');
   const timeButton=document.getElementById('recommend-time-trigger');
   const timeLabel=document.getElementById('recommend-time-label');
+  const timeCaption=document.getElementById('recommend-time-caption');
   const timeOptions=document.getElementById('recommend-time-options');
   const areaButton=document.getElementById('recommend-area-trigger');
   const areaLabel=document.getElementById('recommend-area-label');
-  const areaOptions=document.getElementById('recommend-area-options');
   const locationStatus=document.getElementById('recommend-location-status');
   const stationControls=document.getElementById('recommend-station-controls');
-  const lineButton=document.getElementById('recommend-line-trigger');
+  const currentLocation=document.getElementById('recommend-current-location');
+  const mainPicker=document.getElementById('recommend-main-picker');
+  const districtName=document.getElementById('recommend-district-name');
+  const districtEn=document.getElementById('recommend-district-en');
+  const title=document.getElementById('recommend-home-trigger');
+  const lineSelect=document.getElementById('recommend-line-select');
+  const lineField=document.getElementById('recommend-line-field');
   const lineLabel=document.getElementById('recommend-line-label');
-  const lineDot=document.getElementById('recommend-line-dot');
-  const lineOptions=document.getElementById('recommend-line-options');
-  const stationButton=document.getElementById('recommend-station-trigger');
+  const lineEn=document.getElementById('recommend-line-en');
+  const lineCode=document.getElementById('recommend-line-code');
+  const stationSelect=document.getElementById('recommend-station-select');
+  const stationField=document.getElementById('recommend-station-field');
   const stationLabel=document.getElementById('recommend-station-label');
-  const stationOptions=document.getElementById('recommend-station-options');
-  const stationSearch=document.getElementById('recommend-station-search');
-  const stationResults=document.getElementById('recommend-station-results');
+  const stationEn=document.getElementById('recommend-station-en');
+  const stationCode=document.getElementById('recommend-station-code');
   const moods=document.getElementById('recommend-mood-options');
   const volumes=document.getElementById('recommend-volume-options');
   const scenes=document.getElementById('recommend-scene-options');
@@ -89,21 +95,31 @@
   function taipeiTimeLabel(){return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(taipeiNow());}
   function taipeiHour(){return Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hourCycle:'h23'}).formatToParts(taipeiNow()).find(p=>p.type==='hour')?.value??12);}
   function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<14?'lunch':h>=14&&h<17?'afternoon':h>=17&&h<23?'night':'late';}
-  const state={timeMode:'current',time:defaultBand(),areaMode:'all',area:'',line:'',stationCode:'',genre:'',volume:'',scene:'',page:0,locationStatus:'idle',geoRequested:false,position:null};
+  const state={timeMode:'current',time:defaultBand(),areaMode:'current',area:'',line:'',stationCode:'',genre:'',volume:'',scene:'',page:0,locationStatus:'idle',geoRequested:false,position:null};
   // Static station coordinates are used on-device: no geolocation permission,
   // API key, third-party request or location upload in station mode.
   let metroLines=[],metroStations=[],stationsReady=false,stationsFailed=false;
-  const STATION_ALIASES={
-    '台北車站':'台北駅 台北駅前 タイペイ', '西門':'西門駅 シーメン',
-    '東門':'東門駅 永康街','中山':'中山駅 赤峰街',
-    '大安':'大安駅','台北101/世貿':'台北101 世貿 台北101駅',
-    '中正紀念堂':'中正紀念堂駅','台大醫院':'台大病院','龍山寺':'龍山寺駅',
-    '松山機場':'松山空港','南港展覽館':'南港展覧館','動物園':'動物園駅',
-    '國父紀念館':'国父紀念館','忠孝復興':'忠孝復興駅',
-    '忠孝新生':'忠孝新生駅','板橋':'板橋駅','大坪林':'大坪林駅',
-    '士林':'士林駅','公館':'公館駅','北投':'北投駅','淡水':'淡水駅',
-    '迪化街':'大橋頭 北門', '新北產業園區':'新北産業園区'
+  const LINE_EN={BR:'Wenhu Line',R:'Tamsui-Xinyi Line',G:'Songshan-Xindian Line',O:'Zhonghe-Xinlu Line',BL:'Bannan Line',Y:'Circular Line'};
+  const DISTRICTS={
+    '中正區':['中正区','Zhongzheng Dist.'],'大安區':['大安区','Da’an Dist.'],'中山區':['中山区','Zhongshan Dist.'],
+    '大同區':['大同区','Datong Dist.'],'萬華區':['万華区','Wanhua Dist.'],'松山區':['松山区','Songshan Dist.'],
+    '信義區':['信義区','Xinyi Dist.'],'士林區':['士林区','Shilin Dist.'],'北投區':['北投区','Beitou Dist.'],
+    '文山區':['文山区','Wenshan Dist.'],'內湖區':['内湖区','Neihu Dist.'],'南港區':['南港区','Nangang Dist.']
   };
+  // District is an estimate from nearby address-verified reference venues.
+  // No coordinates leave the device. If no reliable reference is close, show
+  // the location as unconfirmed instead of inventing an administrative district.
+  function nearbyDistrict(point){
+    if(!point||!nearbyReady)return null;
+    const candidates=nearbyVenues.filter(v=>DISTRICTS[v.district]&&v.addressVerified!==false)
+      .map(v=>({district:v.district,distance:distanceMeters(point.lat,point.lng,v.lat,v.lng)}))
+      .filter(x=>x.distance<=350).sort((a,b)=>a.distance-b.distance).slice(0,7);
+    if(!candidates.length||candidates[0].distance>240)return null;
+    const scores=new Map();
+    for(const x of candidates)scores.set(x.district,(scores.get(x.district)||0)+1/Math.max(60,x.distance));
+    const best=[...scores.entries()].sort((a,b)=>b[1]-a[1])[0];
+    return best?DISTRICTS[best[0]]:null;
+  }
   function currentStation(){return metroStations.find(x=>x.code===state.stationCode&&x.line===state.line)||null;}
   function stationOrigin(){const x=currentStation();return x?{lat:x.lat,lng:x.lng}:null;}
   async function loadMetroStations(){
@@ -120,7 +136,7 @@
       if(!stationsReady)throw new Error('station list incomplete');
       stationsFailed=false;
     }catch(_){stationsFailed=true;metroLines=[];metroStations=[];}
-    buildMetroLineOptions();syncUI();renderResults();
+    buildMetroLineOptions();renderStationOptions();syncUI();renderResults();
   }
   const GEO_MAX_METERS=500; // Honest straight-line radius for the first verified batch.
   let coordinates=new Map(),markets=new Map(),coordinatesReady=false,coordinatesFailed=false;
@@ -561,56 +577,42 @@
   buildChoice(timeControls,TIME,timeOptions,'recommend-option',value=>{
     state.timeMode=value;state.time=value==='current'?defaultBand():value;state.page=0;syncUI();renderResults();closeOptions();
   });
-  buildChoice(areaControls,[['current','現在地'],['station','駅から選択']],areaOptions,'recommend-option',value=>{
-    state.areaMode=value;state.area='';state.page=0;state.position=null;
-    state.locationStatus='idle';geoRun++;
-    if(value==='current')requestLocation(true);
-    syncUI();renderResults();closeOptions();
-  });
-  function buildMetroLineOptions(){
-    lineOptions.replaceChildren();
-    for(const line of metroLines){
-      const b=el('button','recommend-option recommend-line-option');b.type='button';
-      b.dataset.value=line.id;
-      const dot=el('span','recommend-line-marker');dot.style.backgroundColor=line.color;
-      b.append(dot,el('span','recommend-line-name',line.name),el('span','recommend-line-code',line.id));
-      b.setAttribute('aria-pressed',String(state.line===line.id));
-      b.addEventListener('click',()=>{
-        if(state.line!==line.id){state.line=line.id;state.stationCode='';state.page=0;}
-        syncUI();renderResults();closeOptions();
-      });
-      lineOptions.append(b);
+  function activateMode(mode){
+    const switching=state.areaMode!==mode;
+    state.areaMode=mode;state.area='';state.page=0;
+    closeOptions();advanced.open=false;
+    if(mode==='current'){
+      // The pinned button always returns to GPS mode and requests a fresh fix.
+      state.position=null;state.locationStatus='idle';state.geoRequested=false;
+      geoRun++;requestLocation(true);
+    }else{
+      geoRun++;state.position=null;state.locationStatus='idle';
+      syncUI();renderResults();
     }
-    if(!metroLines.length)lineOptions.append(el('p','recommend-station-empty',stationsFailed?'路線情報を読み込めませんでした。':'路線情報を読み込み中…'));
+  }
+  function buildMetroLineOptions(){
+    lineSelect.replaceChildren(new Option('路線を選択',''));
+    for(const line of metroLines)lineSelect.add(new Option(`${line.id}  ${line.name}`,line.id));
+    lineSelect.value=state.line||'';
   }
   function renderStationOptions(){
-    stationResults.replaceChildren();
-    const word=normalize(stationSearch.value).replace(/臺/g,'台');
-    const items=metroStations.filter(x=>x.line===state.line&&(!word||
-      normalize([x.name,x.code,STATION_ALIASES[x.name]||''].join(' ')).replace(/臺/g,'台').includes(word)));
-    for(const item of items){
-      const b=el('button','recommend-option recommend-station-option');b.type='button';
-      b.dataset.value=item.code;
-      const code=el('span','recommend-station-code',item.code);
-      const lineColor=metroLines.find(x=>x.id===item.line)?.color;
-      if(lineColor){code.style.backgroundColor=lineColor;code.style.color=item.line==='Y'?'#2C2708':'#fff';}
-      b.append(code,el('span','recommend-station-name',item.name));
-      b.setAttribute('aria-pressed',String(item.code===state.stationCode));
-      b.addEventListener('click',()=>{
-        state.stationCode=item.code;state.page=0;
-        syncUI();renderResults();closeOptions();
-      });
-      stationResults.append(b);
-    }
-    if(!items.length)stationResults.append(el('p','recommend-station-empty','該当する駅はありません。'));
+    const items=metroStations.filter(s=>s.line===state.line);
+    stationSelect.replaceChildren(new Option(state.line?'駅を選択':'先に路線を選択',''));
+    for(const item of items)stationSelect.add(new Option(`${item.code}  ${item.name}${item.en?' / '+item.en:''}`,item.code));
+    stationSelect.value=state.stationCode||'';
   }
-  stationSearch.addEventListener('input',renderStationOptions);
-  stationSearch.addEventListener('keydown',event=>{
-    if(event.key==='Enter'){
-      const first=stationResults.querySelector('button');
-      if(first){event.preventDefault();first.click();}
-    }
+  lineSelect.addEventListener('change',()=>{
+    if(state.line!==lineSelect.value){state.line=lineSelect.value;state.stationCode='';state.page=0;}
+    renderStationOptions();syncUI();renderResults();lineSelect.blur();
   });
+  stationSelect.addEventListener('change',()=>{
+    state.stationCode=stationSelect.value;state.page=0;
+    syncUI();renderResults();stationSelect.blur();
+  });
+  for(const [select,field] of [[lineSelect,lineField],[stationSelect,stationField]]){
+    select.addEventListener('focus',()=>{stationControls.dataset.active=select===lineSelect?'line':'station';field.classList.add('is-picking');advanced.open=false;closeOptions();});
+    select.addEventListener('blur',()=>{field.classList.remove('is-picking');stationControls.dataset.active='';});
+  }
   buildChoice(genreControls,GENRES,moods,'recommend-pill',value=>{
     state.genre=state.genre===value?'':value;state.page=0;advanced.open=false;syncUI();renderResults();
   });
@@ -620,22 +622,16 @@
   buildChoice(sceneControls,SCENES,scenes,'recommend-pill',value=>{
     state.scene=state.scene===value?'':value;state.page=0;advanced.open=false;syncUI();renderResults();
   });
-  function closeOptions(){for(const [b,options] of [[timeButton,timeOptions],[areaButton,areaOptions],[lineButton,lineOptions],[stationButton,stationOptions]]){options.hidden=true;b.setAttribute('aria-expanded','false');}}
-  function toggleOptions(button,options){const shouldOpen=options.hidden;closeOptions();advanced.open=false;if(shouldOpen){options.hidden=false;button.setAttribute('aria-expanded','true');}}
-  timeButton.addEventListener('click',()=>toggleOptions(timeButton,timeOptions));
-  areaButton.addEventListener('click',()=>toggleOptions(areaButton,areaOptions));
-  lineButton.addEventListener('click',()=>toggleOptions(lineButton,lineOptions));
-  stationButton.addEventListener('click',()=>{
-    if(stationButton.disabled)return;
-    stationSearch.value='';renderStationOptions();
-    toggleOptions(stationButton,stationOptions);
-  });
-  drawer.addEventListener('keydown',event=>{
-    if(event.key==='Escape')closeOptions();
-  });
+  function closeOptions(){timeOptions.hidden=true;timeButton.setAttribute('aria-expanded','false');}
+  function toggleTimeOptions(){const open=timeOptions.hidden;closeOptions();advanced.open=false;if(open){timeOptions.hidden=false;timeButton.setAttribute('aria-expanded','true');}}
+  timeButton.addEventListener('click',toggleTimeOptions);
+  areaButton.addEventListener('click',()=>activateMode(state.areaMode==='station'?'current':'station'));
+  title.addEventListener('click',()=>activateMode('current'));
+  title.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();activateMode('current');}});
+  drawer.addEventListener('keydown',event=>{if(event.key==='Escape')closeOptions();});
   advanced.addEventListener('toggle',()=>{if(advanced.open)closeOptions();});
   drawer.addEventListener('click',e=>{
-    if(!e.target.closest('.recommend-control-wrap'))closeOptions();
+    if(!e.target.closest('.recommend-control-time-wrap'))closeOptions();
     if(!e.target.closest('.recommend-control-advanced-wrap'))advanced.open=false;
   });
   // Selected conditions become removable bubbles; the add button stays last.
@@ -667,30 +663,48 @@
   function syncUI(){
     syncActiveConditions();
     const timeName=TIME.find(([value])=>value===state.time)?.[1]||'昼';
-    timeLabel.textContent=state.timeMode==='current'?'現在時刻':timeName;
-    areaLabel.textContent=state.areaMode==='current'?'現在地':state.areaMode==='station'?'駅から選択':'エリアを選択';
-    stationControls.hidden=state.areaMode!=='station';
+    timeLabel.textContent=timeName;
+    timeCaption.textContent=state.timeMode==='current'?'現在時刻':'時間帯指定';
+    const isStation=state.areaMode==='station';
+    areaLabel.textContent=isStation?'駅から検索':'現在地';
+    mainPicker.classList.toggle('is-station',isStation);
+    stationControls.hidden=!isStation;
+    currentLocation.hidden=isStation;
+    areaButton.setAttribute('aria-label',isStation?'現在地に戻る':'駅から検索に切り替え');
+    areaButton.title=isStation?'現在地に戻る':'駅から検索';
     const selectedLine=metroLines.find(x=>x.id===state.line);
     const selectedStation=currentStation();
+    lineSelect.disabled=!stationsReady;
+    stationSelect.disabled=!selectedLine;
+    lineSelect.value=state.line||'';
+    stationSelect.value=state.stationCode||'';
     lineLabel.textContent=selectedLine?selectedLine.name:stationsFailed?'路線データなし':'路線を選択';
-    lineDot.style.backgroundColor=selectedLine?.color||'transparent';
-    lineDot.classList.toggle('is-selected',!!selectedLine);
-    lineButton.disabled=!stationsReady;
-    stationButton.disabled=!selectedLine;
+    lineEn.textContent=selectedLine?LINE_EN[selectedLine.id]:'Select Line';
+    lineCode.textContent=selectedLine?.id||'--';
+    lineCode.style.backgroundColor=selectedLine?.color||'';
+    lineCode.style.color=selectedLine?.id==='Y'?'#272109':'';
+    lineCode.classList.toggle('is-empty',!selectedLine);
     stationLabel.textContent=selectedStation?selectedStation.name:selectedLine?'駅を選択':'先に路線を選択';
-    for(const b of lineOptions.querySelectorAll('button[data-value]'))b.setAttribute('aria-pressed',String(b.dataset.value===state.line));
+    stationEn.textContent=selectedStation?(selectedStation.en||'MRT Station'):selectedLine?'Select Station':'Select Line First';
+    stationCode.textContent=selectedStation?.code||'--';
+    stationCode.style.backgroundColor=selectedLine?.color||'';
+    stationCode.style.color=selectedLine?.id==='Y'?'#272109':'';
+    stationCode.classList.toggle('is-empty',!selectedStation);
+    const district=nearbyDistrict(state.position);
+    districtName.textContent=district?district[0]:state.locationStatus==='loading'?'測位中':state.locationStatus==='success'?'現在地':'現在地';
+    districtEn.textContent=district?district[1]:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':'Location';
+    currentLocation.title=district?'登録店の所在地から推定した行政区です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
-    for(const b of areaControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.areaMode));
     for(const b of genreControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.genre));
     for(const b of volumeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.volume));
     for(const b of sceneControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.scene));
     const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!coordinatesReady&&!nearbyReady)?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${coordinates.size+nearbyVenues.length}候補からご案内します。`};
-    locationStatus.textContent=state.areaMode==='current'?messages[state.locationStatus]||'':
-      state.areaMode==='station'?(stationsFailed?'駅データを読み込めませんでした。再読み込みしてください。':
+    locationStatus.textContent=!isStation?messages[state.locationStatus]||'':
+      stationsFailed?'駅データを読み込めませんでした。再読み込みしてください。':
       !stationsReady?'駅データを読み込み中…':
       !state.line?'路線を選んでください。':
       !selectedStation?'駅を選んでください。':
-      `選択した駅から直線${GEO_MAX_METERS}m以内の登録店を検索します。`):'';
+      `選択した駅から直線${GEO_MAX_METERS}m以内の登録店を検索します。`;
     locationStatus.hidden=!locationStatus.textContent;
   }
   // The Geolocation API requires HTTPS and explicit browser permission.
@@ -700,7 +714,7 @@
   let geoRun=0; // Initialized before persisted debug position can be restored.
   // Debug-only location override, enabled solely by ?debugLocation=1.
   const debugEnabled=new URLSearchParams(location.search).get('debugLocation')==='1';
-  const debugPoints=[['station','台北車站',25.0478,121.5170],['ximen','西門町',25.0421,121.5081],['zhongshan','中山站',25.0526,121.5204]];
+  const debugPoints=[['station','台北車站',25.046255,121.517532],['ximen','西門町',25.0421,121.5081],['zhongshan','中山站',25.0526,121.5204]];
   let debugPosition=null;
   function setDebugPosition(lat,lng){
     if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat<24.7||lat>25.4||lng<121.2||lng>122)return false;
@@ -801,8 +815,9 @@
   function refreshContextOnOpen(){
     if(state.timeMode==='current'){state.time=defaultBand();state.page=0;}
     syncUI();renderResults();
-    // Never request geolocation on drawer open or reopen. Only a direct tap on
-    // 「現在地」 inside the area chooser may ask for permission.
+    // Opening the drawer is an explicit gesture. Request GPS once when it is
+    // needed; never repeatedly prompt users who already declined.
+    if(state.areaMode==='current'&&!state.geoRequested&&state.locationStatus==='idle')requestLocation();
   }
   function formatDistance(meters){return `${Math.max(10,Math.round(meters/10)*10)}m`;}
   function reportDebug(orderedCount){
@@ -992,7 +1007,7 @@
     // Keyboard-only access without adding a homepage entrance.
     if(e.altKey&&e.key.toLowerCase()==='r'&&!isOpen&&!body.classList.contains('food-drawer-open')){e.preventDefault();settle(true);return;}
     if(!isOpen||e.key!=='Tab')return;
-    const focusable=[...drawer.querySelectorAll('button:not([disabled]),a[href],input:not([disabled])')].filter(n=>n.getClientRects().length);
+    const focusable=[...drawer.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),[role=button][tabindex="0"]')].filter(n=>n.getClientRects().length);
     const first=focusable[0],last=focusable[focusable.length-1];if(!first||!last)return;
     if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
