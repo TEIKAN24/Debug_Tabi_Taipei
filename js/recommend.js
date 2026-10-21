@@ -1,11 +1,12 @@
-/* TAIPEI CITY GUIDE v30.9.83 — optional on-device nearby distance for verified venues.
+/* TAIPEI CITY GUIDE v30.9.86 — searchable MRT line/station picker and 500m station-radius recommendations.
+   v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
    v30.9.83: venues.json — coordinates for the 6 bars.
    v30.9.81: match every listed map link; night-market stalls use their market;
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.85';
+  const VERSION='30.9.86';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -21,6 +22,16 @@
   const areaLabel=document.getElementById('recommend-area-label');
   const areaOptions=document.getElementById('recommend-area-options');
   const locationStatus=document.getElementById('recommend-location-status');
+  const stationControls=document.getElementById('recommend-station-controls');
+  const lineButton=document.getElementById('recommend-line-trigger');
+  const lineLabel=document.getElementById('recommend-line-label');
+  const lineDot=document.getElementById('recommend-line-dot');
+  const lineOptions=document.getElementById('recommend-line-options');
+  const stationButton=document.getElementById('recommend-station-trigger');
+  const stationLabel=document.getElementById('recommend-station-label');
+  const stationOptions=document.getElementById('recommend-station-options');
+  const stationSearch=document.getElementById('recommend-station-search');
+  const stationResults=document.getElementById('recommend-station-results');
   const moods=document.getElementById('recommend-mood-options');
   const volumes=document.getElementById('recommend-volume-options');
   const scenes=document.getElementById('recommend-scene-options');
@@ -30,7 +41,7 @@
   const advancedTrigger=advanced.querySelector('summary');
   const body=document.body;
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const TIME=[['current','現時刻'],['morning','朝'],['lunch','昼'],['afternoon','午後'],['night','夜'],['late','深夜']];
+  const TIME=[['current','現在時刻'],['morning','朝'],['lunch','昼'],['afternoon','午後'],['night','夜'],['late','深夜']];
   const GENRES=[['taiwan','🇹🇼 台湾料理'],['rice','🍚 ごはん系'],['noodle','🍜 麺類'],['dumpling','🥟 小籠包・点心'],['hotpot','🍲 鍋料理'],['sweet','🍧 スイーツ'],['drink','🧋 ドリンク']];
   const VOLUMES=[['light','🥟 軽く'],['hearty','🍜 がっつり']];
   const SCENES=[['walk','🚶 食べ歩き'],['nightmarket','🌙 夜市を楽しむ'],['rest','☕ ひと休み']];
@@ -78,7 +89,39 @@
   function taipeiTimeLabel(){return new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(taipeiNow());}
   function taipeiHour(){return Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hourCycle:'h23'}).formatToParts(taipeiNow()).find(p=>p.type==='hour')?.value??12);}
   function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<14?'lunch':h>=14&&h<17?'afternoon':h>=17&&h<23?'night':'late';}
-  const state={timeMode:'current',time:defaultBand(),areaMode:'all',area:'',genre:'',volume:'',scene:'',page:0,locationStatus:'idle',geoRequested:false,position:null};
+  const state={timeMode:'current',time:defaultBand(),areaMode:'all',area:'',line:'',stationCode:'',genre:'',volume:'',scene:'',page:0,locationStatus:'idle',geoRequested:false,position:null};
+  // Static station coordinates are used on-device: no geolocation permission,
+  // API key, third-party request or location upload in station mode.
+  let metroLines=[],metroStations=[],stationsReady=false,stationsFailed=false;
+  const STATION_ALIASES={
+    '台北車站':'台北駅 台北駅前 タイペイ', '西門':'西門駅 シーメン',
+    '東門':'東門駅 永康街','中山':'中山駅 赤峰街',
+    '大安':'大安駅','台北101/世貿':'台北101 世貿 台北101駅',
+    '中正紀念堂':'中正紀念堂駅','台大醫院':'台大病院','龍山寺':'龍山寺駅',
+    '松山機場':'松山空港','南港展覽館':'南港展覧館','動物園':'動物園駅',
+    '國父紀念館':'国父紀念館','忠孝復興':'忠孝復興駅',
+    '忠孝新生':'忠孝新生駅','板橋':'板橋駅','大坪林':'大坪林駅',
+    '士林':'士林駅','公館':'公館駅','北投':'北投駅','淡水':'淡水駅',
+    '迪化街':'大橋頭 北門', '新北產業園區':'新北産業園区'
+  };
+  function currentStation(){return metroStations.find(x=>x.code===state.stationCode&&x.line===state.line)||null;}
+  function stationOrigin(){const x=currentStation();return x?{lat:x.lat,lng:x.lng}:null;}
+  async function loadMetroStations(){
+    try{
+      const response=await fetch(`food/mrt_stations.json?v=${VERSION}`,{cache:'no-store'});
+      if(!response.ok)throw new Error('station file unavailable');
+      const data=await response.json();
+      if(data.schemaVersion!==1||!Array.isArray(data.lines)||!Array.isArray(data.stations))throw new Error('station file invalid');
+      metroLines=data.lines.filter(x=>/^(BR|R|G|O|BL|Y)$/.test(x.id)&&typeof x.name==='string');
+      metroStations=data.stations.filter(x=>metroLines.some(line=>line.id===x.line)&&
+        typeof x.code==='string'&&typeof x.name==='string'&&
+        Number.isFinite(x.lat)&&Number.isFinite(x.lng)&&x.lat>24.8&&x.lat<25.3&&x.lng>121.3&&x.lng<121.8);
+      stationsReady=metroLines.length===6&&metroStations.length>=130;
+      if(!stationsReady)throw new Error('station list incomplete');
+      stationsFailed=false;
+    }catch(_){stationsFailed=true;metroLines=[];metroStations=[];}
+    buildMetroLineOptions();syncUI();renderResults();
+  }
   const GEO_MAX_METERS=500; // Honest straight-line radius for the first verified batch.
   let coordinates=new Map(),markets=new Map(),coordinatesReady=false,coordinatesFailed=false;
   let nearbyVenues=[],nearbyReady=false,nearbyCatalog=null;
@@ -106,7 +149,7 @@
       coordinates=clean;markets=marketPoints;coordinatesReady=true;catalog=null;
     }catch(_){coordinatesFailed=true;}
     // Updating metadata never requests location or stores the user's coordinates.
-    if(state.areaMode==='current'){syncUI();renderResults();}
+    if(state.areaMode==='current'||state.areaMode==='station'){syncUI();renderResults();}
   }
   const FEATURED=/おすすめ|ミシュラン|ビブグルマン|孤独のグルメ|超行列|行列店|一番人気|高人気|人気店|人気老舗/;
   // v30.9.85: separate award-sourced venue index, included only in 500m GPS mode.
@@ -123,7 +166,7 @@
         /^https:\/\/www\.google\.com\/maps\/|^https:\/\/maps\.app\.goo\.gl\//.test(r.mapUrl||''));
       nearbyCatalog=null;nearbyReady=true;
     }catch(e){nearbyReady=false;nearbyVenues=[];}
-    if(state.areaMode==='current'){syncUI();renderResults();}
+    if(state.areaMode==='current'||state.areaMode==='station'){syncUI();renderResults();}
   }
   function readNearbyCatalog(){
     if(nearbyCatalog)return nearbyCatalog;
@@ -392,28 +435,31 @@
   function dailyNoise(name,seed){const v=hash32(seed+'|'+name);return ((v^v>>>16)>>>0)/4294967296;}
   function recommendationSeed(){
     // Include rounded position only in ephemeral daily ordering, never storage.
-    const geoKey=state.areaMode==='current'&&state.position?`${state.position.lat.toFixed(3)},${state.position.lng.toFixed(3)}`:'';
+    const point=state.areaMode==='station'?stationOrigin():state.areaMode==='current'?state.position:null;
+    const geoKey=point?`${point.lat.toFixed(3)},${point.lng.toFixed(3)}`:'';
     return [taipeiDate(),state.time,geoKey||state.area,
       state.genre,state.volume,state.scene].join('|');
   }
   const MAIN_SHARE=.4;
   function recommendedPool(){
-    const useGPS=state.areaMode==='current'&&state.locationStatus==='success'&&!!state.position&&(coordinatesReady||nearbyReady);
+    const origin=state.areaMode==='station'?stationOrigin():
+      state.areaMode==='current'&&state.locationStatus==='success'?state.position:null;
+    const useDistance=!!origin&&(coordinatesReady||nearbyReady);
     // Nearby import must not contaminate non-GPS area browsing.
-    const sourceItems=useGPS?[...readCatalog(),...readNearbyCatalog()]:readCatalog();
+    const sourceItems=useDistance?[...readCatalog(),...readNearbyCatalog()]:readCatalog();
     const timeCandidates=sourceItems.filter(item=>eligibleTime(item,state.time));
     // Only verified, specifically matched storefronts take part in GPS ranking.
     // An unknown location is never assumed to be at a neighborhood midpoint.
-    const withinRange=useGPS?closestPerBrand(timeCandidates.map(item=>{
+    const withinRange=useDistance?closestPerBrand(timeCandidates.map(item=>{
       const own=Array.isArray(item.branches)?item.branches:Number.isFinite(item.lat)?[item]:[];
       const candidates=own.length?own:item.marketPoint?[item.marketPoint]:[];
       const nearest=candidates.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng))
-        .map(p=>({...p,distanceMeters:distanceMeters(state.position.lat,state.position.lng,p.lat,p.lng)}))
+        .map(p=>({...p,distanceMeters:distanceMeters(origin.lat,origin.lng,p.lat,p.lng)}))
         .sort((a,b)=>a.distanceMeters-b.distanceMeters)[0];
       return nearest?{...item,distanceMeters:nearest.distanceMeters,distanceToMarket:!own.length,nearestMapUrl:Array.isArray(item.branches)?nearest.mapUrl:null}:null;
     }).filter(item=>item&&item.distanceMeters<=GEO_MAX_METERS)):[];
     const nearbyFallback=false;
-    const byTime=useGPS?withinRange:timeCandidates;
+    const byTime=useDistance?withinRange:timeCandidates;
     const criteria=[];
     if(state.area)criteria.push({label:'エリア',weight:35,fn:item=>item.area===state.area});
     if(state.genre)criteria.push({label:'料理ジャンル',weight:30,fn:item=>genreMatch(item,state.genre)});
@@ -438,7 +484,7 @@
       const score=matched.reduce((sum,c)=>sum+c.weight,0)
         +(item.featured?1:0) // visibility comes from the rotating slot-1 rule below
         +(item.nearbySource?(item.locationConfidence==='high'?0:item.locationConfidence==='medium'?-3:-10):0)
-        +(state.area&&state.areaMode!=='current'&&item.chain?6:0) // not a proxy for branch proximity
+        +(state.area&&state.areaMode==='all'&&item.chain?6:0) // not a proxy for branch proximity
         // Distance in bands (≈0–170 / 170–340 / 340–500 m): shops at a similar
         // walk rotate daily instead of the single nearest one always winning.
         +(Number.isFinite(item.distanceMeters)?40-12*Math.min(2,Math.floor(item.distanceMeters/170)):0)
@@ -478,7 +524,7 @@
       }
       take(pick);
     }
-    return {ordered,timeCount:byTime.length,criteria,lifted,nearbyFallback,useGPS,nearbyCount:withinRange.length};
+    return {ordered,timeCount:byTime.length,criteria,lifted,nearbyFallback,useDistance,nearbyCount:withinRange.length};
   }
   function diversityKey(item,genre){
     if(genre==='noodle'){
@@ -515,11 +561,55 @@
   buildChoice(timeControls,TIME,timeOptions,'recommend-option',value=>{
     state.timeMode=value;state.time=value==='current'?defaultBand():value;state.page=0;syncUI();renderResults();closeOptions();
   });
-  buildChoice(areaControls,[['current','現在地'],['all','エリア指定なし'],...AREAS.map(([id,label])=>[id,label])],areaOptions,'recommend-option',value=>{
-    state.areaMode=value;state.page=0;
-    if(value==='current'){state.area='';state.position=null;state.locationStatus='loading';requestLocation(true);}
-    else {state.area=value==='all'?'':value;state.position=null;state.locationStatus='idle';geoRun++;}
+  buildChoice(areaControls,[['current','現在地'],['station','駅から選択']],areaOptions,'recommend-option',value=>{
+    state.areaMode=value;state.area='';state.page=0;state.position=null;
+    state.locationStatus='idle';geoRun++;
+    if(value==='current')requestLocation(true);
     syncUI();renderResults();closeOptions();
+  });
+  function buildMetroLineOptions(){
+    lineOptions.replaceChildren();
+    for(const line of metroLines){
+      const b=el('button','recommend-option recommend-line-option');b.type='button';
+      b.dataset.value=line.id;
+      const dot=el('span','recommend-line-marker');dot.style.backgroundColor=line.color;
+      b.append(dot,el('span','recommend-line-name',line.name),el('span','recommend-line-code',line.id));
+      b.setAttribute('aria-pressed',String(state.line===line.id));
+      b.addEventListener('click',()=>{
+        if(state.line!==line.id){state.line=line.id;state.stationCode='';state.page=0;}
+        syncUI();renderResults();closeOptions();
+      });
+      lineOptions.append(b);
+    }
+    if(!metroLines.length)lineOptions.append(el('p','recommend-station-empty',stationsFailed?'路線情報を読み込めませんでした。':'路線情報を読み込み中…'));
+  }
+  function renderStationOptions(){
+    stationResults.replaceChildren();
+    const word=normalize(stationSearch.value).replace(/臺/g,'台');
+    const items=metroStations.filter(x=>x.line===state.line&&(!word||
+      normalize([x.name,x.code,STATION_ALIASES[x.name]||''].join(' ')).replace(/臺/g,'台').includes(word)));
+    for(const item of items){
+      const b=el('button','recommend-option recommend-station-option');b.type='button';
+      b.dataset.value=item.code;
+      const code=el('span','recommend-station-code',item.code);
+      const lineColor=metroLines.find(x=>x.id===item.line)?.color;
+      if(lineColor){code.style.backgroundColor=lineColor;code.style.color=item.line==='Y'?'#2C2708':'#fff';}
+      b.append(code,el('span','recommend-station-name',item.name));
+      b.setAttribute('aria-pressed',String(item.code===state.stationCode));
+      b.addEventListener('click',()=>{
+        state.stationCode=item.code;state.page=0;
+        syncUI();renderResults();closeOptions();
+      });
+      stationResults.append(b);
+    }
+    if(!items.length)stationResults.append(el('p','recommend-station-empty','該当する駅はありません。'));
+  }
+  stationSearch.addEventListener('input',renderStationOptions);
+  stationSearch.addEventListener('keydown',event=>{
+    if(event.key==='Enter'){
+      const first=stationResults.querySelector('button');
+      if(first){event.preventDefault();first.click();}
+    }
   });
   buildChoice(genreControls,GENRES,moods,'recommend-pill',value=>{
     state.genre=state.genre===value?'':value;state.page=0;advanced.open=false;syncUI();renderResults();
@@ -530,10 +620,19 @@
   buildChoice(sceneControls,SCENES,scenes,'recommend-pill',value=>{
     state.scene=state.scene===value?'':value;state.page=0;advanced.open=false;syncUI();renderResults();
   });
-  function closeOptions(){for(const [b,options] of [[timeButton,timeOptions],[areaButton,areaOptions]]){options.hidden=true;b.setAttribute('aria-expanded','false');}}
+  function closeOptions(){for(const [b,options] of [[timeButton,timeOptions],[areaButton,areaOptions],[lineButton,lineOptions],[stationButton,stationOptions]]){options.hidden=true;b.setAttribute('aria-expanded','false');}}
   function toggleOptions(button,options){const shouldOpen=options.hidden;closeOptions();advanced.open=false;if(shouldOpen){options.hidden=false;button.setAttribute('aria-expanded','true');}}
   timeButton.addEventListener('click',()=>toggleOptions(timeButton,timeOptions));
   areaButton.addEventListener('click',()=>toggleOptions(areaButton,areaOptions));
+  lineButton.addEventListener('click',()=>toggleOptions(lineButton,lineOptions));
+  stationButton.addEventListener('click',()=>{
+    if(stationButton.disabled)return;
+    stationSearch.value='';renderStationOptions();
+    toggleOptions(stationButton,stationOptions);
+  });
+  drawer.addEventListener('keydown',event=>{
+    if(event.key==='Escape')closeOptions();
+  });
   advanced.addEventListener('toggle',()=>{if(advanced.open)closeOptions();});
   drawer.addEventListener('click',e=>{
     if(!e.target.closest('.recommend-control-wrap'))closeOptions();
@@ -568,15 +667,30 @@
   function syncUI(){
     syncActiveConditions();
     const timeName=TIME.find(([value])=>value===state.time)?.[1]||'昼';
-    timeLabel.textContent=state.timeMode==='current'?`現時刻 · ${timeName}`:timeName;
-    areaLabel.textContent=state.areaMode==='current'?'現在地':state.areaMode==='all'?'エリア指定なし':AREAS.find(([id])=>id===state.areaMode)?.[1]||'エリアを選ぶ';
+    timeLabel.textContent=state.timeMode==='current'?'現在時刻':timeName;
+    areaLabel.textContent=state.areaMode==='current'?'現在地':state.areaMode==='station'?'駅から選択':'エリアを選択';
+    stationControls.hidden=state.areaMode!=='station';
+    const selectedLine=metroLines.find(x=>x.id===state.line);
+    const selectedStation=currentStation();
+    lineLabel.textContent=selectedLine?selectedLine.name:stationsFailed?'路線データなし':'路線を選択';
+    lineDot.style.backgroundColor=selectedLine?.color||'transparent';
+    lineDot.classList.toggle('is-selected',!!selectedLine);
+    lineButton.disabled=!stationsReady;
+    stationButton.disabled=!selectedLine;
+    stationLabel.textContent=selectedStation?selectedStation.name:selectedLine?'駅を選択':'先に路線を選択';
+    for(const b of lineOptions.querySelectorAll('button[data-value]'))b.setAttribute('aria-pressed',String(b.dataset.value===state.line));
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
     for(const b of areaControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.areaMode));
     for(const b of genreControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.genre));
     for(const b of volumeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.volume));
     for(const b of sceneControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.scene));
     const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!coordinatesReady&&!nearbyReady)?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${coordinates.size+nearbyVenues.length}候補からご案内します。`};
-    locationStatus.textContent=state.areaMode==='current'?messages[state.locationStatus]||'': '';
+    locationStatus.textContent=state.areaMode==='current'?messages[state.locationStatus]||'':
+      state.areaMode==='station'?(stationsFailed?'駅データを読み込めませんでした。再読み込みしてください。':
+      !stationsReady?'駅データを読み込み中…':
+      !state.line?'路線を選んでください。':
+      !selectedStation?'駅を選んでください。':
+      `選択した駅から直線${GEO_MAX_METERS}m以内の登録店を検索します。`):'';
     locationStatus.hidden=!locationStatus.textContent;
   }
   // The Geolocation API requires HTTPS and explicit browser permission.
@@ -721,12 +835,18 @@
     }catch(e){target.textContent='推薦診斷錯誤：'+e.message;}
   }
   function renderResults(){
-    const {ordered,timeCount,lifted,nearbyFallback,useGPS,nearbyCount}=recommendedPool();
+    if(state.areaMode==='station'&&(!currentStation()||(!coordinatesReady&&!nearbyReady))){
+      results.replaceChildren(el('p','recommend-no-data',stationsFailed?'駅データを読み込めませんでした。':currentStation()?'位置データを読み込み中です。':'路線と駅を選ぶと、駅から500m以内のおすすめを表示します。'));
+      count.textContent='駅を選択';more.hidden=true;relaxed.hidden=true;
+      disclaimer.textContent='※ 選択駅からの直線距離を基準にご案内します。';
+      return;
+    }
+    const {ordered,timeCount,lifted,nearbyFallback,useDistance,nearbyCount}=recommendedPool();
     results.replaceChildren();
     if(!ordered.length){
       more.hidden=true;
       relaxed.hidden=false;
-      relaxed.textContent=timeCount===0?(useGPS?'直線500m以内に位置データ登録済みの該当店はありません。':'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。'):'該当店が見つかりません。';
+      relaxed.textContent=timeCount===0?(useDistance?'選択地点から直線500m以内に該当する登録店はありません。':'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。'):'該当店が見つかりません。';
       results.append(el('p','recommend-no-data','おすすめ情報を準備中です。'));
       count.textContent='0軒';reportDebug(0);return;
     }
@@ -736,12 +856,12 @@
     count.textContent=`${slice.length}軒をピックアップ`;
     relaxed.hidden=!lifted.length&&!nearbyFallback;
     relaxed.textContent=lifted.length?`条件を少しゆるめました（${lifted.join('・')}）。時間帯は変更していません。`:'';
-    if(useGPS&&nearbyFallback){
+    if(useDistance&&nearbyFallback){
       locationStatus.textContent='この時間帯は直線500m以内に位置データ登録済みの店がありません。';
       locationStatus.hidden=false;
     }
-    if(useGPS&&!nearbyFallback){
-      locationStatus.textContent=`現在地から直線500m以内の位置データ登録済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size+nearbyVenues.length}候補）。`;
+    if(useDistance&&!nearbyFallback){
+      locationStatus.textContent=`${state.areaMode==='station'?'選択駅':'現在地'}から直線500m以内の位置データ登録済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size+nearbyVenues.length}候補）。`;
       locationStatus.hidden=false;
     }
     reportDebug(ordered.length);
@@ -758,8 +878,8 @@
         const location=el('span','recommend-place');
         if(Number.isFinite(item.distanceMeters))location.classList.add('recommend-distance-badge');
         if(distanceText)location.setAttribute('aria-label',item.market
-          ?`${item.market}内。${item.distanceToMarket?'夜市まで':'現在地から'}の直線距離 ${distanceText}`
-          :`現在地からの直線距離 ${distanceText}`);
+          ?`${item.market}内。${item.distanceToMarket?'夜市まで':state.areaMode==='station'?'選択駅から':'現在地から'}の直線距離 ${distanceText}`
+          :`${state.areaMode==='station'?'選択駅':'現在地'}からの直線距離 ${distanceText}`);
         const pin=el('span','recommend-place-pin');
         pin.setAttribute('aria-hidden','true');
         pin.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
@@ -772,10 +892,10 @@
       results.append(card);
     });
     more.hidden=ordered.length<=3;
-    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useGPS&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useGPS&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。${slice.some(x=>x.nearbySource&&!x.address)?'住所未確認の店舗は、地図上で店名と場所をご確認ください。':''}`;
+    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useDistance&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useDistance&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。${slice.some(x=>x.nearbySource&&!x.address)?'住所未確認の店舗は、地図上で店名と場所をご確認ください。':''}`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
-  syncUI();renderResults();loadCoordinates();loadNearbyVenues();
+  syncUI();renderResults();loadMetroStations();loadCoordinates();loadNearbyVenues();
   // Safari often restores a previous page snapshot from the Back/Forward cache.
   // Recompute results from current DOM, without requesting location.
   window.addEventListener('pageshow',event=>{

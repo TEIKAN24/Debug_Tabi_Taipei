@@ -65,7 +65,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
   });
  });
 })();</script><link rel="stylesheet" href="css/guide.css?v=30.9.81"/>
-<link rel="stylesheet" href="css/recommend.css?v=30.9.81"/>
+<link rel="stylesheet" href="css/recommend.css?v=30.9.86"/>
 
 
 
@@ -147,13 +147,27 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
  <p class="recommend-intro">台北のおすすめから、今の気分に合う3軒を。</p>
  <div class="recommend-controls" aria-label="おすすめの条件">
   <div class="recommend-controls-primary">
+   <div class="recommend-control-wrap recommend-control-area-wrap">
+    <button class="recommend-control" id="recommend-area-trigger" type="button" aria-expanded="false" aria-controls="recommend-area-options"><span class="recommend-control-icon recommend-area-pin" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg></span><span id="recommend-area-label">エリアを選択</span><span class="recommend-control-arrow" aria-hidden="true"></span></button>
+    <div class="recommend-options" id="recommend-area-options" hidden></div>
+   </div>
    <div class="recommend-control-wrap recommend-control-time-wrap">
-    <button class="recommend-control" id="recommend-time-trigger" type="button" aria-expanded="false" aria-controls="recommend-time-options"><span class="recommend-control-icon recommend-clock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.25"/><path d="M12 7v5l3.5 2"/></svg></span><span id="recommend-time-label">現時刻</span><span class="recommend-control-arrow" aria-hidden="true"></span></button>
+    <button class="recommend-control" id="recommend-time-trigger" type="button" aria-expanded="false" aria-controls="recommend-time-options"><span class="recommend-control-icon recommend-clock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.25"/><path d="M12 7v5l3.5 2"/></svg></span><span id="recommend-time-label">現在時刻</span><span class="recommend-control-arrow" aria-hidden="true"></span></button>
     <div class="recommend-options" id="recommend-time-options" hidden></div>
    </div>
-   <div class="recommend-control-wrap recommend-control-area-wrap">
-    <button class="recommend-control" id="recommend-area-trigger" type="button" aria-expanded="false" aria-controls="recommend-area-options"><span class="recommend-control-icon recommend-area-pin" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg></span><span id="recommend-area-label">エリア指定なし</span><span class="recommend-control-arrow" aria-hidden="true"></span></button>
-    <div class="recommend-options" id="recommend-area-options" hidden></div>
+  </div>
+  <div class="recommend-station-controls" id="recommend-station-controls" hidden aria-label="駅を選択">
+   <div class="recommend-control-wrap recommend-line-wrap">
+    <button class="recommend-control recommend-station-trigger" id="recommend-line-trigger" type="button" aria-expanded="false" aria-controls="recommend-line-options"><span class="recommend-line-dot" id="recommend-line-dot" aria-hidden="true"></span><span id="recommend-line-label">路線を選択</span><span class="recommend-control-arrow" aria-hidden="true"></span></button>
+    <div class="recommend-options recommend-line-options" id="recommend-line-options" hidden></div>
+   </div>
+   <div class="recommend-control-wrap recommend-station-wrap">
+    <button class="recommend-control recommend-station-trigger" id="recommend-station-trigger" type="button" aria-expanded="false" aria-controls="recommend-station-options" disabled><span id="recommend-station-label">先に路線を選択</span><span class="recommend-control-arrow" aria-hidden="true"></span></button>
+    <div class="recommend-options recommend-station-options" id="recommend-station-options" hidden>
+     <label class="recommend-station-search-label" for="recommend-station-search">駅名を検索</label>
+     <input id="recommend-station-search" class="recommend-station-search" type="search" placeholder="駅名・駅番号で検索" autocomplete="off" spellcheck="false" inputmode="search">
+     <div class="recommend-station-results" id="recommend-station-results" role="group" aria-label="駅の候補"></div>
+    </div>
    </div>
   </div>
   <div class="recommend-controls-secondary" id="recommend-controls-secondary">
@@ -366,5 +380,5 @@ html[data-theme="light"] #recommend-debug-location option{background:#fff;color:
 html[data-theme="light"] #recommend-debug-diagnostics{background:#f3f8f4;color:#244331;border-color:#bfd5c6;}
 @media(max-height:560px){#recommend-debug-fab{bottom:calc(14px + env(safe-area-inset-bottom,0px));}#recommend-debug-location{bottom:calc(65px + env(safe-area-inset-bottom,0px));max-height:65dvh;}}
 </style>
-<script src="js/recommend.js?v=30.9.85"></script>
+<script src="js/recommend.js?v=30.9.86"></script>
 </body></html>
