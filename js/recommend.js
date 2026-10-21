@@ -1,9 +1,10 @@
-/* TAIPEI CITY GUIDE v30.9.81 — optional on-device nearby distance for verified venues.
+/* TAIPEI CITY GUIDE v30.9.82 — optional on-device nearby distance for verified venues.
+   v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
    v30.9.81: match every listed map link; night-market stalls use their market;
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.81';
+  const VERSION='30.9.82';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -105,6 +106,7 @@
     // Updating metadata never requests location or stores the user's coordinates.
     if(state.areaMode==='current'){syncUI();renderResults();}
   }
+  const FEATURED=/おすすめ|ミシュラン|ビブグルマン|孤独のグルメ|超行列|行列店|一番人気|高人気|人気店|人気老舗/;
   const normalize=t=>String(t||'').replace(/\s+/g,'').toLowerCase();
   const categoryOf=(tab,group)=>{
     if(/朝ごはん/.test(tab))return 'breakfast';
@@ -146,20 +148,21 @@
         const key=normalize(name);
         const area=isArea?(AREA_MATCH.find(([code,rx])=>rx.test(tab))?.[0]||''):'';
         const category=isArea?categoryOf('',group):categoryOf(tab,group);
-        const curated=(/おすすめ|地元人気|一番人気|人気|ビブグルマン|ミシュラン|孤独のグルメ/.test(info)?2:0)
-          +(li.querySelector('.venue-tag--featured')?3:0)+(/定番/.test(info)?1:0);
+        // Editorial pick = a store-level label in the guide. Plain 「人気」 and dish
+        // highlights (芝麻湯圓, 水出し珈琲 …) describe dishes, not the shop.
+        const featured=FEATURED.test(info);
         // guide.js rewrites map links to Google Maps search URLs on touch devices.
         // Match coordinates against the original per-place URL, not the mobile navigation URL.
         // A venue listed twice keeps every link it is listed with.
         const sourceMapUrl=a.dataset.originalMapsUrl || a.href;
         // Night-market stalls are grouped under 「〇〇夜市おすすめ…」.
         const market=category==='nightmarket'?(group.match(/^(.+?夜市)/)?.[1]||''):'';
-        const record={name,url:a.href,sourceMapUrls:[sourceMapUrl],market,area,category,details:info,curated,chain:CHAIN_NAMES.test(name),order:found.size};
+        const record={name,url:a.href,sourceMapUrls:[sourceMapUrl],market,area,category,details:info,featured,chain:CHAIN_NAMES.test(name),order:found.size};
         const existing=found.get(key);
         if(!existing){found.set(key,record);return;}
         if(isArea){existing.area=area;existing.url=a.href;}
         if(!existing.sourceMapUrls.includes(sourceMapUrl))existing.sourceMapUrls.push(sourceMapUrl);
-        existing.curated=Math.max(existing.curated,curated);
+        existing.featured||=featured;
         existing.chain||=record.chain;
         existing.details=[...new Set([existing.details,info].filter(Boolean))].join('、').slice(0,135);
       });
@@ -345,6 +348,7 @@
     return [taipeiDate(),state.time,geoKey||state.area,
       state.genre,state.volume,state.scene].join('|');
   }
+  const MAIN_SHARE=.4;
   function recommendedPool(){
     const timeCandidates=readCatalog().filter(item=>eligibleTime(item,state.time));
     const useGPS=state.areaMode==='current'&&state.locationStatus==='success'&&!!state.position&&coordinatesReady;
@@ -382,45 +386,47 @@
     const scored=pool.map(item=>{
       const matched=criteria.filter(c=>c.fn(item));
       const score=matched.reduce((sum,c)=>sum+c.weight,0)
-        +(item.curated>0?8:0)
+        +(item.featured?1:0) // visibility comes from the rotating slot-1 rule below
         +(state.area&&state.areaMode!=='current'&&item.chain?6:0) // not a proxy for branch proximity
-        +(Number.isFinite(item.distanceMeters)?Math.round(40*(1-item.distanceMeters/GEO_MAX_METERS)):0)
+        // Distance in bands (≈0–170 / 170–340 / 340–500 m): shops at a similar
+        // walk rotate daily instead of the single nearest one always winning.
+        +(Number.isFinite(item.distanceMeters)?40-12*Math.min(2,Math.floor(item.distanceMeters/170)):0)
         +mealBonus(item);
       return {...item,matchScore:matched.reduce((sum,c)=>sum+c.weight,0),score,
         fullMatch:matched.length===criteria.length,matched:matched.map(c=>c.label),
         diversityKey:diversityKey(item,state.genre),
         random:dailyNoise(item.name,seed)};
     });
-    // Exact matches dominate. Daily jitter is deliberately small relative to
-    // user-condition weights and lets similarly good venues alternate by day.
-    scored.sort((a,b)=>b.score-a.score || a.order-b.order);
-    const best=scored[0]?.score||0;
-    const tier=p=>p.score>=best-12; // 12-point quality band for daily discovery
-    const strong=scored.filter(tier);
-    const weak=scored.filter(p=>!tier(p));
-    const seededSort=(a,b)=>(b.score+7*b.random)-(a.score+7*a.random)||a.order-b.order;
-    strong.sort(seededSort);weak.sort(seededSort);
-    // One plausible curated main pick when near top; never force an inferior
-    // featured shop over a substantially better matching non-featured shop.
-    const ordered=[];
-    const used=new Set();
-    const append=item=>{if(item&&!used.has(item.name)){ordered.push(item);used.add(item.name);}};
-    const main=strong.find(item=>item.curated>0);
-    append(main||strong[0]||weak[0]);
-    const remaining=[...strong,...weak].filter(item=>!used.has(item.name));
-    const chooseNext=()=>{
-      // Never reach into a substantially worse score tier just to enforce
-      // the "2 discoveries" target; matching quality always comes first.
-      const fromTier=items=>{
-        const available=items.filter(item=>!used.has(item.name));
-        if(!available.length)return null;
-        const varied=available.filter(item=>!ordered.slice(-2).some(p=>p.diversityKey===item.diversityKey));
-        return varied.find(item=>item.curated===0)||varied[0]
-          ||available.find(item=>item.curated===0)||available[0];
-      };
-      append(fromTier(strong)||fromTier(weak));
-    };
-    while(ordered.length<scored.length)chooseNext();
+    // Quality band: only venues within 12 points of the best compete first.
+    const best=scored.reduce((max,p)=>Math.max(max,p.score),0);
+    const strong=scored.filter(p=>p.score>=best-12);
+    const weak=scored.filter(p=>p.score<best-12);
+    const noise=(item,step)=>dailyNoise(item.name+'#'+step,seed);
+    const ordered=[],used=new Set();
+    const take=item=>{ordered.push(item);used.add(item.name);};
+    // On ~40% of days slot 1 is reserved for an editorial pick; on the other
+    // days editorial picks compete like everyone else, so no shop is daily.
+    // Chains are excluded from the reserved slot: a branch is everywhere, so it
+    // is not a 「本命」. They still compete for every slot like other venues.
+    const featured=strong.filter(p=>p.featured&&!p.chain);
+    if(featured.length&&dailyNoise('__editorial-slot__',seed)<MAIN_SHARE){
+      take(featured.reduce((x,y)=>y.score+7*noise(y,0)>x.score+7*noise(x,0)?y:x));
+    }
+    // Every further slot: best seeded value in the strongest remaining tier.
+    // Repeating the type of the last two picks costs 4 points — this favours
+    // variety without forcing a one-of-a-kind shop into every result.
+    while(ordered.length<scored.length){
+      const tier=strong.some(p=>!used.has(p.name))?strong:weak;
+      const recent=ordered.slice(-2).map(p=>p.diversityKey);
+      const step=ordered.length;
+      let pick=null,value=-Infinity;
+      for(const item of tier){
+        if(used.has(item.name))continue;
+        const v=item.score+7*noise(item,step)-4*recent.filter(k=>k===item.diversityKey).length;
+        if(v>value){pick=item;value=v;}
+      }
+      take(pick);
+    }
     return {ordered,timeCount:byTime.length,criteria,lifted,nearbyFallback,useGPS,nearbyCount:withinRange.length};
   }
   function diversityKey(item,genre){
@@ -435,6 +441,14 @@
       const s=item.name+' '+item.details;
       if(/豆花/.test(s))return 'tofu-pudding';
       if(/かき氷|冰/.test(s))return 'ice';
+    }
+    if(item.category==='breakfast'){
+      const s=item.name+' '+item.details;
+      if(/飯糰|飯團|おにぎり/.test(s))return 'breakfast-riceball';
+      if(/豆漿/.test(s))return 'breakfast-soymilk';
+      if(/トースト|吐司|三明治|サンド/.test(s))return 'breakfast-toast';
+      if(/蛋餅|焼餅|燒餅/.test(s))return 'breakfast-bing';
+      return 'breakfast';
     }
     return item.genre.find(g=>g!=='taiwan')||item.displayType||'グルメ';
   }
