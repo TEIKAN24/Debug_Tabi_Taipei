@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.98 — same-page location/station switching with custom readable line and station menus.
+/* TAIPEI CITY GUIDE v30.9.96 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
    v30.9.83: venues.json — coordinates for the 6 bars.
@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.98';
+  const VERSION='30.9.97';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -167,33 +167,6 @@
     renderResults();
   }
   function normalizeNoteName(name){return String(name||'').normalize('NFKC').toLowerCase().replace(/[\s　・·．.（）()「」『』]/g,'').replace(/魯/g,'滷').replace(/豊/g,'豐');}
-  // Locally authored restaurant fields override inferred nearby data.
-  // No remote API and no browser-side editing on the public website.
-  let editorialOverrides=new Map();
-  function overrideKey(name){return normalizeNoteName(name);}
-  function overrideFor(item){return editorialOverrides.get(overrideKey(item.name))||null;}
-  function applyOverride(item){
-    const patch=overrideFor(item);
-    if(!patch)return item;
-    const out={...item};
-    if(typeof patch.displayType==='string')out.displayType=patch.displayType;
-    if(typeof patch.category==='string')out.category=patch.category;
-    if(typeof patch.shortNote==='string')out.editorNote=patch.shortNote;
-    if(Number.isInteger(patch.michelinStars)&&patch.michelinStars>=0&&patch.michelinStars<=3)out.editorStars=patch.michelinStars;
-    if(Array.isArray(patch.tags))out.guideTags=patch.tags.filter(x=>x&&typeof x.text==='string'&&x.text.trim()).map(x=>({text:x.text.trim(),tone:['normal','featured','caution'].includes(x.tone)?x.tone:'normal'}));
-    return out;
-  }
-  async function loadEditorialOverrides(){
-    try{
-      const res=await fetch(`food/recommend_overrides.json?v=${VERSION}`,{cache:'no-store'});
-      if(!res.ok)throw Error('overrides absent');
-      const data=await res.json();
-      if(data.schemaVersion!==1||!data.records||typeof data.records!=='object')throw Error('overrides invalid');
-      editorialOverrides=new Map(Object.entries(data.records));
-    }catch(_){editorialOverrides=new Map();}
-    catalog=null;nearbyCatalog=null;
-    renderResults();
-  }
   function guideEditorialNote(item){
     // Exact storefront name only. Fuzzy/brand-wide matches risk attributing a
     // different branch's review to the selected one.
@@ -289,14 +262,12 @@
         address:r.address||'',district:r.district||'',hours:r.time||'',
         awards:r.awards||{},specialty:r.specialty||'',
         displayType:r.displayType||'グルメ'};
-      const changed=applyOverride(row);
-      Object.assign(row,changed);
       const inferred=inferVenueTags(row);
       // Award-winning desserts at a regular restaurant do not turn that
       // restaurant into a dedicated sweets venue.
       if(row.category!=='sweet'&&row.category!=='cafe')inferred.genre=inferred.genre.filter(g=>g!=='sweet');
       if(row.category==='meal'){inferred.volume=['hearty'];}
-      return applyOverride({...row,...inferred,displayType:row.displayType||inferred.displayType});
+      return {...row,...inferred,displayType:r.displayType||inferred.displayType};
     });
     return nearbyCatalog;
   }
@@ -400,8 +371,7 @@
       const location=stored&&(listed.includes(stored.mapUrl)||listed.includes(stored.searchUrl))?(stored.branches?{branches:stored.branches,brandId:stored.brandId||null}:{lat:stored.lat,lng:stored.lng,brandId:stored.brandId||null}):{};
       // A stall without its own verified point is placed at its market.
       const marketPoint=item.market&&!location.branches&&!Number.isFinite(location.lat)?markets.get(item.market)||null:null;
-      const edited=applyOverride(item);
-      return applyOverride(Object.assign(edited,inferVenueTags(edited),location,{marketPoint}));
+      return Object.assign(item,inferVenueTags(item),location,{marketPoint});
     });
     return catalog;
   }
@@ -520,12 +490,10 @@
     [/老舗/, '昔ながらの台湾の味をたどる一軒。'],
   ];
   function reason(item){
-    // An explicit editor value (including empty) takes priority.
-    if(typeof item.editorNote==='string')return item.editorNote;
     // 1. Guide author's original annotation is authoritative. Never overwrite
     // it with a generated snippet, even if the shop also appears in nearby.json.
     const original=item.guideNote||guideEditorialNote(item);
-    if(original && !(/^[（(].+[）)]$/.test(original.trim()) && item.guideTags?.length))return original;
+    if(original)return original;
     // 2. Each new note was manually edited against a published review or
     // award-listed dish. This does not claim today's opening status.
     const checked=reviewedNotes.get(normalizeNoteName(item.name));
@@ -536,15 +504,11 @@
       if(precise)return precise;
       for(const [pattern,sentence] of detailReasons){if(pattern.test(item.details||''))return sentence;}
     }
-    // Where sourced dishes exist, name them rather than inventing a review.
-    const dish=String(item.specialty||'').replace(/(?:500碗|500盤|500甜)\s*20\d\d\s*[:：]\s*/g,'').split(/[；;]/).map(x=>x.trim()).filter(Boolean)[0];
-    if(dish)return `推薦料理：${dish.slice(0,45)}`;
     // No speculative ratings or generic filler. An empty description is better
     // than suggesting an actual visitor opinion we do not have evidence for.
     return '';
   }
   function michelinStars(item){
-    if(Number.isInteger(item.editorStars))return Math.max(0,Math.min(3,item.editorStars));
     const parts=[item?.awards?.michelin,item?.awards?.summary,item?.details,(item?.guideTags||[]).map(t=>t.text).join('、')].filter(Boolean).join(' ');
     if(/(?:米其林|ミシュラン).{0,3}(?:三つ星|三星|3星|★★★|\*\*\*)/.test(parts))return 3;
     if(/(?:米其林|ミシュラン).{0,3}(?:二つ星|二星|2星|★★|\*\*)/.test(parts))return 2;
@@ -1128,7 +1092,7 @@
     disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useDistance&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useDistance&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。${slice.some(x=>x.nearbySource&&!x.address)?'住所未確認の店舗は、地図上で店名と場所をご確認ください。':''}`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
-  syncUI();renderResults();loadMetroStations();loadCoordinates();loadNearbyVenues();loadReviewedNotes();loadEditorialOverrides();
+  syncUI();renderResults();loadMetroStations();loadCoordinates();loadNearbyVenues();loadReviewedNotes();
   // Safari often restores a previous page snapshot from the Back/Forward cache.
   // Recompute results from current DOM, without requesting location.
   window.addEventListener('pageshow',event=>{
