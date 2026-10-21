@@ -1100,3 +1100,99 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
  .recommend-distance-pill{padding:6px 9px;font-size:9.5px;}
  .recommend-guide-tag{padding:6px 8px!important;font-size:9px!important;}
 }
+
+
+/* v30.9.99 — restore mobile proportions and follow the latest mockup. */
+@media(max-width:600px){
+  .recommend-intro{margin-bottom:16px!important;}
+  .recommend-source-captions{display:flex!important;justify-content:space-between;align-items:center;gap:10px;grid-template-columns:none!important;margin-bottom:6px;}
+  .recommend-source-captions > :first-child{order:2;}
+  .recommend-source-captions > :last-child{order:1;}
+  .recommend-source-caption{font-size:10px;gap:4px;}
+  .recommend-caption-icon{width:14px;height:14px;}
+
+  .recommend-main-picker{display:grid;grid-template-columns:minmax(0,1fr) 82px;grid-template-rows:40px 40px;gap:6px 8px;align-items:stretch;}
+  .recommend-current-location,.recommend-station-controls,.recommend-picker-location,.recommend-picker-station{grid-column:1;grid-row:1 / span 2;min-width:0;}
+  .recommend-control-time-wrap{grid-column:2;grid-row:1;min-width:0;}
+  .recommend-mode-button{grid-column:2;grid-row:2;min-width:0;}
+
+  .recommend-picker-location,.recommend-picker-station{border-radius:14px;min-height:86px;}
+  .recommend-picker-location{padding:0 14px;gap:10px;display:flex;align-items:center;}
+  .recommend-location-pin{flex:0 0 18px;width:18px;height:18px;}
+  .recommend-location-copy{gap:6px;align-items:flex-end;}
+  .recommend-location-copy strong{font-size:clamp(13px,5vw,18px);line-height:1.1;}
+  .recommend-location-copy small{font-size:clamp(10px,3vw,12px);line-height:1.1;}
+
+  .recommend-picker-station{display:grid;grid-template-rows:1fr 1fr;overflow:hidden;}
+  .recommend-native-field .recommend-native-display{padding:4px 10px;gap:8px;}
+  .recommend-native-line{border-radius:13px 13px 0 0;}
+  .recommend-native-field + .recommend-native-field{border-radius:0 0 13px 13px;}
+  .recommend-native-code{min-width:20px;width:20px;height:20px;font-size:10px;border-radius:4px;}
+  .recommend-native-copy{gap:8px;}
+  .recommend-native-copy strong{font-size:clamp(12px,4.4vw,16px);line-height:1.1;}
+  .recommend-native-copy small{font-size:clamp(10px,3vw,12px);line-height:1.1;}
+  .recommend-native-chevron{flex:0 0 14px;width:14px;height:14px;}
+  .recommend-native-menu{right:-92px!important;left:auto!important;width:min(312px,calc(100vw - 34px))!important;max-width:calc(100vw - 34px)!important;max-height:min(300px,44dvh)!important;}
+
+  .recommend-main-picker .recommend-control-time-wrap>.recommend-control{height:40px;padding:0 11px;border-radius:14px;font-size:12px;font-weight:720;}
+  .recommend-main-picker .recommend-control-time-wrap .recommend-control-arrow{width:12px;height:12px;flex-basis:12px;}
+  .recommend-main-picker .recommend-control-time-wrap .recommend-control-icon{width:14px;height:14px;flex-basis:14px;}
+  .recommend-main-picker .recommend-control-time-wrap .recommend-clock-icon svg{width:13px;height:13px;}
+
+  .recommend-mode-button{height:40px;border-radius:14px;padding:0 8px;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;}
+  .recommend-mode-text{font-size:10px;line-height:1.15;font-weight:740;}
+  .recommend-mode-pin{display:inline-flex;width:20px;height:20px;align-items:center;justify-content:center;}
+  .recommend-mode-pin svg{width:18px;height:18px;}
+  #recommend-main-picker.is-station .recommend-mode-text{display:none;}
+  #recommend-main-picker.is-station .recommend-mode-button{padding:0;}
+  #recommend-main-picker:not(.is-station) .recommend-mode-pin{display:none;}
+
+  .recommend-location-status{display:none!important;}
+
+  .recommend-result-head{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin:20px 0 0!important;align-items:start;}
+  .recommend-result-head .recommend-controls-secondary{order:-1;justify-content:flex-start!important;margin-left:0!important;}
+  .recommend-result-head h3{font-size:17px;line-height:1.2;}
+  .recommend-sort{margin:8px 0 10px;justify-content:flex-end;}
+
+  .recommend-card{min-height:116px!important;border-radius:14px!important;}
+  .recommend-card-shell{grid-template-columns:minmax(0,1fr) 122px!important;gap:10px!important;min-height:116px!important;padding:12px 14px 11px!important;}
+  .recommend-card-type{font-size:10px!important;line-height:1.2!important;}
+  .recommend-venue{margin-top:7px!important;font-size:clamp(14px,6vw,19px)!important;line-height:1.12!important;-webkit-line-clamp:2;}
+  .recommend-reason{margin-top:12px!important;font-size:10px!important;line-height:1.35!important;-webkit-line-clamp:2;color:#A8A1AE!important;}
+  .recommend-card-side{grid-template-rows:auto auto 1fr;gap:8px!important;}
+  .recommend-distance-pill{padding:6px 9px!important;font-size:10px!important;gap:4px!important;}
+  .recommend-distance-pill-icon{width:12px!important;height:12px!important;flex-basis:12px!important;}
+  .recommend-card-stars{min-height:18px!important;gap:3px!important;align-self:flex-start;justify-self:end;}
+  .recommend-card-star{font-size:15px!important;}
+  .recommend-guide-tags{gap:5px 5px!important;justify-content:flex-end!important;}
+  .recommend-guide-tag{padding:6px 8px!important;border-radius:10px!important;font-size:10px!important;line-height:1!important;}
+  .recommend-results{gap:10px!important;}
+  .recommend-more{margin-top:10px!important;}
+  .recommend-disclaimer{margin-top:7px!important;}
+}
+@media(max-width:390px){
+  .recommend-main-picker{grid-template-columns:minmax(0,1fr) 74px;grid-template-rows:38px 38px;gap:6px 8px;}
+  .recommend-picker-location,.recommend-picker-station{min-height:82px;}
+  .recommend-main-picker .recommend-control-time-wrap>.recommend-control,.recommend-mode-button{height:38px;border-radius:13px;}
+  .recommend-card{min-height:112px!important;}
+  .recommend-card-shell{grid-template-columns:minmax(0,1fr) 116px!important;min-height:112px!important;padding:11px 12px 10px!important;}
+  .recommend-venue{font-size:14px!important;}
+  .recommend-guide-tag{font-size:9.5px!important;padding:5px 7px!important;}
+}
+@media(max-width:360px){
+  .recommend-intro{margin-bottom:14px!important;}
+  .recommend-main-picker{grid-template-columns:minmax(0,1fr) 68px;grid-template-rows:36px 36px;gap:5px 7px;}
+  .recommend-picker-location,.recommend-picker-station{min-height:77px;border-radius:13px;}
+  .recommend-main-picker .recommend-control-time-wrap>.recommend-control,.recommend-mode-button{height:36px;border-radius:12px;padding-inline:8px;}
+  .recommend-mode-text{font-size:9px;}
+  .recommend-location-copy strong,.recommend-native-copy strong{font-size:11px;}
+  .recommend-location-copy small,.recommend-native-copy small{font-size:8px;}
+  .recommend-native-code{min-width:18px;width:18px;height:18px;font-size:9px;}
+  .recommend-card{min-height:108px!important;}
+  .recommend-card-shell{grid-template-columns:minmax(0,1fr) 106px!important;min-height:108px!important;padding:10px 11px 9px!important;}
+  .recommend-card-type{font-size:9px!important;}
+  .recommend-venue{font-size:13px!important;}
+  .recommend-reason{font-size:9px!important;margin-top:10px!important;}
+  .recommend-distance-pill{font-size:9px!important;padding:5px 7px!important;}
+  .recommend-guide-tag{font-size:8.5px!important;padding:5px 6px!important;}
+}

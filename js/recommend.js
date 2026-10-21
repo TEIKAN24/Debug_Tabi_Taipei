@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.97';
+  const VERSION='30.9.99';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -837,8 +837,8 @@
     for(const option of lineMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.line));
     for(const option of stationMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.stationCode));
     const district=nearbyDistrict(state.position);
-    districtName.textContent=district?district[0]:state.locationStatus==='loading'?'測位中':state.locationStatus==='success'?'現在地':'現在地';
-    districtEn.textContent=district?district[1]:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':'Location';
+    districtName.textContent=district?`台北市 ${district[0]}`:state.locationStatus==='loading'?'測位中':state.locationStatus==='success'?'現在地':'現在地';
+    districtEn.textContent=district?`${district[1]} Taipei City`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'District not confirmed':'Location';
     currentLocation.title=district?'登録店の所在地から推定した行政区です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
     for(const b of genreControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.genre));
