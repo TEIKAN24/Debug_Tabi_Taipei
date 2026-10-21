@@ -1,0 +1,926 @@
+{
+  "schemaVersion": 1,
+  "version": "30.9.95",
+  "updated": "2026-10-21",
+  "purpose": "Evidence-based Japanese recommender descriptions; no inference of operating status or customer rating.",
+  "priority": [
+    "original guide author note",
+    "published review digest",
+    "award-recommended dish",
+    "no description"
+  ],
+  "notes": [
+    {
+      "name": "阜杭豆漿",
+      "text": "窯焼きの厚い焼餅は外が香ばしく中はもっちり。朝は行列覚悟で。",
+      "basis": "published_review",
+      "sourceUrls": [
+        "https://ifoodie.tw/post/67df5a5d927f805cf33e8081",
+        "https://supertaste.tvbs.com.tw/food/357765"
+      ],
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "意麵王",
+      "text": "コシのある乾意麺とワンタン湯。大稲埕で昔ながらの麺を楽しめる。",
+      "basis": "published_review",
+      "sourceUrls": [
+        "https://ifoodie.tw/restaurant/559d4f84c03a103ee86c6177-%E6%84%8F%E9%BA%B5%E7%8E%8B"
+      ],
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "圓環邊蚵仔煎",
+      "text": "牡蠣入りの蚵仔煎は生地がやわらかめ。甘辛いタレは好みが分かれる。",
+      "basis": "published_review",
+      "sourceUrls": [
+        "https://ifoodie.tw/restaurant/559d7e2dc03a103ee86c8009-%E5%9C%93%E7%92%B0%E9%82%8A%E8%9A%B5%E4%BB%94%E7%85%8E"
+      ],
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "小王煮瓜",
+      "text": "色の濃い魯肉飯は甘辛い味付け。清湯瓜仔肉を添えるのも定番。",
+      "basis": "published_review",
+      "sourceUrls": [
+        "https://ifoodie.tw/post/68786285eb74c476e2b8af8a",
+        "https://www.ptt.cc/bbs/Food/M.1617725393.A.668.html"
+      ],
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "雙月食品 (青島東路)",
+      "text": "具だくさんの鶏スープ。剥皮唐辛子を使った少しピリ辛の一杯も。",
+      "basis": "published_review",
+      "sourceUrls": [
+        "https://ifoodie.tw/post/62f88f6282828711fca57998"
+      ],
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "阿城鵝肉",
+      "text": "燻製のガチョウ肉が看板。ガチョウ油をかけたご飯も一緒に。",
+      "basis": "published_review",
+      "sourceUrls": [
+        "https://ifoodie.tw/restaurant/55a4f8c9c03a10241de63ccf-%E9%98%BF%E5%9F%8E%E9%B5%9D%E8%82%89?__t=n"
+      ],
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "賣麵炎仔",
+      "text": "切仔麺に焼肉や黒白切。大稲埕らしい麺と小皿の組み合わせ。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://guide.michelin.com/tw/zh_TW/taipei-region/restaurants/bib-gourmand",
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "燒肉",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "涼州街無名涼麵",
+      "text": "涼麺のほか、米粉湯や黒白切も。小吃を組み合わせて食べたい店。",
+      "basis": "award_dish",
+      "sourceUrls": [],
+      "awardDishes": "黑白切、米粉湯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "香滿園",
+      "text": "魯肉飯を中心に、小皿料理も合わせて食べたい大稲埕の一軒。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "魯肉飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "金峰魯肉飯",
+      "text": "看板は魯肉飯。肉の煮込みをご飯に合わせる台湾の定番料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "魯肉飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "曉迪筒仔米糕",
+      "text": "小ぶりな筒に詰めて蒸す米糕。魯肉飯も受賞料理に選出。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.marieclaire.com.tw/lifestyle/taste/88033",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "滷肉飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "龍記炒燴",
+      "text": "卵をふんわり絡めた牛肉の燴飯。白ご飯が主役のローカルメニュー。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://supertaste.tvbs.com.tw/food/348817",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "滑蛋牛肉燴飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "大橋頭老牌筒仔米糕 (延平北路)",
+      "text": "筒仔米糕に、双拼湯や海陸湯。おこわと温かい汁物の組み合わせ。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://guide.michelin.com/tw/zh_TW/taipei-region/taipei/restaurant/da-qiao-tou-tube-rice-pudding",
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://travel.udn.com/travel/story/7193/9626757"
+      ],
+      "awardDishes": "筒仔米糕、雙拼湯、海陸湯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "寧夏夜市-知高飯",
+      "text": "香菇魯肉飯が受賞料理。椎茸入りの肉そぼろご飯を。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://tlan1012.github.io/Fable5/500bowls-2026-taiwan.html",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "香菇魯肉飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "老麵店",
+      "text": "乾麺を中心に、ワンタン湯や滷味も。麺と小皿がそろう店。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://supertaste.tvbs.com.tw/food/347630",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "乾麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "排骨湯，高麗菜飯",
+      "text": "看板は原汁排骨湯と高麗菜飯。スープとキャベツご飯のセットで。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://shotfunlady.com/he-jiang-jie-pai-gu-tang/",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "原汁排骨湯+高麗菜飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "鮮魚店",
+      "text": "透抽米粉湯が受賞料理。イカを使った米粉の汁麺を目当てに。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.gq.com.tw/life/article/longtail-林明健-after-hours-with-chefs-私房美食地圖",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "透抽米粉湯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "臨江街夜市 巷口無名麵店",
+      "text": "肉麻麺のほか、豚の内臓や頭骨肉のスープも候補。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://supertaste.tvbs.com.tw/food/360513",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "豬粉腸、肉麻麵、頭骨肉湯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "源芳刈包",
+      "text": "蒸した割包で具材をはさむ、台湾の定番食べ歩きメニュー。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://guide.michelin.com/tw/zh_TW/taipei-region/restaurants/bib-gourmand",
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www-ws.gov.taipei/Download.ashx?icon=..pdf&n=6ZmE5Lu244CBMjAyNeaJk%2BeJmeelreelnue%2Bjumjn%2BWQjeWWri5wZGY%3D&u=LzAwMS9VcGxvYWQvNDA3L3JlbGZpbGUvMTAxNjIvOTQ2OTg0NS85YzQ0Njc5Mi1hNDcwLTQxZDItYjFhZS02OTE2NDI0NjgzZWYucGRm"
+      ],
+      "awardDishes": "刈包",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "士東市場137號米粉湯",
+      "text": "米粉湯と黒白切。嘴邊肉や肝連など豚の部位も楽しめる。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://500times.udn.com/wtimes/story/123497/8051615",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "米粉湯 嘴邊肉 肝連",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "矮仔財滷肉飯",
+      "text": "市場で食べたい魯肉飯。2026年の「500碗」選出料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://supertaste.tvbs.com.tw/pack/339688",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "滷肉飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "大佳牛雜湯",
+      "text": "牛の内臓を使う牛雜麺。2025・2026年とも推薦された一杯。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "牛雜麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "一甲子餐飲",
+      "text": "割包と焢肉飯が看板候補。角煮を挟むか、ご飯にのせるか。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://guide.michelin.com/tw/zh_TW/taipei-region/restaurants/bib-gourmand",
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "刈包",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "上全肉羹",
+      "text": "肉羹湯が選出料理。とろみのある台湾式スープを一杯。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "肉羹湯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "大龍峒肉羹 米粉湯",
+      "text": "肉羹と米粉湯を合わせる屋台系の味。昔ながらの小吃を。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "肉羹米粉、米粉湯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "林家乾麵",
+      "text": "乾麺と魚丸湯。麺の種類や汁物を組み合わせるのが楽しみ。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "乾麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "樂天羊肉",
+      "text": "羊肉湯や清燉羊排骨湯。羊肉をスープで味わいたいときに。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "羊肉湯、清燉羊排骨湯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "萍姊酸菜麵",
+      "text": "酸菜入りワンタン麺と、目玉焼きをのせた乾麺が推薦料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "酸菜蛋餛飩湯麵、酸菜乾麵加荷包蛋",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "許仔豬腳麵線",
+      "text": "豚足のスープや麺線。煮込んだ豚足を汁物と一緒に。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "豬腳湯、綜合湯、綜合麵線",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "1976道地香港美食 敦南本店",
+      "text": "豉汁排骨飯が「500碗」に選出。豆鼓の風味を生かした排骨ご飯。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "豉汁排骨飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "24小吃店",
+      "text": "2026年の「500碗」に魯肉飯が選出。米料理を選ぶときの一軒。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "魯肉飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "Foldie",
+      "text": "胡桃とベーコンを使ったサンドイッチが推薦料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "核桃培根營養三明治",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "Hui Fu Teas 薈福村茶",
+      "text": "手炒めのトマト肉ソースをのせた麺が受賞メニュー。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "手炒慢燉蕃茄肉醬美人麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "LOUIS’ BURGERS",
+      "text": "ルッコラとチーズのバーガーに、ベーコンを追加する食べ方も。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "芝麻葉起司漢堡（加點培根）",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "NORI BRUNCH",
+      "text": "ブランチの蛋餅が「500碗」選出。台湾式の卵クレープを。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "蛋餅",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "Pizza Americano 老美披薩",
+      "text": "辛口のウォッカソースを使ったピザ。2026年の選出料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "辣味伏特加披薩",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "Q10旋風式烤玉米",
+      "text": "炭焼きトウモロコシに海苔風味や薬膳風味の選択肢。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "和風海苔，漢方藥膳",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "SUBBER潛艇堡專賣店",
+      "text": "チーズと炭焼き牛肉のサブサンドが受賞メニュー。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "起司炭烤牛排潛艇堡",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "一幻拉麵 台北信義店",
+      "text": "海老だしを使った塩味ラーメンが「500碗」に選出。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "原味鮮蝦鹽味拉麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "三姐鵝肉",
+      "text": "鵝肉だけでなく、米血やスープ麺も紹介された店。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "米血 湯麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "丫川水煎包",
+      "text": "水煎包が看板の台湾小吃。焼き面のある包子を気軽に。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "水煎包",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "五草車中華食館 南昌店",
+      "text": "豚肉の細切り入り卵チャーハンが「500碗」受賞料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "肉絲蛋炒飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "仁愛魚丸冬粉",
+      "text": "魚丸と冬粉のスープ。辛い漬物を合わせる食べ方も。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "魚丸冬粉（辣菜）",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "公園餡餅粥",
+      "text": "褡褳火焼（細長い焼き餃子）が「500碗」に選ばれた。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "褡褳火燒",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "劍潭勇伯米粉湯",
+      "text": "大腸頭が選出料理。米粉湯と豚の内臓料理を。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "大腸頭",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "劍潭肉圓王",
+      "text": "肉圓が2023・2025・2026年の選出料理。蒸し肉圓を目当てに。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "肉圓",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "北一菜盒店",
+      "text": "韮菜を包んだ菜盒が看板。軽食に選びたい焼き粉もの。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "韭菜盒",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "博多幸龍總本店",
+      "text": "大盛り塩豚骨ラーメンが「500碗」に選出された店。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "大碗鹽豚骨拉麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "古亭三六九包子",
+      "text": "鮮肉包が受賞メニュー。肉あん入りの蒸し包子を。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "鮮肉包",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "史大華精緻麵食安和店",
+      "text": "キムチと肉そぼろの汁麺が2026年の推薦料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "泡菜肉末湯麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "合府小籠湯包",
+      "text": "小籠湯包だけでなく、蒸しキャベツも「500碗」に登場。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "蒸高麗菜",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "吉家槓子頭",
+      "text": "しっかりした食感の小麦パン「槓子頭」が選出料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "槓子頭",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "名家魯肉飯",
+      "text": "魯肉飯が2026年の選出メニュー。台湾らしいご飯の一杯を。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "滷肉飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "吳家牛肉麵店",
+      "text": "海老ワンタンの汁なし麺が2026年の「500碗」に選出。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "乾拌鮮蝦餛飩",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "吳記南京板鴨",
+      "text": "塩ゆで鴨「鹽水鴨」が受賞料理。鴨肉を中心に選びたい店。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "鹽水鴨",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "呂巷仔口麵食館",
+      "text": "肺管頭（豚の気管）が推薦料理。内臓系の小吃が好きな人に。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "肺管頭",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "周家豆腐捲",
+      "text": "韮菜の菜盒が「500碗」に登場。粉ものを軽く食べたいときに。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "韭菜盒",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "周記肉粥店",
+      "text": "台湾式の肉粥が複数年の「500碗」に選出された店。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "肉粥",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "四鄉五島馬祖麵店",
+      "text": "黒ごまを使った大盛りの麺が受賞料理。馬祖系の麺を。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "大碗黑麻麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "大樹下古早麵",
+      "text": "粿仔條羹が2026年の推薦料理。米粉の平麺をとろみスープで。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "粿仔條羹",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "大膽牛腩麵",
+      "text": "牛バラとワンタンの麺が受賞。牛肉と海鮮の組み合わせ。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "牛腩雲吞麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "天母豆漿",
+      "text": "キャベツ入り蛋餅が「500碗」選出。朝の軽食に。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "高麗菜蛋餅",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "好時光披薩",
+      "text": "魚介をのせた「漁夫海鮮披薩」が選出料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "漁夫海鮮披薩",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "家鄉碳烤香雞排 士林店",
+      "text": "炭焼き仕上げの雞排が2026年の推薦メニュー。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "家鄉碳烤雞排",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "小林麵館",
+      "text": "麻辣鴨血と豆腐を合わせた牛肉麺が受賞料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "麻辣鴨血豆腐牛肉麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "小紅莓石頭火鍋",
+      "text": "石頭火鍋が受賞料理。台湾式の鍋を選ぶなら。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "石頭火鍋",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "小辣椒魷魚羹",
+      "text": "イカのとろみスープ「魷魚羹」が推薦料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "魷魚羹",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "小都都水煎包",
+      "text": "台湾式の焼き包子「水煎包」が2026年選出。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "水煎包",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "巧之味水餃",
+      "text": "帆立を包んだ緑色の水餃子が「500碗」に登場。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "干貝綠藻皮水餃",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "廟口鵝肉",
+      "text": "脆皮焼肉が選出料理。ガチョウ肉だけではない一皿。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "脆皮燒肉",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "得記麻辣脆皮臭豆腐",
+      "text": "パリッとした皮の麻辣臭豆腐が選出メニュー。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "脆皮臭豆腐",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "感謝您鹽酥雞",
+      "text": "鹽酥雞が2026年の「500碗」に選出。台湾の揚げ物を。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "鹽酥雞",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "所長茶葉蛋",
+      "text": "豆干をパンのように使う「豆干堡」が推薦メニュー。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "豆干堡",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "昆陽牛肉麵",
+      "text": "紅焼牛肉麺が選出料理。煮込んだ牛肉入りの汁麺を。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "紅燒牛肉麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "易易海南雞飯（士林夜市店）",
+      "text": "やわらかな鶏胸肉を使う海南雞飯が受賞料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "香滑雞胸飯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "春水堂人文茶館（中正店）",
+      "text": "椒麻豆乳担々麺が「500碗」に選出。お茶以外の料理も。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "椒麻豆漿擔擔麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "曾記便當",
+      "text": "揚げ鶏もも肉の弁当が推薦料理。ご飯をしっかり食べたいときに。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "炸雞腿排",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "東發號 油飯・麵線",
+      "text": "油飯・麺線・肉羹を組み合わせて食べたい老舗系の小吃。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "油飯 麵線 肉羹",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "林東芳牛肉麵",
+      "text": "半筋半肉スープが2026年選出。牛筋と牛肉を一緒に。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "半筋半肉湯",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "桃源街老王記牛肉麵店",
+      "text": "紅焼と清燉、2種類の牛肉麺が「500碗」の推薦料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "紅燒牛肉麵 清燉牛肉麵",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "武昌排骨大王",
+      "text": "排骨飯が複数年の「500碗」に登場。豚肉のおかずとご飯。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "排骨",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "永康牛肉麵",
+      "text": "牛肉麺に加え、四川風の漬物も2026年の推薦料理。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "四川泡菜",
+      "checkedDate": "2026-10-21"
+    },
+    {
+      "name": "江家原汁排骨湯",
+      "text": "排骨スープが複数年選出。梅干菜など副菜も候補。",
+      "basis": "award_dish",
+      "sourceUrls": [
+        "https://500times.udn.com/wtimes/story/123497/9547367",
+        "https://www.jacksu.tw/tool/life/tw-500-bowl"
+      ],
+      "awardDishes": "原汁排骨湯",
+      "checkedDate": "2026-10-21"
+    }
+  ]
+}

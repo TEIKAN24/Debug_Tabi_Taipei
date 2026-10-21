@@ -348,7 +348,6 @@ html[data-theme="light"] .recommend-advanced-trigger .recommend-advanced-plus {c
 .recommend-area-pin{display:inline-flex;align-items:center;justify-content:center;}
 .recommend-area-pin svg{display:block;width:15px;height:15px;}
 .recommend-advanced-panel .recommend-volume-heading,
-.recommend-advanced-panel .recommend-scene-heading{margin-top:13px;}
 html[data-theme="light"] .recommend-drawer {--reco-purple:#7759AF;--reco-accent:#7554AD;--reco-line:#C8BADE;--reco-muted:#695B7E;}
 html[data-theme="light"] .recommend-control,html[data-theme="light"] .recommend-pill{color:#47395B;border-color:#CDC2DE;background:#fff;}
 html[data-theme="light"] .recommend-control[aria-expanded="true"],html[data-theme="light"] .recommend-advanced[open] .recommend-advanced-trigger{border-color:#8A70B4;}
@@ -1010,4 +1009,14 @@ html[data-theme="light"] .recommend-sort-option[aria-pressed="true"]{color:#5A3D
 @media(max-width:600px) and (max-height:720px){
   .recommend-sort{margin:-2px 0 6px;}
   .recommend-sort-option{min-height:24px;}
+}
+
+/* v30.9.95 — restore breathing space between intro, picker and recommendation heading. */
+@media (max-width:600px){
+  .recommend-intro{margin-bottom:clamp(35px,4.8dvh,45px);}
+  .recommend-result-head{margin-top:clamp(31px,4.65dvh,43px);}
+}
+@media (max-width:600px) and (max-height:720px){
+  .recommend-intro{margin-bottom:18px;}
+  .recommend-result-head{margin-top:20px;}
 }
