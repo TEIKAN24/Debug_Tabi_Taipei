@@ -65,7 +65,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
   });
  });
 })();</script><link rel="stylesheet" href="css/guide.css?v=30.9.81"/>
-<link rel="stylesheet" href="css/recommend.css?v=30.9.87"/>
+<link rel="stylesheet" href="css/recommend.css?v=30.9.88"/>
 
 
 
@@ -161,12 +161,16 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
     </div>
     <div class="recommend-picker-station" id="recommend-station-controls" hidden aria-label="路線と駅を選択">
      <div class="recommend-native-field recommend-native-line" id="recommend-line-field">
-      <span class="recommend-native-display"><span id="recommend-line-code" class="recommend-native-code">BL</span><span class="recommend-native-copy"><strong id="recommend-line-label">路線を選択</strong><small id="recommend-line-en">Select Line</small></span><span class="recommend-native-chevron" aria-hidden="true"></span></span>
-      <select id="recommend-line-select" aria-label="地下鉄の路線を選択" disabled><option value="">路線を選択</option></select>
+      <button type="button" class="recommend-native-trigger" id="recommend-line-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="recommend-line-menu">
+       <span class="recommend-native-display"><span id="recommend-line-code" class="recommend-native-code">BL</span><span class="recommend-native-copy"><strong id="recommend-line-label">路線を選択</strong><small id="recommend-line-en">Select Line</small></span><span class="recommend-native-chevron" aria-hidden="true"></span></span>
+      </button>
+      <div class="recommend-native-menu" id="recommend-line-menu" role="listbox" aria-label="地下鉄の路線を選択" hidden></div>
      </div>
      <div class="recommend-native-field recommend-native-station" id="recommend-station-field">
-      <span class="recommend-native-display"><span id="recommend-station-code" class="recommend-native-code">--</span><span class="recommend-native-copy"><strong id="recommend-station-label">先に路線を選択</strong><small id="recommend-station-en">Select Station</small></span><span class="recommend-native-chevron" aria-hidden="true"></span></span>
-      <select id="recommend-station-select" aria-label="駅を選択" disabled><option value="">先に路線を選択</option></select>
+      <button type="button" class="recommend-native-trigger" id="recommend-station-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="recommend-station-menu" disabled>
+       <span class="recommend-native-display"><span id="recommend-station-code" class="recommend-native-code">--</span><span class="recommend-native-copy"><strong id="recommend-station-label">先に路線を選択</strong><small id="recommend-station-en">Select Station</small></span><span class="recommend-native-chevron" aria-hidden="true"></span></span>
+      </button>
+      <div class="recommend-native-menu recommend-native-menu-station" id="recommend-station-menu" role="listbox" aria-label="駅を選択" hidden></div>
      </div>
     </div>
     <button type="button" id="recommend-area-trigger" class="recommend-mode-button" aria-label="駅から検索に切り替え" title="駅から検索"><span class="recommend-mode-text">駅から<br>検索</span><span class="recommend-mode-pin" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg></span></button>
@@ -381,5 +385,5 @@ html[data-theme="light"] #recommend-debug-location option{background:#fff;color:
 html[data-theme="light"] #recommend-debug-diagnostics{background:#f3f8f4;color:#244331;border-color:#bfd5c6;}
 @media(max-height:560px){#recommend-debug-fab{bottom:calc(14px + env(safe-area-inset-bottom,0px));}#recommend-debug-location{bottom:calc(65px + env(safe-area-inset-bottom,0px));max-height:65dvh;}}
 </style>
-<script src="js/recommend.js?v=30.9.87"></script>
+<script src="js/recommend.js?v=30.9.88"></script>
 </body></html>

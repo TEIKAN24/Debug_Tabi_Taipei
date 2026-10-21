@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.87 — one-page location/station switching and native compact station selects.
+/* TAIPEI CITY GUIDE v30.9.88 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
    v30.9.83: venues.json — coordinates for the 6 bars.
@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.87';
+  const VERSION='30.9.88';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -28,12 +28,14 @@
   const districtName=document.getElementById('recommend-district-name');
   const districtEn=document.getElementById('recommend-district-en');
   const title=document.getElementById('recommend-home-trigger');
-  const lineSelect=document.getElementById('recommend-line-select');
+  const lineTrigger=document.getElementById('recommend-line-trigger');
+  const lineMenu=document.getElementById('recommend-line-menu');
   const lineField=document.getElementById('recommend-line-field');
   const lineLabel=document.getElementById('recommend-line-label');
   const lineEn=document.getElementById('recommend-line-en');
   const lineCode=document.getElementById('recommend-line-code');
-  const stationSelect=document.getElementById('recommend-station-select');
+  const stationTrigger=document.getElementById('recommend-station-trigger');
+  const stationMenu=document.getElementById('recommend-station-menu');
   const stationField=document.getElementById('recommend-station-field');
   const stationLabel=document.getElementById('recommend-station-label');
   const stationEn=document.getElementById('recommend-station-en');
@@ -580,7 +582,7 @@
   function activateMode(mode){
     const switching=state.areaMode!==mode;
     state.areaMode=mode;state.area='';state.page=0;
-    closeOptions();advanced.open=false;
+    closeOptions();closeStationMenus();advanced.open=false;
     if(mode==='current'){
       // The pinned button always returns to GPS mode and requests a fresh fix.
       state.position=null;state.locationStatus='idle';state.geoRequested=false;
@@ -591,28 +593,68 @@
     }
   }
   function buildMetroLineOptions(){
-    lineSelect.replaceChildren(new Option('路線を選択',''));
-    for(const line of metroLines)lineSelect.add(new Option(`${line.id}  ${line.name}`,line.id));
-    lineSelect.value=state.line||'';
+    lineMenu.replaceChildren();
+    for(const line of metroLines){
+      const button=el('button','recommend-native-option recommend-native-option-line');button.type='button';
+      button.dataset.value=line.id;button.setAttribute('role','option');button.setAttribute('aria-selected',String(state.line===line.id));
+      const badge=el('span','recommend-native-option-code',line.id);badge.classList.add('is-line');badge.style.backgroundColor=line.color||'';badge.style.borderColor=line.color||'';badge.style.color='#ffffff';
+      const copy=el('span','recommend-native-option-copy');
+      copy.append(el('strong','',line.name));copy.append(el('small','',LINE_EN[line.id]||'MRT Line'));
+      button.append(badge,copy);
+      button.addEventListener('click',()=>{
+        if(state.line!==line.id){state.line=line.id;state.stationCode='';state.page=0;}
+        renderStationOptions();syncUI();renderResults();closeStationMenus();
+      });
+      lineMenu.append(button);
+    }
   }
   function renderStationOptions(){
+    stationMenu.replaceChildren();
     const items=metroStations.filter(s=>s.line===state.line);
-    stationSelect.replaceChildren(new Option(state.line?'駅を選択':'先に路線を選択',''));
-    for(const item of items)stationSelect.add(new Option(`${item.code}  ${item.name}${item.en?' / '+item.en:''}`,item.code));
-    stationSelect.value=state.stationCode||'';
+    if(!state.line){
+      const empty=el('div','recommend-native-empty','先に路線を選択');
+      const sub=el('small','', 'Select line first');empty.append(sub);stationMenu.append(empty);return;
+    }
+    if(!items.length){
+      const empty=el('div','recommend-native-empty','駅データがありません');stationMenu.append(empty);return;
+    }
+    for(const item of items){
+      const button=el('button','recommend-native-option recommend-native-option-station');button.type='button';
+      button.dataset.value=item.code;button.setAttribute('role','option');button.setAttribute('aria-selected',String(state.stationCode===item.code));
+      const badge=el('span','recommend-native-option-code',item.code.replace(/^[A-Z]+/,''));badge.classList.add('is-station');const itemLineColor=(metroLines.find(x=>x.id===item.line)?.color)||'#4288c9';badge.style.setProperty('--station-code-border',itemLineColor);badge.style.borderColor=itemLineColor;badge.style.backgroundColor='#ffffff';badge.style.color='#202227';
+      const copy=el('span','recommend-native-option-copy');
+      copy.append(el('strong','',item.name));copy.append(el('small','',item.en||'MRT Station'));
+      button.append(badge,copy);
+      button.addEventListener('click',()=>{
+        state.stationCode=item.code;state.page=0;
+        syncUI();renderResults();closeStationMenus();
+      });
+      stationMenu.append(button);
+    }
   }
-  lineSelect.addEventListener('change',()=>{
-    if(state.line!==lineSelect.value){state.line=lineSelect.value;state.stationCode='';state.page=0;}
-    renderStationOptions();syncUI();renderResults();lineSelect.blur();
-  });
-  stationSelect.addEventListener('change',()=>{
-    state.stationCode=stationSelect.value;state.page=0;
-    syncUI();renderResults();stationSelect.blur();
-  });
-  for(const [select,field] of [[lineSelect,lineField],[stationSelect,stationField]]){
-    select.addEventListener('focus',()=>{stationControls.dataset.active=select===lineSelect?'line':'station';field.classList.add('is-picking');advanced.open=false;closeOptions();});
-    select.addEventListener('blur',()=>{field.classList.remove('is-picking');stationControls.dataset.active='';});
+  function closeStationMenus(){
+    lineMenu.hidden=true;stationMenu.hidden=true;
+    lineTrigger.setAttribute('aria-expanded','false');stationTrigger.setAttribute('aria-expanded','false');
+    lineField.classList.remove('is-picking','is-open');stationField.classList.remove('is-picking','is-open');
+    stationControls.dataset.active='';
   }
+  function openStationMenu(kind){
+    if(kind==='line'){
+      if(!stationsReady)return;
+      const open=lineMenu.hidden;
+      closeStationMenus();closeOptions();advanced.open=false;
+      if(open){lineMenu.hidden=false;lineTrigger.setAttribute('aria-expanded','true');lineField.classList.add('is-picking','is-open');stationControls.dataset.active='line';}
+      return;
+    }
+    if(stationTrigger.disabled)return;
+    const open=stationMenu.hidden;
+    closeStationMenus();closeOptions();advanced.open=false;
+    if(open){stationMenu.hidden=false;stationTrigger.setAttribute('aria-expanded','true');stationField.classList.add('is-picking','is-open');stationControls.dataset.active='station';}
+  }
+  lineTrigger.addEventListener('click',()=>openStationMenu('line'));
+  stationTrigger.addEventListener('click',()=>openStationMenu('station'));
+  lineTrigger.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeStationMenus();}});
+  stationTrigger.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeStationMenus();}});
   buildChoice(genreControls,GENRES,moods,'recommend-pill',value=>{
     state.genre=state.genre===value?'':value;state.page=0;advanced.open=false;syncUI();renderResults();
   });
@@ -628,11 +670,12 @@
   areaButton.addEventListener('click',()=>activateMode(state.areaMode==='station'?'current':'station'));
   title.addEventListener('click',()=>activateMode('current'));
   title.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();activateMode('current');}});
-  drawer.addEventListener('keydown',event=>{if(event.key==='Escape')closeOptions();});
+  drawer.addEventListener('keydown',event=>{if(event.key==='Escape'){closeOptions();closeStationMenus();advanced.open=false;}});
   advanced.addEventListener('toggle',()=>{if(advanced.open)closeOptions();});
   drawer.addEventListener('click',e=>{
     if(!e.target.closest('.recommend-control-time-wrap'))closeOptions();
     if(!e.target.closest('.recommend-control-advanced-wrap'))advanced.open=false;
+    if(!e.target.closest('.recommend-native-field'))closeStationMenus();
   });
   // Selected conditions become removable bubbles; the add button stays last.
   // With no active conditions the wide "さらに条件を指定 ＋" button returns.
@@ -672,24 +715,28 @@
     currentLocation.hidden=isStation;
     areaButton.setAttribute('aria-label',isStation?'現在地に戻る':'駅から検索に切り替え');
     areaButton.title=isStation?'現在地に戻る':'駅から検索';
+    if(!isStation)closeStationMenus();
     const selectedLine=metroLines.find(x=>x.id===state.line);
     const selectedStation=currentStation();
-    lineSelect.disabled=!stationsReady;
-    stationSelect.disabled=!selectedLine;
-    lineSelect.value=state.line||'';
-    stationSelect.value=state.stationCode||'';
+    lineTrigger.disabled=!stationsReady;
+    stationTrigger.disabled=!selectedLine;
     lineLabel.textContent=selectedLine?selectedLine.name:stationsFailed?'路線データなし':'路線を選択';
     lineEn.textContent=selectedLine?LINE_EN[selectedLine.id]:'Select Line';
     lineCode.textContent=selectedLine?.id||'--';
     lineCode.style.backgroundColor=selectedLine?.color||'';
-    lineCode.style.color=selectedLine?.id==='Y'?'#272109':'';
+    lineCode.style.borderColor=selectedLine?.color||'';
+    lineCode.style.color='#ffffff';
     lineCode.classList.toggle('is-empty',!selectedLine);
     stationLabel.textContent=selectedStation?selectedStation.name:selectedLine?'駅を選択':'先に路線を選択';
     stationEn.textContent=selectedStation?(selectedStation.en||'MRT Station'):selectedLine?'Select Station':'Select Line First';
-    stationCode.textContent=selectedStation?.code||'--';
-    stationCode.style.backgroundColor=selectedLine?.color||'';
-    stationCode.style.color=selectedLine?.id==='Y'?'#272109':'';
+    stationCode.textContent=selectedStation?selectedStation.code.replace(/^[A-Z]+/,''):'--';
+    stationCode.style.setProperty('--station-code-border',selectedLine?.color||'#424049');
+    stationCode.style.backgroundColor=selectedLine?'#ffffff':'';
+    stationCode.style.borderColor=selectedLine?.color||'';
+    stationCode.style.color=selectedLine?'#202227':'';
     stationCode.classList.toggle('is-empty',!selectedStation);
+    for(const option of lineMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.line));
+    for(const option of stationMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.stationCode));
     const district=nearbyDistrict(state.position);
     districtName.textContent=district?district[0]:state.locationStatus==='loading'?'測位中':state.locationStatus==='success'?'現在地':'現在地';
     districtEn.textContent=district?district[1]:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':'Location';
