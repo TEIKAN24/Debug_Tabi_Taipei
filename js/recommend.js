@@ -878,14 +878,9 @@
   // The Geolocation API requires HTTPS and explicit browser permission.
   // No coordinates are stored, sent to any service, or persisted.
   const rad=n=>n*Math.PI/180;
-  // v30.9.105: Maps navigation searches the business name, NOT its GPS
+  // v30.9.106: Maps navigation searches the business name, NOT its GPS
   // coordinates. For chains, use the closest branch's new/official name.
   // Only fall back to a verified place link when the branch is nameless/ambiguous.
-  function mapsDistrictFromAddress(value){
-    const address=String(value||'').replace(/\s+/g,'');
-    const match=address.match(/(?:台北市|臺北市)(中正區|大安區|中山區|大同區|萬華區|松山區|信義區|士林區|北投區|文山區|內湖區|南港區)/);
-    return match?match[1]:'';
-  }
   function mapsBrandName(item){
     const original=String(item.name||'').trim();
     if(/^(?:Louisa Coffee|路易莎)/i.test(original))return '路易莎咖啡';
@@ -912,7 +907,6 @@
     const isChain=!!(item.brandId||item.chain||(Array.isArray(item.branches)&&item.branches.length>1)||CHAIN_BRANDS.some(([,pattern])=>pattern.test(item.name)));
     const known=item.nearbySource?null:coordinates.get(item.name);
     const address=String(branch?.address||item.address||known?.address||'').trim();
-    const district=String(branch?.district||item.district||mapsDistrictFromAddress(address)||'').trim();
     // A brand-only entry (e.g. unnamed "50嵐" branch) would make Google pick
     // another storefront. Keep the existing location-specific place URL instead.
     if(branch&&isChain&&!mapsIsSpecificBranch(branchName,brand)&&!address){
@@ -926,11 +920,9 @@
       name=includesBrand?branchName:`${brand} ${branchName}`;
     }
     if(!name)return item.nearestMapUrl||item.url||'';
-    // The street address is needed for a chain whose branch name is missing;
-    // otherwise the usual readable district gives the search local context.
+    // Search by name only; use address solely for unnamed chain branches.
     const specific=branch&&mapsIsSpecificBranch(branchName,brand);
-    const context=address&&isChain&&!specific?address:district?`台北市${district}`:address||'台北市';
-    const query=[name,context].filter(Boolean).join(' ');
+    const query=address&&isChain&&!specific?`${name} ${address}`:name;
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
   }
 
