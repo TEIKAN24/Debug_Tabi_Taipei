@@ -6,7 +6,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.104';
+  const VERSION='30.9.105';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -561,7 +561,11 @@
       const nearest=candidates.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng))
         .map(p=>({...p,distanceMeters:distanceMeters(origin.lat,origin.lng,p.lat,p.lng)}))
         .sort((a,b)=>a.distanceMeters-b.distanceMeters)[0];
-      return nearest?{...item,distanceMeters:nearest.distanceMeters,distanceToMarket:!own.length,nearestMapUrl:Array.isArray(item.branches)?nearest.mapUrl:null}:null;
+      // Carry the exact selected storefront into Maps search; coordinates remain
+      // responsible solely for filtering, distance, and nearest-branch choice.
+      return nearest?{...item,distanceMeters:nearest.distanceMeters,distanceToMarket:!own.length,
+        nearestMapUrl:Array.isArray(item.branches)?nearest.mapUrl:null,
+        nearestBranch:Array.isArray(item.branches)?nearest:null}:null;
     }).filter(item=>item&&item.distanceMeters<=GEO_MAX_METERS)):[];
     const nearbyFallback=false;
     const byTime=useDistance?withinRange:timeCandidates;
@@ -874,6 +878,62 @@
   // The Geolocation API requires HTTPS and explicit browser permission.
   // No coordinates are stored, sent to any service, or persisted.
   const rad=n=>n*Math.PI/180;
+  // v30.9.105: Maps navigation searches the business name, NOT its GPS
+  // coordinates. For chains, use the closest branch's new/official name.
+  // Only fall back to a verified place link when the branch is nameless/ambiguous.
+  function mapsDistrictFromAddress(value){
+    const address=String(value||'').replace(/\s+/g,'');
+    const match=address.match(/(?:台北市|臺北市)(中正區|大安區|中山區|大同區|萬華區|松山區|信義區|士林區|北投區|文山區|內湖區|南港區)/);
+    return match?match[1]:'';
+  }
+  function mapsBrandName(item){
+    const original=String(item.name||'').trim();
+    if(/^(?:Louisa Coffee|路易莎)/i.test(original))return '路易莎咖啡';
+    if(/^五桐號/i.test(original))return '五桐號';
+    if(/^鼎泰豊/.test(original))return '鼎泰豐';
+    return original;
+  }
+  function mapsBranchName(value){
+    return String(value||'').trim().replace(/\s*[|｜]\s*(?:線上|线上|點選|点選|歡迎|立即).*$/u,'').trim();
+  }
+  function mapsIsSpecificBranch(name,brand){
+    const branch=normalizeNoteName(name),root=normalizeNoteName(brand);
+    if(brand==='路易莎咖啡'&&/^(?:louisa(?:\s*coffee)?|路易莎(?:咖啡)?)(?:\s+路易莎咖啡)?$/i.test(String(name).trim()))return false;
+    if(brand==='50嵐'&&/^(?:50\s*lan|50嵐)$/i.test(String(name).trim()))return false;
+    if(brand==='五桐號'&&/^(?:五桐[號号](?:\s*wootea)?)$/i.test(String(name).trim()))return false;
+    if(brand==='八方雲集'&&/^(?:八方雲集(?:鍋貼水餃專賣店)?)$/.test(String(name).trim()))return false;
+    return !!branch&&branch!==root&&!/^(?:分店\d+|本店|門市|直營店|分店)$/u.test(String(name).trim());
+  }
+  function recommendationMapsUrl(item){
+    const branch=item.nearestBranch||null;
+    // A branch can have the brand before or after its store designation.
+    const brand=mapsBrandName(item);
+    const branchName=mapsBranchName(branch?.name||branch?.label||branch?.storeName||'');
+    const isChain=!!(item.brandId||item.chain||(Array.isArray(item.branches)&&item.branches.length>1)||CHAIN_BRANDS.some(([,pattern])=>pattern.test(item.name)));
+    const known=item.nearbySource?null:coordinates.get(item.name);
+    const address=String(branch?.address||item.address||known?.address||'').trim();
+    const district=String(branch?.district||item.district||mapsDistrictFromAddress(address)||'').trim();
+    // A brand-only entry (e.g. unnamed "50嵐" branch) would make Google pick
+    // another storefront. Keep the existing location-specific place URL instead.
+    if(branch&&isChain&&!mapsIsSpecificBranch(branchName,brand)&&!address){
+      return branch.mapUrl||item.nearestMapUrl||item.url||'';
+    }
+    let name=brand;
+    if(branch&&isChain&&mapsIsSpecificBranch(branchName,brand)){
+      const normalized=normalizeNoteName(branchName);
+      const aliases=brand==='路易莎咖啡'?/路易莎|louisa/i:brand==='五桐號'?/五桐[號号]|wootea/i:brand==='50嵐'?/50\s*lan|50嵐/i:brand==='麥味登'?/[麥麦]味登/i:null;
+      const includesBrand=normalized.includes(normalizeNoteName(brand))||(aliases&&aliases.test(branchName));
+      name=includesBrand?branchName:`${brand} ${branchName}`;
+    }
+    if(!name)return item.nearestMapUrl||item.url||'';
+    // The street address is needed for a chain whose branch name is missing;
+    // otherwise the usual readable district gives the search local context.
+    const specific=branch&&mapsIsSpecificBranch(branchName,brand);
+    const context=address&&isChain&&!specific?address:district?`台北市${district}`:address||'台北市';
+    const query=[name,context].filter(Boolean).join(' ');
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  }
+
   function distanceMeters(lat1,lng1,lat2,lng2){const dLat=rad(lat2-lat1),dLng=rad(lng2-lng1);const a=Math.sin(dLat/2)**2+Math.cos(rad(lat1))*Math.cos(rad(lat2))*Math.sin(dLng/2)**2;return 6371000*2*Math.asin(Math.min(1,Math.sqrt(a)));}
   let geoRun=0; // Initialized before persisted debug position can be restored.
   // Debug-only location override, enabled solely by ?debugLocation=1.
@@ -1078,7 +1138,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       const side=el('div','recommend-card-side');
       const cuisine=cardCuisine(item);
       if(cuisine)main.append(el('div','recommend-card-type',cuisine));
-      const a=el('a','recommend-venue',item.name);a.href=item.nearestMapUrl||item.url;a.target='_blank';a.rel='noopener noreferrer';main.append(a);
+      const a=el('a','recommend-venue',item.name);a.href=recommendationMapsUrl(item);a.target='_blank';a.rel='noopener noreferrer';main.append(a);
       const distanceText=Number.isFinite(item.distanceMeters)?`約${formatDistance(item.distanceMeters)}`:'';
       if(distanceText){
         const badge=el('span','recommend-distance-pill');
