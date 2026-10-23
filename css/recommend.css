@@ -1649,3 +1649,8 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-featured{
 html[data-theme="light"] .recommend-drawer .recommend-guide-tag-editorial{
   background:#F8EEDB!important;color:#8A6428!important;border-color:#D7B67B!important;
 }
+
+/* v30.9.109 — requested 5px vertical offsets, without changing bubble height. */
+.recommend-drawer .recommend-controls-secondary {position:relative!important;top:5px!important;}
+.recommend-drawer .recommend-result-head > h3 {position:relative!important;top:5px!important;}
+.recommend-drawer .recommend-more {position:relative!important;top:-5px!important;}

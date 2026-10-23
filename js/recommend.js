@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.108 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
+/* TAIPEI CITY GUIDE v30.9.109 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
    v30.9.96 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
@@ -7,7 +7,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.108';
+  const VERSION='30.9.109';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -134,6 +134,46 @@
     const best=[...scores.entries()].sort((a,b)=>b[1]-a[1])[0];
     return best?DISTRICTS[best[0]]:null;
   }
+  // Offline Taipei municipal outline, simplified from MOI county GIS
+  // (ronnywang/twgeojson county 63000). Coordinates are [longitude,latitude].
+  // Keep a tolerance for survey/GPS uncertainty at the city boundary.
+  const TAIPEI_OUTLINE=[
+    [121.56408,25.19818],[121.57224,25.19358],[121.58379,25.19452],
+    [121.58333,25.17717],[121.57698,25.16714],[121.58986,25.16385],
+    [121.58918,25.15235],[121.60812,25.13132],[121.59548,25.11395],
+    [121.59734,25.10962],[121.6259,25.09668],[121.62801,25.08352],
+    [121.6163,25.06395],[121.62334,25.05718],[121.61629,25.05081],
+    [121.61917,25.04351],[121.64658,25.02792],[121.66588,25.02984],
+    [121.6626,25.02294],[121.63177,25.02571],[121.62274,25.01716],
+    [121.60438,25.01929],[121.59753,25.01459],[121.60004,24.97694],
+    [121.61999,24.96945],[121.59868,24.96045],[121.57867,24.96664],
+    [121.56048,24.96499],[121.55232,24.98685],[121.54537,24.98355],
+    [121.53513,24.99502],[121.53177,24.99017],[121.53238,25.00776],
+    [121.51903,25.01979],[121.50928,25.02137],[121.49555,25.00927],
+    [121.49057,25.01098],[121.48367,25.03691],[121.50488,25.04965],
+    [121.50574,25.0757],[121.48689,25.09835],[121.46431,25.10252],
+    [121.45705,25.10922],[121.46397,25.1306],[121.48692,25.15081],
+    [121.50264,25.17289],[121.52027,25.16993],[121.52603,25.18302],
+    [121.54066,25.1872],[121.54486,25.19577],[121.55203,25.19725],
+    [121.55489,25.20849],[121.56265,25.20946],[121.56408,25.19818]
+  ];
+  function inTaipeiCity(lat,lng,accuracy=0){
+    if(lat<24.94||lat>25.23||lng<121.43||lng>121.69)return false;
+    let inside=false;
+    let borderMeters=Infinity;
+    const x=lng*101000,y=lat*111200;
+    for(let i=0,j=TAIPEI_OUTLINE.length-1;i<TAIPEI_OUTLINE.length;j=i++){
+      const a=TAIPEI_OUTLINE[j],b=TAIPEI_OUTLINE[i];
+      if((a[1]>lat)!==(b[1]>lat)&&lng<(b[0]-a[0])*(lat-a[1])/(b[1]-a[1])+a[0])inside=!inside;
+      const ax=a[0]*101000,ay=a[1]*111200,bx=b[0]*101000,by=b[1]*111200;
+      const dx=bx-ax,dy=by-ay;
+      const t=Math.min(1,Math.max(0,((x-ax)*dx+(y-ay)*dy)/(dx*dx+dy*dy||1)));
+      borderMeters=Math.min(borderMeters,Math.hypot(x-(ax+dx*t),y-(ay+dy*t)));
+    }
+    // Simplified map vertices may differ from the actual boundary by ~300m.
+    // For close calls, prefer not to incorrectly call someone outside Taipei.
+    return inside||borderMeters<=Math.max(450,Math.min(1000,accuracy||0));
+  }
   function currentStation(){return metroStations.find(x=>x.code===state.stationCode&&x.line===state.line)||null;}
   function stationOrigin(){const x=currentStation();return x?{lat:x.lat,lng:x.lng}:null;}
   async function loadMetroStations(){
@@ -190,8 +230,7 @@
     for(const match of trailing.matchAll(/（([^）]+)）/g))descriptions.push(...match[1].split(/[、,，]/));
     // Preserve the author's original short labels, with 500碗 excluded at
     // display level. Chain flags stay internal to recommendation diversity.
-    const skip=/^(?:チェーン店|連鎖店|チェーン|グルメ)$/;
-    const tags=[...new Set(descriptions.map(t=>t.trim()).filter(t=>t&&!skip.test(t)&&!/(?:500\s*碗|五百碗)/i.test(t)&&t.length<=20))].slice(0,3);
+    const tags=[...new Set(descriptions.map(t=>t.trim()).filter(t=>t&&!/(?:500\s*碗|五百碗)/i.test(t)&&t.length<=30))];
     if(!editorialNotes.has(key))editorialNotes.set(key,{tags});
   });
 
@@ -218,7 +257,7 @@
     nearbyCatalog=nearbyVenues.map((r,index)=>({
       name:r.name,url:r.branches[0]?.mapUrl||'',sourceMapUrls:[],
       guidePick:editorialNotes.has(normalizeNoteName(r.name))||r.awards?.bibGourmand2026||!!r.awards?.highestBowls,
-      guideTags:[...((editorialNotes.get(normalizeNoteName(r.name))?.tags||[]).map(text=>({text,tone:'editorial'}))),...(r.guideTags||[])],
+      guideTags:(r.guideTags?.length?r.guideTags:(editorialNotes.get(normalizeNoteName(r.name))?.tags||[]).map(text=>({text,tone:'editorial'}))),
       editorialPick:editorialNotes.has(normalizeNoteName(r.name)),
       category:r.category||'meal',details:'',
       industries:r.industries||[],
@@ -253,7 +292,7 @@
     return 0;
   }
   function cardTags(item){
-    const omit=/^(?:チェーン店|連鎖店|チェーン|ドリンク|カフェ|スイーツ|麺類|ごはん系|ごはん料理|小籠包・点心|鍋料理|夜市|台湾小吃|朝ごはん|熱炒|バー|グルメ)$/;
+    const omit=/^グルメ$/;
     const tags=[];
     // Import the labels from ⭐ おすすめリスト, not a redundant badge bearing
     // the section title itself.
@@ -606,9 +645,9 @@
     for(const option of lineMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.line));
     for(const option of stationMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.stationCode));
     const district=nearbyDistrict(state.position);
-    districtName.textContent=district?`台北市 ${district[0]}`:state.locationStatus==='loading'?'測位中':state.locationStatus==='success'?'現在地':'現在地';
-    districtEn.textContent=district?`${district[1]} Taipei City`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':'Location';
-    currentLocation.title=district?'登録店の所在地から推定した行政区です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
+    districtName.textContent=state.locationStatus==='outside'?'台北市外':district?`台北市 ${district[0]}`:state.locationStatus==='loading'?'測位中':'現在地';
+    districtEn.textContent=state.locationStatus==='outside'?'Outside Taipei':district?`${district[1]} Taipei City`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':'Location';
+    currentLocation.title=state.locationStatus==='outside'?'現在地は台北市の対象エリア外です。':district?'登録店の所在地から推定した行政区です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
     for(const b of genreControls){
       const active=state.genres.includes(b.dataset.value);
@@ -689,7 +728,10 @@
     if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat<24.7||lat>25.4||lng<121.2||lng>122)return false;
     debugPosition={lat,lng,accuracy:10};
     try{sessionStorage.setItem('taipeiDebugLocation',JSON.stringify({lat,lng}));}catch(e){}
-    geoRun++;state.areaMode='current';state.area='';state.position={...debugPosition};state.locationStatus='success';state.page=0;
+    geoRun++;state.areaMode='current';state.area='';
+    const inside=inTaipeiCity(lat,lng,debugPosition.accuracy);
+    state.position=inside?{...debugPosition}:null;
+    state.locationStatus=inside?'success':'outside';state.page=0;
     syncUI();renderResults();return true;
   }
   if(debugEnabled){
@@ -769,7 +811,7 @@
       const {latitude,longitude,accuracy}=pos.coords;
       if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||!Number.isFinite(accuracy)||accuracy>1000){
         state.position=null;state.locationStatus='imprecise';
-      }else if(latitude<24.7||latitude>25.4||longitude<121.2||longitude>122){
+      }else if(!inTaipeiCity(latitude,longitude,accuracy)){
         state.position=null;state.locationStatus='outside';
       }else{
         state.position={lat:latitude,lng:longitude,accuracy}; // session only; never persisted or transmitted
