@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.110 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
+/* TAIPEI CITY GUIDE v30.9.111 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
    v30.9.96 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
@@ -7,7 +7,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.110';
+  const VERSION='30.9.111';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -267,7 +267,7 @@
       volume:r.volume||[],
       genre:r.industries||[],
       curated:0,featured:editorialNotes.has(normalizeNoteName(r.name)),
-      chain:!!r.chain,brandId:r.chain?r.id:null,
+      chain:!!r.chain,brandId:r.chain?r.id:null,irregularHours:!!r.irregularHours,
       area:'',order:10000+index,branches:r.branches,
       nearbySource:true,locationConfidence:'high',
       address:r.branches[0]?.address||'',district:'',hours:'',
@@ -303,6 +303,78 @@
        (item?.name==='甜満'&&value==='人気急上昇中'))return 'featured';
     return 'neutral';
   }
+  // Show observed store hours, not a forecast based on the selected meal band.
+  // All calculations use actual Taipei local weekday/time, including overnight
+  // intervals, split shifts and contiguous 24-hour schedules.
+  const WEEKDAY_KEYS=['sun','mon','tue','wed','thu','fri','sat'];
+  const CLOSE_SOON_MINUTES=30;
+  function taipeiClock(at=new Date()){
+    const parts=new Intl.DateTimeFormat('en-US',{
+      timeZone:'Asia/Taipei',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+    }).formatToParts(at);
+    const out=Object.fromEntries(parts.filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+    const index=WEEKDAY_KEYS.indexOf(String(out.weekday||'').toLowerCase().slice(0,3));
+    return {dayIndex:index,minute:Number(out.hour)*60+Number(out.minute)};
+  }
+  function scheduleMinute(value){
+    if(typeof value!=='string'||!/^\d{1,2}:\d{2}$/.test(value))return null;
+    const [h,m]=value.split(':').map(Number);
+    return h===24&&m===0?1440:h>=0&&h<24&&m>=0&&m<60?h*60+m:null;
+  }
+  function branchOpeningStatus(item,at=new Date()){
+    // A place shown with no location still links to its first listed branch;
+    // keep the status for exactly the same storefront as the Maps link.
+    const branch=item.nearestBranch||item.branches?.[0];
+    if(branch?.irregularHours||(!branch&&item.irregularHours))return 'irregular';
+    const days=branch?.days;
+    if(!days||typeof days!=='object')return 'unknown';
+    const clock=taipeiClock(at);
+    if(clock.dayIndex<0||!Number.isFinite(clock.minute))return 'unknown';
+    const intervals=[];
+    let knownCount=0;
+    for(const offset of [-1,0,1]){
+      const weekday=WEEKDAY_KEYS[(clock.dayIndex+offset+7)%7];
+      const slots=days[weekday];
+      if(!Array.isArray(slots))continue;
+      for(const pair of slots){
+        if(!Array.isArray(pair)||pair.length<2)continue;
+        const from=scheduleMinute(pair[0]),to=scheduleMinute(pair[1]);
+        if(from===null||to===null)continue;
+        // 00:00 to 24:00 is a full-day opening. Equal start/end is not
+        // assumed to mean 24h unless explicitly written with 24:00.
+        if(from===to)continue;
+        const end=to<from?to+1440:to;
+        intervals.push({start:offset*1440+from,end:offset*1440+end});
+        knownCount++;
+      }
+    }
+    if(!knownCount)return 'unknown';
+    intervals.sort((a,b)=>a.start-b.start);
+    const merged=[];
+    for(const interval of intervals){
+      const last=merged[merged.length-1];
+      if(last&&interval.start<=last.end)last.end=Math.max(last.end,interval.end);
+      else merged.push({...interval});
+    }
+    const current=merged.find(x=>x.start<=clock.minute&&clock.minute<x.end);
+    if(!current)return 'closed';
+    return current.end-clock.minute<=CLOSE_SOON_MINUTES?'soon':'open';
+  }
+  const OPENING_LABEL={open:'営業中',soon:'まもなく閉店',closed:'営業時間外',irregular:'不定期営業',unknown:'営業時間未確認'};
+  function updateOpeningStatusNode(node,item){
+    const code=branchOpeningStatus(item);
+    node.className='recommend-opening-status recommend-opening-'+code;
+    node.textContent=OPENING_LABEL[code];
+    node.title=code==='unknown'?'店舗別の営業時間を確認できません':code==='irregular'?'不定期営業のため、訪問前に最新情報をご確認ください':'登録された通常営業時間による目安です';
+  }
+  let visibleRecommendations=[];
+  function refreshVisibleOpeningStatuses(){
+    results.querySelectorAll('.recommend-opening-status').forEach(node=>{
+      const item=visibleRecommendations[Number(node.dataset.resultIndex)];
+      if(item)updateOpeningStatusNode(node,item);
+    });
+  }
+
   function cardTags(item){
     const omit=/^グルメ$/;
     const tags=[];
@@ -918,6 +990,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     const pages=Math.ceil(ordered.length/3);
     state.page=((state.page%pages)+pages)%pages;
     const slice=ordered.slice(state.page*3,state.page*3+3);
+    visibleRecommendations=slice;
     count.textContent=`${slice.length}軒をピックアップ`;
     relaxed.hidden=!lifted.length&&!nearbyFallback;
     relaxed.textContent=lifted.length?`条件を少しゆるめました（${lifted.join('・')}）。時間帯は変更していません。`:'';
@@ -930,7 +1003,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       locationStatus.hidden=false;
     }
     reportDebug(ordered.length);
-    slice.forEach(item=>{
+    slice.forEach((item,resultIndex)=>{
       const card=el('article','recommend-card');
       const shell=el('div','recommend-card-shell');
       const main=el('div','recommend-card-main');
@@ -949,6 +1022,10 @@ ${GEO_MAX_METERS}m 內：${near} 筆
         badge.append(pin,el('span','recommend-distance-pill-label',distanceText));
         side.append(badge);
       }else side.append(el('span','recommend-distance-pill recommend-distance-pill-empty',''));
+      const opening=el('span','recommend-opening-status');
+      opening.dataset.resultIndex=String(resultIndex);
+      updateOpeningStatusNode(opening,item);
+      side.append(opening);
       const starsCount=Math.min(3,michelinStars(item));
       const starsWrap=el('div','recommend-card-stars');
       starsWrap.setAttribute('aria-label',starsCount?`ミシュラン${starsCount}つ星`:'ミシュラン評価なし');
@@ -959,7 +1036,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
           starsWrap.append(star);
         }
       }
-      side.append(starsWrap);
+      if(starsCount)side.append(starsWrap);
       const tags=cardTags(item);
       if(tags.length){
         const tagList=el('div','recommend-guide-tags');
@@ -982,9 +1059,13 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     });
     requestAnimationFrame(()=>results.querySelectorAll('.recommend-guide-tags').forEach(updateTagFade));
     more.hidden=ordered.length<=3;
-    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useDistance&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useDistance&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。${slice.some(x=>x.nearbySource&&!x.address)?'住所未確認の店舗は、地図上で店名と場所をご確認ください。':''}`;
+    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useDistance&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useDistance&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリューム・営業状況は目安です。通常営業時間に基づくため、臨時休業や祝日の変更は反映されません。訪問前に最新情報をご確認ください。${slice.some(x=>x.nearbySource&&!x.address)?'住所未確認の店舗は、地図上で店名と場所をご確認ください。':''}`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
+  // Update labels while the panel stays open; no repeated geolocation request.
+  window.setInterval(refreshVisibleOpeningStatuses,60*1000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleOpeningStatuses();});
+  window.addEventListener('pageshow',refreshVisibleOpeningStatuses);
   syncUI();renderResults();loadMetroStations();loadNearbyVenues();
   // Safari often restores a previous page snapshot from the Back/Forward cache.
   // Recompute results from current DOM, without requesting location.
