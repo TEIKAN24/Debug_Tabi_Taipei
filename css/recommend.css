@@ -1724,30 +1724,31 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
 }
 
 
-/* v30.9.111 — badges 5% above the original, not 10%; keep the tag
+/* v30.9.112 — badges 3% above original size; keep the tag
    strip's right edge aligned to the distance chip. */
 .recommend-drawer .recommend-tag-track .recommend-guide-tag{
-  font-size:12.6px!important;
-  padding:8.4px 13.65px!important;
-  border-radius:14.7px!important;
+  font-size:12.36px!important;
+  padding:8.24px 13.39px!important;
+  border-radius:14.42px!important;
 }
 @media(max-width:600px){
   .recommend-drawer .recommend-tag-track .recommend-guide-tag{
-    font-size:10.5px!important;
-    padding:7.35px 10.5px!important;
-    border-radius:12.6px!important;
+    font-size:10.3px!important;
+    padding:7.21px 10.3px!important;
+    border-radius:12.36px!important;
   }
 }
 @media(max-width:360px){
   .recommend-drawer .recommend-tag-track .recommend-guide-tag{
-    font-size:9.45px!important;
-    padding:6.3px 8.4px!important;
-    border-radius:10.5px!important;
+    font-size:9.27px!important;
+    padding:6.18px 8.24px!important;
+    border-radius:10.3px!important;
   }
 }
 /* Top-left of the cuisine descriptor is unchanged; +0.5pt = +0.667px. */
 .recommend-drawer .recommend-card-main .recommend-card-type{
   font-size:14.667px!important;
+  position:relative!important;top:2.5px!important;
 }
 @media(max-width:600px){
   .recommend-drawer .recommend-card-main .recommend-card-type{font-size:10.167px!important;}
@@ -1766,8 +1767,9 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
   display:inline-flex;align-items:center;justify-content:flex-end;
   gap:4px;max-width:100%;min-width:0;
   justify-self:end;align-self:start;
+  position:relative;top:5px;
   color:#A7D9B7;
-  font:700 10px/1.25 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
+  font:700 11.333px/1.25 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
   letter-spacing:0;white-space:nowrap;text-align:right;
 }
 .recommend-drawer .recommend-opening-status::before{
@@ -1785,10 +1787,10 @@ html[data-theme="light"] .recommend-drawer .recommend-opening-irregular,
 html[data-theme="light"] .recommend-drawer .recommend-opening-unknown{color:#747474;}
 .recommend-drawer .recommend-card-stars{min-height:0!important;align-self:end!important;}
 @media(max-width:600px){
-  .recommend-drawer .recommend-opening-status{font-size:9px!important;line-height:1.1!important;gap:3px;}
+  .recommend-drawer .recommend-opening-status{font-size:10.333px!important;line-height:1.1!important;gap:3px;}
   .recommend-drawer .recommend-opening-status::before{width:4px;height:4px;}
   .recommend-drawer .recommend-card-stars{min-height:0!important;}
 }
 @media(max-width:360px){
-  .recommend-drawer .recommend-opening-status{font-size:8.5px!important;}
+  .recommend-drawer .recommend-opening-status{font-size:9.833px!important;}
 }

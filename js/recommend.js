@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.111 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
+/* TAIPEI CITY GUIDE v30.9.112 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
    v30.9.96 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
@@ -7,7 +7,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.111';
+  const VERSION='30.9.112';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -307,7 +307,7 @@
   // All calculations use actual Taipei local weekday/time, including overnight
   // intervals, split shifts and contiguous 24-hour schedules.
   const WEEKDAY_KEYS=['sun','mon','tue','wed','thu','fri','sat'];
-  const CLOSE_SOON_MINUTES=30;
+  const CLOSE_SOON_MINUTES=60;
   function taipeiClock(at=new Date()){
     const parts=new Intl.DateTimeFormat('en-US',{
       timeZone:'Asia/Taipei',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'
