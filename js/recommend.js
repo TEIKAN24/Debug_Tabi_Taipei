@@ -1,4 +1,5 @@
-/* TAIPEI CITY GUIDE v30.9.96 — same-page location/station switching with custom readable line and station menus.
+/* TAIPEI CITY GUIDE v30.9.107 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
+   v30.9.96 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
    v30.9.83: venues.json — coordinates for the 6 bars.
@@ -6,7 +7,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.105';
+  const VERSION='30.9.107';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -51,7 +52,7 @@
   const body=document.body;
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const TIME=[['current','現在時刻'],['morning','朝'],['lunch','昼'],['afternoon','午後'],['night','夜'],['late','深夜']];
-  const GENRES=[['rice','🍚 ごはん系'],['noodle','🍜 麺類'],['dumpling','🥟 小籠包・点心'],['sweet','🍧 スイーツ'],['drink','🧋 ドリンク'],['cafe','☕️ カフェ']];
+  const GENRES=[['モーニング','☀️ モーニング'],['小吃','🥢 小吃'],['レストラン','🍽️ レストラン'],['カフェ','☕ カフェ'],['スイーツ','🍰 スイーツ'],['ドリンク','🧋 ドリンク'],['バー','🍸 バー'],['ごはん系','🍚 ごはん系'],['麺類','🍜 麺類'],['餃子','🥟 餃子'],['小籠包・点心','♨️ 小籠包・点心'],['アイス','🍧 アイス']];
   const VOLUMES=[['light','🥟 軽く'],['hearty','🍜 がっつり']];
   const AREAS=[
     ['nakayama','中山駅・赤峰街',25.0529,121.5204],
@@ -122,9 +123,11 @@
   // the location as unconfirmed instead of inventing an administrative district.
   function nearbyDistrict(point){
     if(!point||!nearbyReady)return null;
-    const candidates=nearbyVenues.filter(v=>DISTRICTS[v.district]&&v.addressVerified!==false)
-      .map(v=>({district:v.district,distance:distanceMeters(point.lat,point.lng,v.lat,v.lng)}))
-      .filter(x=>x.distance<=350).sort((a,b)=>a.distance-b.distance).slice(0,7);
+    const candidates=nearbyVenues.flatMap(v=>(v.branches||[]).map(b=>{
+      const district=Object.keys(DISTRICTS).find(d=>(b.address||'').includes(d));
+      return district&&Number.isFinite(b.lat)&&Number.isFinite(b.lng)?
+        {district,distance:distanceMeters(point.lat,point.lng,b.lat,b.lng)}:null;
+    })).filter(x=>x&&x.distance<=350).sort((a,b)=>a.distance-b.distance).slice(0,7);
     if(!candidates.length||candidates[0].distance>240)return null;
     const scores=new Map();
     for(const x of candidates)scores.set(x.district,(scores.get(x.district)||0)+1/Math.max(60,x.distance));
@@ -151,7 +154,7 @@
   }
   const GEO_MAX_METERS=1200;
   const GEO_PRIORITY_METERS=800; // Straight-line radius for GPS and selected-station recommendations.
-  let coordinates=new Map(),markets=new Map(),coordinatesReady=false,coordinatesFailed=false;
+  const coordinates=new Map(); // Deprecated directory coordinates deliberately unused.
   let nearbyVenues=[],nearbyReady=false,nearbyCatalog=null;
   // v30.9.95 — editorial descriptions: provenance lives in a separate static
   // file, and absent evidence never becomes a fabricated customer review.
@@ -168,346 +171,56 @@
     renderResults();
   }
   function normalizeNoteName(name){return String(name||'').normalize('NFKC').toLowerCase().replace(/[\s　・·．.（）()「」『』]/g,'').replace(/魯/g,'滷').replace(/豊/g,'豐');}
-  function guideEditorialNote(item){
-    // Exact storefront name only. Fuzzy/brand-wide matches risk attributing a
-    // different branch's review to the selected one.
-    const match=readCatalog().find(x=>normalizeNoteName(x.name)===normalizeNoteName(item.name)&&x.guideNote);
-    return match?.guideNote||'';
-  }
-
-  // Static same-origin JSON; no key, request to mapping APIs, or GPS upload.
-  async function loadCoordinates(){
-    try{
-      const reply=await fetch(`food/venues.json?v=${VERSION}`,{cache:'no-store'});
-      if(!reply.ok)throw new Error('venue file unavailable');
-      const data=await reply.json();
-      if(data.schemaVersion!==1||!data.venues||typeof data.venues!=='object')throw new Error('venue file invalid');
-      const clean=new Map();
-      for(const [name,entry] of Object.entries(data.venues)){
-        if(!entry)continue;
-        const valid=point=>point&&Number.isFinite(point.lat)&&Number.isFinite(point.lng)&&point.lat>=24.7&&point.lat<=25.4&&point.lng>=121.2&&point.lng<=122&&/^https:\/\//.test(point.mapUrl||'');
-        if(Array.isArray(entry.branches)){const branches=entry.branches.filter(valid);if(branches.length)clean.set(name,{...entry,branches});}
-        else if(valid(entry))clean.set(name,entry);
-      }
-      // Night markets: one reference point per market for stalls without their
-      // own verified point. Entries with null coordinates are simply skipped.
-      const marketPoints=new Map();
-      for(const [name,point] of Object.entries(data.nightMarkets||{})){
-        if(point&&Number.isFinite(point.lat)&&Number.isFinite(point.lng)&&point.lat>=24.7&&point.lat<=25.4&&point.lng>=121.2&&point.lng<=122)
-          marketPoints.set(name,{lat:point.lat,lng:point.lng});
-      }
-      coordinates=clean;markets=marketPoints;coordinatesReady=true;catalog=null;nearbyCatalog=null;
-    }catch(_){coordinatesFailed=true;}
-    // Updating metadata never requests location or stores the user's coordinates.
-    if(state.areaMode==='current'||state.areaMode==='station'){syncUI();renderResults();}
-  }
+  // The editor's curated database is the only recommendation source.
+  // The older venues.json and webpage catalogue are not loaded for picking.
   const FEATURED=/おすすめ|ミシュラン|ビブグルマン|孤独のグルメ|超行列|行列店|一番人気|高人気|人気店|人気老舗/;
   const MICHELIN_FLOWER_SVG='<svg viewBox="0 0 18.96 20.63" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="#594f41" d="M12.82 4.38c.1.09.72-.4.89-.48 1.77-.91 3.68-.55 4.72 1.2 1.32 2.23.01 4.29-2.13 5.22.49.32 1.06.55 1.51.92 2.9 2.4-.11 7.49-4.1 5.5l-.88-.55c.44 2.54-1.04 4.61-3.74 4.43-2.28-.16-3.37-2.34-2.99-4.43-.04-.04-.88.52-1.01.58-3.84 1.89-6.9-3.04-3.8-5.63.4-.34.88-.55 1.33-.81C.78 9.41-.51 8.02.19 5.82c.86-2.68 3.88-3.04 5.91-1.37-.98-5.85 7.64-6 6.73-.07ZM11.19 7.99l-.57-.32c.94-1.68 2.25-5.63-.34-6.46-.63-.2-1.17-.19-1.79.06-2.39.97-1.07 4.74-.18 6.4l-.57.32c-1-1.63-3.58-4.68-5.66-3.02-.95.76-1.33 2.19-.55 3.21 1.06 1.38 3.47 1.69 5.1 1.81v.58c-1.58.19-4.61.59-5.33 2.25-.47 1.06.07 2.46 1.07 3.01 2.1 1.15 4.34-1.62 5.37-3.15l.59.19c-.66 1.48-1.55 3.52-1.06 5.15.59 1.94 3.56 2.09 4.32.21.67-1.64-.28-3.85-.97-5.36l.59-.19c.99 1.48 3.11 4.06 5.14 3.29.76-.29 1.42-1.24 1.5-2.04.29-2.59-3.67-3.18-5.53-3.36v-.58c2.24.02 7.14-1.27 5.08-4.45-1.82-2.8-5.17.62-6.2 2.45Z"/></svg>';
-  // v30.9.85: separate award-sourced venue index, included only in distance-based GPS/station mode.
-  // No geolocation is sent to a server; all distance checks run locally.
+  // v30.9.107 — The sole restaurant database is derived from the user's
+  // carefully maintained editor backup; each chain keeps branch-specific data.
   async function loadNearbyVenues(){
     try{
       const response=await fetch(`food/nearby.json?v=${VERSION}`,{cache:'no-store'});
-      if(!response.ok)throw new Error('nearby dataset unavailable');
+      if(!response.ok)throw new Error('restaurant database unavailable');
       const data=await response.json();
-      if(data.schemaVersion!==1||!Array.isArray(data.venues))throw new Error('nearby schema invalid');
-      nearbyVenues=data.venues.filter(r=>r&&typeof r.name==='string'&&
-        Number.isFinite(r.lat)&&Number.isFinite(r.lng)&&
-        r.lat>24.95&&r.lat<25.25&&r.lng>121.35&&r.lng<121.72&&
-        /^https:\/\/www\.google\.com\/maps\/|^https:\/\/maps\.app\.goo\.gl\//.test(r.mapUrl||''));
+      if(data.schemaVersion!==1||!Array.isArray(data.venues))throw new Error('restaurant schema invalid');
+      nearbyVenues=data.venues.filter(r=>r&&typeof r.name==='string'&&Array.isArray(r.branches)&&r.branches.some(b=>
+        Number.isFinite(b.lat)&&Number.isFinite(b.lng)&&b.lat>24.9&&b.lat<25.3&&b.lng>121.35&&b.lng<121.73));
       nearbyCatalog=null;nearbyReady=true;
-    }catch(e){nearbyReady=false;nearbyVenues=[];}
-    if(state.areaMode==='current'||state.areaMode==='station'){syncUI();renderResults();}
+    }catch(e){nearbyReady=false;nearbyVenues=[];nearbyCatalog=null;}
+    syncUI();renderResults();
   }
   function readNearbyCatalog(){
     if(nearbyCatalog)return nearbyCatalog;
-    // Match nearby records to the human-curated food directory. An exact
-    // name can be reused at a different branch, so coordinate conflicts are
-    // checked rather than blindly transplanting a shop's labels.
-    const guideByName=new Map();
-    const guideByMap=new Map();
-    const foodPicks=readCatalog().filter(item=>item.guidePick);
-    for(const pick of foodPicks){
-      const key=normalizeNoteName(pick.name);
-      if(!guideByName.has(key))guideByName.set(key,[]);
-      guideByName.get(key).push(pick);
-      for(const url of pick.sourceMapUrls||[])guideByMap.set(url,pick);
-    }
-    nearbyCatalog=nearbyVenues.map((r,index)=>{
-      const candidates=guideByName.get(normalizeNoteName(r.name))||[];
-      let guidePick=guideByMap.get(r.mapUrl)||null;
-      if(!guidePick&&candidates.length===1){
-        const match=candidates[0];
-        const points=match.branches||((Number.isFinite(match.lat)&&Number.isFinite(match.lng))?[match]:[]);
-        // Unknown guide coordinates: exact unique name is sufficient.
-        // Known coordinates: do not attach tags to an unrelated branch.
-        if(!points.length||points.some(p=>distanceMeters(p.lat,p.lng,r.lat,r.lng)<=250))guidePick=match;
-      }
-      // Nearby aliases may contain an extra branch/designator; only match
-      // when the guide venue actually has a verified nearby coordinate.
-      if(!guidePick){
-        const rn=normalizeNoteName(r.name);
-        const aliases=foodPicks.filter(p=>{
-          const pn=normalizeNoteName(p.name);
-          if(Math.min(pn.length,rn.length)<5||!(pn.includes(rn)||rn.includes(pn)))return false;
-          const points=p.branches||((Number.isFinite(p.lat)&&Number.isFinite(p.lng))?[p]:[]);
-          return points.some(q=>distanceMeters(q.lat,q.lng,r.lat,r.lng)<=100);
-        });
-        if(aliases.length===1)guidePick=aliases[0];
-      }
-      const row={name:r.name,url:r.mapUrl,sourceMapUrls:[r.mapUrl],
-        guidePick:!!guidePick,guideTags:guidePick?.guideTags||[],
-        category:r.category||'meal',details:r.specialty||'',
-        curated:0,featured:false,chain:CHAIN_NAMES.test(r.name),
-        area:'',order:10000+index,lat:r.lat,lng:r.lng,
-        brandId:null,nearbySource:true,locationConfidence:r.locationConfidence,
-        address:r.address||'',district:r.district||'',hours:r.time||'',
-        awards:r.awards||{},specialty:r.specialty||'',
-        displayType:r.displayType||'グルメ'};
-      const inferred=inferVenueTags(row);
-      // Award-winning desserts at a regular restaurant do not turn that
-      // restaurant into a dedicated sweets venue.
-      if(row.category!=='sweet'&&row.category!=='cafe')inferred.genre=inferred.genre.filter(g=>g!=='sweet');
-      if(row.category==='meal'){inferred.volume=['hearty'];}
-      return {...row,...inferred,displayType:r.displayType||inferred.displayType};
-    });
+    nearbyCatalog=nearbyVenues.map((r,index)=>({
+      name:r.name,url:r.branches[0]?.mapUrl||'',sourceMapUrls:[],
+      guidePick:(r.awards?.bibGourmand2026||!!r.awards?.highestBowls),
+      guideTags:r.guideTags||[],
+      category:r.category||'meal',details:'',
+      industries:r.industries||[],
+      timeBands:r.timeBands||[],
+      timeVerified:r.timeVerified||'',
+      awardDish:r.awardDish||'',
+      volume:r.volume||[],
+      genre:r.industries||[],
+      curated:0,featured:(r.awards?.bibGourmand2026||!!r.awards?.highestBowls),
+      chain:!!r.chain,brandId:r.chain?r.id:null,
+      area:'',order:10000+index,branches:r.branches,
+      nearbySource:true,locationConfidence:'high',
+      address:r.branches[0]?.address||'',district:'',hours:'',
+      awards:r.awards||{},specialty:'',
+      displayType:r.displayType||'レストラン'
+    }));
     return nearbyCatalog;
   }
   const normalize=t=>String(t||'').replace(/\s+/g,'').toLowerCase();
-  const categoryOf=(tab,group)=>{
-    if(/朝ごはん/.test(tab))return 'breakfast';
-    if(/夜市/.test(tab))return 'nightmarket';
-    if(/小籠包|餃子/.test(tab))return 'dumpling';
-    if(/お米|ルーローハン/.test(tab))return 'rice';
-    if(/麺類/.test(tab))return 'noodle';
-    if(/火鍋/.test(tab))return 'hotpot';
-    if(/居酒屋/.test(tab))return 'izakaya';
-    if(/バー/.test(group))return 'bar';
-    if(/スイーツ|デザート/.test(group))return 'sweet';
-    if(/タピオカ|ティースタンド|ジュース|お茶専門/.test(group))return 'drink';
-    if(/カフェ|喫茶/.test(group))return 'cafe';
-    // The area directory's broad 「グルメ」 category is not a portion size
-    // and must never automatically become a rice/hearty meal.
-    return 'other';
-  };
-  const panelLabel=panel=>document.getElementById(panel?.getAttribute('aria-labelledby')||'')?.textContent.trim()||'';
-  let catalog=null;
-  function readCatalog(){
-    if(catalog)return catalog;
-    const foodRoot=document.querySelector('#guide details.venue-directory-section:not(.area-directory-section)');
-    const areaRoot=document.querySelector('#guide details.area-directory-section');
-    const found=new Map();
-    function read(root,isArea){
-      if(!root)return;
-      root.querySelectorAll('li.venue-list-item, li.venue-row').forEach(li=>{
-        // Match the actual published guide markup. The legacy class names
-        // venue-row/venue-main-link were never present on the static HTML.
-        const a=li.querySelector('a.venue-main-link[href], a[href^="https://maps.app.goo.gl/"], a[href^="https://www.google.com/maps/"]');
-        if(!a||!/^https:\/\/(?:maps\.app\.goo\.gl|www\.google\.com\/maps)/.test(a.href))return;
-        const tab=panelLabel(li.closest('.tab-panel'));
-        const group=li.closest('details.nested-accordion')?.querySelector(':scope > summary')?.textContent.trim()||'';
-        if(isArea&&!/グルメ|カフェ|スイーツ/.test(group))return;
-        const name=a.textContent.trim();if(!name)return;
-        const tagNodes=[...li.querySelectorAll('.venue-tag')];
-        const tags=tagNodes.map(n=>n.textContent.trim()).filter(Boolean);
-        const notes=li.querySelector('.venue-extra-note')?.textContent.trim()||'';
-        // The published guide stores the user's editorial text as a bare text
-        // node directly after the map link, e.g. <a>店名</a>（冷麺、ローカル）.
-        // It has no .venue-tag or .venue-extra-note nodes. Reading only those
-        // classes silently dropped almost every user-authored note.
-        const inlineNote=[...li.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE)
-          .map(n=>n.textContent.trim()).join(' ').trim();
-        const guideNote=[inlineNote,notes].filter(Boolean).join('、').trim();
-        // Reuse the labels from the author's original 食べる・飲む directory.
-        // On the published page guide.js creates .venue-tag elements; the
-        // fallback also works if this module is tested without guide.js.
-        const rawGuideTags=tags.length?tags:
-          (inlineNote.match(/^[（(]([^）)]*)[）)]$/)?.[1]||'')
-            .split(/[、，,]/).map(t=>t.trim()).filter(t=>t&&t.length<=22&&!/[。！？]/.test(t));
-        const extraGuideTags=(li.dataset.curatedTags||'').split('、').map(t=>t.trim()).filter(Boolean);
-        const editorialTags=[];
-        if(!isArea){
-          for(const text of [...rawGuideTags,...extraGuideTags]){
-            if(editorialTags.some(t=>t.text===text))continue;
-            const node=tagNodes.find(n=>n.textContent.trim()===text);
-            const tone=node?.classList.contains('venue-tag--caution')||/八角なし|注意|臭い|⚠/.test(text)?'caution':
-              node?.classList.contains('venue-tag--featured')||/おすすめ|ミシュラン|孤独のグルメ|超行列|一番人気|高人気|ビブグルマン|人気店|行列店|水出し珈琲/.test(text)?'featured':'normal';
-            editorialTags.push({text,tone});
-          }
-        }
-        const info=[...tags,guideNote].filter(Boolean).join('、');
-        const key=normalize(name);
-        const area=isArea?(AREA_MATCH.find(([code,rx])=>rx.test(tab))?.[0]||''):'';
-        const category=isArea?categoryOf('',group):categoryOf(tab,group);
-        // Editorial pick = a store-level label in the guide. Plain 「人気」 and dish
-        // highlights (芝麻湯圓, 水出し珈琲 …) describe dishes, not the shop.
-        const featured=FEATURED.test(info);
-        // guide.js rewrites map links to Google Maps search URLs on touch devices.
-        // Match coordinates against the original per-place URL, not the mobile navigation URL.
-        // A venue listed twice keeps every link it is listed with.
-        const sourceMapUrl=a.dataset.originalMapsUrl || a.href;
-        // Night-market stalls are grouped under 「〇〇夜市おすすめ…」.
-        const market=category==='nightmarket'?(group.match(/^(.+?夜市)/)?.[1]||''):'';
-        const record={name,url:a.href,sourceMapUrls:[sourceMapUrl],market,area,category,details:info,guideNote,
-          guidePick:!isArea,guideTags:editorialTags,featured,chain:CHAIN_NAMES.test(name),order:found.size};
-        const existing=found.get(key);
-        if(!existing){found.set(key,record);return;}
-        if(isArea){existing.area=area;existing.url=a.href;}
-        if(!existing.sourceMapUrls.includes(sourceMapUrl))existing.sourceMapUrls.push(sourceMapUrl);
-        existing.featured||=featured;
-        existing.guidePick||=record.guidePick;
-        if(!existing.guideTags?.length&&record.guideTags?.length)existing.guideTags=record.guideTags;
-        existing.chain||=record.chain;
-        existing.details=[...new Set([existing.details,info].filter(Boolean))].join('、').slice(0,135);
-        if(!existing.guideNote&&guideNote)existing.guideNote=guideNote;
-      });
-    }
-    read(foodRoot,false);read(areaRoot,true);
-    // Venue metadata is independent of the legacy navigation category.
-    // Uncertain tags are left absent rather than fabricated from 「グルメ」.
-    catalog=[...found.values()].map(item=>{
-      const stored=coordinates.get(item.name);
-      // Check the original place link; mobile links may be rewritten for navigation.
-      // Keep verification strict so an unrelated branch's coordinates never attach.
-      const listed=item.sourceMapUrls;
-      const location=stored&&(listed.includes(stored.mapUrl)||listed.includes(stored.searchUrl))?(stored.branches?{branches:stored.branches,brandId:stored.brandId||null}:{lat:stored.lat,lng:stored.lng,brandId:stored.brandId||null}):{};
-      // A stall without its own verified point is placed at its market.
-      const marketPoint=item.market&&!location.branches&&!Number.isFinite(location.lat)?markets.get(item.market)||null:null;
-      return Object.assign(item,inferVenueTags(item),location,{marketPoint});
-    });
-    return catalog;
-  }
   function eligibleTime(item,time){
-    const c=item.category,s=item.details;
-    if(time==='morning')return c==='breakfast'||(c==='cafe'&&!/夜カフェ/.test(s));
-    if(time==='lunch')return !['breakfast','nightmarket','bar','izakaya'].includes(c);
-    if(time==='afternoon')return !['breakfast','nightmarket','bar','izakaya'].includes(c);
-    if(time==='night')return c!=='breakfast';
-    if(time==='late')return ['bar','izakaya'].includes(c)||/24h|24時間|深夜まで|夜カフェ/.test(s);
-    return false;
+    const bands=item.timeBands||[];
+    return bands.includes(time)||Array.isArray(item.branches)&&item.branches.some(b=>b.timeBands?.includes(time));
   }
-  // The three recommendation dimensions are independent and may contain
-  // multiple values. They are editorial estimates, not verified portion sizes.
-  // Specific known food signals override broad directory categories.
-  function inferVenueTags(item){
-    const c=item.category;
-    const source=item.name+' '+(item.details||'');
-    const genre=new Set(), volume=new Set();
-    const contains=rx=>rx.test(source);
-    const pancake=contains(/葱抓餅|蔥抓餅|葱油餅|蔥油餅|蛋餅|焼餅|燒餅/);
-    const streetFood=contains(/胡椒餅|葱抓餅|蔥抓餅|葱油餅|蔥油餅|雞蛋糕|鶏蛋糕|車輪餅|地瓜球|雞排|鶏排|鹽酥雞|塩酥雞|水煎包|割包|刈包|大腸包小腸|甜不辣|肉圓/);
-    const isSweet=contains(/豆花|雪花冰|かき氷|刨冰|粉圓|湯圓|仙草|甜品|デザート|スイーツ|パンケーキ|ケーキ/);
-    const isDrink=contains(/手搖|手揺|奶茶|ミルクティー|タピオカ|ジュース|果汁|ドリンク|ティースタンド|飲料|茶飲|手沖茶/);
-    const isCafe=c==='cafe'||contains(/カフェ|喫茶|咖啡|珈琲|コーヒー|coffee|café|cafe/i);
-    const isNoodle=contains(/牛肉麵|牛肉麺|涼麵|涼麺|乾麵|乾麺|担仔麺|擔仔麵|ラーメン|拉麵|拉麺|米粉湯|麺線|麵線/);
-    const isRice=contains(/魯肉飯|滷肉飯|肉燥飯|排骨飯|雞肉飯|鶏肉飯|炒飯|米糕|飯糰|飯團|弁当|便當|丼飯|おこわ/);
-    const isDumpling=contains(/小籠包|小籠湯包|蒸餃|鍋貼|水餃|餃子|水煎包/);
-    const isHotpot=contains(/火鍋|麻辣鍋|しゃぶしゃぶ|鍋物|羊肉爐/);
-    const isHearty=contains(/定食|セットメニュー|食べ放題|吃到飽|便當|弁当|焼肉|燒肉|熱炒|合菜|丼飯|排骨飯/);
-    // Categories from the food-specific directory carry narrower meaning.
-    if(c==='rice'||isRice)genre.add('rice');
-    if(c==='noodle'||isNoodle)genre.add('noodle');
-    if(c==='dumpling'||isDumpling)genre.add('dumpling');
-    if(c==='hotpot'||isHotpot)genre.add('hotpot');
-    if(c==='sweet'||isSweet)genre.add('sweet');
-    if(c==='drink'||isDrink)genre.add('drink');
-    if(isCafe)genre.add('cafe');
-    if(c==='breakfast'||c==='nightmarket'||c==='dumpling'||c==='rice'||c==='hotpot'||pancake||streetFood||contains(/臺灣料理|台湾料理|滷味|魯味|伝統小吃|台式/))genre.add('taiwan');
-    if(c==='noodle'&&!contains(/ラーメン|日本式/))genre.add('taiwan');
-
-    if(['drink','sweet','cafe','nightmarket'].includes(c)||isSweet||isDrink||pancake||streetFood)volume.add('light');
-    if(['rice','noodle','hotpot','izakaya'].includes(c)||isRice||isNoodle||isHotpot||isHearty)volume.add('hearty');
-    if(c==='dumpling'||isDumpling){volume.add('light');volume.add('hearty');}
-    // Breakfast sets may be filling, but snacks are not automatically so.
-    if(c==='breakfast'&&!pancake){volume.add('light');if(contains(/飯糰|飯團|朝食セット|定食/))volume.add('hearty');}
-    // Specific street-food form takes precedence over generic directory name.
-    let displayType='グルメ';
-    if(streetFood||pancake)displayType='台湾小吃';
-    else if(genre.has('sweet'))displayType='スイーツ';
-    else if(genre.has('dumpling'))displayType='小籠包・点心';
-    else if(genre.has('hotpot'))displayType='鍋料理';
-    else if(genre.has('noodle'))displayType='麺類';
-    else if(genre.has('rice'))displayType='ごはん料理';
-    else if(c==='breakfast')displayType='朝ごはん';
-    else if(c==='nightmarket')displayType='夜市';
-    else if(genre.has('cafe'))displayType='カフェ';
-    else if(genre.has('drink'))displayType='ドリンク';
-    else if(c==='izakaya')displayType='熱炒';
-    else if(c==='bar')displayType='バー';
-    return {genre:[...genre],volume:[...volume],displayType};
-  }
-  function genreMatch(item,genre){return item.genre.includes(genre);}
-  function volumeMatch(item,volume){return item.volume.includes(volume);}
-  // Reviewed descriptions for a small set of identifiable venues. Other
-  // entries use the guide's own editorial notes, never generic "おすすめが特徴".
-  // Some examples use publicly reported visitor impressions and menu details;
-  // other descriptions draw on existing guide notes, never invented ratings.
-  const venueReasons=new Map([
-    ['阜杭豆漿','厚焼きの焼餅と豆乳が名物。行列も多い定番の台湾朝食。'],
-    ['鼎泰豊','薄皮の小籠包と丁寧なサービスで知られる定番店。'],
-    ['金峰魯肉飯','甘辛く煮込んだ魯肉飯に、肉羹スープを添えて。'],
-    ['白水豆花','なめらかな豆花に、麦芽糖とピーナッツの香ばしさ。'],
-    ['蜂大咖啡','昔ながらの喫茶空間で、水出しコーヒーや焼き菓子を。'],
-    ['阿城鵝肉','香り豊かな燻製ガチョウ肉とガチョウ油ご飯。'],
-    ['香滿園','八角の風味が控えめな魯肉飯。漬物や小皿料理と一緒に。'],
-    ['小王煮瓜','色の濃い魯肉飯と、あっさりした瓜仔肉のスープ。'],
-  ]);
-  const detailReasons=[
-    [/八角なし/, '八角が苦手な人にも選びやすい、八角不使用の味付け。'],
-    [/炭火トースト/, '炭火で焼くトーストが看板の台湾朝食店。'],
-    [/台湾おにぎり/, '具をたっぷり包んだ台湾式おにぎりで朝ごはん。'],
-    [/ミルク系/, 'ミルク系の台湾茶ドリンクが好きな人に。'],
-    [/芝芝金萱/, '「芝芝金萱」のチーズフォームとお茶の組み合わせ。'],
-    [/パパイヤミルク/, 'パパイヤミルクで台湾らしいドリンク休憩。'],
-    [/水出し珈琲/, '水出しコーヒーをゆっくり味わいたいときに。'],
-    [/茶チョコ/, 'お茶の風味を生かしたチョコレートも楽しめます。'],
-    [/夜カフェ/, '夜にカフェでひと息つきたいときの候補。'],
-    [/トウファ専門/, '台湾の豆花を味わいたいときに立ち寄りたい専門店。'],
-    [/マンゴーかき氷/, 'マンゴーを使った台湾かき氷でひと休み。'],
-    [/お餅入りかき氷/, 'もちもち食感を楽しめる台湾かき氷。'],
-    [/烏龍茶小籠包/, '烏龍茶の香りを生かした小籠包が目当てなら。'],
-    [/焼き小籠包/, '焼き目の香ばしい小籠包を味わえるお店。'],
-    [/小籠包/, 'スープを包んだ小籠包を食べたいときに。'],
-    [/水餃子|焼き棒餃子/, 'もちもちの水餃子や焼き餃子を気軽に。'],
-    [/蒸し餃子/, '蒸したての餃子を楽しみたいときに。'],
-    [/豚足の煮込み/, 'じっくり煮込んだ豚足を、ごはんと一緒に。'],
-    [/台湾豚角煮丼/, 'やわらかく煮込んだ豚角煮をごはんと一緒に。'],
-    [/台湾南部風おこわ/, '台湾南部風のおこわ「米糕」を味わえます。'],
-    [/台湾北部風おこわ/, '台湾北部風のおこわ「米糕」を味わえます。'],
-    [/牛肉麺/, '台湾の牛肉麺を一杯しっかり楽しみたいときに。'],
-    [/券売機/, '券売機で注文できる台湾の食堂。'],
-    [/冷麺/, 'さっぱりした台湾式の涼麺を食べたいときに。'],
-    [/豆乳ベース/, '豆乳ベースの鍋を囲んで台湾の鍋料理を。'],
-    [/辛くない|辛さ調整/, '辛さに配慮した鍋の選択肢もあります。'],
-    [/ハーゲンダッツ/, '火鍋に加え、アイス食べ放題も楽しめます。'],
-    [/ヤギ肉鍋/, '薬膳と羊肉を合わせた台湾の鍋料理。'],
-    [/台湾風煮込み/, '台湾風の煮込み料理「滷味」をつまみに。'],
-    [/さつまいもボール/, 'もちっとした地瓜球を食べ歩きで。'],
-    [/焼きエリンギ/, '香ばしく焼いたエリンギを屋台で。'],
-    [/揚げイカ/, 'サクサクの揚げイカで夜市の食べ歩きを。'],
-    [/胡椒餅/, '焼きたての胡椒餅で食べ歩き。'],
-    [/塩ゆで鶏肉/, 'さっぱりした塩ゆで鶏と野菜の小吃。'],
-    [/薬膳スープ/, '薬膳の風味を楽しむ温かいスープ。'],
-    [/レトロ/, 'どこか懐かしい雰囲気を楽しみたいときに。'],
-    [/老舗/, '昔ながらの台湾の味をたどる一軒。'],
-  ];
+  function genreMatch(item,genre){return (item.industries||[]).includes(genre);}
+  function volumeMatch(item,volume){return (item.volume||[]).includes(volume);}
   function reason(item){
-    // 1. Guide author's original annotation is authoritative. Never overwrite
-    // it with a generated snippet, even if the shop also appears in nearby.json.
-    const original=item.guideNote||guideEditorialNote(item);
-    if(original)return original;
-    // 2. Each new note was manually edited against a published review or
-    // award-listed dish. This does not claim today's opening status.
-    const checked=reviewedNotes.get(normalizeNoteName(item.name));
-    if(checked)return checked;
-    // 3. Legacy explicitly verified sentences may be used where available.
-    if(!item.nearbySource){
-      const precise=venueReasons.get(item.name);
-      if(precise)return precise;
-      for(const [pattern,sentence] of detailReasons){if(pattern.test(item.details||''))return sentence;}
-    }
-    // No speculative ratings or generic filler. An empty description is better
-    // than suggesting an actual visitor opinion we do not have evidence for.
+    if(item.awardDish)return `500碗で紹介された料理：${item.awardDish}。`;
     return '';
   }
   function michelinStars(item){
@@ -549,15 +262,16 @@
   function recommendedPool(){
     const origin=state.areaMode==='station'?stationOrigin():
       state.areaMode==='current'&&state.locationStatus==='success'?state.position:null;
-    const useDistance=!!origin&&(coordinatesReady||nearbyReady);
+    const useDistance=!!origin&&nearbyReady;
     // Nearby import must not contaminate non-GPS area browsing.
-    const sourceItems=useDistance?[...readCatalog(),...readNearbyCatalog()]:readCatalog();
+    const sourceItems=readNearbyCatalog();
     const timeCandidates=sourceItems.filter(item=>eligibleTime(item,state.time));
     // Only verified, specifically matched storefronts take part in GPS ranking.
     // An unknown location is never assumed to be at a neighborhood midpoint.
     const withinRange=useDistance?closestPerBrand(timeCandidates.map(item=>{
       const own=Array.isArray(item.branches)?item.branches:Number.isFinite(item.lat)?[item]:[];
-      const candidates=own.length?own:item.marketPoint?[item.marketPoint]:[];
+      const eligibleBranches=own.filter(b=>!b.timeBands?.length||b.timeBands.includes(state.time));
+      const candidates=eligibleBranches;
       const nearest=candidates.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng))
         .map(p=>({...p,distanceMeters:distanceMeters(origin.lat,origin.lng,p.lat,p.lng)}))
         .sort((a,b)=>a.distanceMeters-b.distanceMeters)[0];
@@ -571,22 +285,17 @@
     const byTime=useDistance?withinRange:timeCandidates;
     const criteria=[];
     if(state.area)criteria.push({label:'エリア',weight:35,fn:item=>item.area===state.area});
-    if(state.genre)criteria.push({label:'料理ジャンル',weight:30,fn:item=>genreMatch(item,state.genre)});
+    if(state.genre)criteria.push({label:'業種',weight:30,fn:item=>genreMatch(item,state.genre)});
     if(state.volume)criteria.push({label:'ボリューム',weight:20,fn:item=>volumeMatch(item,state.volume)});
-    // Start with every requested condition. If fewer than three candidates
-    // remain, relax from the last optional choice backward (volume, genre,
-    // then area). The Taipei time band is never relaxed.
-    const active=[...criteria],lifted=[];
-    let pool=byTime.filter(item=>active.every(c=>c.fn(item)));
-    while(pool.length<Math.min(3,byTime.length)&&active.length){
-      lifted.push(active.pop().label);
-      pool=byTime.filter(item=>active.every(c=>c.fn(item)));
-    }
+    // Never silently replace the user's explicitly selected business type or
+    // volume with an unrelated store just to fill three cards.
+    const lifted=[];
+    const pool=byTime.filter(item=>criteria.every(c=>c.fn(item)));
     const seed=recommendationSeed();
     const newestAwardBonus=item=>{
       // 500盤 and 500碗 both follow 2026 > 2025 > 2024;
       // don't award double points to restaurants included in both lists.
-      const years=String(item.awards?.plates||'')+'；'+String(item.awards?.bowls||'');
+      const years=String(item.awards?.bowls||'');
       if(/2026\s*[:：]\s*\d+\s*[盤碗]/.test(years))return 9;
       if(/2025\s*[:：]\s*\d+\s*[盤碗]/.test(years))return 6;
       if(/2024\s*[:：]\s*\d+\s*[盤碗]/.test(years))return 3;
@@ -673,7 +382,7 @@
       if(/蛋餅|焼餅|燒餅/.test(s))return 'breakfast-bing';
       return 'breakfast';
     }
-    return item.genre.find(g=>g!=='taiwan')||item.displayType||'';
+    return item.displayType||item.category||'';
   }
   function cardCuisine(item){
     if(item.displayType&&item.displayType!=='グルメ')return item.displayType;
@@ -822,8 +531,8 @@
     }
     const hasSelections=selected.length>0;
     secondaryControls.classList.toggle('recommend-has-selected',hasSelections);
-    advancedTrigger.setAttribute('aria-label',hasSelections?'条件を追加':'さらに条件を指定');
-    advancedTrigger.title=hasSelections?'条件を追加':'さらに条件を指定';
+    advancedTrigger.setAttribute('aria-label',hasSelections?'業種・ボリュームを追加':'業種・ボリュームを選択');
+    advancedTrigger.title=hasSelections?'業種・ボリュームを追加':'業種・ボリュームを選択';
   }
   function syncUI(){
     syncActiveConditions();
@@ -866,7 +575,7 @@
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
     for(const b of genreControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.genre));
     for(const b of volumeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.volume));
-    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!coordinatesReady&&!nearbyReady)?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${coordinates.size+nearbyVenues.length}候補からご案内します。`};
+    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!nearbyReady)?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${nearbyVenues.reduce((n,v)=>n+v.branches.length,0)}店舗からご案内します。`};
     locationStatus.textContent=!isStation?messages[state.locationStatus]||'':
       stationsFailed?'駅データを読み込めませんでした。再読み込みしてください。':
       !stationsReady?'駅データを読み込み中…':
@@ -900,12 +609,14 @@
     return !!branch&&branch!==root&&!/^(?:分店\d+|本店|門市|直營店|分店)$/u.test(String(name).trim());
   }
   function recommendationMapsUrl(item){
-    const branch=item.nearestBranch||null;
+    const branch=item.nearestBranch||item.branches?.[0]||null;
+    // Preserve the exact location/Google Maps link from the editor when available.
+    if(/^https:\/\/(?:www\.google\.com\/maps\/|maps\.app\.goo\.gl\/)/.test(branch?.mapUrl||''))return branch.mapUrl;
     // A branch can have the brand before or after its store designation.
     const brand=mapsBrandName(item);
     const branchName=mapsBranchName(branch?.name||branch?.label||branch?.storeName||'');
     const isChain=!!(item.brandId||item.chain||(Array.isArray(item.branches)&&item.branches.length>1)||CHAIN_BRANDS.some(([,pattern])=>pattern.test(item.name)));
-    const known=item.nearbySource?null:coordinates.get(item.name);
+    const known=null;
     const address=String(branch?.address||item.address||known?.address||'').trim();
     // A brand-only entry (e.g. unnamed "50嵐" branch) would make Google pick
     // another storefront. Keep the existing location-specific place URL instead.
@@ -1041,7 +752,7 @@
     const target=document.getElementById('recommend-debug-diagnostics');
     if(!target)return;
     try{
-      const rows=[...readCatalog(),...readNearbyCatalog()];
+      const rows=readNearbyCatalog();
       const positioned=rows.filter(x=>Array.isArray(x.branches)?x.branches.length:(Number.isFinite(x.lat)&&Number.isFinite(x.lng))||!!x.marketPoint);
       let near=0,eligible=0;
       if(state.position){
@@ -1054,11 +765,11 @@
         }
       }
       target.textContent=`JS 版本：v${VERSION}
-座標 JSON：${coordinatesReady?'已載入 '+coordinates.size+' 筆':coordinatesFailed?'載入失敗':'載入中'}
-網頁餐飲清單：${rows.length} 筆
-配對成功：${positioned.length} 筆
+餐廳資料：${nearbyReady?'已載入 '+nearbyVenues.length+' 品牌': '載入中'}
+新資料品牌：${rows.length} 筆
+有座標品牌：${positioned.length} 筆
 ${GEO_MAX_METERS}m 內：${near} 筆
-符合時段：${eligible} 筆
+符合時段：${eligible} 品牌
 實際推薦：${orderedCount} 筆
 定位狀態：${state.locationStatus}
 選擇時段：${state.time}
@@ -1068,7 +779,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   function updateSortControls(){
     const origin=state.areaMode==='station'?stationOrigin():
       state.areaMode==='current'&&state.locationStatus==='success'?state.position:null;
-    const distanceAvailable=!!origin&&(coordinatesReady||nearbyReady);
+    const distanceAvailable=!!origin&&nearbyReady;
     sortDistance.disabled=!distanceAvailable;
     sortDistance.title=distanceAvailable?'直線距離が近い順に表示します':'現在地を取得するか、駅を選択すると使えます';
     sortRecommend.setAttribute('aria-pressed',String(state.sortMode==='recommend'));
@@ -1093,7 +804,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   },{passive:true});
   function renderResults(){
     updateSortControls();
-    if(state.areaMode==='station'&&(!currentStation()||(!coordinatesReady&&!nearbyReady))){
+    if(state.areaMode==='station'&&(!currentStation()||!nearbyReady)){
       results.replaceChildren(el('p','recommend-no-data',stationsFailed?'駅データを読み込めませんでした。':currentStation()?'位置データを読み込み中です。':`路線と駅を選ぶと、駅から${GEO_MAX_METERS}m以内のおすすめを表示します。`));
       count.textContent='駅を選択';more.hidden=true;relaxed.hidden=true;
       disclaimer.textContent='※ 選択駅からの直線距離を基準にご案内します。';
@@ -1119,7 +830,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       locationStatus.hidden=false;
     }
     if(useDistance&&!nearbyFallback){
-      locationStatus.textContent=`${state.areaMode==='station'?'選択駅':'現在地'}から直線${GEO_MAX_METERS}m以内の位置データ登録済み${nearbyCount}軒を検索中（位置登録済み${coordinates.size+nearbyVenues.length}候補）。`;
+      locationStatus.textContent=`${state.areaMode==='station'?'選択駅':'現在地'}から直線${GEO_MAX_METERS}m以内の位置データ登録済み${nearbyCount}軒を検索中（位置登録済み${nearbyVenues.reduce((n,v)=>n+v.branches.length,0)}店舗）。`;
       locationStatus.hidden=false;
     }
     reportDebug(ordered.length);
@@ -1177,11 +888,11 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useDistance&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useDistance&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリュームは目安です。営業中とは限りません。訪問前に営業時間をご確認ください。${slice.some(x=>x.nearbySource&&!x.address)?'住所未確認の店舗は、地図上で店名と場所をご確認ください。':''}`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
-  syncUI();renderResults();loadMetroStations();loadCoordinates();loadNearbyVenues();loadReviewedNotes();
+  syncUI();renderResults();loadMetroStations();loadNearbyVenues();
   // Safari often restores a previous page snapshot from the Back/Forward cache.
   // Recompute results from current DOM, without requesting location.
   window.addEventListener('pageshow',event=>{
-    if(event.persisted){catalog=null;syncUI();renderResults();if(!coordinatesReady&&!coordinatesFailed)loadCoordinates();}
+    if(event.persisted){nearbyCatalog=null;syncUI();renderResults();if(!nearbyReady)loadNearbyVenues();}
   });
   let isOpen=false, dragging=null, raf=0, queuedProgress=0, progress=0, lastFocus=null, lockedY=0, savedStyle=null, suppressedUntil=0;
   const panelWidth=()=>Math.min(innerWidth,480);

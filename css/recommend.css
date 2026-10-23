@@ -1600,3 +1600,15 @@ html[data-theme="light"] .recommend-drawer .recommend-active-chip-remove{color:v
 html[data-theme="light"] .recommend-drawer .recommend-card-star svg path{fill:#777777!important;}
 .recommend-drawer .recommend-relaxed{background:#252525;border-color:#555555;color:#CDCDCD;}
 html[data-theme="light"] .recommend-drawer .recommend-relaxed{background:#F2F2F2;border-color:#CECECE;color:#656565;}
+
+/* v30.9.107 — the author's 500碗 / Michelin Bib Gourmand distinctions are gold in both themes. */
+.recommend-drawer .recommend-guide-tag-featured{
+  background:rgba(181,139,73,.20)!important;
+  color:#F1C77F!important;
+  border-color:#B58B49!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-guide-tag-featured{
+  background:#F8EEDB!important;
+  color:#8A6428!important;
+  border-color:#D7B67B!important;
+}
