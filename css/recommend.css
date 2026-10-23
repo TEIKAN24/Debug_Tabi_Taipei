@@ -1613,33 +1613,36 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-featured{
   border-color:#D7B67B!important;
 }
 
-/* v30.9.108 — compact equal-height bubbles inside optional conditions. */
-.recommend-drawer .recommend-advanced-panel .recommend-choices{gap:6px;}
-.recommend-drawer .recommend-advanced-panel .recommend-pill{
-  box-sizing:border-box!important;height:28px!important;min-height:28px!important;
-  padding:0 10px!important;line-height:1!important;font-size:11px!important;
-  display:inline-flex!important;align-items:center!important;justify-content:center!important;
-  white-space:nowrap!important;border-radius:999px!important;
+/* v30.9.108 — Keep the original chip size; fix the misalignment (not height).
+   An earlier mobile rule top:5px moved only the + summary downward. Once
+   selection chips appeared, they looked like they floated 5px above it. */
+.recommend-drawer .recommend-controls-secondary{
+  align-items:center!important;align-content:center!important;gap:5px!important;
 }
-.recommend-drawer .recommend-advanced-panel .recommend-pill:disabled{opacity:.38;cursor:not-allowed;}
 .recommend-drawer .recommend-controls-secondary .recommend-active-chip,
 .recommend-drawer .recommend-controls-secondary .recommend-advanced-trigger{
-  height:28px!important;min-height:28px!important;
-  padding:0 9px!important;line-height:1!important;border-radius:999px!important;
-  box-sizing:border-box!important;display:inline-flex;align-items:center!important;
-  font-size:11px!important;
+  box-sizing:border-box!important;
+  height:30px!important;min-height:30px!important;
+  display:inline-flex!important;align-items:center!important;
+  line-height:1.25!important;margin:0!important;
+  position:static!important;top:auto!important;transform:none!important;
+  vertical-align:middle!important;
+  border-radius:999px!important;
+}
+.recommend-drawer .recommend-controls-secondary .recommend-active-chip{
+  padding:3px 10px!important;font-size:11px!important;
+}
+.recommend-drawer .recommend-controls-secondary .recommend-advanced-trigger{
+  padding:3px 9px!important;
 }
 .recommend-drawer .recommend-controls-secondary.recommend-has-selected .recommend-advanced-trigger{
-  width:28px!important;min-width:28px!important;min-height:28px!important;
+  width:30px!important;min-width:30px!important;min-height:30px!important;
   padding:0!important;border-radius:50%!important;
 }
-.recommend-drawer .recommend-active-chip-remove{font-size:14px!important;line-height:1!important;}
+.recommend-drawer .recommend-active-chip-remove{font-size:15px!important;line-height:1!important;}
+.recommend-drawer .recommend-advanced-panel .recommend-pill:disabled{opacity:.38;cursor:not-allowed;}
 .recommend-drawer .recommend-choice-limit{font-size:10px;color:var(--reco-muted);font-weight:500;margin-left:4px;}
-@media(max-width:600px){
-  .recommend-result-head .recommend-advanced-trigger{top:0!important;}
-  .recommend-drawer .recommend-controls-secondary{gap:5px!important;}
-}
-/* Identify handpicked ⭐ おすすめリスト venues without borrowing any old candidates. */
+/* Editorial picks still drive ranking but their label contents inherit the original tag UI. */
 .recommend-drawer .recommend-guide-tag-editorial{
   background:rgba(181,139,73,.18)!important;color:#E9C485!important;border-color:#B58B49!important;
 }

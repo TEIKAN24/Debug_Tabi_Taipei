@@ -175,7 +175,11 @@
   // Read the live HTML so changes to the editorial list do not require a
   // second hand-maintained list of tags in the recommendation database.
   const editorialNotes=new Map();
-  document.querySelectorAll('.venue-directory-section li.venue-list-item').forEach(li=>{
+  // Restrict editorial annotations to the 食べる・飲む subsection; none of
+  // the sightseeing / shopping editorial categories are restaurant tags.
+  const editorialFoodSection=[...document.querySelectorAll('.venue-directory-section')]
+    .find(sec=>sec.querySelector(':scope > summary .accordion-category-heading')?.textContent.includes('食べる・飲む'));
+  editorialFoodSection?.querySelectorAll('li.venue-list-item').forEach(li=>{
     const link=li.querySelector('a');if(!link)return;
     const key=normalizeNoteName(link.textContent);
     if(!key)return;
@@ -184,8 +188,10 @@
     if(manual)descriptions.push(...manual.split(/[、,，]/));
     const trailing=li.textContent.replace(link.textContent,'');
     for(const match of trailing.matchAll(/（([^）]+)）/g))descriptions.push(...match[1].split(/[、,，]/));
-    const skip=/^(?:チェーン店|連鎖店|チェーン|台湾式|グルメ|500碗.*)$/;
-    const tags=[...new Set(descriptions.map(t=>t.trim()).filter(t=>t&&!skip.test(t)&&t.length<=20))].slice(0,3);
+    // Preserve the author's original short labels, with 500碗 excluded at
+    // display level. Chain flags stay internal to recommendation diversity.
+    const skip=/^(?:チェーン店|連鎖店|チェーン|グルメ)$/;
+    const tags=[...new Set(descriptions.map(t=>t.trim()).filter(t=>t&&!skip.test(t)&&!/(?:500\s*碗|五百碗)/i.test(t)&&t.length<=20))].slice(0,3);
     if(!editorialNotes.has(key))editorialNotes.set(key,{tags});
   });
 
@@ -249,9 +255,10 @@
   function cardTags(item){
     const omit=/^(?:チェーン店|連鎖店|チェーン|ドリンク|カフェ|スイーツ|麺類|ごはん系|ごはん料理|小籠包・点心|鍋料理|夜市|台湾小吃|朝ごはん|熱炒|バー|グルメ)$/;
     const tags=[];
-    if(item.editorialPick)tags.push({text:'⭐ おすすめリスト',tone:'editorial-pick'});
+    // Import the labels from ⭐ おすすめリスト, not a redundant badge bearing
+    // the section title itself.
     for(const tag of item.guideTags||[]){
-      if(!tag?.text||omit.test(tag.text)||/^500\s*碗/.test(tag.text))continue;
+      if(!tag?.text||omit.test(tag.text)||/(?:500\s*碗|五百碗)/i.test(tag.text))continue;
       if(tags.some(x=>x.text===tag.text))continue;
       tags.push(tag);
     }
