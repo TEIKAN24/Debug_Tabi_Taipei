@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.109 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
+/* TAIPEI CITY GUIDE v30.9.110 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
    v30.9.96 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
@@ -7,7 +7,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.109';
+  const VERSION='30.9.110';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -290,6 +290,18 @@
     if(/(?:米其林|ミシュラン).{0,3}(?:二つ星|二星|2星|★★|\*\*)/.test(parts))return 2;
     if(/(?:米其林|ミシュラン).{0,3}(?:一つ星|一星|1星|★|\*)/.test(parts))return 1;
     return 0;
+  }
+  // Match ⭐ おすすめリスト's actual venue-label classification rules from
+  // js/guide.js. Source annotations contain text; their "editorial" fallback
+  // alone does not indicate a gold/red style. Keep Michelin Bib tags gold.
+  const GUIDE_HIGHLIGHT = /おすすめ|孤独のグルメ|ミシュラン|超行列|一番人気|高人気|ビブグルマン|人気老舗|人気店|行列店|エビ水餃|抹茶焼き氷|芝麻湯圓|鴨舌|水出し珈琲|目玉焼き魯肉飯/;
+  const GUIDE_CAUTION = /八角なし|治安|注意|⚠|臭い/;
+  function cardTagTone(tag,item){
+    const value=String(tag?.text||'');
+    if(GUIDE_CAUTION.test(value)||tag?.tone==='caution')return 'caution';
+    if(GUIDE_HIGHLIGHT.test(value)||tag?.tone==='featured'||tag?.tone==='editorial-pick'||
+       (item?.name==='甜満'&&value==='人気急上昇中'))return 'featured';
+    return 'neutral';
   }
   function cardTags(item){
     const omit=/^グルメ$/;
@@ -955,9 +967,9 @@ ${GEO_MAX_METERS}m 內：${near} 筆
         const tagTrack=el('div','recommend-tag-track');
         for(const tag of tags){
           const chip=el('span','recommend-guide-tag',tag.text);
-          if(tag.tone==='featured')chip.classList.add('recommend-guide-tag-featured');
-          if(tag.tone==='editorial-pick')chip.classList.add('recommend-guide-tag-editorial');
-          if(tag.tone==='caution')chip.classList.add('recommend-guide-tag-caution');
+          const tone=cardTagTone(tag,item);
+          if(tone==='featured')chip.classList.add('recommend-guide-tag-featured');
+          if(tone==='caution')chip.classList.add('recommend-guide-tag-caution');
           tagTrack.append(chip);
         }
         tagList.append(tagTrack);

@@ -1654,3 +1654,71 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-editorial{
 .recommend-drawer .recommend-controls-secondary {position:relative!important;top:5px!important;}
 .recommend-drawer .recommend-result-head > h3 {position:relative!important;top:5px!important;}
 .recommend-drawer .recommend-more {position:relative!important;top:-5px!important;}
+
+
+/* v30.9.110 — match ⭐ おすすめリスト's exact feature/caution colors.
+   Selector specificity and placement intentionally override the grayscale era. */
+.recommend-drawer .recommend-guide-tag-featured{
+  color:#EBC489!important;background:#423A2D!important;border-color:#66533B!important;
+}
+.recommend-drawer .recommend-guide-tag-caution{
+  color:#F4A89B!important;background:#3F3032!important;border-color:#725252!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-guide-tag-featured{
+  color:#815A1B!important;background:#F8EEDB!important;border-color:#DDC79E!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
+  color:#A94338!important;background:#FFF1EF!important;border-color:#DBB7B3!important;
+}
+/* Restaurant names move down 5px, grow by 1pt (1.333px) at each breakpoint.
+   Keep the 3 result cards and their other contents at their former size. */
+.recommend-drawer .recommend-card-main .recommend-venue{
+  position:relative!important;top:5px!important;
+  font-size:calc(clamp(17px,5.6vw,24px) + 1.333px)!important;
+}
+@media(max-width:600px){
+  .recommend-drawer .recommend-card-main .recommend-venue{
+    font-size:calc(clamp(14px,4.5vw,17px) + 1.333px)!important;
+  }
+}
+@media(max-width:360px){
+  .recommend-drawer .recommend-card-main .recommend-venue{font-size:calc(13px + 1.333px)!important;}
+}
+
+/* v30.9.110 final — 10% larger recommendation tags, preserving the
+   distance chip's right-hand alignment. Scroll only the tag strip when
+   multiple labels exceed the available width. */
+.recommend-drawer .recommend-card-shell > .recommend-guide-tags{
+  box-sizing:border-box!important;
+  justify-self:stretch!important;
+  width:100%!important;
+  max-width:100%!important;
+  padding-right:0!important;
+  margin-right:0!important;
+  overflow-x:auto!important;
+}
+.recommend-drawer .recommend-tag-track{
+  justify-content:flex-end!important;
+  min-width:100%!important;
+  width:max-content!important;
+  box-sizing:border-box!important;
+}
+.recommend-drawer .recommend-tag-track .recommend-guide-tag{
+  font-size:13.2px!important;
+  padding:8.8px 14.3px!important;
+  border-radius:15.4px!important;
+}
+@media(max-width:600px){
+  .recommend-drawer .recommend-tag-track .recommend-guide-tag{
+    font-size:11px!important;
+    padding:7.7px 11px!important;
+    border-radius:13.2px!important;
+  }
+}
+@media(max-width:360px){
+  .recommend-drawer .recommend-tag-track .recommend-guide-tag{
+    font-size:9.9px!important;
+    padding:6.6px 8.8px!important;
+    border-radius:11px!important;
+  }
+}
