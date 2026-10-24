@@ -1451,3 +1451,5 @@ html[data-theme="light"] .food-flip-toggle{color:#3A3A3A;border-color:#BDBDBD;}
 #food-flip .food-flip-back .tab-panels{flex:1 1 auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;margin:0!important;}
 #food-flip .food-flip-back .tab-pills{flex:none!important;}
 #food-flip .food-flip-back .tab-panel:not([hidden]){flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;}
+/* v30.9.121 — 🥢 食べる・飲む is an open section, not an accordion box. */
+.site-content .food-hub{margin:4px 0 22px;}
