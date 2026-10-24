@@ -1,4 +1,5 @@
-/* TAIPEI CITY GUIDE v30.9.124 — main heading snap and no-focus advanced filter toggle.
+/* TAIPEI CITY GUIDE v30.9.125 — artifact-free flip, reverse-list fade and stable iOS height.
+   v30.9.124 — main heading snap and no-focus advanced filter toggle.
    v30.9.121 — the food section is no longer an accordion (full width); the block turns
    the other way.
    v30.9.120 — no drawer: the recommender is the front of 🥢 食べる・飲む and turns over
@@ -24,7 +25,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.124';
+  const VERSION='30.9.125';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -1355,6 +1356,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     if(!directoryRoot||!directoryTabs||!directoryPanel)return;
     if(!directoryLoaded){
       directoryPanel.replaceChildren(directoryNode('p','food-directory-message','店舗データを読み込めませんでした。ページを再読み込みしてください。'));
+      directoryRoot.dataset.fadeBottom='false';
       return;
     }
     const buckets=new Map(DIRECTORY_TYPES.map(([key])=>[key,[]]));
@@ -1427,7 +1429,18 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     });
     directoryPanel.replaceChildren(heading,list);
     directoryPanel.scrollTop=0;
+    requestAnimationFrame(updateDirectoryScrollFade);
   }
+  function updateDirectoryScrollFade(){
+    if(!directoryRoot||!directoryPanel)return;
+    // One pixel of rounding tolerance prevents a flicker at the very bottom
+    // of momentum scrolling on iOS Safari.
+    directoryRoot.dataset.fadeBottom=String(
+      directoryPanel.scrollHeight-directoryPanel.clientHeight-directoryPanel.scrollTop>2
+    );
+  }
+  directoryPanel?.addEventListener('scroll',updateDirectoryScrollFade,{passive:true});
+  window.addEventListener('resize',()=>requestAnimationFrame(updateDirectoryScrollFade),{passive:true});
   function selectDirectoryTab(key,focus){
     if(directoryChoice===key)return;
     directoryChoice=key;
@@ -1441,7 +1454,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   if(flip){
     const inner=flip.querySelector('.food-flip-inner');
     const faces={front:flip.querySelector('.food-flip-front'),back:flip.querySelector('.food-flip-back')};
-    let face='front',angle=0,turning=false;
+    let face='front',turning=false;
     const show=name=>{
       face=name;flip.dataset.face=name;
       for(const [key,node] of Object.entries(faces)){const hidden=key!==name;node.inert=hidden;node.setAttribute('aria-hidden',String(hidden));}
@@ -1454,22 +1467,36 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       if(focus)faces[name].querySelector('.food-flip-toggle')?.focus({preventScroll:true});
       // Let the list re-measure its scroll areas now that it is visible.
       window.dispatchEvent(new Event('resize'));
+      requestAnimationFrame(updateDirectoryScrollFade);
     };
     function turnTo(name,{animate=true,focus=true}={}){
       if(turning||name===face)return;
       if(!animate){settleTurn(name,false);return;}
       turning=true;closeOptions();closeStationMenus();advanced.open=false;
-      if(reduceMotion.matches){
-        inner.classList.add('is-fading');
-        const out=faces[face].animate([{opacity:1},{opacity:0}],{duration:160,easing:'ease-out'});
-        out.onfinish=()=>{show(name);const inAnim=faces[name].animate([{opacity:0},{opacity:1}],{duration:160,easing:'ease-in'});inAnim.onfinish=inAnim.oncancel=()=>settleTurn(name,focus);};
-        out.oncancel=()=>settleTurn(name,focus);
-        return;
-      }
-      const from=angle,to=angle-180;angle=to%360;
+      // iOS Safari: rotating the parent while simultaneously exposing both 3D
+      // faces may leave a ghost of the front on the back (compositor bug).
+      // Turn the outgoing face halfway *alone*, switch visibility, then turn
+      // the incoming face in. The faces never paint on top of one another.
+      if(reduceMotion.matches){settleTurn(name,focus);return;}
+      const outgoing=faces[face],incoming=faces[name];
+      const direction=name==='back'?-1:1;
+      const duration=270;
       inner.classList.add('is-turning');
-      const anim=inner.animate([{transform:`rotateY(${from}deg)`},{transform:`rotateY(${to}deg)`}],{duration:620,easing:'cubic-bezier(.45,.05,.25,1)'});
-      anim.onfinish=anim.oncancel=()=>settleTurn(name,focus);
+      const away=outgoing.animate([
+        {transform:'rotateY(0deg)',opacity:1},
+        {transform:`rotateY(${direction*90}deg)`,opacity:0}
+      ],{duration,easing:'cubic-bezier(.42,0,.9,.72)',fill:'both'});
+      away.onfinish=()=>{
+        away.oncancel=null;away.cancel();
+        show(name);
+        const toward=incoming.animate([
+          {transform:`rotateY(${-direction*90}deg)`,opacity:0},
+          {transform:'rotateY(0deg)',opacity:1}
+        ],{duration,easing:'cubic-bezier(.16,.64,.25,1)',fill:'both'});
+        toward.onfinish=()=>{toward.oncancel=null;toward.cancel();settleTurn(name,focus);};
+        toward.oncancel=()=>{if(turning)settleTurn(name,focus);};
+      };
+      away.oncancel=()=>{if(turning)settleTurn(name,focus);};
     }
     flip.querySelectorAll('.food-flip-toggle').forEach(button=>button.addEventListener('click',()=>turnTo(button.dataset.to)));
     // Links to an item of the list (#…) open the list side directly.
