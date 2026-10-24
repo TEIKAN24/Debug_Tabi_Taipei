@@ -1,4 +1,6 @@
-/* TAIPEI CITY GUIDE v30.9.120 — no drawer: the recommender is the front of 🥢 食べる・飲む and turns over
+/* TAIPEI CITY GUIDE v30.9.121 — the food section is no longer an accordion (full width); the block turns
+   the other way.
+   v30.9.120 — no drawer: the recommender is the front of 🥢 食べる・飲む and turns over
    to the full list (一覧へ ＞ / おすすめへ ＞). Location is asked for only after a tap.
    v30.9.119 — cards show the live status again (もうすぐ営業 within 30 min, もうすぐ閉店
    within 1 h); a shop closed now shows its next opening, e.g. （月）10:00から.
@@ -21,7 +23,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.120';
+  const VERSION='30.9.121';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -1331,7 +1333,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
         out.oncancel=()=>settleTurn(name,focus);
         return;
       }
-      const from=angle,to=angle+180;angle=to%360;
+      const from=angle,to=angle-180;angle=to%360;
       inner.classList.add('is-turning');
       const anim=inner.animate([{transform:`rotateY(${from}deg)`},{transform:`rotateY(${to}deg)`}],{duration:620,easing:'cubic-bezier(.45,.05,.25,1)'});
       anim.onfinish=anim.oncancel=()=>settleTurn(name,focus);

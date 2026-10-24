@@ -1,6 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
-   v30.9.118 — back-to-top button removed. */
+   v30.9.118 — back-to-top button removed.
+   v30.9.121 — 🥢 食べる・飲む is an always-open section (no accordion) holding おすすめ ⇄ 一覧. */
 
 /* =================== JS 01: behavior-1 =================== */
 ;
@@ -255,7 +256,7 @@
 (function () {
   'use strict';
 
-  const containers = document.querySelectorAll('.site-content details.venue-directory-section');
+  const containers = document.querySelectorAll('.site-content .venue-directory-section');
   for (const pane of document.querySelectorAll('.site-content .venue-directory-section .tab-panel')) { pane.tabIndex = 0; }
   const HIGHLIGHT = /おすすめ|孤独のグルメ|ミシュラン|超行列|一番人気|高人気|ビブグルマン|人気老舗|人気店|行列店|エビ水餃|抹茶焼き氷|芝麻湯圓|鴨舌|水出し珈琲|目玉焼き魯肉飯/;
   const CAUTION = /八角なし|治安|注意|⚠|臭い/;
@@ -1931,7 +1932,7 @@ update();
   // Only the travel-preparation accordions auto-fold when leaving the
   // viewport. Airport access, all dining/area/experience sections and nearby
   // destinations remain open until an actual user selection closes them.
-  const foodRoot=guide.querySelector('details.venue-directory-section:not(.area-directory-section)');
+  const foodRoot=guide.querySelector('.venue-directory-section:not(.area-directory-section)');
   const detailBlocks=[...guide.querySelectorAll('details')]
     .filter(detail=>foodRoot && !!(detail.compareDocumentPosition(foodRoot) & Node.DOCUMENT_POSITION_FOLLOWING));
   const dayTripPanels=[];
@@ -2793,6 +2794,7 @@ update();
   const guide=document.getElementById('guide');
   if(!guide)return;
   const roots=[...guide.querySelectorAll('.page-body > details.root-accordion')];
+  const foodOwner=guide.querySelector('.food-hub');
   const airport=guide.querySelector('#airport-route-selector');
   const daytrip=guide.querySelector('.sights-day-trips');
   let folding=false;
@@ -2804,18 +2806,19 @@ update();
       const id=nav.dataset.target;
       if(id==='travel')return 'travel';
       if(id==='sights')return roots.find(root=>root.id==='3f56bda0-4caa-8046-a491-c25321b680c1')||null;
-      return ({food:roots.find(root=>root.id==='3f56bda0-4caa-80cb-846a-c054fc9eb79b'),
+      return ({food:foodOwner,
                areas:roots.find(root=>root.classList.contains('area-directory-section')),
                experiences:roots.find(root=>root.id==='3f76bda0-4caa-80d2-8841-c76e1f8f749a'),
                souvenirs:roots.find(root=>root.id==='3f66bda0-4caa-8038-8328-e8b12e95336f')})[id]||null;
     }
+    // The always-open food section (おすすめ ⇄ 一覧) folds the other blocks like a root.
+    if(element.closest('#guide .food-hub'))return foodOwner;
     const root=element.closest('#guide .page-body > details.root-accordion');
     if(root)return root;
     if(element.closest('#guide #airport-route-selector'))return airport;
     if(element.closest('#guide .sights-day-trips'))return daytrip;
     return null;
   };
-  const foodOwner=roots.find(root=>root.id==='3f56bda0-4caa-80cb-846a-c054fc9eb79b');
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   let anchorVersion=0;
   for(const kind of ['wheel','touchstart','pointerdown']){
