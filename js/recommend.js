@@ -1,4 +1,6 @@
-/* TAIPEI CITY GUIDE v30.9.118 — 現在時刻 uses real opening hours (open → closing soon → opening within
+/* TAIPEI CITY GUIDE v30.9.119 — cards show the live status again (もうすぐ営業 within 30 min, もうすぐ閉店
+   within 1 h); a shop closed now shows its next opening, e.g. （月）10:00から.
+   v30.9.118 — 現在時刻 uses real opening hours (open → closing soon → opening within
    the hour; closed shops left out); 時間帯指定 shows each shop's hours for that band; 料理種類 has one
    layer; card labels 朝食／台湾式居酒屋; whole card opens Maps.
    v30.9.117 — v30.9.115 features merged onto v30.9.116 (火鍋 naming, larger cuisine
@@ -17,7 +19,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.118';
+  const VERSION='30.9.119';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -378,7 +380,7 @@
     for(const x of list){const last=merged[merged.length-1];if(last&&x.start<=last.end)last.end=Math.max(last.end,x.end);else merged.push({...x});}
     return merged;
   }
-  const OPEN_SOON_MINUTES=60,BAND_MIN_OVERLAP=30;
+  const OPEN_SOON_MINUTES=30,BAND_MIN_OVERLAP=30;
   const BAND_WINDOWS={morning:[300,660],lunch:[660,840],afternoon:[840,1020],night:[1020,1380],late:[1380,1740]};
   // 現在時刻: live status of one storefront.
   function liveStatus(branch,item,clock){
@@ -392,11 +394,14 @@
     if(next&&next.start-now<=OPEN_SOON_MINUTES)return {code:'opening',at:next.start};
     return {code:'closed'};
   }
-  // 時間帯指定: the chosen band today, or tomorrow once today's band is over.
+  // 時間帯指定: the chosen band today, counted from now once it is under way;
+  // with less than 30 minutes of it left (or over), tomorrow's band.
   function bandWindow(clock){
     const [start,end]=BAND_WINDOWS[state.time]||BAND_WINDOWS.lunch;
-    if(state.time==='late'&&clock.minute<300)return {start:start-1440,end:end-1440,tomorrow:false};
-    return end<=clock.minute?{start:start+1440,end:end+1440,tomorrow:true}:{start,end,tomorrow:false};
+    const now=clock.minute,early=state.time==='late'&&now<300;
+    const s=early?start-1440:start,e=early?end-1440:end;
+    if(e-now>=BAND_MIN_OVERLAP)return {start:Math.max(s,now),end:e,tomorrow:false};
+    return early?{start,end,tomorrow:false}:{start:start+1440,end:end+1440,tomorrow:true};
   }
   function bandHours(branch,item,clock,win){
     if(branch?.irregularHours||(!branch&&item.irregularHours))return {code:'irregular'};
@@ -406,20 +411,40 @@
     return spans.length?{code:'hours',spans,tomorrow:win.tomorrow}:{code:'closed'};
   }
   const clockText=m=>{const v=((m%1440)+1440)%1440;return `${Math.floor(v/60)}:${String(v%60).padStart(2,'0')}`;};
-  const spanText=x=>x.end-x.start>=1440?'24時間':`${clockText(x.start)}–${x.end%1440===0?'24:00':clockText(x.end)}`;
-  const OPENING_LABEL={open:'営業中',soon:'まもなく閉店',closed:'営業時間外',irregular:'不定期営業',unknown:'営業時間未確認'};
+  const WEEKDAY_JA='日月火水木金土';
+  // Next opening of a storefront: the opening that covers the chosen band when it
+  // is tomorrow's, otherwise the next opening after now.
+  function nextOpening(branch,item,clock,win){
+    if(branch?.irregularHours||(!branch&&item.irregularHours))return {code:'irregular'};
+    const intervals=branchIntervals(branch,clock);
+    if(!intervals)return {code:'unknown'};
+    const x=win?intervals.find(i=>Math.min(i.end,win.end)-Math.max(i.start,win.start)>=BAND_MIN_OVERLAP):intervals.find(i=>i.start>clock.minute);
+    if(!x)return {code:'closed'};
+    if(x.end-x.start>=1440)return {code:'open'};
+    return {code:'next',at:x.start,day:(clock.dayIndex+Math.floor(x.start/1440)+7)%7};
+  }
+  // What a card says: the live status; with a chosen band, a shop that is not
+  // open now shows when it opens next (tomorrow's band: its opening tomorrow).
+  function cardTiming(item){
+    const branch=item.nearestBranch||item.branches?.[0]||null,clock=taipeiClock();
+    if(state.timeMode==='current')return liveStatus(branch,item,clock);
+    const win=bandWindow(clock);
+    if(win.tomorrow)return nextOpening(branch,item,clock,win);
+    const live=liveStatus(branch,item,clock);
+    return live.code==='closed'?nextOpening(branch,item,clock,null):live;
+  }
+  const OPENING_LABEL={open:'営業中',soon:'もうすぐ閉店',opening:'もうすぐ営業',closed:'営業時間外',irregular:'不定期営業',unknown:'営業時間未確認'};
   function timingLabel(t){
-    if(t.code==='opening')return `${clockText(t.at)} 開店`;
-    if(t.code==='hours')return (t.tomorrow?'明日 ':'')+t.spans.slice(0,2).map(spanText).join('・');
+    if(t.code==='next')return `（${WEEKDAY_JA[t.day]}）${clockText(t.at)}から`;
     return OPENING_LABEL[t.code]||OPENING_LABEL.unknown;
   }
   function updateOpeningStatusNode(node,item){
-    // 現在時刻 is refreshed live; a chosen band shows the hours it was picked for.
-    const t=state.timeMode==='current'?liveStatus(item.nearestBranch||item.branches?.[0]||null,item,taipeiClock()):(item.timing||{code:'unknown'});
+    const t=cardTiming(item);
     node.className='recommend-opening-status recommend-opening-'+t.code;
     node.textContent=timingLabel(t);
     node.title=t.code==='unknown'?'店舗別の営業時間を確認できません':t.code==='irregular'?'不定期営業のため、訪問前に最新情報をご確認ください':
-      t.code==='hours'?'この時間帯の通常営業時間（目安）です':t.code==='opening'?'1時間以内に開店予定です（通常営業時間による目安）':'登録された通常営業時間による目安です';
+      t.code==='opening'?'30分以内に営業開始予定です（通常営業時間による目安）':t.code==='soon'?'1時間以内に閉店予定です（通常営業時間による目安）':
+      t.code==='next'?'次の営業開始（通常営業時間による目安）':'登録された通常営業時間による目安です';
   }
   let visibleRecommendations=[];
   function refreshVisibleOpeningStatuses(){
@@ -462,7 +487,7 @@
   const MAIN_SHARE=.4;
   // Candidates for the current time rule and, with a location, within range.
   // Each shop is represented by its best storefront: the best timing rank
-  // (open > closing soon > opening soon > hours unknown), then the nearest.
+  // (open > closing within 1 h > opening within 30 min > hours unknown), then the nearest.
   function contextCandidates(){
     const origin=state.areaMode==='station'?stationOrigin():
       state.areaMode==='current'&&state.locationStatus==='success'?state.position:null;
