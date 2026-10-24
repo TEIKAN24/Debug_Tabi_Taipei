@@ -1523,3 +1523,27 @@ html[data-theme="light"] #food-recommend-section .food-directory-message{color:#
   #food-recommend-section .food-directory-row{grid-template-columns:21px minmax(0,1fr);}
   #food-recommend-section .food-directory-link{font-size:13px;}
 }
+
+/* v30.9.123 — inline front: remove the drawer-era vertical edge gradients. */
+#food-recommend-section .recommend-drawer.is-inline::before,
+#food-recommend-section .recommend-drawer.is-inline::after{
+  content:none!important;display:none!important;
+}
+/* Keep the full three-card slot even if only zero, one or two recommendations
+   match. The back face is absolutely overlaid on the front face's fixed slot. */
+#food-recommend-section .recommend-drawer.is-inline .recommend-results{
+  display:grid!important;
+  box-sizing:border-box!important;
+  flex:0 0 auto!important;
+  height:327px!important;min-height:327px!important;max-height:327px!important;
+  grid-template-rows:repeat(3,101px)!important;
+  grid-auto-rows:101px!important;
+  align-content:start!important;
+  row-gap:12px!important;
+}
+@media(max-width:360px){
+  #food-recommend-section .recommend-drawer.is-inline .recommend-results{
+    height:324px!important;min-height:324px!important;max-height:324px!important;
+    grid-template-rows:repeat(3,100px)!important;grid-auto-rows:100px!important;
+  }
+}

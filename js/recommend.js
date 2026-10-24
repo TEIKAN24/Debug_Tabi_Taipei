@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.122 — the flip is an independent section; its 13-tab directory reads nearby.json.
+/* TAIPEI CITY GUIDE v30.9.123 — fixed three-result height and streamlined back-directory badges.
    v30.9.121 — the food section is no longer an accordion (full width); the block turns
    the other way.
    v30.9.120 — no drawer: the recommender is the front of 🥢 食べる・飲む and turns over
@@ -24,7 +24,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.122';
+  const VERSION='30.9.123';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -1323,9 +1323,15 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     // Future editor kinds should still remain visible in a defined tab.
     return 'world';
   }
+  function directoryIsChain(venue){
+    // Some editor-managed chain brands have only one registered branch; their
+    // チェーン店 tag is the source of truth for directory presentation, too.
+    return !!(venue.chain||venue.branches.length>1||
+      (Array.isArray(venue.guideTags)&&venue.guideTags.some(tag=>tag&&tag.text?.trim()==='チェーン店')));
+  }
   function directoryMapUrl(venue){
     // Never send a chain to a particular branch; the visitor chooses the branch on Maps.
-    if(venue.chain||venue.branches.length>1){
+    if(directoryIsChain(venue)){
       return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(venue.name);
     }
     return venue.branches[0]?.mapUrl||'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(venue.name+' 台北');
@@ -1386,20 +1392,29 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       anchor.href=directoryMapUrl(v);anchor.target='_blank';anchor.rel='noopener noreferrer';
       top.append(anchor);
       const branchCount=v.branches.length;
-      if(v.chain||branchCount>1)top.append(directoryNode('span','food-directory-branches',branchCount+' 店舗'));
+      if(directoryIsChain(v))top.append(directoryNode('span','food-directory-branches','チェーン店'));
       body.append(top);
       const badges=directoryNode('div','food-directory-badges');
-      // The exact card genre remains visible, even under a broader directory category.
-      badges.append(directoryNode('span','food-directory-kind',v.displayType||'レストラン'));
+      // Purple cuisine badges are useful only in the dessert and dim-sum tabs.
+      if(directoryChoice==='sweet'||directoryChoice==='dumpling'){
+        badges.append(directoryNode('span','food-directory-kind',v.displayType||'レストラン'));
+      }
       const tagKeys=new Set();
       for(const tag of (Array.isArray(v.guideTags)?v.guideTags:[])){
         if(!tag||typeof tag.text!=='string'||!tag.text.trim())continue;
-        const text=tag.text.trim();if(tagKeys.has(text))continue;tagKeys.add(text);
+        const text=tag.text.trim();if(tagKeys.has(text))continue;
+        // A chain has one dedicated label by the name, never a duplicate chip.
+        if(text==='チェーン店')continue;
+        // Hide undated auto-generated Bib Gourmand badges; retain a year or
+        // user-maintained editorial tag from the original guide list.
+        if(/ビブグルマン|必比登/i.test(text)&&!/(?:19|20)\d{2}/.test(text)&&!v.guideTagSource)continue;
+        tagKeys.add(text);
         const tone=tag.tone==='featured'?'featured':tag.tone==='caution'?'caution':tag.tone==='veg'?'veg':'editorial';
         badges.append(directoryNode('span','food-directory-tag food-directory-tag--'+tone,text));
       }
-      if(v.awards?.bibGourmand2026&&!tagKeys.has('ビブグルマン'))badges.append(directoryNode('span','food-directory-tag food-directory-tag--featured','ビブグルマン'));
-      body.append(badges);li.append(body);list.append(li);
+      // Do not synthesize a second plain ビブグルマン badge from awards data.
+      if(badges.childElementCount)body.append(badges);
+      li.append(body);list.append(li);
     });
     directoryPanel.replaceChildren(heading,list);
     directoryPanel.scrollTop=0;
