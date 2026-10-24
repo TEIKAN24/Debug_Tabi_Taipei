@@ -1,8 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.115 — station search in the line menu; stacked 2-digit + letter station
-   codes (e.g. 03/A); the cuisine panel spans the result row; unavailable choices move last.
-   v30.9.114 — two-layer cuisine picker: 料理種類 filters, 台湾グルメ details only lift
-   matching shops; choices with no shop for the current time and place are greyed out.
-   v30.9.113 — data files revalidate with cache:'no-cache' (304 when unchanged) instead of no-store.
+/* TAIPEI CITY GUIDE v30.9.116 — data files revalidate with cache:'no-cache' (304 when unchanged) instead of no-store.
    v30.9.112 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
    v30.9.96 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
@@ -12,7 +8,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.115';
+  const VERSION='30.9.116';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -49,7 +45,7 @@
   const stationEn=document.getElementById('recommend-station-en');
   const stationCode=document.getElementById('recommend-station-code');
   const moods=document.getElementById('recommend-mood-options');
-  const subOptions=document.getElementById('recommend-sub-options');
+  const volumes=document.getElementById('recommend-volume-options');
   const activeFilters=document.getElementById('recommend-active-filters');
   const secondaryControls=document.getElementById('recommend-controls-secondary');
   const advanced=document.getElementById('recommend-advanced');
@@ -57,25 +53,8 @@
   const body=document.body;
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const TIME=[['current','現在時刻'],['morning','朝'],['lunch','昼'],['afternoon','午後'],['night','夜'],['late','深夜']];
-  // 料理種類 (first layer, single choice) filters the shops. 台湾グルメ details
-  // (second layer, several allowed) only bring matching shops to the front.
-  // Each entry: [key, label, data tags in nearby.json "industries"].
-  const CATEGORIES=[
-    ['taiwan','🥢 台湾グルメ',['小吃','麺類','ごはん系','餃子','小籠包・点心','台湾料理','熱炒','鍋','モーニング']],
-    ['world','🌏 各国・創作料理',['各国・創作料理']],
-    ['sweets','🍧 スイーツ・カフェ',['スイーツ','アイス','カフェ']],
-    ['drink','🧋 ドリンク',['ドリンク']],
-    ['bar','🍸 バー',['バー']]
-  ];
-  const TAIWAN_SUBS=[
-    ['street','🍢 屋台料理・軽食',['小吃']],
-    ['noodle','🍜 麺類',['麺類']],
-    ['rice','🍚 ごはん系',['ごはん系']],
-    ['dumpling','🥟 小籠包・餃子',['小籠包・点心','餃子']],
-    ['taiwanese','🥘 台湾料理・熱炒',['台湾料理','熱炒']],
-    ['hotpot','🍲 鍋',['鍋']],
-    ['breakfast','☀️ 台湾式朝食',['モーニング']]
-  ];
+  const GENRES=[['モーニング','☀️ モーニング'],['小吃','🥢 屋台料理・軽食'],['レストラン','🍽️ レストラン'],['鍋','🍲 火鍋'],['カフェ','☕ カフェ'],['スイーツ','🍰 スイーツ'],['ドリンク','🧋 ドリンク'],['バー','🍸 バー'],['ごはん系','🍚 ごはん系'],['麺類','🍜 麺類'],['餃子','🥟 餃子'],['小籠包・点心','♨️ 小籠包・点心'],['アイス','🍧 アイス']];
+  const VOLUMES=[['light','🥟 軽く'],['hearty','🍜 がっつり']];
   const AREAS=[
     ['nakayama','中山駅・赤峰街',25.0529,121.5204],
     ['dihua','迪化街・大稻埕',25.0560,121.5102],
@@ -129,7 +108,7 @@
   function taipeiHour(){return Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hourCycle:'h23'}).formatToParts(taipeiNow()).find(p=>p.type==='hour')?.value??12);}
   // Taipei time bands: 朝 05–10:59, 昼 11–13:59, 午後 14–16:59, 夜 17–22:59, 深夜 23–04:59.
   function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<14?'lunch':h>=14&&h<17?'afternoon':h>=17&&h<23?'night':'late';}
-  const state={timeMode:'current',time:defaultBand(),areaMode:'current',area:'',line:'',stationCode:'',category:'',subs:[],sortMode:'recommend',page:0,locationStatus:'idle',geoRequested:false,position:null};
+  const state={timeMode:'current',time:defaultBand(),areaMode:'current',area:'',line:'',stationCode:'',genres:[],volume:'',sortMode:'recommend',page:0,locationStatus:'idle',geoRequested:false,position:null};
   // Static station coordinates are used on-device: no geolocation permission,
   // API key, third-party request or location upload in station mode.
   let metroLines=[],metroStations=[],stationsReady=false,stationsFailed=false;
@@ -303,9 +282,8 @@
     const bands=item.timeBands||[];
     return bands.includes(time)||Array.isArray(item.branches)&&item.branches.some(b=>b.timeBands?.includes(time));
   }
-  const tagsMatch=(item,tags)=>(item.industries||[]).some(tag=>tags.includes(tag));
-  function categoryMatch(item,key){const def=CATEGORIES.find(([k])=>k===key);return !!def&&tagsMatch(item,def[2]);}
-  function subMatch(item,key){const def=TAIWAN_SUBS.find(([k])=>k===key);return !!def&&tagsMatch(item,def[2]);}
+  function genreMatch(item,genre){if(genre==='鍋')return (item.industries||[]).includes('鍋')||item.displayType==='火鍋'||item.displayType==='鍋';return (item.industries||[]).includes(genre);}
+  function volumeMatch(item,volume){return (item.volume||[]).includes(volume);}
   function reason(item){return '';} // No 500碗 text in the recommendation UI.
   function michelinStars(item){
     const parts=[item?.awards?.michelin,item?.awards?.summary,item?.details,(item?.guideTags||[]).map(t=>t.text).join('、')].filter(Boolean).join(' ');
@@ -321,7 +299,6 @@
   const GUIDE_CAUTION = /八角なし|治安|注意|⚠|臭い/;
   function cardTagTone(tag,item){
     const value=String(tag?.text||'');
-    if(tag?.tone==='veg')return 'veg';
     if(GUIDE_CAUTION.test(value)||tag?.tone==='caution')return 'caution';
     if(GUIDE_HIGHLIGHT.test(value)||tag?.tone==='featured'||tag?.tone==='editorial-pick'||
        (item?.name==='甜満'&&value==='人気急上昇中'))return 'featured';
@@ -427,11 +404,10 @@
     const point=state.areaMode==='station'?stationOrigin():state.areaMode==='current'?state.position:null;
     const geoKey=point?`${point.lat.toFixed(3)},${point.lng.toFixed(3)}`:'';
     return [taipeiDate(),state.time,geoKey||state.area,
-      state.category,state.subs.join(',')].join('|');
+      state.genres.join(','),state.volume].join('|');
   }
   const MAIN_SHARE=.4;
-  // Shops open in the selected time band and, with a location, within range.
-  function contextCandidates(){
+  function recommendedPool(){
     const origin=state.areaMode==='station'?stationOrigin():
       state.areaMode==='current'&&state.locationStatus==='success'?state.position:null;
     const useDistance=!!origin&&nearbyReady;
@@ -453,20 +429,16 @@
         nearestMapUrl:Array.isArray(item.branches)?nearest.mapUrl:null,
         nearestBranch:Array.isArray(item.branches)?nearest:null}:null;
     }).filter(item=>item&&item.distanceMeters<=GEO_MAX_METERS)):[];
-    const byTime=useDistance?withinRange:timeCandidates;
-    return {useDistance,withinRange,byTime};
-  }
-  function recommendedPool(){
-    const {useDistance,withinRange,byTime}=contextCandidates();
     const nearbyFallback=false;
+    const byTime=useDistance?withinRange:timeCandidates;
     const criteria=[];
     if(state.area)criteria.push({label:'エリア',weight:35,fn:item=>item.area===state.area});
-    // The 料理種類 is a filter. Second-layer picks combine with OR and only form
-    // the first ranking tier: shops matching any of them come first.
-    const subHits=item=>state.subs.filter(key=>subMatch(item,key));
-    const preferenceTier=item=>state.subs.length&&subHits(item).length?1:0;
+    if(state.volume)criteria.push({label:'ボリューム',weight:20,fn:item=>volumeMatch(item,state.volume)});
+    // Genres combine with OR, while volume is an independent AND condition.
+    // Count distinct matching genres; this is the first ranking dimension.
+    const genreMatches=item=>state.genres.filter(g=>genreMatch(item,g)).length;
     const lifted=[];
-    const pool=byTime.filter(item=>(!state.category||categoryMatch(item,state.category))&&criteria.every(c=>c.fn(item)));
+    const pool=byTime.filter(item=>(!state.genres.length||genreMatches(item)>0)&&criteria.every(c=>c.fn(item)));
     const seed=recommendationSeed();
     const newestAwardBonus=item=>{
       // Awards remain ranking signals, but 500碗 badges are intentionally hidden;
@@ -483,7 +455,7 @@
       state.time==='lunch'&&['rice','noodle','dumpling'].includes(item.category)?4:0;
     const scored=pool.map(item=>{
       const matched=criteria.filter(c=>c.fn(item));
-      const matchedGenreCount=preferenceTier(item);
+      const matchedGenreCount=genreMatches(item);
       const score=matched.reduce((sum,c)=>sum+c.weight,0)
         +(item.guidePick?(item.chain?12:26):0) // original food picks rank ahead; everyday chains get a smaller boost
         +(item.featured?1:0) // visibility comes from the rotating slot-1 rule below
@@ -495,9 +467,9 @@
           -(item.distanceMeters>GEO_PRIORITY_METERS?26:0):0)
         +mealBonus(item)+newestAwardBonus(item);
       return {...item,matchScore:matchedGenreCount,matchedGenreCount,score,
-        fullMatch:(!state.subs.length||matchedGenreCount>0)&&matched.length===criteria.length,
-        matched:[...subHits(item),...matched.map(c=>c.label)],
-        diversityKey:diversityKey(item,''),
+        fullMatch:(!state.genres.length||matchedGenreCount===state.genres.length)&&matched.length===criteria.length,
+        matched:[...state.genres.filter(g=>genreMatch(item,g)),...matched.map(c=>c.label)],
+        diversityKey:diversityKey(item,state.genres[0]||''),
         random:dailyNoise(item.name,seed)};
     });
     // Type coverage takes priority over distance, award badges and editorial
@@ -576,7 +548,7 @@
     if(/豆花|かき氷|冰|甜點|甜品|スイーツ/i.test(parts)||item.category==='sweet')return 'スイーツ';
     if(/奶茶|茶|ドリンク|豆漿|ミルク|ジュース/i.test(parts)||item.category==='drink')return 'ドリンク';
     if(/小籠包|蒸餃|鍋貼|水餃|餃子|点心/i.test(parts)||item.category==='dumpling')return '小籠包・点心';
-    if(/火鍋|鍋|麻辣/.test(parts)||item.category==='hotpot')return '鍋料理';
+    if(/火鍋|鍋|麻辣/.test(parts)||item.category==='hotpot')return '火鍋';
     if(/牛肉麵|牛肉麺|麺線|麵線|麺|麵|米粉/.test(parts)||item.category==='noodle')return '麺類';
     if(/魯肉飯|滷肉飯|雞肉飯|鶏肉飯|排骨飯|炒飯|米糕|便當|弁当|ごはん|飯/.test(parts)||item.category==='rice'||item.category==='meal')return 'ごはん料理';
     if(item.category==='breakfast')return '朝ごはん';
@@ -584,9 +556,9 @@
     if(item.category==='izakaya')return '熱炒';
     return '台湾料理';
   }
-  const typeLabel={breakfast:'朝食',nightmarket:'夜市',dumpling:'小籠包・餃子',rice:'ごはん',noodle:'麺',hotpot:'鍋',bar:'バー',drink:'ドリンク',sweet:'スイーツ',cafe:'カフェ',meal:'ごはん',izakaya:'熱炒'};
+  const typeLabel={breakfast:'朝食',nightmarket:'夜市',dumpling:'小籠包・餃子',rice:'ごはん',noodle:'麺',hotpot:'火鍋',bar:'バー',drink:'ドリンク',sweet:'スイーツ',cafe:'カフェ',meal:'ごはん',izakaya:'熱炒'};
   function el(tag,cls,txt){const node=document.createElement(tag);if(cls)node.className=cls;if(txt!==undefined)node.textContent=txt;return node;}
-  const timeControls=[],areaControls=[],categoryControls=[],subControls=[];
+  const timeControls=[],areaControls=[],genreControls=[],volumeControls=[];
   function buildChoice(group,items,holder,cls,callback){
     for(const [value,label] of items){
       const b=el('button',cls,label);b.type='button';b.dataset.value=value;b.setAttribute('aria-pressed','false');
@@ -610,82 +582,8 @@
       syncUI();renderResults();
     }
   }
-  // Codes such as G03A / R22A show the number on top and the letter below.
-  function fillStationCode(node,code){
-    const number=String(code||'').replace(/^[A-Z]+/,'');
-    const split=number.match(/^(\d+)([A-Z])$/);
-    node.classList.toggle('has-suffix',!!split);
-    if(!split){node.textContent=number;node.removeAttribute('aria-label');return;}
-    node.replaceChildren(el('span','recommend-code-number',split[1]),el('span','recommend-code-suffix',split[2]));
-    node.setAttribute('aria-label',number);
-  }
-  // Line menu: a search field (station name, English name or number) above the line list.
-  const lineSearch=el('input','recommend-station-search-input');
-  lineSearch.type='search';lineSearch.placeholder='駅名・駅番号で検索';
-  lineSearch.setAttribute('aria-label','駅名または駅番号で検索（例：中山、R11）');
-  lineSearch.autocomplete='off';lineSearch.spellcheck=false;lineSearch.enterKeyHint='search';
-  const lineSearchWrap=el('label','recommend-station-search');
-  lineSearchWrap.innerHTML='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 5 5"/></svg>';
-  lineSearchWrap.append(lineSearch);
-  const lineList=el('div','recommend-native-list');
-  lineList.setAttribute('role','listbox');lineList.setAttribute('aria-label','地下鉄の路線を選択');
-  lineMenu.append(lineSearchWrap,lineList);
-  // Japanese / simplified forms of characters used in station names, folded to the data's forms.
-  const STATION_CHAR_FOLD={亜:'亞',内:'內',剣:'劍',区:'區',国:'國',囲:'圍',円:'圓',学:'學',徳:'德',楼:'樓',権:'權',渓:'溪',万:'萬',芦:'蘆',覧:'覽',医:'醫',関:'關',双:'雙',体:'體',竜:'龍',荘:'莊',回:'迴',産:'產',臺:'台',
-    关:'關',龙:'龍',园:'園',圆:'圓',权:'權',览:'覽',门:'門',东:'東',车:'車',头:'頭',汇:'匯',宁:'寧',桥:'橋',机:'機',场:'場',电:'電',馆:'館',阳:'陽',纪:'紀',兴:'興',华:'華',凤:'鳳',麟:'麟'};
-  const foldStationText=text=>[...String(text||'').normalize('NFKC').toLowerCase().replace(/空港/g,'機場')].map(ch=>STATION_CHAR_FOLD[ch]??ch).join('')
-    .replace(/車站|駅|站|[\s・·．.\-－_()（）]/g,'');
-  function searchStations(query){
-    const q=foldStationText(query);
-    if(!q)return [];
-    const ranked=[];
-    for(const item of metroStations){
-      const code=item.code.toLowerCase(),name=foldStationText(item.name),en=foldStationText(item.en);
-      const rank=code===q?0:code.startsWith(q)?1:name===q||en===q?2:name.startsWith(q)?3:en.startsWith(q)?4:name.includes(q)?5:en.includes(q)||code.includes(q)?6:-1;
-      if(rank>=0)ranked.push([rank,item]);
-    }
-    const lineOrder=id=>metroLines.findIndex(x=>x.id===id);
-    return ranked.sort((a,b)=>a[0]-b[0]||lineOrder(a[1].line)-lineOrder(b[1].line)||a[1].code.localeCompare(b[1].code,'en',{numeric:true}))
-      .slice(0,30).map(x=>x[1]);
-  }
-  function chooseStation(item){
-    state.line=item.line;state.stationCode=item.code;state.page=0;
-    lineSearch.value='';
-    renderStationOptions();buildMetroLineOptions();syncUI();renderResults();closeStationMenus();
-  }
-  function renderLineSearch(){
-    if(!lineSearch.value.trim()){buildMetroLineOptions();return;}
-    lineList.replaceChildren();
-    const found=searchStations(lineSearch.value);
-    if(!found.length){
-      const empty=el('div','recommend-native-empty','該当する駅がありません');
-      empty.append(el('small','','駅名（中国語・英語）または駅番号で検索できます'));
-      lineList.append(empty);return;
-    }
-    for(const item of found){
-      const color=(metroLines.find(x=>x.id===item.line)?.color)||'#4288c9';
-      const button=el('button','recommend-native-option recommend-native-option-station recommend-station-result');button.type='button';
-      button.dataset.value=item.code;button.dataset.line=item.line;button.setAttribute('role','option');
-      button.setAttribute('aria-selected',String(state.line===item.line&&state.stationCode===item.code));
-      const badge=el('span','recommend-native-option-code');badge.classList.add('is-station');fillStationCode(badge,item.code);
-      badge.style.setProperty('--station-code-border',color);badge.style.borderColor=color;badge.style.backgroundColor='#ffffff';badge.style.color='#202227';
-      const copy=el('span','recommend-native-option-copy');
-      copy.append(el('strong','',item.name),el('small','',`${item.code} · ${item.en||'MRT Station'}`));
-      button.append(badge,copy);
-      button.addEventListener('click',()=>chooseStation(item));
-      lineList.append(button);
-    }
-  }
-  lineSearch.addEventListener('input',renderLineSearch);
-  lineSearch.addEventListener('keydown',event=>{
-    if(event.key==='Enter'){
-      event.preventDefault();
-      const first=lineSearch.value.trim()?searchStations(lineSearch.value)[0]:null;
-      if(first)chooseStation(first);
-    }else if(event.key==='Escape'){event.preventDefault();closeStationMenus();lineTrigger.focus({preventScroll:true});}
-  });
   function buildMetroLineOptions(){
-    lineList.replaceChildren();
+    lineMenu.replaceChildren();
     for(const line of metroLines){
       const button=el('button','recommend-native-option recommend-native-option-line');button.type='button';
       button.dataset.value=line.id;button.setAttribute('role','option');button.setAttribute('aria-selected',String(state.line===line.id));
@@ -697,7 +595,7 @@
         if(state.line!==line.id){state.line=line.id;state.stationCode='';state.page=0;}
         renderStationOptions();syncUI();renderResults();closeStationMenus();
       });
-      lineList.append(button);
+      lineMenu.append(button);
     }
   }
   function renderStationOptions(){
@@ -713,7 +611,7 @@
     for(const item of items){
       const button=el('button','recommend-native-option recommend-native-option-station');button.type='button';
       button.dataset.value=item.code;button.setAttribute('role','option');button.setAttribute('aria-selected',String(state.stationCode===item.code));
-      const badge=el('span','recommend-native-option-code');fillStationCode(badge,item.code);badge.classList.add('is-station');const itemLineColor=(metroLines.find(x=>x.id===item.line)?.color)||'#4288c9';badge.style.setProperty('--station-code-border',itemLineColor);badge.style.borderColor=itemLineColor;badge.style.backgroundColor='#ffffff';badge.style.color='#202227';
+      const badge=el('span','recommend-native-option-code',item.code.replace(/^[A-Z]+/,''));badge.classList.add('is-station');const itemLineColor=(metroLines.find(x=>x.id===item.line)?.color)||'#4288c9';badge.style.setProperty('--station-code-border',itemLineColor);badge.style.borderColor=itemLineColor;badge.style.backgroundColor='#ffffff';badge.style.color='#202227';
       const copy=el('span','recommend-native-option-copy');
       copy.append(el('strong','',item.name));copy.append(el('small','',item.en||'MRT Station'));
       button.append(badge,copy);
@@ -735,7 +633,7 @@
       if(!stationsReady)return;
       const open=lineMenu.hidden;
       closeStationMenus();closeOptions();advanced.open=false;
-      if(open){if(lineSearch.value){lineSearch.value='';buildMetroLineOptions();}lineMenu.hidden=false;lineTrigger.setAttribute('aria-expanded','true');lineField.classList.add('is-picking','is-open');stationControls.dataset.active='line';}
+      if(open){lineMenu.hidden=false;lineTrigger.setAttribute('aria-expanded','true');lineField.classList.add('is-picking','is-open');stationControls.dataset.active='line';}
       return;
     }
     if(stationTrigger.disabled)return;
@@ -747,14 +645,14 @@
   stationTrigger.addEventListener('click',()=>openStationMenu('station'));
   lineTrigger.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeStationMenus();}});
   stationTrigger.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeStationMenus();}});
-  buildChoice(categoryControls,CATEGORIES,moods,'recommend-pill',value=>{
-    // Changing (or clearing) the 料理種類 always starts its details afresh.
-    state.category=state.category===value?'':value;state.subs=[];
+  buildChoice(genreControls,GENRES,moods,'recommend-pill',value=>{
+    if(state.genres.includes(value))state.genres=state.genres.filter(g=>g!==value);
+    else if(state.genres.length<3)state.genres=[...state.genres,value];
+    else return;
     state.page=0;syncUI();renderResults();
   });
-  buildChoice(subControls,TAIWAN_SUBS,subOptions,'recommend-pill',value=>{
-    state.subs=state.subs.includes(value)?state.subs.filter(key=>key!==value):[...state.subs,value];
-    state.page=0;syncUI();renderResults();
+  buildChoice(volumeControls,VOLUMES,volumes,'recommend-pill',value=>{
+    state.volume=state.volume===value?'':value;state.page=0;syncUI();renderResults();
   });
   function closeOptions(){timeOptions.hidden=true;timeButton.setAttribute('aria-expanded','false');}
   function toggleTimeOptions(){const open=timeOptions.hidden;closeOptions();advanced.open=false;if(open){timeOptions.hidden=false;timeButton.setAttribute('aria-expanded','true');}}
@@ -764,25 +662,6 @@
   title.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();activateMode('current');}});
   drawer.addEventListener('keydown',event=>{if(event.key==='Escape'){closeOptions();closeStationMenus();advanced.open=false;}});
   advanced.addEventListener('toggle',()=>{if(advanced.open)closeOptions();});
-  // The open panel can grow wider than its row (more selected chips); keep it above the sort tabs.
-  advanced.addEventListener('toggle',()=>{
-    advanced.closest('.recommend-result-head')?.classList.toggle('is-advanced-open',advanced.open);
-    placeAdvancedPanel();
-  });
-  // The panel spans the whole result row so choices sit side by side, however
-  // narrow the row of selected conditions (its positioning parent) is.
-  const advancedPanel=advanced.querySelector('.recommend-advanced-panel');
-  function placeAdvancedPanel(){
-    if(!advanced.open||!advancedPanel)return;
-    const head=advanced.closest('.recommend-result-head'),host=advancedPanel.offsetParent;
-    if(!head||!host)return;
-    const row=head.getBoundingClientRect(),origin=host.getBoundingClientRect();
-    advancedPanel.style.left=`${Math.round(row.left-origin.left)}px`;
-    advancedPanel.style.right='auto';
-    advancedPanel.style.width=`${Math.round(row.width)}px`;
-    advancedPanel.style.maxWidth='none';
-  }
-  window.addEventListener('resize',placeAdvancedPanel,{passive:true});
   drawer.addEventListener('click',e=>{
     if(!e.target.closest('.recommend-control-time-wrap'))closeOptions();
     if(!e.target.closest('.recommend-control-advanced-wrap'))advanced.open=false;
@@ -793,11 +672,11 @@
   function syncActiveConditions(){
     activeFilters.replaceChildren();
     const selected=[];
-    const category=CATEGORIES.find(([value])=>value===state.category);
-    if(category)selected.push({kind:'category',value:category[0],label:category[1]});
-    for(const [value,label] of TAIWAN_SUBS){
-      if(state.subs.includes(value))selected.push({kind:'sub',value,label});
+    for(const [value,label] of GENRES){
+      if(state.genres.includes(value))selected.push({kind:'genre',value,label});
     }
+    const volume=VOLUMES.find(([value])=>value===state.volume);
+    if(volume)selected.push({kind:'volume',value:volume[0],label:volume[1]});
     for(const choice of selected){
       const chip=el('button','recommend-active-chip');chip.type='button';
       chip.setAttribute('aria-label',`${choice.label}の条件を解除`);
@@ -805,8 +684,8 @@
       chip.append(el('span','recommend-active-chip-label',choice.label));
       const remove=el('span','recommend-active-chip-remove','×');remove.setAttribute('aria-hidden','true');chip.append(remove);
       chip.addEventListener('click',()=>{
-        if(choice.kind==='category'){state.category='';state.subs=[];}
-        else state.subs=state.subs.filter(key=>key!==choice.value);
+        if(choice.kind==='genre')state.genres=state.genres.filter(g=>g!==choice.value);
+        else state.volume='';
         state.page=0;syncUI();renderResults();
       });
       activeFilters.append(chip);
@@ -815,7 +694,6 @@
     secondaryControls.classList.toggle('recommend-has-selected',hasSelections);
     advancedTrigger.setAttribute('aria-label','さらに条件を指定');
     advancedTrigger.title='さらに条件を指定';
-    placeAdvancedPanel();
   }
   function syncUI(){
     syncActiveConditions();
@@ -843,22 +721,26 @@
     lineCode.classList.toggle('is-empty',!selectedLine);
     stationLabel.textContent=selectedStation?selectedStation.name:selectedLine?'駅を選択':'先に路線を選択';
     stationEn.textContent=selectedStation?(selectedStation.en||'MRT Station'):selectedLine?'Select Station':'Select Line First';
-    if(selectedStation)fillStationCode(stationCode,selectedStation.code);else{stationCode.classList.remove('has-suffix');stationCode.removeAttribute('aria-label');stationCode.textContent='--';}
+    stationCode.textContent=selectedStation?selectedStation.code.replace(/^[A-Z]+/,''):'--';
     stationCode.style.setProperty('--station-code-border',selectedLine?.color||'#424049');
     stationCode.style.backgroundColor=selectedLine?'#ffffff':'';
     stationCode.style.borderColor=selectedLine?.color||'';
     stationCode.style.color=selectedLine?'#202227':'';
     stationCode.classList.toggle('is-empty',!selectedStation);
-    for(const option of lineList.querySelectorAll('.recommend-native-option-line'))option.setAttribute('aria-selected',String(option.dataset.value===state.line));
+    for(const option of lineMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.line));
     for(const option of stationMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.stationCode));
     const district=nearbyDistrict(state.position);
     districtName.textContent=state.locationStatus==='outside'?'台北市外':district?`台北市 ${district[0]}`:state.locationStatus==='loading'?'測位中':'現在地';
     districtEn.textContent=state.locationStatus==='outside'?'Outside Taipei':district?`${district[1]} Taipei City`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':'Location';
     currentLocation.title=state.locationStatus==='outside'?'現在地は台北市の対象エリア外です。':district?'登録店の所在地から推定した行政区です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
-    for(const b of categoryControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.category));
-    for(const b of subControls)b.setAttribute('aria-pressed',String(state.subs.includes(b.dataset.value)));
-    subOptions.hidden=state.category!=='taiwan';
+    for(const b of genreControls){
+      const active=state.genres.includes(b.dataset.value);
+      b.setAttribute('aria-pressed',String(active));
+      b.disabled=state.genres.length>=3&&!active;
+      b.title=b.disabled?'料理種類は3つまで選択できます':'';
+    }
+    for(const b of volumeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.volume));
     const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!nearbyReady)?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${nearbyVenues.reduce((n,v)=>n+v.branches.length,0)}店舗からご案内します。`};
     locationStatus.textContent=!isStation?messages[state.locationStatus]||'':
       stationsFailed?'駅データを読み込めませんでした。再読み込みしてください。':
@@ -1089,34 +971,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   window.addEventListener('resize',()=>{
     document.querySelectorAll('.recommend-guide-tags').forEach(updateTagFade);
   },{passive:true});
-  // A choice without any registered shop for the current time band and place
-  // is greyed out; a selection that has just become impossible is cleared.
-  const UNAVAILABLE_TITLE='この時間帯・場所に該当する登録店はありません';
-  function refreshChoiceAvailability(){
-    const buttons=[...categoryControls,...subControls];
-    if(!nearbyReady){for(const b of buttons){b.disabled=false;b.removeAttribute('title');}moods.append(...categoryControls);subOptions.append(...subControls);return;}
-    const {byTime}=contextCandidates();
-    let cleared=false;
-    const apply=(b,available)=>{b.disabled=!available;if(available)b.removeAttribute('title');else b.title=UNAVAILABLE_TITLE;};
-    for(const b of categoryControls){
-      const available=byTime.some(item=>categoryMatch(item,b.dataset.value));
-      apply(b,available);
-      if(!available&&state.category===b.dataset.value){state.category='';state.subs=[];cleared=true;}
-    }
-    for(const b of subControls){
-      const available=byTime.some(item=>categoryMatch(item,'taiwan')&&subMatch(item,b.dataset.value));
-      apply(b,available);
-      if(!available&&state.subs.includes(b.dataset.value)){state.subs=state.subs.filter(key=>key!==b.dataset.value);cleared=true;}
-    }
-    const lastWhenUnavailable=(holder,controls)=>{
-      const wanted=[...controls.filter(b=>!b.disabled),...controls.filter(b=>b.disabled)];
-      if(wanted.some((b,i)=>holder.children[i]!==b))holder.append(...wanted);
-    };
-    lastWhenUnavailable(moods,categoryControls);lastWhenUnavailable(subOptions,subControls);
-    if(cleared){state.page=0;syncUI();}
-  }
   function renderResults(){
-    refreshChoiceAvailability();
     updateSortControls();
     if(state.areaMode==='station'&&(!currentStation()||!nearbyReady)){
       results.replaceChildren(el('p','recommend-no-data',stationsFailed?'駅データを読み込めませんでした。':currentStation()?'位置データを読み込み中です。':`路線と駅を選ぶと、駅から${GEO_MAX_METERS}m以内のおすすめを表示します。`));
@@ -1193,7 +1048,6 @@ ${GEO_MAX_METERS}m 內：${near} 筆
           const tone=cardTagTone(tag,item);
           if(tone==='featured')chip.classList.add('recommend-guide-tag-featured');
           if(tone==='caution')chip.classList.add('recommend-guide-tag-caution');
-          if(tone==='veg')chip.classList.add('recommend-guide-tag-veg');
           tagTrack.append(chip);
         }
         tagList.append(tagTrack);
@@ -1206,7 +1060,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     });
     requestAnimationFrame(()=>results.querySelectorAll('.recommend-guide-tags').forEach(updateTagFade));
     more.hidden=ordered.length<=3;
-    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useDistance&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useDistance&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・営業状況は目安です。通常営業時間に基づくため、臨時休業や祝日の変更は反映されません。訪問前に最新情報をご確認ください。${slice.some(x=>x.nearbySource&&!x.address)?'住所未確認の店舗は、地図上で店名と場所をご確認ください。':''}`;
+    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}${useDistance&&!nearbyFallback?'距離は直線の概算で、徒歩ルートとは異なります。':''}${useDistance&&slice.some(x=>x.distanceToMarket)?'夜市の店は夜市までの距離です。':''}時間帯・ボリューム・営業状況は目安です。通常営業時間に基づくため、臨時休業や祝日の変更は反映されません。訪問前に最新情報をご確認ください。${slice.some(x=>x.nearbySource&&!x.address)?'住所未確認の店舗は、地図上で店名と場所をご確認ください。':''}`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
   // Update labels while the panel stays open; no repeated geolocation request.

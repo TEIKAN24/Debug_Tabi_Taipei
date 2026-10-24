@@ -65,7 +65,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
   });
  });
 })();</script><link rel="stylesheet" href="css/guide.css?v=30.9.113"/>
-<link rel="stylesheet" href="css/recommend.css?v=30.9.115"/>
+<link rel="stylesheet" href="css/recommend.css?v=30.9.116"/>
 </head><body><div class="recommend-drawer-backdrop" aria-hidden="true"></div>
 <div class="recommend-drawer" id="taipei-recommender" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="recommend-title" tabindex="-1">
  <div class="recommend-drawer-inner">
@@ -88,10 +88,10 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
     </div>
     <div class="recommend-picker-station" id="recommend-station-controls" hidden aria-label="路線と駅を選択">
      <div class="recommend-native-field recommend-native-line" id="recommend-line-field">
-      <button type="button" class="recommend-native-trigger" id="recommend-line-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="recommend-line-menu">
+      <button type="button" class="recommend-native-trigger" id="recommend-line-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="recommend-line-menu">
        <span class="recommend-native-display"><span id="recommend-line-code" class="recommend-native-code">BL</span><span class="recommend-native-copy"><strong id="recommend-line-label">路線を選択</strong><small id="recommend-line-en">Select Line</small></span><span class="recommend-native-chevron" aria-hidden="true"></span></span>
       </button>
-      <div class="recommend-native-menu" id="recommend-line-menu" role="group" aria-label="路線を選択、または駅を検索" hidden></div>
+      <div class="recommend-native-menu" id="recommend-line-menu" role="listbox" aria-label="地下鉄の路線を選択" hidden></div>
      </div>
      <div class="recommend-native-field recommend-native-station" id="recommend-station-field">
       <button type="button" class="recommend-native-trigger" id="recommend-station-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="recommend-station-menu" disabled>
@@ -111,9 +111,11 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
     <details class="recommend-advanced" id="recommend-advanced">
      <summary class="recommend-control recommend-advanced-trigger" aria-label="さらに条件を指定"><span class="recommend-advanced-label">さらに条件を指定</span><span class="recommend-advanced-plus" aria-hidden="true"></span></summary>
      <div class="recommend-advanced-panel">
-      <h3 id="recommend-mood-title">料理種類</h3>
+      <h3 id="recommend-mood-title">料理種類 <small class="recommend-choice-limit">最大3つまで</small></h3>
       <div class="recommend-choices" id="recommend-mood-options" role="group" aria-labelledby="recommend-mood-title"></div>
-      <div class="recommend-choices recommend-subchoices" id="recommend-sub-options" role="group" aria-label="台湾グルメの種類（複数選択可）" hidden></div>
+      <h3 class="recommend-volume-heading" id="recommend-volume-title">ボリューム</h3>
+      <div class="recommend-choices" id="recommend-volume-options" role="group" aria-labelledby="recommend-volume-title"></div>
+      <p class="recommend-help">※ 料理種類は最大3つ・ボリュームは1つ。複数の料理種類に合うお店から優先して表示します。</p>
      </div>
     </details>
    </div>
@@ -313,5 +315,5 @@ html[data-theme="light"] #recommend-debug-location option{background:#fff;color:
 html[data-theme="light"] #recommend-debug-diagnostics{background:#f3f8f4;color:#244331;border-color:#bfd5c6;}
 @media(max-height:560px){#recommend-debug-fab{bottom:calc(14px + env(safe-area-inset-bottom,0px));}#recommend-debug-location{bottom:calc(65px + env(safe-area-inset-bottom,0px));max-height:65dvh;}}
 </style>
-<script src="js/recommend.js?v=30.9.115"></script>
+<script src="js/recommend.js?v=30.9.116"></script>
 </body></html>
