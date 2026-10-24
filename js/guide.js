@@ -83,6 +83,9 @@
     if (!summary || !siteContent.contains(summary)) return;
     const detail = summary.parentElement;
     if (detail?.tagName !== 'DETAILS') return;
+    // The inline recommender owns its filter <details>; it is not a guide
+    // accordion and must never trigger scrollOpenedSummaryIntoView().
+    if (detail.id === 'recommend-advanced') return;
     // A link inside a summary must continue to work like a normal link.
     if (event.target.closest('a, button')) return;
     event.preventDefault(); // avoid a second native <details> toggle
@@ -105,7 +108,7 @@
     }
   });
   // Also enforce sibling exclusivity if a detail is opened by other scripts.
-  document.querySelectorAll('.site-content details').forEach(detail => {
+  document.querySelectorAll('.site-content details:not(#recommend-advanced)').forEach(detail => {
     detail.addEventListener('toggle', () => {
       if (detail.open) closePeerAccordions(detail);
     });
@@ -2548,7 +2551,7 @@ update();
   const selectors=[
     '#top',
     '#guide .page-body > h2[id="3f86bda0-4caa-8049-b865-f2a862bb77c5"]',
-    '#guide .page-body > h2[id="3f66bda0-4caa-80df-96ae-ee6d8959abef"]',
+    '#guide #food-recommend-section #recommend-title',
     '#guide .page-body > .sights-day-trips > h3'
   ].join(',');
   const getHeadings=()=>[...document.querySelectorAll(selectors)]

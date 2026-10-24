@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.123 — fixed three-result height and streamlined back-directory badges.
+/* TAIPEI CITY GUIDE v30.9.124 — main heading snap and no-focus advanced filter toggle.
    v30.9.121 — the food section is no longer an accordion (full width); the block turns
    the other way.
    v30.9.120 — no drawer: the recommender is the front of 🥢 食べる・飲む and turns over
@@ -24,7 +24,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.123';
+  const VERSION='30.9.124';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -822,6 +822,15 @@
   title.addEventListener('click',()=>activateMode('current'));
   title.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();activateMode('current');}});
   drawer.addEventListener('keydown',event=>{if(event.key==='Escape'){closeOptions();closeStationMenus();advanced.open=false;}});
+  // Do not steal the page position when a pointer opens the advanced filter.
+  // Keep the native <details> toggle and keyboard focus for accessibility.
+  // Pointerdown may otherwise focus <summary> before click (notably Safari).
+  advancedTrigger.addEventListener('pointerdown',event=>{
+    if(event.isPrimary&&event.cancelable)event.preventDefault();
+  });
+  advancedTrigger.addEventListener('click',event=>{
+    if(event.detail>0&&document.activeElement===advancedTrigger)advancedTrigger.blur();
+  });
   advanced.addEventListener('toggle',()=>{if(advanced.open)closeOptions();});
   // The open panel can grow wider than its row (more selected chips); keep it above the sort tabs.
   advanced.addEventListener('toggle',()=>{
