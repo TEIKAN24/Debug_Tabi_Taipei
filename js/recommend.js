@@ -1,4 +1,5 @@
-/* TAIPEI CITY GUIDE v30.9.126 — visible back-list fade and corrected front card spacing.
+/* TAIPEI CITY GUIDE v30.9.127 — compact recommendation footer without hidden gaps.
+   v30.9.126 — visible back-list fade and corrected front card spacing.
    v30.9.125 — artifact-free flip, reverse-list fade and stable iOS height.
    v30.9.124 — main heading snap and no-focus advanced filter toggle.
    v30.9.121 — the food section is no longer an accordion (full width); the block turns
@@ -26,7 +27,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.126';
+  const VERSION='30.9.127';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');

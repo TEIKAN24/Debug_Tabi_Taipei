@@ -1647,3 +1647,30 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
 #food-recommend-section .recommend-drawer.is-inline .recommend-relaxed{order:2;}
 #food-recommend-section .recommend-drawer.is-inline .recommend-more{order:3;}
 #food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{order:4;}
+
+
+/* v30.9.127 — keep three-card height stable, but do not let hidden controls
+   create a gap between the third result and the actionable footer.
+   Reserve the optional blocks AFTER visible content instead. */
+#food-recommend-section .recommend-drawer.is-inline .recommend-results{order:1!important;}
+#food-recommend-section .recommend-drawer.is-inline .recommend-relaxed:not([hidden]){order:2!important;}
+#food-recommend-section .recommend-drawer.is-inline .recommend-more:not([hidden]){
+  order:3!important;
+  margin:9px 0 0!important;
+}
+#food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{
+  order:4!important;
+  margin:6px 0 0!important;
+}
+/* An unavailable 'more' button and its reserved 32px slot are visually placed
+   after the note, rather than interrupting the result-to-note reading flow. */
+#food-recommend-section .recommend-drawer.is-inline .recommend-more[hidden]{
+  order:5!important;
+  margin:9px 0 0!important;
+}
+/* Likewise the invisible 39px soft-warning reservation moves below the note.
+   When this warning becomes visible it returns just below the result cards. */
+#food-recommend-section .recommend-drawer.is-inline .recommend-relaxed[hidden]{order:6!important;}
+/* Gain a little viewport room above the results instead of relying on negative
+   margins at the bottom, which can break Safari's touch hit targets. */
+#food-recommend-section .recommend-drawer.is-inline .recommend-result-head{margin-top:28px!important;}
