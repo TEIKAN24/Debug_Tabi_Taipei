@@ -1,4 +1,6 @@
-/* TAIPEI CITY GUIDE v30.9.119 — cards show the live status again (もうすぐ営業 within 30 min, もうすぐ閉店
+/* TAIPEI CITY GUIDE v30.9.120 — no drawer: the recommender is the front of 🥢 食べる・飲む and turns over
+   to the full list (一覧へ ＞ / おすすめへ ＞). Location is asked for only after a tap.
+   v30.9.119 — cards show the live status again (もうすぐ営業 within 30 min, もうすぐ閉店
    within 1 h); a shop closed now shows its next opening, e.g. （月）10:00から.
    v30.9.118 — 現在時刻 uses real opening hours (open → closing soon → opening within
    the hour; closed shops left out); 時間帯指定 shows each shop's hours for that band; 料理種類 has one
@@ -19,10 +21,9 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.119';
+  const VERSION='30.9.120';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
-  const backdrop=document.querySelector('.recommend-drawer-backdrop');
   const results=document.getElementById('recommend-results');
   const count=document.getElementById('recommend-count');
   const relaxed=document.getElementById('recommend-relaxed');
@@ -917,7 +918,7 @@
     for(const option of stationMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.stationCode));
     const district=nearbyDistrict(state.position);
     districtName.textContent=state.locationStatus==='outside'?'台北市外':district?`台北市 ${district[0]}`:state.locationStatus==='loading'?'測位中':'現在地';
-    districtEn.textContent=state.locationStatus==='outside'?'Outside Taipei':district?`${district[1]} Taipei City`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':'Location';
+    districtEn.textContent=state.locationStatus==='outside'?'Outside Taipei':district?`${district[1]} Taipei City`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':state.locationStatus==='idle'?'タップして現在地を取得':'Location';
     currentLocation.title=state.locationStatus==='outside'?'現在地は台北市の対象エリア外です。':district?'登録店の所在地から推定した行政区です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
     for(const b of categoryControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.category));
@@ -1087,13 +1088,6 @@
       if(request!==geoRun||state.areaMode!=='current')return;
       state.position=null;state.locationStatus=err.code===1?'denied':'error';state.page=0;syncUI();renderResults();
     },{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
-  }
-  function refreshContextOnOpen(){
-    if(state.timeMode==='current'){state.time=defaultBand();state.page=0;}
-    syncUI();renderResults();
-    // Opening the drawer is an explicit gesture. Request GPS once when it is
-    // needed; never repeatedly prompt users who already declined.
-    if(state.areaMode==='current'&&!state.geoRequested&&state.locationStatus==='idle')requestLocation();
   }
   function formatDistance(meters){return `${Math.max(10,Math.round(meters/10)*10)}m`;}
   function reportDebug(orderedCount){
@@ -1278,105 +1272,78 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   window.addEventListener('pageshow',event=>{
     if(event.persisted){nearbyCatalog=null;syncUI();renderResults();if(!nearbyReady)loadNearbyVenues();}
   });
-  let isOpen=false, dragging=null, raf=0, queuedProgress=0, progress=0, lastFocus=null, lockedY=0, savedStyle=null, suppressedUntil=0;
-  const panelWidth=()=>Math.min(innerWidth,480);
-  const clamp=v=>Math.max(0,Math.min(1,v));
-  function commit(){raf=0;progress=clamp(queuedProgress);body.style.setProperty('--recommend-offset',`${((progress-1)*panelWidth()).toFixed(2)}px`);body.style.setProperty('--recommend-progress',progress.toFixed(4));body.style.setProperty('--recommend-shift',`${(26*progress).toFixed(2)}px`);}
-  function draw(p,immediate=false){queuedProgress=clamp(p);if(immediate){cancelAnimationFrame(raf);commit();}else if(!raf)raf=requestAnimationFrame(commit);}
-  function lock(){if(savedStyle)return;lastFocus=document.activeElement;lockedY=scrollY;savedStyle={position:body.style.position,top:body.style.top,width:body.style.width,overflow:body.style.overflow};body.style.position='fixed';body.style.top=`-${lockedY}px`;body.style.width='100%';body.style.overflow='hidden';}
-  function unlock(){if(!savedStyle)return;Object.assign(body.style,savedStyle);savedStyle=null;window.scrollTo({top:lockedY,behavior:'instant'});}
-  let openGeneration=0;
-  function syncChrome(active){
-    const meta=document.querySelector('meta[name="theme-color"]');
-    if(meta)meta.setAttribute('content',active?(document.documentElement.dataset.theme==='light'?'#F7F8F7':'#0D0D0D'):(document.documentElement.dataset.theme==='light'?'#F7F8F7':'#111417'));
-  }
-  function settle(open){
-    isOpen=open;
-    if(!open){closeOptions();advanced.open=false;}
-    if(open){
-      lock();
-      // The first three picks are rendered before opening. Defer costly
-      // geolocation / rebuilding until after the slide settles.
-      const thisOpening=++openGeneration;
-      window.setTimeout(()=>{if(isOpen&&openGeneration===thisOpening)refreshContextOnOpen();},reduceMotion.matches?0:350);
-      drawer.inert=false;drawer.setAttribute('aria-hidden','false');
-      body.classList.add('recommend-drawer-open','recommend-swipe-active');
-      syncChrome(true);
-      draw(1,true);drawer.focus({preventScroll:true});
-    }else{
-      ++openGeneration;
-      body.classList.remove('recommend-drawer-open');drawer.setAttribute('aria-hidden','true');
-      if(drawer.contains(document.activeElement))document.activeElement.blur();
-      draw(0,true);unlock();
-      if(lastFocus?.isConnected&&lastFocus!==body)lastFocus.focus({preventScroll:true});
-      window.setTimeout(()=>{if(!isOpen&&!dragging){body.classList.remove('recommend-swipe-active');drawer.inert=true;syncChrome(false);}},reduceMotion.matches?0:350);
-    }
-  }
-  backdrop.addEventListener('click',()=>{if(isOpen)settle(false);});
-  function blocked(target){
-    if(!(target instanceof Element))return true;
-    if(target.closest('input,textarea,select,[contenteditable="true"],audio,video,a[href]'))return true;
-    if(target.closest('.tab-pills,#airport-route-selector .route-panel,.sights-day-trips .daytrip-destination-panel'))return true;
-    // Don't steal gestures owned by horizontal scrolling controls.
-    for(let n=target;n&&n!==body;n=n.parentElement){
-      if(n.scrollWidth>n.clientWidth+5 && /auto|scroll|overlay/.test(getComputedStyle(n).overflowX))return true;
-    }
-    return false;
-  }
-  function begin(x,y,target,kind){
-    // Let restaurant tag chips scroll horizontally without activating the drawer swipe.
-    if(target instanceof Element && target.closest('.recommend-guide-tags,#recommend-debug-fab,#recommend-debug-location'))return;
-    if(dragging||body.classList.contains('food-drawer-open')||body.classList.contains('food-swipe-active'))return;
-    if(!isOpen&&blocked(target))return;
-    dragging={x,y,px:x,t:performance.now(),velocity:0,axis:'unset',activated:false,start:isOpen?1:0,kind};
-  }
-  function move(x,y,event){
-    if(!dragging)return;
-    const g=dragging,dx=x-g.x,dy=y-g.y;
-    if(g.axis==='unset'){
-      if(Math.hypot(dx,dy)<10)return;
-      if(Math.abs(dy)>Math.abs(dx)*1.1){dragging=null;return;}
-      if((!isOpen&&dx<=0)||(isOpen&&dx>=0)){dragging=null;return;}
-      g.axis='x';g.activated=true;
-      body.classList.add('recommend-swipe-active','recommend-swipe-dragging');
-      syncChrome(true);
-      drawer.inert=false;drawer.setAttribute('aria-hidden','false');
-    }
-    if(event?.cancelable)event.preventDefault();
-    const t=performance.now(),dt=Math.max(1,t-g.t);
-    g.velocity=.7*g.velocity+.3*(x-g.px)/dt;g.px=x;g.t=t;
-    draw(g.start+dx/panelWidth());
-  }
-  function finish(){
-    if(!dragging)return;
-    const g=dragging;dragging=null;if(!g.activated)return;
-    draw(queuedProgress,true);
-    body.classList.remove('recommend-swipe-dragging');suppressedUntil=performance.now()+400;
-    const open=isOpen?!(progress<.52||(g.velocity<-.52&&progress<.88)):(progress>.48||(g.velocity>.52&&progress>.12));
-    settle(open);
-  }
-  let touchId=null;
-  document.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;const t=e.touches[0];touchId=t.identifier;begin(t.clientX,t.clientY,e.target,'touch');},{passive:true,capture:true});
-  document.addEventListener('touchmove',e=>{if(!dragging||dragging.kind!=='touch')return;const t=[...e.changedTouches].find(t=>t.identifier===touchId);if(t)move(t.clientX,t.clientY,e);},{passive:false,capture:true});
-  document.addEventListener('touchend',e=>{if(dragging?.kind==='touch'&&[...e.changedTouches].some(t=>t.identifier===touchId)){finish();touchId=null;}},{passive:true,capture:true});
-  document.addEventListener('touchcancel',()=>{if(dragging?.kind==='touch')finish();},{passive:true,capture:true});
-  document.addEventListener('mousedown',e=>{if(e.button===0)begin(e.clientX,e.clientY,e.target,'mouse');},true);
-  document.addEventListener('mousemove',e=>{if(dragging?.kind==='mouse')move(e.clientX,e.clientY,e);},true);
-  document.addEventListener('mouseup',()=>{if(dragging?.kind==='mouse')finish();},true);
-  document.addEventListener('dragstart',e=>{if(dragging?.kind==='mouse')e.preventDefault();},true);
-  document.addEventListener('click',e=>{if(performance.now()<suppressedUntil){e.preventDefault();e.stopPropagation();}},true);
-  document.addEventListener('keydown',e=>{
-    if(e.key==='Escape'&&isOpen){e.preventDefault();settle(false);return;}
-    // Keyboard-only access without adding a homepage entrance.
-    if(e.altKey&&e.key.toLowerCase()==='r'&&!isOpen&&!body.classList.contains('food-drawer-open')){e.preventDefault();settle(true);return;}
-    if(!isOpen||e.key!=='Tab')return;
-    const focusable=[...drawer.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),[role=button][tabindex="0"]')].filter(n=>n.getClientRects().length);
-    const first=focusable[0],last=focusable[focusable.length-1];if(!first||!last)return;
-    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
-    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
-    else if(!drawer.contains(document.activeElement)){e.preventDefault();first.focus();}
+  // The recommender is part of the page. Location is requested only after the
+  // visitor taps 現在地 (or the title), unless they have already allowed it.
+  try{
+    navigator.permissions?.query({name:'geolocation'}).then(permission=>{
+      if(permission.state==='granted'&&state.areaMode==='current'&&!state.geoRequested)requestLocation();
+    }).catch(()=>{});
+  }catch(error){}
+  currentLocation.setAttribute('role','button');currentLocation.tabIndex=0;
+  currentLocation.setAttribute('aria-label','現在地からおすすめを探す');
+  const askLocation=()=>{if(state.areaMode==='current'&&state.locationStatus!=='loading')activateMode('current');};
+  currentLocation.addEventListener('click',askLocation);
+  currentLocation.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();askLocation();}});
+  // Open menus close when the visitor taps anywhere else on the page.
+  document.addEventListener('click',event=>{
+    if(drawer.contains(event.target))return;
+    closeOptions();closeStationMenus();advanced.open=false;
   });
-  window.addEventListener('resize',()=>draw(isOpen?1:0,true),{passive:true});
-  window.addEventListener('blur',()=>{if(dragging)finish();});
-  drawer.inert=true;draw(0,true);
+  // 現在時刻 follows the clock: a new time band, or coming back to the page,
+  // refreshes the picks; in between only the opening labels update.
+  const followClock=()=>{
+    if(state.timeMode!=='current')return;
+    const band=defaultBand();
+    if(band!==state.time){state.time=band;state.page=0;syncUI();}
+    renderResults();
+  };
+  window.setInterval(()=>{if(state.timeMode==='current'&&defaultBand()!==state.time)followClock();},60*1000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)followClock();});
+
+  // 🥢 食べる・飲む: おすすめ (front) ⇄ 一覧 (back). The block always turns the
+  // same way; 3D is used only while turning, then the page is laid out normally.
+  const flip=document.getElementById('food-flip');
+  if(flip){
+    const inner=flip.querySelector('.food-flip-inner');
+    const faces={front:flip.querySelector('.food-flip-front'),back:flip.querySelector('.food-flip-back')};
+    let face='front',angle=0,turning=false;
+    const show=name=>{
+      face=name;flip.dataset.face=name;
+      for(const [key,node] of Object.entries(faces)){const hidden=key!==name;node.inert=hidden;node.setAttribute('aria-hidden',String(hidden));}
+    };
+    show('front');
+    const settleTurn=(name,focus)=>{
+      inner.classList.remove('is-turning','is-fading');show(name);turning=false;
+      if(name==='front')closeOptions();
+      if(flip.getBoundingClientRect().top<0)flip.scrollIntoView({block:'start',behavior:reduceMotion.matches?'auto':'smooth'});
+      if(focus)faces[name].querySelector('.food-flip-toggle')?.focus({preventScroll:true});
+      // Let the list re-measure its scroll areas now that it is visible.
+      window.dispatchEvent(new Event('resize'));
+    };
+    function turnTo(name,{animate=true,focus=true}={}){
+      if(turning||name===face)return;
+      if(!animate){settleTurn(name,false);return;}
+      turning=true;closeOptions();closeStationMenus();advanced.open=false;
+      if(reduceMotion.matches){
+        inner.classList.add('is-fading');
+        const out=faces[face].animate([{opacity:1},{opacity:0}],{duration:160,easing:'ease-out'});
+        out.onfinish=()=>{show(name);const inAnim=faces[name].animate([{opacity:0},{opacity:1}],{duration:160,easing:'ease-in'});inAnim.onfinish=inAnim.oncancel=()=>settleTurn(name,focus);};
+        out.oncancel=()=>settleTurn(name,focus);
+        return;
+      }
+      const from=angle,to=angle+180;angle=to%360;
+      inner.classList.add('is-turning');
+      const anim=inner.animate([{transform:`rotateY(${from}deg)`},{transform:`rotateY(${to}deg)`}],{duration:620,easing:'cubic-bezier(.45,.05,.25,1)'});
+      anim.onfinish=anim.oncancel=()=>settleTurn(name,focus);
+    }
+    flip.querySelectorAll('.food-flip-toggle').forEach(button=>button.addEventListener('click',()=>turnTo(button.dataset.to)));
+    // Links to an item of the list (#…) open the list side directly.
+    const revealTarget=()=>{
+      const id=decodeURIComponent(location.hash.slice(1));
+      const target=id&&document.getElementById(id);
+      if(target&&faces.back.contains(target))turnTo('back',{animate:false,focus:false});
+    };
+    window.addEventListener('hashchange',revealTarget);
+    revealTarget();
+  }
 })();
