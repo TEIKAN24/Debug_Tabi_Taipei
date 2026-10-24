@@ -1,4 +1,5 @@
-/* TAIPEI CITY GUIDE v30.9.125 — artifact-free flip, reverse-list fade and stable iOS height.
+/* TAIPEI CITY GUIDE v30.9.126 — visible back-list fade and corrected front card spacing.
+   v30.9.125 — artifact-free flip, reverse-list fade and stable iOS height.
    v30.9.124 — main heading snap and no-focus advanced filter toggle.
    v30.9.121 — the food section is no longer an accordion (full width); the block turns
    the other way.
@@ -25,7 +26,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.125';
+  const VERSION='30.9.126';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -1455,6 +1456,19 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     const inner=flip.querySelector('.food-flip-inner');
     const faces={front:flip.querySelector('.food-flip-front'),back:flip.querySelector('.food-flip-back')};
     let face='front',turning=false;
+    const updateBackHeight=()=>{
+      // Safari's VisualViewport reflects the actual unobscured window when
+      // the bottom bar expands; the reverse-side fade stays above that bar.
+      const vv=window.visualViewport;
+      const viewBottom=vv?vv.offsetTop+vv.height:window.innerHeight;
+      const top=flip.getBoundingClientRect().top;
+      const available=Math.floor(viewBottom-top-64);
+      const height=Math.max(280,Math.min(700,available));
+      inner.style.setProperty('--food-back-height',height+'px');
+      requestAnimationFrame(updateDirectoryScrollFade);
+    };
+    window.addEventListener('resize',()=>{if(face==='back')updateBackHeight();},{passive:true});
+    window.visualViewport?.addEventListener('resize',()=>{if(face==='back')updateBackHeight();},{passive:true});
     const show=name=>{
       face=name;flip.dataset.face=name;
       for(const [key,node] of Object.entries(faces)){const hidden=key!==name;node.inert=hidden;node.setAttribute('aria-hidden',String(hidden));}
@@ -1463,6 +1477,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     const settleTurn=(name,focus)=>{
       inner.classList.remove('is-turning','is-fading');show(name);turning=false;
       if(name==='front')closeOptions();
+      if(name==='back')updateBackHeight();
       if(flip.getBoundingClientRect().top<0)flip.scrollIntoView({block:'start',behavior:reduceMotion.matches?'auto':'smooth'});
       if(focus)faces[name].querySelector('.food-flip-toggle')?.focus({preventScroll:true});
       // Let the list re-measure its scroll areas now that it is visible.
@@ -1471,6 +1486,15 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     };
     function turnTo(name,{animate=true,focus=true}={}){
       if(turning||name===face)return;
+      if(name==='back'){
+        // Bring the new panel's header into the visible window before sizing
+        // its independently scrolling directory. In particular, a flip button
+        // close to the bottom of a short viewport must not put the fade below
+        // the bottom browser bar.
+        const top=flip.getBoundingClientRect().top;
+        if(top<0||top>80)flip.scrollIntoView({block:'start',behavior:'auto'});
+        updateBackHeight();
+      }
       if(!animate){settleTurn(name,false);return;}
       turning=true;closeOptions();closeStationMenus();advanced.open=false;
       // iOS Safari: rotating the parent while simultaneously exposing both 3D

@@ -1622,3 +1622,28 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
 @media(prefers-reduced-motion:reduce){
   #food-recommend-section .food-directory::after{transition:none;}
 }
+
+
+/* v30.9.126 — independent reverse-side viewport and real three-card geometry.
+   The reverse list previously inherited the 830px *front* height, so its fade
+   lived below the Safari address toolbar instead of at the visible scroll edge. */
+#food-recommend-section .food-flip[data-face="back"] .food-flip-inner{
+  height:var(--food-back-height,min(680px,calc(100svh - 160px)));
+  min-height:0;
+}
+#food-recommend-section .food-flip[data-face="back"] .food-flip-front{
+  position:absolute;inset:0;pointer-events:none;
+}
+#food-recommend-section .food-flip[data-face="back"] .food-flip-back{
+  height:100%;min-height:0;
+}
+/* The conditional advisory placeholder belongs *after* the three cards, not
+   between the section heading and the first recommendation. Keep its stable
+   slot so a change to 0/1/2 matches does not resize the whole front side. */
+#food-recommend-section .recommend-drawer.is-inline .recommend-drawer-inner{
+  display:flex!important;flex-direction:column!important;
+}
+#food-recommend-section .recommend-drawer.is-inline .recommend-results{order:1;}
+#food-recommend-section .recommend-drawer.is-inline .recommend-relaxed{order:2;}
+#food-recommend-section .recommend-drawer.is-inline .recommend-more{order:3;}
+#food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{order:4;}
