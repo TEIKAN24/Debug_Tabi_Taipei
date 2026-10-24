@@ -9,7 +9,6 @@
   "use strict";
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const firstLevel={
-    food:'3f56bda0-4caa-80cb-846a-c054fc9eb79b',
     sights:'3f56bda0-4caa-8046-a491-c25321b680c1',
     areas:'3f66bda0-4caa-800d-95db-dea98f822273',
     experiences:'3f76bda0-4caa-80d2-8841-c76e1f8f749a',
@@ -1932,7 +1931,7 @@ update();
   // Only the travel-preparation accordions auto-fold when leaving the
   // viewport. Airport access, all dining/area/experience sections and nearby
   // destinations remain open until an actual user selection closes them.
-  const foodRoot=guide.querySelector('.venue-directory-section:not(.area-directory-section)');
+  const foodRoot=guide.querySelector('#food-recommend-section');
   const detailBlocks=[...guide.querySelectorAll('details')]
     .filter(detail=>foodRoot && !!(detail.compareDocumentPosition(foodRoot) & Node.DOCUMENT_POSITION_FOLLOWING));
   const dayTripPanels=[];
@@ -2794,7 +2793,6 @@ update();
   const guide=document.getElementById('guide');
   if(!guide)return;
   const roots=[...guide.querySelectorAll('.page-body > details.root-accordion')];
-  const foodOwner=guide.querySelector('.food-hub');
   const airport=guide.querySelector('#airport-route-selector');
   const daytrip=guide.querySelector('.sights-day-trips');
   let folding=false;
@@ -2806,13 +2804,13 @@ update();
       const id=nav.dataset.target;
       if(id==='travel')return 'travel';
       if(id==='sights')return roots.find(root=>root.id==='3f56bda0-4caa-8046-a491-c25321b680c1')||null;
-      return ({food:foodOwner,
+      return ({food:null,
                areas:roots.find(root=>root.classList.contains('area-directory-section')),
                experiences:roots.find(root=>root.id==='3f76bda0-4caa-80d2-8841-c76e1f8f749a'),
                souvenirs:roots.find(root=>root.id==='3f66bda0-4caa-8038-8328-e8b12e95336f')})[id]||null;
     }
-    // The always-open food section (おすすめ ⇄ 一覧) folds the other blocks like a root.
-    if(element.closest('#guide .food-hub'))return foodOwner;
+    // The independent flip is not an accordion owner.
+    if(element.closest('#guide .food-flip-section'))return null;
     const root=element.closest('#guide .page-body > details.root-accordion');
     if(root)return root;
     if(element.closest('#guide #airport-route-selector'))return airport;
@@ -2823,24 +2821,6 @@ update();
   let anchorVersion=0;
   for(const kind of ['wheel','touchstart','pointerdown']){
     window.addEventListener(kind,()=>{++anchorVersion;},{passive:true,capture:true});
-  }
-  function stabilizeFoodAfterAirportFold(owner,target){
-    if(owner!==foodOwner || target.closest('.quick-nav') || !airport)return;
-    const disclosure=airport.querySelector('#airsel-route-disclosure');
-    if(disclosure?.getAttribute('aria-expanded')!=='true')return;
-    const anchor=target.closest('.tab-pills, summary')||foodOwner.querySelector(':scope > summary');
-    if(!anchor || !anchor.getClientRects().length)return;
-    const top=anchor.getBoundingClientRect().top;
-    const version=++anchorVersion;
-    const start=performance.now();
-    const maintain=()=>{
-      if(version!==anchorVersion || !anchor.isConnected)return;
-      const difference=anchor.getBoundingClientRect().top-top;
-      if(Math.abs(difference)>1 && Math.abs(difference)<1000)
-        window.scrollTo({top:Math.max(0,window.scrollY+difference),behavior:'instant'});
-      if(performance.now()-start<(reduced.matches?130:540))requestAnimationFrame(maintain);
-    };
-    requestAnimationFrame(maintain);
   }
   function foldOtherBlocks(owner){
     roots.forEach(root=>{
@@ -2872,7 +2852,6 @@ update();
     if(!event.target.closest('button, summary, a, input, select, [role="tab"]'))return;
     folding=true;
     try{
-      stabilizeFoodAfterAirportFold(owner,event.target);
       foldOtherBlocks(owner);
     }finally{folding=false;}
   },true);

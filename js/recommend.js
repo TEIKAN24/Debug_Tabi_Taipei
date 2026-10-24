@@ -1,4 +1,5 @@
-/* TAIPEI CITY GUIDE v30.9.121 — the food section is no longer an accordion (full width); the block turns
+/* TAIPEI CITY GUIDE v30.9.122 — the flip is an independent section; its 13-tab directory reads nearby.json.
+   v30.9.121 — the food section is no longer an accordion (full width); the block turns
    the other way.
    v30.9.120 — no drawer: the recommender is the front of 🥢 食べる・飲む and turns over
    to the full list (一覧へ ＞ / おすすめへ ＞). Location is asked for only after a tap.
@@ -23,7 +24,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.121';
+  const VERSION='30.9.122';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -219,6 +220,7 @@
   const GEO_PRIORITY_METERS=800; // Straight-line radius for GPS and selected-station recommendations.
   const coordinates=new Map(); // Deprecated directory coordinates deliberately unused.
   let nearbyVenues=[],nearbyReady=false,nearbyCatalog=null;
+  let directoryVenues=[],directoryLoaded=false;
   // v30.9.95 — editorial descriptions: provenance lives in a separate static
   // file, and absent evidence never becomes a fabricated customer review.
   let reviewedNotes=new Map();
@@ -238,24 +240,8 @@
   // Read the live HTML so changes to the editorial list do not require a
   // second hand-maintained list of tags in the recommendation database.
   const editorialNotes=new Map();
-  // Restrict editorial annotations to the 食べる・飲む subsection; none of
-  // the sightseeing / shopping editorial categories are restaurant tags.
-  const editorialFoodSection=[...document.querySelectorAll('.venue-directory-section')]
-    .find(sec=>sec.querySelector(':scope > summary .accordion-category-heading')?.textContent.includes('食べる・飲む'));
-  editorialFoodSection?.querySelectorAll('li.venue-list-item').forEach(li=>{
-    const link=li.querySelector('a');if(!link)return;
-    const key=normalizeNoteName(link.textContent);
-    if(!key)return;
-    const descriptions=[];
-    const manual=li.getAttribute('data-curated-tags')||'';
-    if(manual)descriptions.push(...manual.split(/[、,，]/));
-    const trailing=li.textContent.replace(link.textContent,'');
-    for(const match of trailing.matchAll(/（([^）]+)）/g))descriptions.push(...match[1].split(/[、,，]/));
-    // Preserve the author's original short labels, with 500碗 excluded at
-    // display level. Chain flags stay internal to recommendation diversity.
-    const tags=[...new Set(descriptions.map(t=>t.trim()).filter(t=>t&&!/(?:500\s*碗|五百碗)/i.test(t)&&t.length<=30))];
-    if(!editorialNotes.has(key))editorialNotes.set(key,{tags});
-  });
+  // The former Notion dining list was removed in v30.9.122.
+  // The JSON guideTags and awards remain the source of editorial labels.
 
   // The editor's curated database is the only recommendation source.
   // The older venues.json and webpage catalogue are not loaded for picking.
@@ -271,9 +257,11 @@
       if(data.schemaVersion!==1||!Array.isArray(data.venues))throw new Error('restaurant schema invalid');
       nearbyVenues=data.venues.filter(r=>r&&typeof r.name==='string'&&Array.isArray(r.branches)&&r.branches.some(b=>
         Number.isFinite(b.lat)&&Number.isFinite(b.lng)&&b.lat>24.9&&b.lat<25.3&&b.lng>121.35&&b.lng<121.73));
+      directoryVenues=data.venues.filter(r=>r&&typeof r.name==='string'&&r.name.trim()&&Array.isArray(r.branches));
+      directoryLoaded=true;
       nearbyCatalog=null;nearbyReady=true;
-    }catch(e){nearbyReady=false;nearbyVenues=[];nearbyCatalog=null;}
-    syncUI();renderResults();
+    }catch(e){nearbyReady=false;nearbyVenues=[];nearbyCatalog=null;directoryVenues=[];directoryLoaded=false;}
+    renderFoodDirectory();syncUI();renderResults();
   }
   function readNearbyCatalog(){
     if(nearbyCatalog)return nearbyCatalog;
@@ -1302,7 +1290,128 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   window.setInterval(()=>{if(state.timeMode==='current'&&defaultBand()!==state.time)followClock();},60*1000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)followClock();});
 
-  // 🥢 食べる・飲む: おすすめ (front) ⇄ 一覧 (back). The block always turns the
+
+  // Independent 13-category directory on the back of the flip.
+  // This classification follows each card's displayType/category, not the old HTML list.
+  const DIRECTORY_TYPES=[
+    ['breakfast','朝食'],['drink','ドリンク'],['cafe','カフェ・喫茶'],
+    ['sweet','スイーツ・アイス'],['dumpling','小籠包・餃子'],['rice','ご飯もの'],
+    ['noodle','麺類'],['hotpot','火鍋'],['snack','屋台料理・軽食'],
+    ['izakaya','台湾式居酒屋'],['taiwan','台湾料理店'],
+    ['world','各国・創作料理'],['bar','バー']
+  ];
+  const directoryRoot=document.getElementById('food-directory');
+  const directoryTabs=document.getElementById('food-directory-tabs');
+  const directoryPanel=document.getElementById('food-directory-panel');
+  let directoryChoice='breakfast';
+  function directoryKey(venue){
+    const kind=String(venue.displayType||'');
+    const broad=venue.category||'';
+    if(broad==='breakfast'||/^(モーニング|朝食)$/.test(kind))return 'breakfast';
+    if(broad==='drink'||kind==='ドリンク')return 'drink';
+    if(broad==='cafe'||/^(カフェ|喫茶|カフェ・喫茶)$/.test(kind))return 'cafe';
+    if(broad==='sweet'||/^(スイーツ|アイス|スイーツ・アイス)$/.test(kind))return 'sweet';
+    if(broad==='dumpling'||/小籠包|点心|餃子/.test(kind))return 'dumpling';
+    if(broad==='rice'||/ごはん|ご飯/.test(kind))return 'rice';
+    if(broad==='noodle'||/麺|麵/.test(kind))return 'noodle';
+    if(/火鍋|^鍋$/.test(kind)||broad==='hotpot')return 'hotpot';
+    if(broad==='snack'||/屋台料理|軽食|^小吃$/.test(kind))return 'snack';
+    if(/台湾料理|創作台湾料理/.test(kind))return 'taiwan';
+    if(/熱炒|居酒屋/.test(kind)||venue.industries?.includes('熱炒'))return 'izakaya';
+    if(broad==='bar'||kind==='バー')return 'bar';
+    if(broad==='meal')return 'world';
+    // Future editor kinds should still remain visible in a defined tab.
+    return 'world';
+  }
+  function directoryMapUrl(venue){
+    // Never send a chain to a particular branch; the visitor chooses the branch on Maps.
+    if(venue.chain||venue.branches.length>1){
+      return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(venue.name);
+    }
+    return venue.branches[0]?.mapUrl||'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(venue.name+' 台北');
+  }
+  function directoryNode(tag,className,text){
+    const element=document.createElement(tag);
+    if(className)element.className=className;
+    if(text!==undefined)element.textContent=String(text);
+    return element;
+  }
+  function renderFoodDirectory(){
+    if(!directoryRoot||!directoryTabs||!directoryPanel)return;
+    if(!directoryLoaded){
+      directoryPanel.replaceChildren(directoryNode('p','food-directory-message','店舗データを読み込めませんでした。ページを再読み込みしてください。'));
+      return;
+    }
+    const buckets=new Map(DIRECTORY_TYPES.map(([key])=>[key,[]]));
+    const seenIds=new Set();
+    for(const venue of directoryVenues){
+      // One brand per row and one primary tab, even if its cuisine tags overlap.
+      const identity=venue.id||venue.name.normalize('NFKC').trim();
+      if(seenIds.has(identity))continue;
+      seenIds.add(identity);
+      buckets.get(directoryKey(venue)).push(venue);
+    }
+    if(!buckets.has(directoryChoice))directoryChoice='breakfast';
+    directoryTabs.replaceChildren(...DIRECTORY_TYPES.map(([key,label])=>{
+      const button=directoryNode('button','food-directory-tab',label);
+      button.type='button';button.dataset.directoryKey=key;
+      button.id='food-directory-tab-'+key;
+      button.setAttribute('role','tab');button.setAttribute('aria-controls','food-directory-panel');
+      button.setAttribute('aria-selected',String(key===directoryChoice));
+      button.tabIndex=key===directoryChoice?0:-1;
+      button.addEventListener('click',()=>selectDirectoryTab(key));
+      button.addEventListener('keydown',e=>{
+        if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+        e.preventDefault();
+        const index=DIRECTORY_TYPES.findIndex(([id])=>id===key);
+        const next=e.key==='Home'?0:e.key==='End'?DIRECTORY_TYPES.length-1:
+          (index+(e.key==='ArrowRight'?1:-1)+DIRECTORY_TYPES.length)%DIRECTORY_TYPES.length;
+        selectDirectoryTab(DIRECTORY_TYPES[next][0],true);
+      });
+      return button;
+    }));
+    const activeTab=directoryTabs.querySelector('[aria-selected="true"]');
+    directoryPanel.setAttribute('aria-labelledby',activeTab?.id||'');
+    const rows=buckets.get(directoryChoice)||[];
+    const heading=directoryNode('div','food-directory-summary');
+    heading.append(directoryNode('span','food-directory-summary-title',DIRECTORY_TYPES.find(([key])=>key===directoryChoice)?.[1]||''));
+    heading.append(directoryNode('span','food-directory-summary-count',rows.length+' 店'));
+    const list=directoryNode('ol','food-directory-list');
+    rows.forEach((v,index)=>{
+      const li=directoryNode('li','food-directory-row');
+      li.append(directoryNode('span','food-directory-number',String(index+1).padStart(2,'0')));
+      const body=directoryNode('div','food-directory-row-main');
+      const top=directoryNode('div','food-directory-name-line');
+      const anchor=directoryNode('a','food-directory-link',v.name);
+      anchor.href=directoryMapUrl(v);anchor.target='_blank';anchor.rel='noopener noreferrer';
+      top.append(anchor);
+      const branchCount=v.branches.length;
+      if(v.chain||branchCount>1)top.append(directoryNode('span','food-directory-branches',branchCount+' 店舗'));
+      body.append(top);
+      const badges=directoryNode('div','food-directory-badges');
+      // The exact card genre remains visible, even under a broader directory category.
+      badges.append(directoryNode('span','food-directory-kind',v.displayType||'レストラン'));
+      const tagKeys=new Set();
+      for(const tag of (Array.isArray(v.guideTags)?v.guideTags:[])){
+        if(!tag||typeof tag.text!=='string'||!tag.text.trim())continue;
+        const text=tag.text.trim();if(tagKeys.has(text))continue;tagKeys.add(text);
+        const tone=tag.tone==='featured'?'featured':tag.tone==='caution'?'caution':tag.tone==='veg'?'veg':'editorial';
+        badges.append(directoryNode('span','food-directory-tag food-directory-tag--'+tone,text));
+      }
+      if(v.awards?.bibGourmand2026&&!tagKeys.has('ビブグルマン'))badges.append(directoryNode('span','food-directory-tag food-directory-tag--featured','ビブグルマン'));
+      body.append(badges);li.append(body);list.append(li);
+    });
+    directoryPanel.replaceChildren(heading,list);
+    directoryPanel.scrollTop=0;
+  }
+  function selectDirectoryTab(key,focus){
+    if(directoryChoice===key)return;
+    directoryChoice=key;
+    renderFoodDirectory();
+    if(focus)directoryTabs.querySelector('[aria-selected="true"]')?.focus({preventScroll:true});
+  }
+
+  // 独立したグルメ一覧: おすすめ (front) ⇄ 一覧 (back). The block always turns the
   // same way; 3D is used only while turning, then the page is laid out normally.
   const flip=document.getElementById('food-flip');
   if(flip){
