@@ -1,5 +1,6 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
-/* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading; back-to-top skips redundant DOM writes. */
+/* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
+   v30.9.118 — back-to-top button removed. */
 
 /* =================== JS 01: behavior-1 =================== */
 ;
@@ -243,71 +244,6 @@
   // The browser manages history restoration; don't reset scrolling on page load,
   // pageshow or when returning from an external map. Initial deep links remain usable.
   if (location.hash) requestAnimationFrame(revealHash);
-  const back=document.querySelector('.back-top');
-  if(back){
-    let lastY=window.scrollY;
-    let hideTimer=null;
-    const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
-    // Scroll fires every frame; only touch the DOM when visibility actually changes.
-    let backVisible=null;
-    function showBack(visible){
-      if(visible===backVisible)return;
-      backVisible=visible;
-      back.classList.toggle('show',visible);
-      back.tabIndex=visible?0:-1;
-      back.setAttribute('aria-hidden',String(!visible));
-    }
-    function atBottom(){
-      const maxY=Math.max(0,(document.scrollingElement?.scrollHeight||document.documentElement.scrollHeight)-window.innerHeight);
-      return maxY>180 && window.scrollY>=maxY-4;
-    }
-    function clearHideTimer(){
-      if(hideTimer!==null){clearTimeout(hideTimer);hideTimer=null;}
-    }
-    function startFadeTimer(){
-      clearHideTimer();
-      if(atBottom()){showBack(true);return;}
-      // Each new scroll event resets the one-second idle countdown.
-      hideTimer=setTimeout(()=>{
-        hideTimer=null;
-        if(atBottom()) showBack(true);
-        else showBack(false);
-      },1000);
-    }
-    function onScroll(){
-      const y=window.scrollY;
-      const moved=Math.abs(y-lastY)>0.5;
-      lastY=y;
-      // At the top, always hide immediately. A click-triggered smooth scroll
-      // must not leave the arrow visible, even if it is still hovered.
-      if(y<=24){
-        clearHideTimer();
-        showBack(false);
-      }else if(atBottom()){
-        clearHideTimer();
-        showBack(true);
-      }else if(moved){
-        showBack(true);
-        startFadeTimer();
-      }
-    }
-    window.addEventListener('scroll',onScroll,{passive:true});
-    window.addEventListener('resize',()=>{
-      if(atBottom()){
-        clearHideTimer();showBack(true);
-      }else if(back.classList.contains('show'))startFadeTimer();
-    },{passive:true});
-    back.addEventListener('click',()=>{
-      clearHideTimer();
-      back.blur();
-      // Hide on click; if smooth scrolling triggers new scroll events,
-      // onScroll will hide it again as soon as the page reaches the top.
-      showBack(false);
-      window.scrollTo({top:0,behavior:reducedMotion.matches?'auto':'smooth'});
-      history.replaceState(null,'',location.pathname+location.search);
-    });
-    showBack(atBottom());
-  }
 })();
 
 /* =================== JS 02: venue-directory-script =================== */

@@ -61,11 +61,10 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .site-content mark{border-radius:3px;padding:0 1px}
 .site-content figure{margin:12px 0}
 .site-content figure figcaption{font-size:11px}
-.back-top{bottom:calc(18px + env(safe-area-inset-bottom));cursor:pointer;z-index:10;transition:opacity .2s,transform .2s}
 
 footer{border-top:1px solid var(--line);margin-top:24px;padding:20px 0 32px;font-size:11px}
 @media(min-width:650px){.wrapper{width:min(100% - 64px,760px)}.quick-nav{gap:14px}.nav-button{min-height:144px;padding:17px 20px}.nav-title{font-size:16px}.nav-subtitle{font-size:12px}.nav-icon{font-size:34px}.site-content{font-size:15px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.nav-button,.back-top{transition:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.nav-button{transition:none}}
 
 /* Restored original illustrated category icons, optimized for 2x mobile density. */
 .inline-category-icon{display:inline-block;width:30px;height:30px;object-fit:contain;vertical-align:middle;margin-right:7px;flex:0 0 auto}
@@ -653,11 +652,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   #food-explorer .quick button {flex-basis:32px;height:34px;}
 }
 /* Back-to-top appears during scrolling, then fades after the user stops for a moment. */
-.back-top {
-  bottom:calc(10px + env(safe-area-inset-bottom));
-  font-size:16px;
-  opacity:0;pointer-events:none;transform:translateY(9px);
-}
 /* Two essential travel cards are legible but not visually competing yellow blocks. */
 .site-content details.root-accordion.travel-caution,
 .site-content details.root-accordion.travel-twac {overflow:visible;border-radius:14px;}
@@ -1338,11 +1332,7 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 
 /* Keep pinch-to-zoom and normal panning. Suppress double-tap zoom on modern
    iOS Safari / Android browsers without disabling accessibility zoom. */
-html, body,
-.nav-button, .site-content a, .site-content button,
-.site-content details > summary,
-#food-explorer button, #food-explorer .pill, #food-explorer .quick button,
-.back-top { touch-action:manipulation; }
+html, body, .nav-button, .site-content a, .site-content button, .site-content details > summary, #food-explorer button, #food-explorer .pill, #food-explorer .quick button { touch-action:manipulation; }
 /* A focused open area reads as a current selection without a bright new box. */
 .site-content .area-directory-section .area-category-list > details[open] > summary {
   color:#FAFAFA!important;
@@ -1783,67 +1773,7 @@ html, body,
 }
 /* The strip remains fully visible if there is no horizontal overflow. */
 
-/* =================== CSS 33: back-top-clear-glass-20261015 =================== */
-
 /* Back-to-top button: clear glass, subtle edge refraction, no frosted blur. */
-.back-top {
-  width:42px!important;height:42px!important;
-  right:12px!important;
-  bottom:calc(12px + env(safe-area-inset-bottom))!important;
-  border-radius:999px!important;
-  position:fixed;
-  overflow:hidden;
-  isolation:isolate;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.040) 0%, rgba(255,255,255,.022) 58%, rgba(255,255,255,.012) 100%),
-    radial-gradient(88% 68% at 82% 100%, rgba(131,211,176,.045) 0%, rgba(131,211,176,.010) 42%, transparent 70%),
-    linear-gradient(145deg, rgba(255,255,255,.016) 0%, rgba(255,255,255,.006) 100%)!important;
-  color:#F8FAFB!important;
-  border:1px solid rgba(255,255,255,.10)!important;
-  box-shadow:
-    0 8px 18px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.10),
-    inset 0 -1px 0 rgba(255,255,255,.018)!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-}
-.back-top::before {
-  content:"";
-  position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:0;
-  padding:.9px;
-  background:conic-gradient(from 196deg at 50% 50%,
-    rgba(255,255,255,.016) 0%,
-    rgba(255,255,255,.036) 18%,
-    rgba(255,255,255,.18) 30%,
-    rgba(255,255,255,.045) 47%,
-    rgba(255,255,255,.014) 66%,
-    rgba(131,211,176,.16) 84%,
-    rgba(255,255,255,.016) 100%);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  mask-composite:exclude;
-}
-.back-top::after {
-  content:"";
-  position:absolute; inset:1px; border-radius:inherit; pointer-events:none; z-index:0;
-  background:
-    radial-gradient(90% 60% at 12% 0%, rgba(255,255,255,.12) 0%, rgba(255,255,255,.028) 24%, transparent 52%),
-    linear-gradient(180deg, rgba(255,255,255,.022) 0%, transparent 34%);
-}
-.back-top > * { position:relative; z-index:1; }
-.back-top.show {
-  opacity:.92!important; pointer-events:auto; transform:translateY(0)!important;
-}
-.back-top.show:hover,
-.back-top.show:focus-visible {
-  opacity:1!important;
-  border-color:rgba(255,255,255,.15)!important;
-  box-shadow:
-    0 10px 22px rgba(0,0,0,.22),
-    inset 0 1px 0 rgba(255,255,255,.12),
-    inset 0 -1px 0 rgba(255,255,255,.02)!important;
-}
 
 /* =================== CSS 34: directory-divider-and-emergency-rework-20261015 =================== */
 
@@ -2068,7 +1998,6 @@ body > footer {
   will-change:transform;
 }
 /* Also float the back-to-top with the main page, without changing its own fade/offset rules. */
-body.food-drawer-open .back-top, body.food-swipe-active .back-top {pointer-events:none!important;opacity:0!important;}
 #guide #food-search.food-drawer {
   
   visibility:hidden;pointer-events:none;
@@ -3420,7 +3349,7 @@ html[data-theme="light"]{
  --bg:#F7F8F7;--paper:#FFFFFF;--ink:#20292C;--muted:#697579;
  --line:#DDE2E3;--accent:#155F92;--shadow:none;
  --text-heading:#172329;--text-body:#263136;--text-secondary:#626E73;
- --text-caption:#778187;--link:#135E96;--link-hover:#09446E;
+ --text-caption:#5E6B72;--link:#135E96;--link-hover:#09446E;
  --mono-main:#172329;--mono-body:#263136;--mono-sub:#657076;
  --mono-muted:#79848A;--mono-line:#D6DCDF;
  --outline-white:#CBD2D6;--outline-divider:#E1E5E7;
@@ -3499,7 +3428,7 @@ html[data-theme="light"] #guide .sights-day-trips .daytrip-destination-panel-hea
 }
 /* Bus/train/taxi timeline: leave their route-line hues intact. */
 html[data-theme="light"] #guide :is(.rail-title,.daytrip-canonical-head-name,.daytrip-bus-head-name,.airsel-route-title,.airsel-station-label,.stop-name,.airsel-station-zh,.airsel-station-ja,.line-name,.direction,.fact-value,.daytrip-canonical-facts strong){color:#26353B!important;}
-html[data-theme="light"] #guide :is(.timeline-status,.station-count,.fact-label,.airsel-route-subtitle,.stop-description,.leg-note,.footnote,.daytrip-note,.station-label,.airsel-station-ja,.leg-meta .separator){color:#69777D!important;}
+html[data-theme="light"] #guide :is(.timeline-status,.station-count,.fact-label,.airsel-route-subtitle,.stop-description,.leg-note,.footnote,.daytrip-note,.station-label,.airsel-station-ja,.leg-meta .separator){color:#5E6B72!important;}
 html[data-theme="light"] #guide :is(.timeline-stop .node,.daytrip-timeline-node){border-color:#35454D;}
 html[data-theme="light"] #guide .timeline-stop.start .node{background:#F7F8F7!important;}
 html[data-theme="light"] #guide .timeline-stop.end .node{background:#35454D!important;}
@@ -3529,7 +3458,7 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .se
 html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-value option{
  color:#1E3038!important;background:#FFFFFF!important;
 }
-html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-label{color:#65757C!important;}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-label{color:#5E6B72!important;}
 html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .swap{
  background:#FFFFFF!important;border-color:#B9C6CC!important;color:#253C47!important;
  box-shadow:0 0 0 5px #F8FAFA!important;
@@ -3580,7 +3509,7 @@ html[data-theme="light"] #guide :is(.travel-caution,.travel-twac) :is(summary,st
 html[data-theme="light"] #guide details.travel-passes{border-color:#CDD5D9!important;background:transparent!important;}
 html[data-theme="light"] #guide .travel-passes > summary .travel-key-icon{background:#EEF2F2!important;}
 html[data-theme="light"] #guide .travel-passes :is(.travel-key-title,.pass-simple-heading h4){color:#243138!important;}
-html[data-theme="light"] #guide .travel-passes :is(.travel-key-subtitle,.pass-simple-item p){color:#69777D!important;}
+html[data-theme="light"] #guide .travel-passes :is(.travel-key-subtitle,.pass-simple-item p){color:#5E6B72!important;}
 html[data-theme="light"] #guide .travel-passes .pass-simple-item{border-color:#DDE2E3!important;}
 html[data-theme="light"] #guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now,
 html[data-theme="light"] #guide a.external-action-link,
@@ -3607,7 +3536,6 @@ html[data-theme="light"] #guide #food-explorer{
 html[data-theme="light"] #guide #food-explorer mark{background:#CDE8D8!important;color:#16452F!important;}
 html[data-theme="light"] #guide #food-explorer :is(.pill.active,.filter.active){color:#175A45!important;}
 /* The subtle global fixed back-to-top and experimental switch. */
-html[data-theme="light"] .back-top{background:#FFFFFF!important;color:#263A43!important;border:1px solid #C9D4D7!important;box-shadow:0 4px 15px rgba(30,45,50,.10)!important;}
 .theme-preview-toggle{
  position:fixed;top:calc(14px + env(safe-area-inset-top));right:71px;z-index:121;
  display:inline-flex;align-items:center;justify-content:center;gap:5px;
@@ -3672,7 +3600,7 @@ html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .airsel-t
   background:#21343E!important;
 }
 /* Emergency cards: visible outline and readable numbers, labels and action icons. */
-html[data-theme="light"] #guide .emergency-intro{color:#66757C!important;}
+html[data-theme="light"] #guide .emergency-intro{color:#5E6B72!important;}
 html[data-theme="light"] #guide a.emergency-contact-card{
   background:#FFFFFF!important;border:1px solid #C8D3D8!important;
   color:#263941!important;box-shadow:none!important;
@@ -4119,7 +4047,7 @@ html[data-theme="light"] .hero-lockup,
 html[data-theme="light"] .hero-lockup-word,
 html[data-theme="light"] .hero-lockup-slash::before{color:#ADADAF; background-color:#ADADAF;}
 html[data-theme="light"] .hero-lockup-word .ta{color:#84D0B3!important;}
-html[data-theme="light"] .hero .tagline{color:#758088!important;}
+html[data-theme="light"] .hero .tagline{color:#5E6B72!important;}
 @media(max-width:600px){
   .hero-masthead{gap:12px;}
   .hero-brandline{font-size:11px;letter-spacing:.14em;}
@@ -4164,16 +4092,18 @@ html[data-theme="light"] .hero h1.hero-masthead .hero-brandline{
   -webkit-text-fill-color:#68747B!important;
   background:transparent!important;
 }
+/* v30.9.118: light mode — mint a little greener, gray letters a little deeper. */
 html[data-theme="light"] .hero h1.hero-masthead .hero-lockup,
 html[data-theme="light"] .hero h1.hero-masthead .hero-lockup-word{
-  color:#B1B1B3!important;
-  -webkit-text-fill-color:#B1B1B3!important;
+  color:#9C9EA2!important;
+  -webkit-text-fill-color:#9C9EA2!important;
   background:transparent!important;
 }
 html[data-theme="light"] .hero h1.hero-masthead .hero-lockup-word .ta{
-  color:#86D3B4!important;
-  -webkit-text-fill-color:#86D3B4!important;
+  color:#5CBF97!important;
+  -webkit-text-fill-color:#5CBF97!important;
 }
+html[data-theme="light"] .hero h1.hero-masthead .hero-lockup-slash::before{background:#9C9EA2!important;}
 body.food-drawer-open .hero.wrapper .theme-preview-toggle{
   opacity:0!important;
   pointer-events:none!important;

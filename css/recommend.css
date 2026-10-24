@@ -155,13 +155,11 @@ html[data-theme="light"] body.recommend-swipe-active {background:#F7F8F7!importa
 .recommend-advanced-panel h3 {margin:0 0 11px;font-size:12px;font-weight:730;color:#e7e7e7;}
 .recommend-advanced-panel .recommend-help {margin-top:12px;}
 html[data-theme="light"] .recommend-advanced-panel {background:#fff;border-color:#d0d9d7;box-shadow:0 12px 30px rgba(24,41,44,.17);}
-@media(max-width:520px){
  .recommend-controls {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;}
  .recommend-controls > .recommend-control-wrap:first-child {grid-column:1/-1;}
  .recommend-control-advanced-wrap {grid-column:2;min-width:0;}
  .recommend-advanced-trigger {width:100%;justify-content:center;gap:5px;padding-inline:7px;font-size:11.5px;}
  .recommend-advanced-panel {width:100%;}
-}
 
 /* v30.9.60 — editorial cards without numbering, featured badges or redundant map CTA. */
 .recommend-card-top{margin-bottom:5px;}
@@ -312,7 +310,6 @@ html[data-theme="light"] .recommend-active-chip-remove{color:#73549C!important;}
 html[data-theme="light"] .recommend-more{color:#604B7C;border-color:#C7BBDD;}
 html[data-theme="light"] .recommend-advanced-panel h3{color:#433354;}
 /* Laptop, tablet and mobile can use the original body scroll if appropriate. */
-@media(max-width:600px){
  .recommend-drawer-inner{
    display:flex;flex-direction:column;
    height:100dvh;overflow-y:hidden;
@@ -334,13 +331,12 @@ html[data-theme="light"] .recommend-advanced-panel h3{color:#433354;}
  .recommend-more{font-size:11px;border-radius:9px;}
  .recommend-disclaimer{font-size:9px;}
  .recommend-relaxed:not([hidden]){font-size:10px;line-height:1.3;padding:5px 8px;margin:4px 0;}
-}
-@media(max-width:600px) and (max-height:720px){
+@media(max-height:720px){
  #recommend-title{margin-bottom:2px;font-size:23px;}
  .recommend-intro{font-size:10px;}
  .recommend-disclaimer{font-size:8.5px;margin-top:5px;}
 }
-@media(max-width:600px) and (max-height:610px){
+@media(max-height:610px){
  .recommend-intro{display:none;}
  .recommend-result-head{margin:5px 0 3px;}
  .recommend-card{min-height:81px;}
@@ -351,7 +347,7 @@ html[data-theme="light"] .recommend-advanced-panel h3{color:#433354;}
 
 /* v30.9.65 — make good use of the available mobile height without making
    cards enormous; the three recommendations remain in a single viewport. */
-@media(max-width:600px) and (min-height:760px){
+@media(min-height:760px){
   .recommend-drawer-inner{display:flex;flex-direction:column;}
   .recommend-results{
     display:grid;
@@ -365,7 +361,7 @@ html[data-theme="light"] .recommend-advanced-panel h3{color:#433354;}
   }
   .recommend-venue{font-size:clamp(15px,3.9vw,17px);}
 }
-@media(max-width:600px) and (min-height:760px) and (max-height:820px){
+@media(min-height:760px) and (max-height:820px){
   .recommend-results{max-height:53dvh;}
 }
 
@@ -409,13 +405,9 @@ html[data-theme="light"] .recommend-advanced-panel h3{color:#433354;}
 .recommend-card-top .recommend-place-pin svg {display:block;width:100%;height:100%;}
 html[data-theme="light"] .recommend-card-top .recommend-place {color:#7B718A;}
 html[data-theme="light"] .recommend-card-top .recommend-place-pin {color:#8764BC;}
-@media(max-width:600px){
-  /* The desktop's card footer was removed; short phones still show the area
-     in the top row, where it costs no extra vertical space. */
   .recommend-card-top .recommend-place {display:inline-flex;gap:3px;font-size:9px;line-height:1.2;}
   .recommend-card-top .recommend-place-pin {width:11px;height:11px;flex-basis:11px;}
-}
-@media(max-width:600px) and (min-height:760px){
+@media(min-height:760px){
   .recommend-results{
     flex:1 1 auto;
     max-height:clamp(430px,68dvh,620px);
@@ -429,8 +421,7 @@ html[data-theme="light"] .recommend-card-top .recommend-place-pin {color:#8764BC
   .recommend-card-top{margin-bottom:5px;}
   .recommend-venue{line-height:1.45;}
 }
-@media(max-width:600px) and (min-height:760px) and (max-height:820px){
-  /* Supersede the older 53dvh cap while allowing flex to shrink naturally. */
+@media(min-height:760px) and (max-height:820px){
   .recommend-results{max-height:clamp(430px,68dvh,620px);}
 }
 @media(max-width:360px){
@@ -440,7 +431,7 @@ html[data-theme="light"] .recommend-card-top .recommend-place-pin {color:#8764BC
 /* Smaller phones also have spare space beneath the old compact result list.
    Redistribute the *available* space among all three cards, never overflowing
    the viewport or changing the popover's independent scrolling behavior. */
-@media(max-width:600px) and (min-height:540px) and (max-height:759px){
+@media(min-height:540px) and (max-height:759px){
   .recommend-drawer-inner{display:flex;flex-direction:column;}
   .recommend-results{
     flex:1 1 auto;
@@ -694,8 +685,6 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
   width:auto;max-width:100%;box-sizing:border-box;
 }
 .recommend-result-head .recommend-count{display:none;}
-@media(max-width:600px){
-  /* Reference screenshot: larger pause after the subtitle and before the results. */
   .recommend-intro{margin-bottom:clamp(23px,3.3dvh,32px);}
   .recommend-location-status{
     flex:0 0 auto;margin:22px 0 0;
@@ -703,7 +692,6 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
   }
   .recommend-result-head{margin:clamp(23px,3.6dvh,32px) 0 12px;}
   .recommend-result-head .recommend-advanced-plus{transform:scale(.82);transform-origin:center;}
-  /* Keep compact cards like the reference, and put extra vertical air above More. */
   .recommend-results{gap:clamp(9px,1.3dvh,12px);
   }
   .recommend-card{
@@ -712,8 +700,7 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
   }
   .recommend-more{margin: auto 0 0;}
   .recommend-disclaimer{margin-top:7px;}
-}
-@media(max-width:600px) and (max-height:720px){
+@media(max-height:720px){
   .recommend-location-status{margin-top:10px;}
   .recommend-result-head{margin:12px 0 7px;}
   .recommend-card{min-height:76px;padding:6px 10px;}
@@ -749,20 +736,16 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
 .recommend-sort-option:focus-visible{outline:2px solid #C4A6FF;outline-offset:3px;border-radius:3px;}
 html[data-theme="light"] .recommend-sort-option{color:#6B6870;}
 html[data-theme="light"] .recommend-sort-option[aria-pressed="true"]{color:#5A3D78;border-bottom-color:#8761AD;}
-@media(max-width:600px){
   .recommend-sort-option{padding-top:3px;padding-bottom:6px;}
-}
-@media(max-width:600px) and (max-height:720px){
+@media(max-height:720px){
   .recommend-sort{margin:-2px 0 6px;}
   .recommend-sort-option{min-height:24px;}
 }
 
 /* v30.9.95 — restore breathing space between intro, picker and recommendation heading. */
-@media (max-width:600px){
   .recommend-intro{margin-bottom:clamp(35px,4.8dvh,45px);}
   .recommend-result-head{margin-top:clamp(31px,4.65dvh,43px);}
-}
-@media (max-width:600px) and (max-height:720px){
+@media(max-height:720px){
   .recommend-intro{margin-bottom:18px;}
   .recommend-result-head{margin-top:20px;}
 }
@@ -773,12 +756,10 @@ html[data-theme="light"] .recommend-sort-option[aria-pressed="true"]{color:#5A3D
 .recommend-guide-tag{
   display:inline-flex;align-items:center;max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;
 }
-@media(max-width:600px){
   .recommend-guide-tags{margin-top:6px;max-height:43px;overflow:hidden;}
   .recommend-guide-tag{max-width:100%;}
   .recommend-card{min-width:0;}
-}
-@media(max-width:600px) and (max-height:720px){
+@media(max-height:720px){
   .recommend-guide-tags{margin-top:4px;max-height:38px;}
   .recommend-guide-tag{font-size:9px;padding:2px 6px;}
 }
@@ -811,12 +792,10 @@ html[data-theme="light"] .recommend-card-stars{color:#AF8A4D;}
 html[data-theme="light"] .recommend-guide-tag{background:#F7F4FA!important;color:#4B3E5D!important;border-color:#D7CDDF!important;}
 html[data-theme="light"] .recommend-guide-tag-featured{background:#F6EDD9!important;color:#8A6428!important;border-color:#D7B67B!important;}
 html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!important;color:#A84C43!important;border-color:#E0B7B2!important;}
-@media(max-width:600px){
  .recommend-card{min-height:132px!important;border-radius:18px!important;}
  .recommend-card-shell{gap:10px;}
  .recommend-distance-pill{padding:7px 10px;font-size:10px;gap:5px;}
  .recommend-distance-pill-icon{flex-basis:13px;}
-}
 @media(max-width:360px){
  .recommend-card-shell{grid-template-columns:minmax(0,1fr) 116px;gap:8px;}
  .recommend-card{min-height:124px!important;}
@@ -826,8 +805,6 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
 
 /* v30.9.100: measured mobile composition. The station picker stays FLEX
    so the original data-active flex-grow animation and native-like menus work. */
-@media(max-width:600px){
-  /* Keep the intro-to-picker breathing room from the reference. */
   .recommend-intro{margin-bottom:clamp(30px,4.1dvh,40px)!important;}
   .recommend-controls{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:0!important;flex:0 0 auto!important;margin:0!important;}
   .recommend-source-captions{
@@ -862,8 +839,6 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
   }
   .recommend-location-copy strong{display:block;max-width:100%;font-size:clamp(15px,4.5vw,19px)!important;line-height:1.12!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
   .recommend-location-copy small{display:block;max-width:100%;font-size:clamp(9px,2.8vw,11px)!important;line-height:1.25!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
-
-  /* Keep exact v97 flex-based active row animation, not grid. */
   .recommend-main-picker > .recommend-picker-station{
     display:flex!important;flex-direction:column!important;padding:2px 4px!important;
     overflow:visible!important;position:relative!important;
@@ -911,8 +886,6 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
   .recommend-mode-button .recommend-mode-pin{width:21px;height:21px;align-items:center;justify-content:center;}
   .recommend-mode-button .recommend-mode-pin svg{width:20px;height:20px;}
   .recommend-location-status{display:none!important;}
-
-  /* Advanced filters in a separate row. Title and order tabs read as one line. */
   .recommend-result-head{
     display:grid!important;grid-template-columns:minmax(0,1fr)!important;
     row-gap:18px!important;align-items:start!important;
@@ -935,8 +908,6 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
     flex:0 0 auto!important;
   }
   .recommend-sort-option{font-size:10.5px!important;min-height:27px!important;padding:3px 0 6px!important;}
-
-  /* Cards are content-independent: their size never consumes the free viewport height. */
   .recommend-results{
     display:grid!important;grid-template-rows:none!important;grid-auto-rows:auto!important;
     flex:0 0 auto!important;min-height:0!important;max-height:none!important;
@@ -967,7 +938,6 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
     margin:clamp(25px,3.5dvh,38px) 0 0!important;padding:6px 9px!important;
   }
   .recommend-disclaimer{flex:0 0 auto!important;margin:8px 0 0!important;line-height:1.4!important;}
-}
 @media(max-width:360px){
   .recommend-main-picker{grid-template-columns:minmax(0,1fr) 74px!important;}
   .recommend-source-captions{grid-template-columns:minmax(0,1fr) 74px!important;}
@@ -1035,12 +1005,9 @@ html[data-theme="light"] .recommend-distance-pill-outer{
   -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 19px,#000 calc(100% - 19px),transparent 100%);
   mask-image:linear-gradient(to right,transparent 0%,#000 19px,#000 calc(100% - 19px),transparent 100%);
 }
-@media(max-width:600px){
-  /* Left-align the clock caption with the time bubble, not the column's right edge. */
   .recommend-source-captions .recommend-source-caption:first-child{
     justify-self:start!important;text-align:left!important;
   }
-  /* Text remains optically centred when the arrow occupies the right edge. */
   .recommend-main-picker .recommend-control-time-wrap>.recommend-control{
     position:relative!important;justify-content:center!important;
   }
@@ -1053,7 +1020,6 @@ html[data-theme="light"] .recommend-distance-pill-outer{
   .recommend-main-picker .recommend-control-time-wrap .recommend-control-arrow{
     position:absolute!important;right:8px;top:50%;transform:translateY(-50%);
   }
-  /* Shift the entire lower block up by shortening only the gap above it. */
   .recommend-result-head{
     margin-top:clamp(16px,2.2dvh,27px)!important;
   }
@@ -1061,17 +1027,14 @@ html[data-theme="light"] .recommend-distance-pill-outer{
     align-self:end!important;min-height:0!important;
   }
   .recommend-card-side .recommend-tag-track{gap:4px!important;}
-}
 @media(max-width:360px){
   .recommend-main-picker .recommend-control-time-wrap>.recommend-control #recommend-time-label{
     font-size:14px!important;
   }
 }
 
-@media(max-width:600px) and (max-height:760px){
-  /* Only reduce the blank gap before the lower section; keep all component sizes. */
+@media(max-height:760px){
   .recommend-result-head{margin-top:2px!important;}
-  /* When Safari chrome reduces usable height, keep the footer text reachable. */
   .recommend-drawer-inner{overflow-y:auto!important;overscroll-behavior:contain;}
 }
 
@@ -1184,17 +1147,13 @@ html[data-theme="light"] .recommend-drawer .recommend-distance-pill{
   min-width:0;width:100%;box-sizing:border-box;margin:0!important;
 }
 .recommend-card-side{grid-template-rows:auto 1fr!important;}
-@media(max-width:600px){
-  /* Change only the filter pill's painted position; not the surrounding layout. */
   .recommend-result-head .recommend-advanced-trigger{top:5px;position:relative;}
-  /* 1pt is 1.333 CSS px, rounded to 1.3px for mobile. */
   .recommend-mode-button .recommend-mode-text{font-size:10.8px!important;}
   .recommend-main-picker.is-station .recommend-mode-button .recommend-mode-return{font-size:11.8px!important;}
   .recommend-card-shell{grid-template-rows:minmax(0,1fr) auto!important;row-gap:2px!important;}
   .recommend-card-shell > .recommend-guide-tags{margin:0!important;align-self:end!important;}
   .recommend-card-side{grid-template-rows:auto 1fr!important;}
   .recommend-guide-tags{max-width:100%!important;}
-}
 @media(max-width:360px){
   .recommend-mode-button .recommend-mode-text{font-size:9.8px!important;}
   .recommend-main-picker.is-station .recommend-mode-button .recommend-mode-return{font-size:11.3px!important;}
@@ -1309,11 +1268,9 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
   position:relative!important;top:5px!important;
   font-size:calc(clamp(17px,5.6vw,24px) + 1.333px)!important;
 }
-@media(max-width:600px){
   .recommend-drawer .recommend-card-main .recommend-venue{
     font-size:calc(clamp(14px,4.5vw,17px) + 1.333px)!important;
   }
-}
 @media(max-width:360px){
   .recommend-drawer .recommend-card-main .recommend-venue{font-size:calc(13px + 1.333px)!important;}
 }
@@ -1345,13 +1302,11 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
   padding:6.5px 10.5px!important;
   border-radius:6px!important;
 }
-@media(max-width:600px){
   .recommend-drawer .recommend-tag-track .recommend-guide-tag{
     font-size:10.3px!important;
     padding:5.5px 8.5px!important;
     border-radius:5px!important;
   }
-}
 @media(max-width:360px){
   .recommend-drawer .recommend-tag-track .recommend-guide-tag{
     font-size:9.27px!important;
@@ -1364,9 +1319,7 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
   font-size:15.3337px!important;
   position:relative!important;top:2.5px!important;
 }
-@media(max-width:600px){
   .recommend-drawer .recommend-card-main .recommend-card-type{font-size:10.8337px!important;}
-}
 @media(max-width:360px){
   .recommend-drawer .recommend-card-main .recommend-card-type{font-size:11.3337px!important;}
 }
@@ -1400,19 +1353,14 @@ html[data-theme="light"] .recommend-drawer .recommend-opening-closed{color:#B23E
 html[data-theme="light"] .recommend-drawer .recommend-opening-irregular,
 html[data-theme="light"] .recommend-drawer .recommend-opening-unknown{color:#747474;}
 .recommend-drawer .recommend-card-stars{min-height:0!important;align-self:end!important;}
-@media(max-width:600px){
   .recommend-drawer .recommend-opening-status{font-size:10.333px!important;line-height:1.1!important;gap:3px;}
   .recommend-drawer .recommend-opening-status::before{width:4px;height:4px;}
   .recommend-drawer .recommend-card-stars{min-height:0!important;}
-}
 @media(max-width:360px){
   .recommend-drawer .recommend-opening-status{font-size:9.833px!important;}
 }
 
-/* v30.9.114 — two-layer cuisine picker: 台湾グルメ details sit below a thin rule;
-   unavailable choices reuse the existing disabled pill style. ベジ badge is green. */
-.recommend-drawer .recommend-subchoices{margin-top:10px;padding-top:10px;border-top:1px solid var(--reco-line);}
-.recommend-drawer .recommend-subchoices[hidden]{display:none;}
+/* v30.9.114 — unavailable choices reuse the existing disabled pill style. ベジ badge is green. */
 .recommend-drawer .recommend-guide-tag-veg{
   color:#A8DDB1!important;background:#263629!important;border-color:#4A7552!important;
 }
@@ -1422,9 +1370,7 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-veg{
 .recommend-drawer .recommend-result-head.is-advanced-open{z-index:32;}
 
 /* v30.9.115 — cuisine panel heading: smaller on phones, with air above the choices. */
-@media(max-width:600px){
   .recommend-drawer #recommend-mood-title{font-size:14px!important;line-height:1.3!important;margin:0 0 12px!important;}
-}
 /* Station numbers with a letter (G03A, R22A): two digits on top, the letter below. */
 .recommend-drawer .recommend-native-code.has-suffix,
 .recommend-drawer .recommend-native-option-code.has-suffix{flex-direction:column;justify-content:center;align-items:center;gap:0;line-height:1;}
@@ -1448,3 +1394,17 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-veg{
 .recommend-drawer .recommend-native-list{display:grid;gap:3px;}
 html[data-theme="light"] .recommend-drawer .recommend-station-search-input{color:#2E2E2E;}
 html[data-theme="light"] .recommend-drawer .recommend-station-search-input::placeholder{color:#8A8A8A;}
+
+/* v30.9.118 — the phone layout is used at every width (desktop follows the phone);
+   new timing labels; 11px captions and sort tabs; the whole card opens Maps. */
+.recommend-drawer .recommend-opening-opening{color:#FFB967;}
+.recommend-drawer .recommend-opening-hours{color:#D9D9D9;}
+html[data-theme="light"] .recommend-drawer .recommend-opening-opening{color:#B7650C;}
+html[data-theme="light"] .recommend-drawer .recommend-opening-hours{color:#4A4A4A;}
+.recommend-drawer #recommend-time-caption,
+.recommend-drawer #recommend-area-label,
+.recommend-drawer .recommend-sort-option{font-size:11px!important;}
+.recommend-drawer .recommend-card{position:relative;cursor:pointer;}
+.recommend-drawer .recommend-card .recommend-venue{position:static!important;}
+.recommend-drawer .recommend-card .recommend-venue::after{content:"";position:absolute;inset:0;z-index:1;}
+.recommend-drawer .recommend-card .recommend-tag-track{position:relative;z-index:2;}
