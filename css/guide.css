@@ -24,23 +24,23 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .nav-subtitle{font-size:10px;line-height:1.5}
 .divider{margin:32px 0 17px;border:0;border-top:1px solid var(--line)}
 .site-content{padding-bottom:80px}
-.site-content h2{font-size:19px;line-height:1.5;letter-spacing:-.025em;margin:32px 0 13px;scroll-margin-top:20px}
-.site-content h3,.site-content h4{font-size:14px;line-height:1.5;margin:14px 0 8px;font-weight:730}
-.site-content p{margin:8px 0;line-height:1.85}
+.site-content h2:not(:where(#taipei-recommender *)){font-size:19px;line-height:1.5;letter-spacing:-.025em;margin:32px 0 13px;scroll-margin-top:20px}
+.site-content h3:not(:where(#taipei-recommender *)),.site-content h4:not(:where(#taipei-recommender *)){font-size:14px;line-height:1.5;margin:14px 0 8px;font-weight:730}
+.site-content p:not(:where(#taipei-recommender *)){margin:8px 0;line-height:1.85}
 .site-content hr{border:0;border-top:1px solid var(--line);margin:23px 0}
 .jump-anchor{display:block;height:0;scroll-margin-top:16px}
-.site-content details{border:1px solid var(--line);border-radius:12px;margin:9px 0;overflow:visible}
+.site-content details:not(:where(#taipei-recommender *)){border:1px solid var(--line);border-radius:12px;margin:9px 0;overflow:visible}
 .site-content details.root-accordion{border-radius:15px;margin:11px 0}
 .site-content details.root-accordion > summary{font-weight:730;font-size:15px;padding:15px 16px}
 .site-content details.nested-accordion{border-radius:11px;margin:8px 0}
 .site-content details.nested-accordion > summary{padding:11px 12px;font-size:13px;font-weight:650}
-.site-content details summary{display:list-item;cursor:pointer;list-style:none;position:relative;padding:12px 13px;padding-right:35px;font-weight:650;line-height:1.5}
+.site-content details summary:not(:where(#taipei-recommender *)){display:list-item;cursor:pointer;list-style:none;position:relative;padding:12px 13px;padding-right:35px;font-weight:650;line-height:1.5}
 .site-content details summary::-webkit-details-marker{display:none}
 .site-content details summary::after{content:'+';position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:19px;font-weight:400;transition:transform .15s ease}
 .site-content details[open] > summary::after{content:'−'}
 .site-content details[open] > summary{border-bottom:1px solid var(--line)}
-.site-content details > :not(summary){margin-left:14px;margin-right:14px}
-.site-content details > :last-child{margin-bottom:14px}
+.site-content details > :not(summary):not(:where(#taipei-recommender *)){margin-left:14px;margin-right:14px}
+.site-content details > :last-child:not(:where(#taipei-recommender *)){margin-bottom:14px}
 .site-content details > .indented,.site-content details > .tab{margin-top:10px}
 
 .site-content .block-color-gray_background{background:#fff}
@@ -57,7 +57,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .site-content th,.site-content td{border:1px solid #e9e9e9;padding:7px 8px;min-width:85px}
 
 .site-content a[href^="https://maps.app.goo.gl"]::after{content:' ↗';font-size:10px;opacity:.58}
-.site-content a:not([href^="https://maps.app.goo.gl"]){text-decoration:underline;text-underline-offset:3px}
+.site-content a:not([href^="https://maps.app.goo.gl"]):not(:where(#taipei-recommender *)){text-decoration:underline;text-underline-offset:3px}
 .site-content mark{border-radius:3px;padding:0 1px}
 .site-content figure{margin:12px 0}
 .site-content figure figcaption{font-size:11px}
@@ -82,7 +82,7 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
 .nav-button:nth-child(4) {background:#292737}
 .nav-button:nth-child(5) {background:#342b31}
 .nav-button:nth-child(6) {background:#342a31}
-.site-content details,.site-content .block-color-gray_background {background:var(--paper)}
+.site-content details:not(:where(#taipei-recommender *)),.site-content .block-color-gray_background {background:var(--paper)}
 .site-content details.root-accordion {box-shadow:0 3px 14px rgba(0,0,0,.12)}
 
 .site-content .block-color-yellow_background {background:#302a21}
@@ -190,21 +190,19 @@ footer {color:var(--text-caption)}
 .nav-title {color:var(--text-heading)}
 .nav-subtitle {color:var(--text-secondary)}
 
-.site-content h2 {color:var(--text-heading);font-weight:790}
-.site-content h3,.site-content h4 {color:#E6ECEF}
-.site-content p,.site-content li,.site-content td {color:var(--text-body)}
+.site-content h2:not(:where(#taipei-recommender *)) {color:var(--text-heading);font-weight:790}
+.site-content h3:not(:where(#taipei-recommender *)),.site-content h4:not(:where(#taipei-recommender *)) {color:#E6ECEF}
+.site-content p:not(:where(#taipei-recommender *)),.site-content li,.site-content td {color:var(--text-body)}
 .site-content th {color:var(--text-heading)}
 .site-content details.root-accordion > summary {color:var(--text-heading)}
 .site-content details.nested-accordion > summary {color:#E0E8EC}
 .site-content details summary::after {color:#A9B8C2}
-.site-content details {background:var(--paper)}
+.site-content details:not(:where(#taipei-recommender *)) {background:var(--paper)}
 .site-content details.nested-accordion {background:#242E35}
 .site-content figure figcaption {color:var(--text-caption)}
 
 /* Links remain easy to recognize, without competing with section headings. */
-a,.site-content a,.site-content a[href^="https://maps.app.goo.gl"],
-.site-content .venue-list-item > a[href^="https://maps.app.goo.gl"],
-.site-content .venue-list-item mark a[href^="https://maps.app.goo.gl"] {
+a,.site-content a:not(:where(#taipei-recommender *)),.site-content a[href^="https://maps.app.goo.gl"],.site-content .venue-list-item > a[href^="https://maps.app.goo.gl"],.site-content .venue-list-item mark a[href^="https://maps.app.goo.gl"] {
   color:var(--link);
 }
 a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:hover {
@@ -214,7 +212,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   text-decoration-color:rgba(169,216,243,.58);
   text-decoration-thickness:1px;
 }
-.site-content a:not([href^="https://maps.app.goo.gl"]) {
+.site-content a:not([href^="https://maps.app.goo.gl"]):not(:where(#taipei-recommender *)) {
   text-decoration-color:rgba(169,216,243,.48);
 }
 .site-content .venue-list-item {color:var(--text-caption)}
@@ -230,7 +228,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 }
 .site-content mark.highlight-gray {color:var(--text-caption)}
 .site-content mark a {color:var(--link)}
-.site-content strong {font-weight:750}
+.site-content strong:not(:where(#taipei-recommender *)) {font-weight:750}
 
 /* Editorial notes keep a transparent background and a quieter tone. */
 .site-content .callout,.site-content .callout.block-color-gray_background {
@@ -292,7 +290,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 @media(prefers-reduced-motion:reduce){.site-content a.section-jump-button{transition:none;}}
 
 /* When an accordion opens, show its heading above the revealed content. */
-.site-content details > summary { scroll-margin-top: 22px; }
+.site-content details > summary:not(:where(#taipei-recommender *)) { scroll-margin-top: 22px; }
 
 /* Restore original Notion emoji stored in empty data-emoji spans. */
 .site-content .icon[data-emoji]::before {content:attr(data-emoji);}
@@ -1047,8 +1045,8 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .travel-caution aside.travel-tip {border:0!important;background:transparent!important;}
 @media (max-width:600px) {
   .site-content {font-size:14px;line-height:1.8;}
-  .site-content h2 {font-size:19px;}
-  .site-content h3,.site-content h4 {font-size:15px;}
+  .site-content h2:not(:where(#taipei-recommender *)) {font-size:19px;}
+  .site-content h3:not(:where(#taipei-recommender *)),.site-content h4:not(:where(#taipei-recommender *)) {font-size:15px;}
   .site-content details.root-accordion > summary {font-size:14px;}
   .site-content details.nested-accordion > summary {font-size:13.5px;}
   .quick-nav .nav-subtitle {font-size:12px;}
@@ -1067,7 +1065,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 /* K95 transparent outline language. Exceptions: six home nav cards, safety/TWAC, food explorer. */
 
 /* General accordions, sub-accordions and directories: no fill. */
-.site-content details:not(.travel-caution):not(.travel-twac),
+.site-content details:not(.travel-caution):not(.travel-twac):not(:where(#taipei-recommender *)),
 .site-content details.root-accordion:not(.travel-caution):not(.travel-twac),
 .site-content details.nested-accordion,
 .site-content details.destination-card,
@@ -1076,7 +1074,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
  background:transparent!important; background-image:none!important;
  border-color:var(--outline-white)!important; box-shadow:none!important;
 }
-.site-content details:not(.travel-caution):not(.travel-twac) > summary,
+.site-content details:not(.travel-caution):not(.travel-twac) > summary:not(:where(#taipei-recommender *)),
 .site-content details:not(.travel-caution):not(.travel-twac)[open] > summary {background:transparent!important; border-color:var(--outline-divider)!important;}
 /* Transparent ordinary option surfaces. */
 .site-content .airport-direction-button,
@@ -1131,7 +1129,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 body{color:var(--mono-body)}
 .hero .tagline,footer{color:var(--mono-sub)!important}
 /* Only ordinary content gets the monochrome palette. */
-.site-content :is(p,li,td,th,summary,summary strong):not(.travel-caution *):not(.travel-twac *):not(#food-explorer *){color:var(--mono-body)}
+.site-content :is(p,li,td,th,summary,summary strong):not(.travel-caution *):not(.travel-twac *):not(#food-explorer *):not(:where(#taipei-recommender *)){color:var(--mono-body)}
 .site-content :is(.airport-access-subheading,.airport-mode-name,.airport-route-stop,.airport-fare-amount,.destination-title,.venue-name-line,.area-intro-title,.travel-topic-title):not(.travel-caution *){color:var(--mono-main)!important}
 .site-content :is(.airport-fare-label,.airport-fare-time,.airport-root-meta,.airport-direction-text small,.destination-pr,.destination-lead,.destination-guide-label,.destination-info-title,.metro-transfer-note,.metro-route-key-item,.venue-row-index,.venue-extra-note,.area-intro-description,.section-note):not(.travel-caution *):not(.travel-twac *){color:var(--mono-sub)!important}
 .site-content :is(.airport-direction-text strong,.airport-direction-button,.selected-value,.venue-main-link,.section-jump-button):not(#food-explorer *){color:var(--mono-main)!important}
@@ -1161,7 +1159,7 @@ body{color:var(--mono-body)}
 }
 html,body{background:#0D0D0D!important;color:#E7E7E7;}
 /* Surfaces are transparent. Thin dividers carry hierarchy instead of boxed panels. */
-.site-content details:not(.travel-caution):not(.travel-twac),
+.site-content details:not(.travel-caution):not(.travel-twac):not(:where(#taipei-recommender *)),
 .site-content .area-directory-section .tab-panel>.area-category-list,
 .site-content .airport-direction-button,
 .site-content .destination-info-group,
@@ -1169,10 +1167,10 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 .site-content .venue-directory-section .venue-secondary-links a{
  background:transparent!important;background-image:none!important;box-shadow:none!important;
 }
-.site-content details:not(.travel-caution):not(.travel-twac),
+.site-content details:not(.travel-caution):not(.travel-twac):not(:where(#taipei-recommender *)),
 .site-content .airport-direction-button,
 .site-content .area-directory-section .tab-panel>.area-category-list{border-color:#424242!important;}
-.site-content details:not(.travel-caution):not(.travel-twac) > summary,
+.site-content details:not(.travel-caution):not(.travel-twac) > summary:not(:where(#taipei-recommender *)),
 .site-content details:not(.travel-caution):not(.travel-twac)[open] > summary,
 .site-content .venue-directory-section li.venue-row,
 .site-content .destination-info-group,
@@ -1198,9 +1196,9 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
  background:transparent!important;border-color:#444444!important;color:#C8C8C8!important;
 }
 /* Main typography: neutral white, gray supporting text. */
-.hero .welcome,.hero h1,.hero h1 span,.site-content h2,.site-content h3,.site-content h4{color:#F7F7F7!important;}
+.hero .welcome,.hero h1,.hero h1 span,.site-content h2:not(:where(#taipei-recommender *)),.site-content h3:not(:where(#taipei-recommender *)),.site-content h4:not(:where(#taipei-recommender *)){color:#F7F7F7!important;}
 .hero .tagline,.site-content .section-note,.site-content .destination-lead,.site-content .venue-extra-note,footer{color:#A6A6A6!important;}
-.site-content a:not(.travel-twac a):not(#food-explorer a){color:#F0F0F0!important;text-decoration-color:#747474!important;}
+.site-content a:not(.travel-twac a):not(#food-explorer a):not(:where(#taipei-recommender *)){color:#F0F0F0!important;text-decoration-color:#747474!important;}
 /* Six entry cards stay recognizable and tappable, but visually quiet. */
 .quick-nav .nav-button:nth-child(n){background:#181818!important;border:1px solid #333333!important;box-shadow:none!important;}
 .quick-nav .nav-button:hover{background:#222222!important;border-color:#505050!important;}
@@ -1332,7 +1330,7 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 
 /* Keep pinch-to-zoom and normal panning. Suppress double-tap zoom on modern
    iOS Safari / Android browsers without disabling accessibility zoom. */
-html, body, .nav-button, .site-content a, .site-content button, .site-content details > summary, #food-explorer button, #food-explorer .pill, #food-explorer .quick button { touch-action:manipulation; }
+html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .site-content button, .site-content details > summary:not(:where(#taipei-recommender *)), #food-explorer button, #food-explorer .pill, #food-explorer .quick button { touch-action:manipulation; }
 /* A focused open area reads as a current selection without a bright new box. */
 .site-content .area-directory-section .area-category-list > details[open] > summary {
   color:#FAFAFA!important;
@@ -3362,14 +3360,13 @@ html[data-theme="light"], html[data-theme="light"] body{
 html[data-theme="light"] body,html[data-theme="light"] #guide{
  scrollbar-color:#BAC5C9 #F0F3F3;
 }
-html[data-theme="light"] :is(.hero h1,.hero h1 span,.hero .welcome,.site-content h2,.site-content h3,.site-content h4),
-html[data-theme="light"] #guide :is(.airport-access-subheading,.travel-topic-title,.venue-name-line,.destination-title,.daytrip-destination-panel-title,.rail-title){color:#172329!important;}
+html[data-theme="light"] :is(.hero h1,.hero h1 span,.hero .welcome,.site-content h2,.site-content h3,.site-content h4):not(:where(#taipei-recommender *)),html[data-theme="light"] #guide :is(.airport-access-subheading,.travel-topic-title,.venue-name-line,.destination-title,.daytrip-destination-panel-title,.rail-title){color:#172329!important;}
 html[data-theme="light"] :is(.hero .tagline,.below-nav,footer),
 html[data-theme="light"] #guide :is(.section-note,.destination-lead,.destination-pr,.destination-guide-label,.venue-extra-note,.area-intro-description,.metro-transfer-note,.airport-fare-time,.airport-fare-label,.daytrip-destination-panel-desc){color:#66737A!important;}
-html[data-theme="light"] #guide :is(p,li,td,th,summary):not(#food-explorer *):not(.travel-caution *):not(.travel-twac *){
+html[data-theme="light"] #guide :is(p,li,td,th,summary):not(#food-explorer *):not(.travel-caution *):not(.travel-twac *):not(:where(#taipei-recommender *)){
  color:#2E393E;
 }
-html[data-theme="light"] #guide a:not(#food-explorer a):not(.travel-twac a):not(.venue-tag){
+html[data-theme="light"] #guide a:not(#food-explorer a):not(.travel-twac a):not(.venue-tag):not(:where(#taipei-recommender *)){
  color:#155F92!important;text-decoration-color:rgba(21,95,146,.34)!important;
 }
 html[data-theme="light"] #guide a:not(#food-explorer a):not(.travel-twac a):hover{color:#084772!important;}
@@ -3389,13 +3386,13 @@ html[data-theme="light"] .quick-nav > .nav-button:nth-child(n):hover{
 html[data-theme="light"] .quick-nav :is(.nav-title){color:#213038!important;}
 html[data-theme="light"] .quick-nav :is(.nav-subtitle,.nav-arrow){color:#66737A!important;}
 /* Outline accordions and the area / venue directories: white page, cool gray rules. */
-html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac),
+html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac):not(:where(#taipei-recommender *)),
 html[data-theme="light"] #guide .destination-card,
 html[data-theme="light"] #guide .area-directory-section .tab-panel > .area-category-list,
 html[data-theme="light"] #guide :is(.airport-mode-card,.airport-direction-button,.airport-check-tools,.airport-check-links a,.destination-info-group){
  background:transparent!important;background-image:none!important;border-color:#CDD5D9!important;box-shadow:none!important;
 }
-html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac) > summary,
+html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac) > summary:not(:where(#taipei-recommender *)),
 html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac)[open] > summary,
 html[data-theme="light"] #guide :is(.destination-info-group,.venue-row,.destination-card .tab-panel,.venue-list-item),
 html[data-theme="light"] #guide .area-directory-section :is(.area-category-list,.area-directory-group){border-color:#DDE2E3!important;}
