@@ -1407,3 +1407,15 @@ html[data-theme="light"] .recommend-drawer .recommend-opening-unknown{color:#747
 @media(max-width:360px){
   .recommend-drawer .recommend-opening-status{font-size:9.833px!important;}
 }
+
+/* v30.9.114 — two-layer cuisine picker: 台湾グルメ details sit below a thin rule;
+   unavailable choices reuse the existing disabled pill style. ベジ badge is green. */
+.recommend-drawer .recommend-subchoices{margin-top:10px;padding-top:10px;border-top:1px solid var(--reco-line);}
+.recommend-drawer .recommend-subchoices[hidden]{display:none;}
+.recommend-drawer .recommend-guide-tag-veg{
+  color:#A8DDB1!important;background:#263629!important;border-color:#4A7552!important;
+}
+html[data-theme="light"] .recommend-drawer .recommend-guide-tag-veg{
+  color:#2D6A3A!important;background:#ECF7EE!important;border-color:#A9D3B1!important;
+}
+.recommend-drawer .recommend-result-head.is-advanced-open{z-index:32;}

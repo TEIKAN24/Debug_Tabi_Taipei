@@ -42775,11 +42775,12 @@
       "id": "food-original-0126",
       "name": "青花驕麻辣鍋",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "鍋"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "鍋",
       "volume": [
         "hearty"
       ],
@@ -43057,11 +43058,12 @@
       "id": "food-original-0127",
       "name": "詹記麻辣火鍋",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "鍋"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "鍋",
       "volume": [
         "hearty"
       ],
@@ -43209,11 +43211,12 @@
       "id": "food-original-0128",
       "name": "馬辣",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "鍋"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "鍋",
       "volume": [
         "hearty"
       ],
@@ -43674,11 +43677,12 @@
       "id": "food-added-xinmala-20261023",
       "name": "新馬辣",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "鍋"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "鍋",
       "volume": [
         "hearty"
       ],
@@ -44125,11 +44129,12 @@
       "id": "food-original-0129",
       "name": "松江自助石頭火鍋城",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "鍋"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "鍋",
       "volume": [
         "hearty"
       ],
@@ -44226,11 +44231,12 @@
       "id": "food-original-0130",
       "name": "無老鍋",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "鍋"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "鍋",
       "volume": [
         "hearty"
       ],
@@ -44514,11 +44520,12 @@
       "id": "food-original-0131",
       "name": "楽烹鍋物 THE HOT POT",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "鍋"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "鍋",
       "volume": [
         "hearty"
       ],
@@ -44609,11 +44616,12 @@
       "id": "food-original-0132",
       "name": "阿財蔬菜羊肉爐",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "鍋"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "鍋",
       "volume": [
         "hearty"
       ],
@@ -44706,11 +44714,12 @@
       "id": "food-original-0133",
       "name": "下港吔羊肉專賣店",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "鍋"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "鍋",
       "volume": [
         "hearty"
       ],
@@ -44807,11 +44816,12 @@
       "id": "food-original-0134",
       "name": "紅翻天",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "熱炒"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "熱炒・海鮮",
       "volume": [
         "hearty"
       ],
@@ -44894,11 +44904,12 @@
       "id": "food-original-0135",
       "name": "臨洋港",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "熱炒"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "熱炒・海鮮",
       "volume": [
         "hearty"
       ],
@@ -44987,11 +44998,12 @@
       "id": "food-original-0136",
       "name": "33区熱炒",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "熱炒"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "熱炒・海鮮",
       "volume": [
         "hearty"
       ],
@@ -45084,11 +45096,12 @@
       "id": "food-original-0137",
       "name": "品鱻海鮮熱炒店",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "熱炒"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "熱炒・海鮮",
       "volume": [
         "hearty"
       ],
@@ -45171,11 +45184,12 @@
       "id": "food-original-0138",
       "name": "鮮定味",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "熱炒"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "熱炒・海鮮",
       "volume": [
         "hearty"
       ],
@@ -48348,11 +48362,12 @@
       "id": "michelin-bib-2026-550800",
       "name": "番紅花印度美饌",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "各国・創作料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "インド料理",
       "volume": [
         "hearty"
       ],
@@ -48930,11 +48945,12 @@
       "id": "michelin-bib-2026-1216373",
       "name": "Tableau by Craig Yang",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "台湾料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "創作台湾料理",
       "volume": [
         "hearty"
       ],
@@ -49134,11 +49150,12 @@
       "id": "michelin-bib-2026-550802",
       "name": "祥和蔬食",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "台湾料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "台湾料理",
       "volume": [
         "hearty"
       ],
@@ -49244,6 +49261,10 @@
       },
       "guideTags": [
         {
+          "text": "ベジ",
+          "tone": "veg"
+        },
+        {
           "text": "ミシュラン ビブグルマン 2026",
           "tone": "featured"
         }
@@ -49254,11 +49275,12 @@
       "id": "michelin-bib-2026-1204301",
       "name": "小酌之家",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "台湾料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "台湾料理",
       "volume": [
         "hearty"
       ],
@@ -49445,11 +49467,12 @@
       "id": "michelin-bib-2026-1193763",
       "name": "松竹園",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "台湾料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "台湾料理",
       "volume": [
         "hearty"
       ],
@@ -49567,11 +49590,12 @@
       "id": "michelin-bib-2026-569911",
       "name": "人和園",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "各国・創作料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "雲南料理",
       "volume": [
         "hearty"
       ],
@@ -49776,11 +49800,12 @@
       "id": "michelin-bib-2026-551098",
       "name": "醉楓園小館",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "各国・創作料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "広東料理",
       "volume": [
         "hearty"
       ],
@@ -49969,11 +49994,12 @@
       "id": "michelin-bib-2026-1193707",
       "name": "隱食家 Inns+",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "台湾料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "台湾料理",
       "volume": [
         "hearty"
       ],
@@ -50171,11 +50197,12 @@
       "id": "michelin-bib-2026-1211653",
       "name": "胖塔可",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "各国・創作料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "メキシコ料理",
       "volume": [
         "hearty"
       ],
@@ -50265,11 +50292,12 @@
       "id": "michelin-bib-2026-1217382",
       "name": "雲川水月",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "各国・創作料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "創作料理",
       "volume": [
         "hearty"
       ],
@@ -50343,6 +50371,10 @@
         "highestBowls": 0
       },
       "guideTags": [
+        {
+          "text": "ベジ",
+          "tone": "veg"
+        },
         {
           "text": "ミシュラン ビブグルマン 2026",
           "tone": "featured"
@@ -50440,11 +50472,12 @@
       "id": "michelin-bib-2026-1193664",
       "name": "金賞軒",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "台湾料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "台湾料理",
       "volume": [
         "hearty"
       ],
@@ -50748,11 +50781,12 @@
       "id": "michelin-bib-2026-1244474",
       "name": "有有1969",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "台湾料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "台湾料理",
       "volume": [
         "hearty"
       ],
@@ -50995,11 +51029,12 @@
       "id": "michelin-bib-2026-1193571",
       "name": "心潮飯店",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "台湾料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "台湾料理",
       "volume": [
         "hearty"
       ],
@@ -51176,11 +51211,12 @@
       "id": "michelin-bib-2026-550706",
       "name": "雞家莊 (長春路)",
       "industries": [
-        "レストラン"
+        "レストラン",
+        "台湾料理"
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "レストラン",
+      "displayType": "台湾料理",
       "volume": [
         "hearty"
       ],
