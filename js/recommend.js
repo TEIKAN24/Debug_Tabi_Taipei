@@ -1,4 +1,6 @@
-/* TAIPEI CITY GUIDE v30.9.114 — two-layer cuisine picker: 料理種類 filters, 台湾グルメ details only lift
+/* TAIPEI CITY GUIDE v30.9.115 — station search in the line menu; stacked 2-digit + letter station
+   codes (e.g. 03/A); the cuisine panel spans the result row; unavailable choices move last.
+   v30.9.114 — two-layer cuisine picker: 料理種類 filters, 台湾グルメ details only lift
    matching shops; choices with no shop for the current time and place are greyed out.
    v30.9.113 — data files revalidate with cache:'no-cache' (304 when unchanged) instead of no-store.
    v30.9.112 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
@@ -10,7 +12,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.114';
+  const VERSION='30.9.115';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -608,8 +610,82 @@
       syncUI();renderResults();
     }
   }
+  // Codes such as G03A / R22A show the number on top and the letter below.
+  function fillStationCode(node,code){
+    const number=String(code||'').replace(/^[A-Z]+/,'');
+    const split=number.match(/^(\d+)([A-Z])$/);
+    node.classList.toggle('has-suffix',!!split);
+    if(!split){node.textContent=number;node.removeAttribute('aria-label');return;}
+    node.replaceChildren(el('span','recommend-code-number',split[1]),el('span','recommend-code-suffix',split[2]));
+    node.setAttribute('aria-label',number);
+  }
+  // Line menu: a search field (station name, English name or number) above the line list.
+  const lineSearch=el('input','recommend-station-search-input');
+  lineSearch.type='search';lineSearch.placeholder='駅名・駅番号で検索';
+  lineSearch.setAttribute('aria-label','駅名または駅番号で検索（例：中山、R11）');
+  lineSearch.autocomplete='off';lineSearch.spellcheck=false;lineSearch.enterKeyHint='search';
+  const lineSearchWrap=el('label','recommend-station-search');
+  lineSearchWrap.innerHTML='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 5 5"/></svg>';
+  lineSearchWrap.append(lineSearch);
+  const lineList=el('div','recommend-native-list');
+  lineList.setAttribute('role','listbox');lineList.setAttribute('aria-label','地下鉄の路線を選択');
+  lineMenu.append(lineSearchWrap,lineList);
+  // Japanese / simplified forms of characters used in station names, folded to the data's forms.
+  const STATION_CHAR_FOLD={亜:'亞',内:'內',剣:'劍',区:'區',国:'國',囲:'圍',円:'圓',学:'學',徳:'德',楼:'樓',権:'權',渓:'溪',万:'萬',芦:'蘆',覧:'覽',医:'醫',関:'關',双:'雙',体:'體',竜:'龍',荘:'莊',回:'迴',産:'產',臺:'台',
+    关:'關',龙:'龍',园:'園',圆:'圓',权:'權',览:'覽',门:'門',东:'東',车:'車',头:'頭',汇:'匯',宁:'寧',桥:'橋',机:'機',场:'場',电:'電',馆:'館',阳:'陽',纪:'紀',兴:'興',华:'華',凤:'鳳',麟:'麟'};
+  const foldStationText=text=>[...String(text||'').normalize('NFKC').toLowerCase().replace(/空港/g,'機場')].map(ch=>STATION_CHAR_FOLD[ch]??ch).join('')
+    .replace(/車站|駅|站|[\s・·．.\-－_()（）]/g,'');
+  function searchStations(query){
+    const q=foldStationText(query);
+    if(!q)return [];
+    const ranked=[];
+    for(const item of metroStations){
+      const code=item.code.toLowerCase(),name=foldStationText(item.name),en=foldStationText(item.en);
+      const rank=code===q?0:code.startsWith(q)?1:name===q||en===q?2:name.startsWith(q)?3:en.startsWith(q)?4:name.includes(q)?5:en.includes(q)||code.includes(q)?6:-1;
+      if(rank>=0)ranked.push([rank,item]);
+    }
+    const lineOrder=id=>metroLines.findIndex(x=>x.id===id);
+    return ranked.sort((a,b)=>a[0]-b[0]||lineOrder(a[1].line)-lineOrder(b[1].line)||a[1].code.localeCompare(b[1].code,'en',{numeric:true}))
+      .slice(0,30).map(x=>x[1]);
+  }
+  function chooseStation(item){
+    state.line=item.line;state.stationCode=item.code;state.page=0;
+    lineSearch.value='';
+    renderStationOptions();buildMetroLineOptions();syncUI();renderResults();closeStationMenus();
+  }
+  function renderLineSearch(){
+    if(!lineSearch.value.trim()){buildMetroLineOptions();return;}
+    lineList.replaceChildren();
+    const found=searchStations(lineSearch.value);
+    if(!found.length){
+      const empty=el('div','recommend-native-empty','該当する駅がありません');
+      empty.append(el('small','','駅名（中国語・英語）または駅番号で検索できます'));
+      lineList.append(empty);return;
+    }
+    for(const item of found){
+      const color=(metroLines.find(x=>x.id===item.line)?.color)||'#4288c9';
+      const button=el('button','recommend-native-option recommend-native-option-station recommend-station-result');button.type='button';
+      button.dataset.value=item.code;button.dataset.line=item.line;button.setAttribute('role','option');
+      button.setAttribute('aria-selected',String(state.line===item.line&&state.stationCode===item.code));
+      const badge=el('span','recommend-native-option-code');badge.classList.add('is-station');fillStationCode(badge,item.code);
+      badge.style.setProperty('--station-code-border',color);badge.style.borderColor=color;badge.style.backgroundColor='#ffffff';badge.style.color='#202227';
+      const copy=el('span','recommend-native-option-copy');
+      copy.append(el('strong','',item.name),el('small','',`${item.code} · ${item.en||'MRT Station'}`));
+      button.append(badge,copy);
+      button.addEventListener('click',()=>chooseStation(item));
+      lineList.append(button);
+    }
+  }
+  lineSearch.addEventListener('input',renderLineSearch);
+  lineSearch.addEventListener('keydown',event=>{
+    if(event.key==='Enter'){
+      event.preventDefault();
+      const first=lineSearch.value.trim()?searchStations(lineSearch.value)[0]:null;
+      if(first)chooseStation(first);
+    }else if(event.key==='Escape'){event.preventDefault();closeStationMenus();lineTrigger.focus({preventScroll:true});}
+  });
   function buildMetroLineOptions(){
-    lineMenu.replaceChildren();
+    lineList.replaceChildren();
     for(const line of metroLines){
       const button=el('button','recommend-native-option recommend-native-option-line');button.type='button';
       button.dataset.value=line.id;button.setAttribute('role','option');button.setAttribute('aria-selected',String(state.line===line.id));
@@ -621,7 +697,7 @@
         if(state.line!==line.id){state.line=line.id;state.stationCode='';state.page=0;}
         renderStationOptions();syncUI();renderResults();closeStationMenus();
       });
-      lineMenu.append(button);
+      lineList.append(button);
     }
   }
   function renderStationOptions(){
@@ -637,7 +713,7 @@
     for(const item of items){
       const button=el('button','recommend-native-option recommend-native-option-station');button.type='button';
       button.dataset.value=item.code;button.setAttribute('role','option');button.setAttribute('aria-selected',String(state.stationCode===item.code));
-      const badge=el('span','recommend-native-option-code',item.code.replace(/^[A-Z]+/,''));badge.classList.add('is-station');const itemLineColor=(metroLines.find(x=>x.id===item.line)?.color)||'#4288c9';badge.style.setProperty('--station-code-border',itemLineColor);badge.style.borderColor=itemLineColor;badge.style.backgroundColor='#ffffff';badge.style.color='#202227';
+      const badge=el('span','recommend-native-option-code');fillStationCode(badge,item.code);badge.classList.add('is-station');const itemLineColor=(metroLines.find(x=>x.id===item.line)?.color)||'#4288c9';badge.style.setProperty('--station-code-border',itemLineColor);badge.style.borderColor=itemLineColor;badge.style.backgroundColor='#ffffff';badge.style.color='#202227';
       const copy=el('span','recommend-native-option-copy');
       copy.append(el('strong','',item.name));copy.append(el('small','',item.en||'MRT Station'));
       button.append(badge,copy);
@@ -659,7 +735,7 @@
       if(!stationsReady)return;
       const open=lineMenu.hidden;
       closeStationMenus();closeOptions();advanced.open=false;
-      if(open){lineMenu.hidden=false;lineTrigger.setAttribute('aria-expanded','true');lineField.classList.add('is-picking','is-open');stationControls.dataset.active='line';}
+      if(open){if(lineSearch.value){lineSearch.value='';buildMetroLineOptions();}lineMenu.hidden=false;lineTrigger.setAttribute('aria-expanded','true');lineField.classList.add('is-picking','is-open');stationControls.dataset.active='line';}
       return;
     }
     if(stationTrigger.disabled)return;
@@ -689,7 +765,24 @@
   drawer.addEventListener('keydown',event=>{if(event.key==='Escape'){closeOptions();closeStationMenus();advanced.open=false;}});
   advanced.addEventListener('toggle',()=>{if(advanced.open)closeOptions();});
   // The open panel can grow wider than its row (more selected chips); keep it above the sort tabs.
-  advanced.addEventListener('toggle',()=>advanced.closest('.recommend-result-head')?.classList.toggle('is-advanced-open',advanced.open));
+  advanced.addEventListener('toggle',()=>{
+    advanced.closest('.recommend-result-head')?.classList.toggle('is-advanced-open',advanced.open);
+    placeAdvancedPanel();
+  });
+  // The panel spans the whole result row so choices sit side by side, however
+  // narrow the row of selected conditions (its positioning parent) is.
+  const advancedPanel=advanced.querySelector('.recommend-advanced-panel');
+  function placeAdvancedPanel(){
+    if(!advanced.open||!advancedPanel)return;
+    const head=advanced.closest('.recommend-result-head'),host=advancedPanel.offsetParent;
+    if(!head||!host)return;
+    const row=head.getBoundingClientRect(),origin=host.getBoundingClientRect();
+    advancedPanel.style.left=`${Math.round(row.left-origin.left)}px`;
+    advancedPanel.style.right='auto';
+    advancedPanel.style.width=`${Math.round(row.width)}px`;
+    advancedPanel.style.maxWidth='none';
+  }
+  window.addEventListener('resize',placeAdvancedPanel,{passive:true});
   drawer.addEventListener('click',e=>{
     if(!e.target.closest('.recommend-control-time-wrap'))closeOptions();
     if(!e.target.closest('.recommend-control-advanced-wrap'))advanced.open=false;
@@ -722,6 +815,7 @@
     secondaryControls.classList.toggle('recommend-has-selected',hasSelections);
     advancedTrigger.setAttribute('aria-label','さらに条件を指定');
     advancedTrigger.title='さらに条件を指定';
+    placeAdvancedPanel();
   }
   function syncUI(){
     syncActiveConditions();
@@ -749,13 +843,13 @@
     lineCode.classList.toggle('is-empty',!selectedLine);
     stationLabel.textContent=selectedStation?selectedStation.name:selectedLine?'駅を選択':'先に路線を選択';
     stationEn.textContent=selectedStation?(selectedStation.en||'MRT Station'):selectedLine?'Select Station':'Select Line First';
-    stationCode.textContent=selectedStation?selectedStation.code.replace(/^[A-Z]+/,''):'--';
+    if(selectedStation)fillStationCode(stationCode,selectedStation.code);else{stationCode.classList.remove('has-suffix');stationCode.removeAttribute('aria-label');stationCode.textContent='--';}
     stationCode.style.setProperty('--station-code-border',selectedLine?.color||'#424049');
     stationCode.style.backgroundColor=selectedLine?'#ffffff':'';
     stationCode.style.borderColor=selectedLine?.color||'';
     stationCode.style.color=selectedLine?'#202227':'';
     stationCode.classList.toggle('is-empty',!selectedStation);
-    for(const option of lineMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.line));
+    for(const option of lineList.querySelectorAll('.recommend-native-option-line'))option.setAttribute('aria-selected',String(option.dataset.value===state.line));
     for(const option of stationMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.stationCode));
     const district=nearbyDistrict(state.position);
     districtName.textContent=state.locationStatus==='outside'?'台北市外':district?`台北市 ${district[0]}`:state.locationStatus==='loading'?'測位中':'現在地';
@@ -1000,7 +1094,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   const UNAVAILABLE_TITLE='この時間帯・場所に該当する登録店はありません';
   function refreshChoiceAvailability(){
     const buttons=[...categoryControls,...subControls];
-    if(!nearbyReady){for(const b of buttons){b.disabled=false;b.removeAttribute('title');}return;}
+    if(!nearbyReady){for(const b of buttons){b.disabled=false;b.removeAttribute('title');}moods.append(...categoryControls);subOptions.append(...subControls);return;}
     const {byTime}=contextCandidates();
     let cleared=false;
     const apply=(b,available)=>{b.disabled=!available;if(available)b.removeAttribute('title');else b.title=UNAVAILABLE_TITLE;};
@@ -1014,6 +1108,11 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       apply(b,available);
       if(!available&&state.subs.includes(b.dataset.value)){state.subs=state.subs.filter(key=>key!==b.dataset.value);cleared=true;}
     }
+    const lastWhenUnavailable=(holder,controls)=>{
+      const wanted=[...controls.filter(b=>!b.disabled),...controls.filter(b=>b.disabled)];
+      if(wanted.some((b,i)=>holder.children[i]!==b))holder.append(...wanted);
+    };
+    lastWhenUnavailable(moods,categoryControls);lastWhenUnavailable(subOptions,subControls);
     if(cleared){state.page=0;syncUI();}
   }
   function renderResults(){
