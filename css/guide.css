@@ -1,8 +1,8 @@
+/* v30.9.113 maintenance — removed rules for markup that no longer exists, overridden declarations and their orphaned notes; cascade order preserved. */
 /* v30.9.51 maintenance — removed guaranteed-overridden top-level declarations and empty rules; cascade order preserved. */
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source rules unchanged. */
 
 /* =================== CSS 01: base =================== */
-
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:22px;-webkit-text-size-adjust:100%;}
@@ -12,7 +12,6 @@ button,a{-webkit-tap-highlight-color:transparent}
 button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .wrapper{width:min(100% - 36px,760px);margin:0 auto}
 .hero{padding:clamp(30px,8vw,60px) 0 10px}
-.eyebrow{font-weight:750;font-size:10px;letter-spacing:.24em;color:var(--accent)}
 .hero h1{font-size:clamp(28px,8vw,47px);line-height:1.1;letter-spacing:-.04em;margin:12px 0 17px;font-weight:830}
 .hero .tagline{margin:0}
 .quick-nav{margin:22px 0 12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -23,8 +22,6 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .nav-icon{font-size:27px;line-height:1}.nav-copy{display:flex;flex-direction:column;gap:1px;padding-top:8px;z-index:1}
 .nav-title{font-size:13px;font-weight:790;line-height:1.5;letter-spacing:-.02em}
 .nav-subtitle{font-size:10px;line-height:1.5}
-.nav-arrow{position:absolute;top:13px;right:13px;font-size:17px;}
-.below-nav{font-size:11px;color:#81878a;margin:5px 1px 0}
 .divider{margin:32px 0 17px;border:0;border-top:1px solid var(--line)}
 .site-content{padding-bottom:80px}
 .site-content h2{font-size:19px;line-height:1.5;letter-spacing:-.025em;margin:32px 0 13px;scroll-margin-top:20px}
@@ -44,8 +41,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .site-content details[open] > summary{border-bottom:1px solid var(--line)}
 .site-content details > :not(summary){margin-left:14px;margin-right:14px}
 .site-content details > :last-child{margin-bottom:14px}
-.site-content details > .indented,.site-content details > .tab,.site-content details > .column-list{margin-top:10px}
-
+.site-content details > .indented,.site-content details > .tab{margin-top:10px}
 
 .site-content .block-color-gray_background{background:#fff}
 
@@ -55,28 +51,19 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .site-content ul.toggle{padding:0;list-style:none}
 .site-content ul.toggle>li{list-style:none}
 .site-content .indented{padding-left:10px}
-.site-content .column-list{display:flex;gap:12px;flex-wrap:wrap}
 .site-content .column{flex:1;min-width:140px}
-.site-content .collection-content-wrapper,.site-content table{max-width:100%;overflow-x:auto}
+.site-content table{max-width:100%;overflow-x:auto}
 .site-content table{border-collapse:collapse;font-size:12px;margin:10px 0}
 .site-content th,.site-content td{border:1px solid #e9e9e9;padding:7px 8px;min-width:85px}
 
 .site-content a[href^="https://maps.app.goo.gl"]::after{content:' ↗';font-size:10px;opacity:.58}
 .site-content a:not([href^="https://maps.app.goo.gl"]){text-decoration:underline;text-underline-offset:3px}
 .site-content mark{border-radius:3px;padding:0 1px}
-.site-content .selected-value{border-radius:6px;font-size:11px;display:inline-block;padding:2px 5px}
-.icon-fallback{display:inline-flex;align-items:center;justify-content:center;font-size:17px;vertical-align:middle;min-width:22px;margin-right:3px}
-
-.feature-link{display:flex;align-items:center;gap:12px;background:#262d30;color:#fff!important;padding:16px;border-radius:15px;text-decoration:none!important;min-height:75px}
-.feature-link:hover{text-decoration:none!important}
-.feature-link-icon{font-size:29px}.feature-link-label{display:flex;flex:1;flex-direction:column;gap:3px}
-.feature-link-label strong{font-size:14px}.feature-link-label small{font-size:11px;color:#cdd5d2}
-.feature-link-arrow{font-size:20px;color:#fff}
 .site-content figure{margin:12px 0}
 .site-content figure figcaption{font-size:11px}
 .back-top{bottom:calc(18px + env(safe-area-inset-bottom));cursor:pointer;z-index:10;transition:opacity .2s,transform .2s}
 
-footer{border-top:1px solid var(--line);margin-top:24px;padding:20px 0 32px;color:#82898b;font-size:11px}
+footer{border-top:1px solid var(--line);margin-top:24px;padding:20px 0 32px;font-size:11px}
 @media(min-width:650px){.wrapper{width:min(100% - 64px,760px)}.quick-nav{gap:14px}.nav-button{min-height:144px;padding:17px 20px}.nav-title{font-size:16px}.nav-subtitle{font-size:12px}.nav-icon{font-size:34px}.site-content{font-size:15px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.nav-button,.back-top{transition:none}}
 
@@ -88,7 +75,6 @@ footer{border-top:1px solid var(--line);margin-top:24px;padding:20px 0 32px;colo
 
 body {background:var(--bg)}
 a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
-.hero .tagline,.below-nav {color:var(--muted)}
 .nav-button {color:var(--ink);border:1px solid #353e45;box-shadow:0 5px 18px rgba(0,0,0,.16)}
 .nav-button:hover {box-shadow:0 8px 24px rgba(0,0,0,.22)}
 .nav-button:nth-child(1) {background:#203033}
@@ -97,32 +83,24 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
 .nav-button:nth-child(4) {background:#292737}
 .nav-button:nth-child(5) {background:#342b31}
 .nav-button:nth-child(6) {background:#342a31}
-.nav-arrow {opacity:.65}
 .site-content details,.site-content .block-color-gray_background {background:var(--paper)}
 .site-content details.root-accordion {box-shadow:0 3px 14px rgba(0,0,0,.12)}
 
-
 .site-content .block-color-yellow_background {background:#302a21}
-.site-content .block-color-blue_background {background:#20313b}
-.site-content .block-color-red_background {background:#382726}
 .site-content .callout {background:#282923}
 .site-content th,.site-content td {border-color:var(--line)}
 .site-content mark {background:#554331;color:#f9e4ad}
-
 
 .site-content figure figcaption,footer {color:var(--muted)}
 
 /* Full-width embedded food search, sized to mobile height without lateral overflow. */
 .food-browser-banner {display:block;margin:17px 0 22px;scroll-margin-top:14px}
-.food-frame-shell {width:100%;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#191a1a;box-shadow:0 5px 20px rgba(0,0,0,.12)}
-.food-frame {display:block;width:100%;border:0;background:#191a1a;color-scheme:dark;overscroll-behavior:contain}
 @media(max-width:600px){
  .wrapper {width:calc(100% - 28px)}
  .hero {padding-top:32px}
  .quick-nav {gap:9px}
  .nav-button {min-height:118px;padding:14px 12px;border-radius:15px}
  .site-content details.root-accordion > summary {padding:14px 15px}
- .food-frame-shell {border-radius:13px}
 }
 @media(max-width:365px){.nav-title{font-size:12px}.nav-subtitle{font-size:9px}.nav-icon{font-size:25px}}
 
@@ -160,18 +138,13 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
  .site-content .tab-pill .inline-category-icon {width:23px;height:23px}
  .site-content details.root-accordion > .indented {margin-left:11px;margin-right:11px}
 }
-/* Original dedicated GitHub search app, maintained independently and embedded in-page. */
-.food-frame {height:705px}
-@media(max-width:600px){.food-frame{height:715px}}
-@media(max-width:365px){.food-frame{height:745px}}
 
 /* 2026-10-14: destination links and low-contrast, unboxed notes */
 .site-content a[href^="https://maps.app.goo.gl"] {
   color:#9ed5f4;
   font-weight:700;
   text-decoration:underline;
-  
-  
+
   text-underline-offset:3px;
 }
 .site-content a[href^="https://maps.app.goo.gl"]:hover {
@@ -203,7 +176,6 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
 }
 /* Remove Notion text-highlight backgrounds; keep original emphasis colors. */
 
-
 /* === Typography hierarchy & subtle navigation surfaces, 2026-10-14 ===
    H1 / section / accordion = clear, near-white.
    Reading text = softer cool white.
@@ -211,26 +183,13 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
    Links = one consistent, accessible pale blue.
    Gold and coral = editorial emphasis, never background highlight. */
 :root {
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
   --tag-gold: #EBC489;
 }
 .hero h1,.hero .welcome {color:var(--text-heading)}
-.hero h1 span,.eyebrow {color:var(--accent)}
-.below-nav,footer {color:var(--text-caption)}
+footer {color:var(--text-caption)}
 .nav-title {color:var(--text-heading)}
 .nav-subtitle {color:var(--text-secondary)}
-.nav-arrow {color:var(--text-secondary)}
 
 .site-content h2 {color:var(--text-heading);font-weight:790}
 .site-content h3,.site-content h4 {color:#E6ECEF}
@@ -241,7 +200,6 @@ a,.site-content a[href^="https://maps.app.goo.gl"] {color:var(--accent)}
 .site-content details summary::after {color:#A9B8C2}
 .site-content details {background:var(--paper)}
 .site-content details.nested-accordion {background:#242E35}
-.site-content .selected-value {color:#D4E0E6;background:#2C3740}
 .site-content figure figcaption {color:var(--text-caption)}
 
 /* Links remain easy to recognize, without competing with section headings. */
@@ -272,11 +230,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   padding:0;
 }
 .site-content mark.highlight-gray {color:var(--text-caption)}
-.site-content mark.highlight-yellow,
-.site-content .venue-list-item mark.highlight-yellow {color:var(--tag-gold)}
-.site-content mark.highlight-red,
-.site-content .venue-list-item mark.highlight-red {color:#F4A89B}
-.site-content mark.highlight-blue:not(:has(a)) {color:#B7DFF5}
 .site-content mark a {color:var(--link)}
 .site-content strong {font-weight:750}
 
@@ -317,12 +270,10 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 @media (max-width: 649px) {
   .quick-nav .nav-button {min-height:108px;padding:13px 12px 12px}
   .quick-nav .nav-title {font-size:clamp(12px,3.25vw,13px);line-height:1.4}
-  .quick-nav .nav-subtitle {font-size:10px;line-height:1.4}
 }
 @media (min-width:650px) {.quick-nav .nav-button {min-height:130px}}
 /* Give new major categories a distinct visual boundary. */
 .site-content .chapter-divider {border-color:var(--line);margin:24px 0 19px}
-
 
 /* The original title is the food-search link; no extra visual button treatment. */
 .hero h1 .hero-title-link,
@@ -331,7 +282,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   display:inline-block;color:inherit;text-decoration:none!important;
 }
 .hero h1 .hero-title-link:focus-visible {outline:2px solid #83d3b0;outline-offset:5px;border-radius:3px;}
-.site-content .section-jump-row {display:flex;justify-content:flex-end;margin:14px 0 16px;}
 .site-content a.section-jump-button {
   display:inline-flex;align-items:center;gap:8px;max-width:100%;
   padding:10px 14px;border:1px solid #40505b;border-radius:999px;
@@ -339,7 +289,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   text-decoration:none;transition:background .16s ease,border-color .16s ease;
 }
 .site-content a.section-jump-button:hover {background:#33454f;border-color:#7896a7;color:#f5f7f8;text-decoration:none;}
-.section-jump-arrow {color:#9eacb6;font-size:15px;margin-left:3px;}
 
 @media(prefers-reduced-motion:reduce){.site-content a.section-jump-button{transition:none;}}
 
@@ -351,44 +300,9 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 
 /* Airport access — compact route cards / boarding pass-inspired structure. */
 .site-content details.airport-access {border-color:#40515a;}
-.site-content .airport-access > .airport-root-heading {display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap;}
-.site-content .airport-root-meta {letter-spacing:.12em;font-weight:800;color:#9babb5;white-space:nowrap;margin-right:17px;}
 .site-content .airport-access > .indented {margin-left:12px;margin-right:12px;}
 .site-content .airport-access .tab-pills {gap:7px;}
 .site-content .airport-access .tab-pill {font-size:12px;min-height:42px;}
-.site-content .airport-options {padding:1px 0 5px;}
-.site-content .airport-route-overview {
-  margin:6px 0 13px;border:1px solid #425660;border-radius:12px;
-  background:linear-gradient(135deg,#263842,#202b32);padding:14px 15px 15px;
-}
-.site-content .airport-route-kicker {color:#9dd8d0;font-size:10px;letter-spacing:.1em;font-weight:780;line-height:1.5;margin-bottom:12px;}
-.site-content .airport-route-line {display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;}
-.site-content .airport-route-stop {display:flex;align-items:center;gap:7px;min-width:0;font-size:12px;font-weight:740;line-height:1.5;color:#f1f5f6;}
-.site-content .airport-route-dot {display:block;flex:0 0 9px;width:9px;height:9px;border-radius:50%;background:#9dd8d0;box-shadow:0 0 0 3px rgba(157,216,208,.14);}
-.site-content .airport-route-dot--end {background:transparent;border:2px solid #a9d8f3;box-shadow:none;}
-.site-content .airport-route-arrow {color:#98b2c1;font-weight:700;line-height:1;}
-.site-content .airport-mode-card {border:1px solid #3e4c55;border-radius:12px;margin:8px 0;padding:13px 13px 14px;}
-.site-content .airport-mode-heading {display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 11px;}
-.site-content .airport-mode-icon {display:inline-flex;align-items:center;justify-content:center;font-size:18px;line-height:1.2;width:24px;flex:0 0 24px;}
-.site-content .airport-mode-name {color:#e9eff2;font-size:13px;font-weight:760;line-height:1.5;}
-.site-content .airport-mode-recommended {font-size:10px;color:#e9cb91;background:#423b2e;border:1px solid #66553a;padding:3px 7px;border-radius:6px;font-weight:740;}
-.site-content .airport-fare-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
-.site-content .airport-fare-item {min-width:0;background:#1a252c;border:1px solid #33434e;border-radius:9px;padding:11px 10px;display:flex;flex-direction:column;gap:5px;}
-.site-content .airport-fare-label {color:#c5d2d9;font-weight:720;font-size:11px;line-height:1.45;}
-.site-content .airport-fare-amount {color:#f4f7f8;font-weight:790;font-size:19px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.3;}
-.site-content .airport-fare-time {color:#aebdc5;font-size:11px;line-height:1.5;}
-.site-content .airport-single-fare {display:flex;align-items:baseline;gap:7px 11px;flex-wrap:wrap;padding:2px 0 0;}
-.site-content .airport-single-fare span:first-child {color:#f4f7f8;font-size:19px;font-weight:790;}
-.site-content .airport-single-fare span:last-child {color:#b3c1ca;font-size:11px;}
-.site-content .airport-mode-compact {display:flex;align-items:center;gap:9px;padding:11px 13px;}
-.site-content .airport-mode-compact .airport-mode-name {font-weight:600;color:#cbd8df;font-size:12px;}
-.site-content .airport-options > :last-child {margin-bottom:5px;}
-@media(max-width:365px){
- .site-content .airport-route-line {gap:6px;}
- .site-content .airport-route-stop {font-size:11px;gap:5px;}
- .site-content .airport-fare-grid {grid-template-columns:1fr;}
-}
-
 
 /* =================== CSS 02: block_1 =================== */
 /* Page header refinements */
@@ -400,9 +314,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   vertical-align:-4px;display:inline-block;
 }
 
-
 /* =================== CSS 03: food-search-styles =================== */
-
 
 #food-explorer{
       --page: #191a1a;
@@ -421,7 +333,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
     font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
     
   }
-#food-explorer .kicker{ font-size: 10px; letter-spacing: .17em; color: var(--accent); font-weight: 750; margin: 0 0 8px; }
 #food-explorer .search-shell{
     display: flex; align-items: center; gap: 10px;
     padding: 0 13px;
@@ -520,9 +431,9 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
     gap: 3px 9px;
     text-align: center;
   }
-#food-explorer .scroll-tip[hidden], #food-explorer .spice-caption[hidden], #food-explorer #scroll-text[hidden]{ display: none; }
+#food-explorer .scroll-tip[hidden], #food-explorer #scroll-text[hidden]{ display: none; }
 #food-explorer .foot{ text-align: center; font-size: 11px;  }
-@media  (max-width: 420px) {#food-explorer .food-panel{ border-radius: 12px; padding: 17px 13px 10px; }
+@media  (max-width: 420px) {
 #food-explorer .tag{ font-size: 9px; }
 #food-explorer .result{ gap: 5px; }
 #food-explorer .pill{ font-size: 11px; padding: 7px 9px; }}
@@ -549,15 +460,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 #food-explorer .search-shell input::placeholder{color:var(--muted);}
 #food-explorer .quick button,#food-explorer .pill{touch-action:manipulation;}
 @media(max-width:420px){#food-explorer .food-panel{padding:18px 13px 15px;border-radius:15px;}}
-
-
-
-/* =================== CSS 04: tabi-taipei-eyebrow-colors =================== */
-
-/* TABI / TAIPEI — change only the lettering colors. */
-.hero .eyebrow { color: #DCE4E8; }
-.hero .eyebrow .ta { color: #83D3B0; }
-
 
 /* =================== CSS 05: venue-directory-style =================== */
 
@@ -590,9 +492,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 }
 .site-content .venue-directory-section .venue-row-body {min-width:0;display:flex;flex-direction:column;gap:7px;}
 .site-content .venue-directory-section .venue-name-line {
-  
-  
-  
+
   flex-wrap:wrap;
   
   line-height:1.5;
@@ -652,8 +552,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   line-height:1.6;
 }
 .site-content .venue-directory-section .venue-secondary-links a {
-  
-  
+
   border-bottom:1px solid rgba(169,216,243,.42);
   
 }
@@ -662,49 +561,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 @media (max-width:365px) {
   .site-content .venue-directory-section li.venue-row {grid-template-columns:21px minmax(0,1fr);column-gap:7px}
   .site-content .venue-directory-section .venue-name-line a.venue-main-link {font-size:13.5px}
-}
-
-/* === MRT routes: integrated into rail cards, styled after the actual services. === */
-.site-content .metro-route {
-  margin:3px 0 17px;padding:13px 11px 10px;background:#1A252C;
-  border:1px solid #394952;border-radius:10px;min-width:0;
-}
-.site-content .metro-route-stops {display:flex;justify-content:space-between;}
-.site-content .metro-route-stops span {min-width:0;font-weight:720;color:#E8F0F3;}
-
-.site-content .metro-route--transfer .metro-route-stops span{flex:0 1 33.33%;max-width:33.33%;font-size:10px;}
-.site-content .metro-route--transfer .metro-route-stops span:nth-child(2){text-align:center;}
-.site-content .metro-route-track{display:flex;align-items:center;width:100%;min-width:0;margin-top:12px;}
-.site-content .metro-route-dot{
-  flex:0 0 9px;width:9px;height:9px;z-index:1;
-  background:#1A252C;border:2px solid #B58A51;border-radius:50%;
-}
-.site-content .metro-route--transfer .metro-route-dot:first-child {border-color:var(--metro-start,#B58A51)}
-.site-content .metro-route--transfer .metro-route-dot:last-child {border-color:var(--metro-end,#358AC5)}
-.site-content .metro-route--transfer .metro-route-dot--transfer{border-color:#D6E3E9;background:#1A252C;box-shadow:0 0 0 1px #1A252C;}
-.site-content .metro-route--taoyuan .metro-route-dot{border-color:#B18BD4;}
-.site-content .metro-route--return .metro-route-dot:first-child{border-color:#358AC5;}
-.site-content .metro-route--return .metro-route-dot:last-child{border-color:#B58A51;}
-.site-content .metro-route-segment{flex:1;min-width:0;height:2px;background:var(--metro-line,#A772CE);position:relative;color:var(--metro-line,#A772CE);}
-.site-content .metro-route-segment--dual{height:5px;background:linear-gradient(to bottom,#AE70D0 0 40%,transparent 40% 60%,#438FD2 60% 100%)}
-.site-content .metro-route-chip{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  color:#EDF3F6;background:#23323B;border:1px solid #617480;
-  padding:4px 8px;border-radius:999px;white-space:nowrap;
-  font-size:10px;font-weight:770;line-height:1.4;z-index:2;
-}
-.site-content .metro-route--transfer .metro-route-chip{padding:4px 5px;border-color:var(--metro-line)}
-.site-content .metro-route-key{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;}
-.site-content .metro-route-key-item{display:inline-flex;align-items:center;gap:5px;color:#B7C4CE;}
-.site-content .metro-route-key-dot{background:var(--key-color);border-radius:50%;display:inline-block;}
-
-.site-content .airport-fare-item--express {
-  border-top:1px solid #755B8D;
-  background:linear-gradient(to bottom,rgba(174,112,208,.24) 0,rgba(174,112,208,.10) 19px,rgba(174,112,208,0) 44px),#1a252c;
-}
-.site-content .airport-fare-item--commuter {
-  border-top:1px solid #426F9A;
-  background:linear-gradient(to bottom,rgba(67,143,210,.24) 0,rgba(67,143,210,.10) 19px,rgba(67,143,210,0) 44px),#1a252c;
 }
 /* === Scrollable place directories: category tabs remain visible outside the list. === */
 .site-content .venue-directory-section .tab-panel {
@@ -737,7 +593,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 @media(max-width:365px){
  .site-content .venue-directory-section .venue-secondary-links{max-width:100px;}
  .site-content .venue-directory-section .venue-secondary-links a{padding:4px 5px;}
- .site-content .metro-route{padding:12px 8px 9px;}
 }
 /* Directory tags: keep each short label on one line when it fits.
    Wrap the whole label to the next row only if necessary; never hide tags behind a swipe. */
@@ -752,7 +607,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   }
 }
 
-
 /* =================== CSS 06: mobile-search-travel-daytrips =================== */
 
 /* === Oct 2026: mobile food index / calmer travel cards / daytrip directory === */
@@ -760,7 +614,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   /* Use almost the entire phone width; keep a little breathing room at the edge. */
   .site-content .food-browser-banner {margin-left:-5px;margin-right:-5px;margin-top:15px;margin-bottom:24px;}
   #food-explorer .food-panel {padding:16px 13px 13px;border-radius:15px;}
-  #food-explorer .kicker {font-size:9px;letter-spacing:.14em;margin-bottom:6px;}
   #food-explorer .food-title {font-size:clamp(20px,5.4vw,23px);margin-bottom:4px;}
   #food-explorer .intro {font-size:11.5px;margin-bottom:13px;line-height:1.6;}
   #food-explorer .search-shell {padding:0 11px;gap:8px;border-radius:11px;}
@@ -772,7 +625,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
     overscroll-behavior-x:contain;
   }
   #food-explorer .quick::-webkit-scrollbar {display:none;}
-  #food-explorer .quick > span {font-size:10px;flex:0 0 auto;margin-right:3px;}
+  #food-explorer .quick > span {flex:0 0 auto;margin-right:3px;}
   #food-explorer .quick button {flex:0 0 35px;height:35px;display:inline-grid;place-items:center;padding:0;font-size:16px;}
   #food-explorer .filters {
     flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;min-width:0;
@@ -782,12 +635,11 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   }
   #food-explorer .filters::-webkit-scrollbar {display:none;}
   #food-explorer .filters .pill {
-    flex:0 0 auto;min-height:39px;white-space:nowrap;scroll-snap-align:start;
-    font-size:11px;padding:7px 11px;
+    flex:0 0 auto;min-height:39px;white-space:nowrap;scroll-snap-align:start;padding:7px 11px;
   }
   #food-explorer .results-head {padding-bottom:8px;}
   #food-explorer .result {padding:11px 1px;gap:8px;}
-  #food-explorer .dish {font-size:14px;line-height:1.45;}
+  #food-explorer .dish {line-height:1.45;}
   #food-explorer .desc {font-size:11px;line-height:1.5;}
   #food-explorer .tag {font-size:9px;margin-top:1px;}
   #food-explorer #results.scrolling {scrollbar-gutter:auto;}
@@ -837,29 +689,12 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   font-size:12px;line-height:1.8;
 }
 
-.site-content .travel-twac .travel-twac-link::after {content:' ↗';font-size:11px;margin-left:5px;}
-
 .site-content .travel-twac em {color:#B3C0BB;}
 /* Nearby travel: a destination directory, not four more airport transport cards. */
 .site-content .destination-lead {font-size:12px;color:var(--text-caption);margin:0 0 15px;line-height:1.7;}
 .site-content details.root-accordion.destination-card {
   background:#1E282E;border:1px solid #3D4D57;border-radius:13px;margin:9px 0;
 }
-.site-content details.destination-card > summary.destination-summary {
-  display:flex;align-items:center;gap:11px;min-height:77px;
-  padding:14px 38px 14px 13px;
-}
-.site-content .destination-number {color:#879DAA;font-size:10px;letter-spacing:.06em;font-variant-numeric:tabular-nums;flex:0 0 20px;}
-.site-content .destination-icon {
-  width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;
-  border-radius:9px;background:#2B3941;font-size:20px;
-}
-.site-content .destination-icon .inline-category-icon.sky-lantern-icon {
-  display:block;width:25px;height:25px;max-width:none;margin:0;vertical-align:initial;
-}
-.site-content .destination-copy {min-width:0;display:flex;flex-direction:column;gap:4px;}
-.site-content .destination-title {font-size:14px;font-weight:730;line-height:1.4;color:#F5F7F8;}
-.site-content .destination-pr {font-weight:430;color:#A8B9C2;}
 .site-content details.destination-card > summary::after {
   content:'';width:8px;height:8px;border-right:1.6px solid #AFC0C9;
   border-bottom:1.6px solid #AFC0C9;right:17px;
@@ -869,15 +704,12 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content details.destination-card[open] > summary {border-bottom:1px solid #3D4D57;}
 @media(max-width:350px) {
   .site-content .travel-key-title {font-size:13px;}
-  .site-content details.destination-card > summary.destination-summary {gap:8px;padding-left:10px;}
-  .site-content .destination-pr {font-size:10.5px;}
 }
 
 /* === Editorial polish: in-page links are clear without repeated external arrows. === */
 .site-content a[href]::after,
 .site-content .venue-directory-section .venue-name-line a.venue-main-link::after,
-.site-content .venue-directory-section .venue-secondary-links a::after,
-.site-content .travel-twac .travel-twac-link::after {
+.site-content .venue-directory-section .venue-secondary-links a::after {
   content:none!important;
   display:none!important;
 }
@@ -922,8 +754,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .travel-caution aside.travel-tip,
 .site-content .travel-caution aside.travel-tip.block-color-gray_background {
   display:block!important;
-  
-  
+
   white-space:normal!important;
 }
 .site-content .travel-caution aside.travel-tip:last-child {margin-bottom:0!important;}
@@ -942,14 +773,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   list-style:none;padding:0;margin:4px 0 0;
 }
 .site-content .travel-twac .bulleted-list > li {list-style:none!important;margin:0;color:#CAD9D3;line-height:1.9;}
-.site-content .travel-twac .travel-twac-link {
-  display:inline-flex;align-items:center;justify-content:center;
-  padding:3px 8px;min-height:30px;border-radius:5px;
-  background:#2B483C;border:1px solid #527866;
-  color:#DAF2E4!important;text-decoration:none!important;
-  font-size:11px;font-weight:690;letter-spacing:0;
-}
-.site-content .travel-twac .travel-twac-link:hover {background:#355948;border-color:#7EAA91;}
 .site-content .travel-twac .bulleted-list em {
   display:block;margin-top:8px;padding:9px 11px;
   border-radius:7px;background:#1C2B28;
@@ -1039,7 +862,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   .site-content .destination-card .tab-pill{font-size:11px;}
 }
 
-
 /* =================== CSS 07: editorial-readability-20261015 =================== */
 
 /* Reading-first refinement: keep the dark palette, change only information density. */
@@ -1084,39 +906,29 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .destination-card .tab-panel details.nested-accordion .indented > p,
 .site-content .destination-card .tab-panel ol.numbered-list > li,
 .site-content .destination-spots > ol.numbered-list li {font-size:12px;line-height:1.8;}
-.site-content .destination-pr {font-size:12px;line-height:1.55;}
 .site-content .destination-guide-label,
 .site-content .destination-info-title {font-size:11.5px;}
 .site-content .destination-card .tab-pill {font-size:12px;}
 .site-content .destination-card .tab-panel > .indented > p:first-child {font-size:12px;}
 /* Supporting labels should remain legible on compact phones. */
-
-.site-content .metro-route--transfer .metro-route-chip {font-size:10px;}
-
-.site-content .airport-root-meta {font-size:10.5px;}
 .site-content .venue-directory-section .venue-row-index {font-size:11px;}
 .site-content .venue-directory-section .venue-tag {font-size:11px;}
 .site-content .venue-directory-section .venue-extra-note {font-size:12px;}
 .site-content .venue-directory-section .venue-secondary-links a {font-size:11.5px;}
 @media(max-width:649px){
   .quick-nav .nav-subtitle {font-size:11.5px;line-height:1.45;}
-  #food-explorer .kicker {font-size:10px;}
   #food-explorer .intro {font-size:12px;}
   #food-explorer .quick > span {font-size:11px;}
   #food-explorer .filters .pill {font-size:11.5px;}
   #food-explorer .desc {font-size:12px;line-height:1.55;}
   #food-explorer .tag {font-size:10.5px;}
   #food-explorer .scroll-tip,#food-explorer .foot {font-size:11px;}
-  .site-content .metro-route--transfer .metro-route-stops span {font-size:10px;}
 }
 @media(max-width:365px){
   .quick-nav .nav-subtitle {font-size:11px;}
-  .site-content .destination-pr {font-size:11.5px;}
   .site-content .travel-topic-subtitle {font-size:11px;}
   .site-content .venue-directory-section .venue-secondary-links a {font-size:11px;}
-  .site-content .metro-route--transfer .metro-route-chip {padding:4px 3px;}
 }
-
 
 /* =================== CSS 08: area-directory-refinement =================== */
 
@@ -1161,7 +973,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   .site-content .area-directory-section .area-intro-description {font-size:11.5px;}
 }
 
-
 /* =================== CSS 09: airport-direction-switcher-style =================== */
 
 /* The section covers both travel preparation and airport transfers. */
@@ -1174,9 +985,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .airport-direction-switcher {
   margin:11px 0 18px;min-width:0;
   padding:0;border:0;border-radius:0;background:transparent;
-}
-.site-content .airport-direction-buttons {
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
 }
 .site-content .airport-direction-button {
   appearance:none;-webkit-appearance:none;cursor:pointer;position:relative;
@@ -1192,94 +1000,24 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .airport-direction-button[aria-expanded="true"] {
   background:#243b4a;border-color:#8acaf0;box-shadow:inset 0 0 0 .5px #8acaf0;
 }
-.site-content .airport-direction-icon {
-  display:block;flex:0 0 auto;width:29px;height:29px;
-  color:#9fb3c0;
-}
-.site-content .airport-direction-button[aria-expanded="true"] .airport-direction-icon {color:#94d3f5;}
-.site-content .airport-direction-icon svg {display:block;width:100%;height:100%;}
-.site-content .airport-direction-text {
-  min-width:0;width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:5px;
-}
-.site-content .airport-direction-text strong {
-  font-size:17px;line-height:1.4;letter-spacing:-.025em;font-weight:700;
-  color:#f2f6f9;white-space:nowrap;
-}
-.site-content .airport-direction-text small {
-  font-size:12px;line-height:1.4;color:#a1b2bd;white-space:nowrap;
-}
-.site-content .airport-direction-indicator {
-  display:flex;align-items:center;justify-content:center;
-  position:absolute;right:15px;top:17px;width:19px;height:19px;
-  color:#94d3f5;opacity:0;transition:opacity .15s ease;
-}
-.site-content .airport-direction-indicator svg {width:100%;height:100%;}
-.site-content .airport-direction-button[aria-expanded="true"] .airport-direction-indicator {opacity:1;}
-.site-content .airport-direction-content {min-width:0;}
 .site-content .airport-direction-switcher .airport-access {margin:11px 0 0;min-width:0;}
 .site-content .airport-direction-switcher .airport-access:not([open]) {display:none;}
 .site-content .airport-direction-switcher .airport-access > summary {display:none;}
 .site-content .airport-direction-switcher .airport-access > .indented {margin:0;padding:13px 12px 14px;}
 @media(max-width:600px){
  .site-content .airport-direction-switcher {padding:0;}
- .site-content .airport-direction-buttons {gap:9px;}
  .site-content .airport-direction-button {padding:13px 12px 13px;gap:11px;border-radius:12px;}
- .site-content .airport-direction-icon {width:26px;height:26px;}
- .site-content .airport-direction-text {gap:4px;}
- .site-content .airport-direction-text strong {font-size:14px;}
- .site-content .airport-direction-text small {font-size:11px;}
- .site-content .airport-direction-indicator {width:17px;height:17px;top:13px;right:11px;}
 }
 @media(max-width:365px){
  .site-content .airport-direction-switcher {padding:0;}
- .site-content .airport-direction-buttons {gap:7px;}
  .site-content .airport-direction-button {min-height:119px;padding:12px 9px 11px;}
- .site-content .airport-direction-icon {width:24px;height:24px;}
- .site-content .airport-direction-text strong {font-size:12.5px;}
- .site-content .airport-direction-text small {font-size:10.5px;}
- .site-content .airport-direction-indicator {top:10px;right:8px;}
 }
-@media(prefers-reduced-motion: reduce){.site-content .airport-direction-button,.site-content .airport-direction-indicator{transition:none;}}
-
+@media(prefers-reduced-motion: reduce){.site-content .airport-direction-button{transition:none;}}
 
 /* =================== CSS 10: airport-quick-check-and-focus-style =================== */
-
-/* Live airport data stays on the official site. Keep access compact and readable. */
-.site-content .airport-check-tools {
-  margin:0 0 12px; padding:10px 12px 11px;
-  background:#202d36; border:1px solid #385163; border-radius:11px;
-}
-.site-content .airport-check-label {
-  display:block; margin-bottom:7px; color:#a7bcc9;
-  font-size:10.5px; font-weight:740; letter-spacing:.025em;
-}
-.site-content .airport-check-links {
-  display:flex; flex-wrap:wrap; gap:7px 8px; align-items:center;
-}
-.site-content .airport-check-links a {
-  display:inline-flex; justify-content:space-between; align-items:center; gap:5px;
-  max-width:100%; min-height:33px; box-sizing:border-box;
-  padding:7px 10px; background:#273d4e; border:1px solid #496981;
-  border-radius:7px; color:#b4e0fa; font-size:11.5px; font-weight:670;
-  line-height:1.35; text-decoration:none;
-}
-.site-content .airport-check-links a:hover,
-.site-content .airport-check-links a:focus-visible {
-  background:#334f62; border-color:#80bde4; color:#e2f4ff;
-}
-.site-content .airport-check-links a span {font-size:12px; opacity:.8;}
-.site-content .airport-check-note {
-  margin:8px 0 0; color:#aab8c1; font-size:11px; line-height:1.55;
-}
 /* Prevent browser scroll anchoring from shifting the viewport as mutually
    exclusive airport details change their heights. JS handles deliberate focus. */
-.site-content .airport-direction-content {overflow-anchor:none;}
 .site-content .airport-direction-switcher {scroll-margin-top:16px;}
-@media(max-width:355px){
-  .site-content .airport-check-links {gap:6px;}
-  .site-content .airport-check-links a {font-size:11px; padding:7px 8px;}
-}
-
 
 /* =================== CSS 11: sightseeing-daytrips-20261015 =================== */
 
@@ -1288,19 +1026,11 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .sights-day-trips > .destination-lead {margin:0 0 14px;}
 .site-content .sights-day-trips > .jump-anchor {scroll-margin-top:18px;}
 
-
 /* =================== CSS 12: mobile-readability-and-card-simplification-20261015 =================== */
 
 /* Reading scale: avoid 9–11px operational text, without resizing icons or route artwork. */
 .site-content .section-note,.site-content .destination-lead {font-size:13px;line-height:1.8;}
-.site-content .travel-key-subtitle,.site-content .travel-topic-subtitle,
-.site-content .destination-pr,.site-content .venue-extra-note,
-.site-content .metro-transfer-note,.site-content .airport-root-meta {font-size:12px;line-height:1.65;}
-.site-content .airport-mode-name,.site-content .airport-fare-label,
-.site-content .airport-fare-time,.site-content .airport-single-fare span:last-child,
-.site-content .airport-route-stop,.site-content .airport-route-kicker,
-.site-content .metro-route-stops span,.site-content .metro-route-key-item,
-.site-content .airport-mode-recommended {font-size:12px;line-height:1.55;}
+.site-content .travel-key-subtitle,.site-content .travel-topic-subtitle,.site-content .venue-extra-note {font-size:12px;line-height:1.65;}
 .site-content .venue-directory-section .venue-row-index,
 .site-content .venue-directory-section .venue-tag,
 .site-content .venue-directory-section .venue-secondary-links a {font-size:12px;line-height:1.45;}
@@ -1315,19 +1045,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .travel-alert .bulleted-list {font-size:13px;line-height:1.8;}
 .site-content .tab-pill,.site-content .destination-card .tab-pill {font-size:13px;line-height:1.45;}
 /* Each major card remains the container; nested route/fare details use spacing and dividers. */
-.site-content .airport-mode-card {border-color:#3c4d57;background:#222d34;}
-.site-content .airport-mode-card .metro-route {
-  background:transparent;border:0;border-radius:0;
-}
-.site-content .airport-mode-card .airport-fare-item {
-  background:transparent;border:0;border-radius:0;box-shadow:none;padding:7px 0 5px;
-}
-.site-content .airport-mode-card .airport-fare-item--express,
-.site-content .airport-mode-card .airport-fare-item--commuter {background:transparent;border-top:0;}
-.site-content .airport-mode-card .airport-fare-grid {gap:8px 14px;}
-.site-content .airport-mode-card .airport-fare-item + .airport-fare-item {
-  border-left:1px solid #40515c;padding-left:14px;
-}
 .site-content .destination-card .tab-panel {background:transparent;border:0;border-top:1px solid #3B4B54;}
 .site-content .destination-card .destination-info-group,
 .site-content .destination-card .tab-panel details.nested-accordion {
@@ -1342,91 +1059,14 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   .site-content details.nested-accordion > summary {font-size:13.5px;}
   .quick-nav .nav-subtitle {font-size:12px;}
   .site-content .travel-topic-title,.site-content .travel-key-title {font-size:14px;}
-  .site-content .airport-fare-amount {font-size:19px;}
-  .site-content .airport-fare-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
-  .site-content .airport-mode-card .airport-fare-item + .airport-fare-item {padding-left:10px;}
-  .site-content .metro-route--transfer .metro-route-stops span {font-size:11.5px;}
-  .site-content .metro-route--transfer .metro-route-chip {font-size:10.5px;}
   .site-content .venue-directory-section .venue-tag {font-size:11.5px;}
   .site-content .destination-card .tab-pill {font-size:12px;}
-  #food-explorer .kicker,#food-explorer .quick > span {font-size:11.5px;}
+  #food-explorer .quick > span {font-size:11.5px;}
   #food-explorer .intro,#food-explorer .desc {font-size:12.5px;line-height:1.65;}
   #food-explorer .filters .pill {font-size:12px;}
   #food-explorer .tag,#food-explorer .scroll-tip,#food-explorer .foot {font-size:11.5px;}
   #food-explorer .dish {font-size:14.5px;}
 }
-@media (max-width:365px) {
-  .site-content .airport-mode-card .airport-fare-item + .airport-fare-item {
-    border-left:0;border-top:1px solid #40515c;padding-left:0;padding-top:12px;margin-top:7px;
-  }
-  .site-content .metro-route--transfer .metro-route-stops span {font-size:11px;}
-  .site-content .metro-route--transfer .metro-route-chip {font-size:10px;}
-}
-
-
-/* =================== CSS 13: airport-line-diagram-v2 =================== */
-
-/* Airport rail route: no decorative terminal dots. Route names live above their lines. */
-.site-content .airport-mode-card .metro-route {padding:4px 0 8px;margin:0 0 11px;}
-.site-content .metro-route-stops {align-items:start;gap:8px;}
-.site-content .metro-route-stops span {flex:1 1 0;max-width:none;font-size:12px;line-height:1.5;}
-.site-content .metro-route-stops span:last-child {text-align:right;}
-.site-content .metro-route-services {margin:9px 0 0;}
-.site-content .metro-service-heading {display:block;text-align:center;color:#CBD6E2;font-size:11px;font-weight:650;letter-spacing:.025em;margin-bottom:8px;}
-.site-content .metro-dual-lines {display:flex;flex-direction:column;gap:7px;padding:0 2px;}
-.site-content .metro-service-line {display:block;height:3px;width:100%;border-radius:999px;}
-.site-content .metro-service-express {box-shadow:none;}
-.site-content .metro-service-commuter {box-shadow:none;}
-.site-content .metro-route-key {margin-top:10px;min-height:0;gap:6px 15px;}
-.site-content .metro-route-key-item {font-size:11.5px;line-height:1.45;white-space:nowrap;}
-.site-content .metro-route-key-dot {width:7px;height:7px;flex:0 0 7px;}
-/* Transfers: names above each half, visible line-colour break at a single transfer marker. */
-.site-content .metro-transfer-stops {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);align-items:start;}
-.site-content .metro-route--transfer .metro-transfer-stops span {max-width:none;min-width:0;font-size:11.5px;flex:none;line-height:1.5;}
-.site-content .metro-route--transfer .metro-transfer-stops span:nth-child(2) {text-align:center;color:#EAF0F3;font-weight:760;}
-.site-content .metro-transfer-service-labels {display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:11px 0 8px;}
-.site-content .metro-transfer-service-labels span {text-align:center;white-space:nowrap;color:#DCE8EE;font-size:11px;font-weight:720;line-height:1.4;}
-.site-content .metro-transfer-service-labels span::before {content:'';display:inline-block;width:6px;height:6px;margin-right:6px;border-radius:2px;background:var(--service-color);vertical-align:2px;}
-.site-content .metro-transfer-track {display:flex;align-items:center;width:100%;padding:0 2px;}
-.site-content .metro-transfer-leg {height:3px;min-width:0;flex:1;border-radius:999px;}
-.site-content .metro-transfer-node {height:24px;width:24px;flex:0 0 24px;border-radius:50%;border:1px solid #8095A2;display:grid;place-items:center;color:#E0EBF1;margin:0 3px;box-shadow:none;}
-.site-content .metro-route--transfer .metro-route-key {margin-top:7px;}
-.site-content .metro-transfer-note {font-size:11.5px;color:#AEBFCC;}
-/* Fare cards regain distinct purple/blue gradient identity without inset boxes. */
-.site-content .airport-mode-card .airport-fare-item--express {
- border:0;border-top:2px solid #A477D0;border-radius:8px 8px 0 0;padding:12px 10px 9px;
-}
-.site-content .airport-mode-card .airport-fare-item--commuter {
- border:0;border-top:2px solid #5F9DD0;border-radius:8px 8px 0 0;padding:12px 10px 9px;
-}
-.site-content .airport-mode-card .airport-fare-item--express + .airport-fare-item--commuter {border-left:0;padding-left:10px;}
-@media(max-width:365px){
- .site-content .airport-mode-card .airport-fare-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
- .site-content .airport-mode-card .airport-fare-item--express + .airport-fare-item--commuter {border-top:2px solid #5F9DD0;margin-top:0;padding-top:12px;padding-left:8px;}
- .site-content .airport-mode-card .airport-fare-item--express {padding-left:8px;padding-right:5px;}
- .site-content .metro-transfer-service-labels {gap:5px;}
- .site-content .metro-transfer-service-labels span {font-size:10px;}
- .site-content .metro-route--transfer .metro-transfer-stops span {font-size:10.5px;}
- .site-content .airport-fare-label {font-size:11px;}
- .site-content .airport-fare-time {font-size:11px;}
-}
-@media(prefers-reduced-motion:reduce){.site-content .metro-service-line,.site-content .metro-transfer-leg{animation:none;}}
-
-
-/* =================== CSS 14: k95-flat-route-refinement =================== */
-
-/* K95: 95% black ink approximate sRGB on screen (5% remaining = 13/255). */
-/* Flat, static diagram lines: no moving shine, bloom or reflection. */
-.site-content .metro-service-line,
-.site-content .metro-transfer-leg,
-.site-content .metro-route-segment,
-.site-content .metro-route-segment--dual { animation:none!important;filter:none!important;box-shadow:none!important; }
-.site-content .metro-service-express {background:#AC72D0!important;}
-.site-content .metro-service-commuter {background:#4396D2!important;}
-.site-content .metro-transfer-leg {background:var(--service-color)!important;}
-.site-content .metro-route-segment::before,
-.site-content .metro-route-segment--dual::after { content:none!important;animation:none!important; }
-
 
 /* =================== CSS 15: k95-outline-transparent-ui =================== */
 
@@ -1448,27 +1088,16 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .airport-direction-button,
 .site-content .airport-direction-button:hover,
 .site-content .airport-direction-button[aria-expanded='true'],
-.site-content .airport-mode-card,
-.site-content .airport-mode-compact,
-.site-content .airport-route-overview,
-.site-content .metro-route,
 .site-content .destination-card .tab-panel,
 .site-content .destination-info-group,
 .site-content .destination-card .tab-panel details.nested-accordion,
-.site-content .airport-check-tools,
-.site-content .airport-check-links a,
 .site-content .venue-directory-section .venue-secondary-links a {
  background:transparent!important;background-image:none!important;box-shadow:none!important;
 }
 .site-content .airport-direction-button,
-.site-content .airport-mode-card,
-.site-content .airport-route-overview,
-.site-content .airport-check-tools,
-.site-content .airport-check-links a,
 .site-content .venue-directory-section .venue-secondary-links a {
  border-color:var(--outline-white)!important;
 }
-.site-content .airport-mode-compact {border:1px solid var(--outline-white)!important;}
 .site-content .destination-card .tab-panel,
 .site-content .destination-info-group,
 .site-content .destination-card .tab-panel details.nested-accordion {border-color:var(--outline-divider)!important;}
@@ -1488,8 +1117,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 /* Ordinary directory rows and tags. */
 .site-content .venue-directory-section .venue-tag,
 .site-content .venue-directory-section .venue-tag--featured,
-.site-content .venue-directory-section .venue-tag--caution,
-.site-content .selected-value {
+.site-content .venue-directory-section .venue-tag--caution {
  background-image:none!important;
  border:1px solid var(--outline-white)!important;box-shadow:none!important;
  
@@ -1499,10 +1127,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .destination-info-group > p {border-color:var(--outline-divider)!important;}
 .site-content .destination-card .tab-panel ol.numbered-list {border-left-color:var(--outline-divider)!important;}
 .site-content .destination-card .tab-panel ol.numbered-list::before {background:#0D0D0D!important;border-color:var(--outline-white)!important;}
-/* Preserve line identity and the expressly requested purple/blue fare gradients. */
-.site-content .metro-transfer-node {background:#0D0D0D!important;border-color:var(--outline-white)!important;}
 /* Keep all food-search and two key travel cards exactly as previously styled. */
-
 
 /* =================== CSS 16: k95-monochrome-text-airport-icons =================== */
 /* White primary typography and gray supporting information.
@@ -1510,8 +1135,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
    MRT lines, line dots and train-type gradient panels retain their route identities. */
 :root{--mono-line:rgba(245,245,245,.4)}
 body{color:var(--mono-body)}
-.hero h1,.hero h1 span,.hero .welcome,.site-content h2,.site-content h3,.site-content h4{color:var(--mono-main)!important}
-.hero .tagline,.below-nav,footer{color:var(--mono-sub)!important}
+.hero .tagline,footer{color:var(--mono-sub)!important}
 /* Only ordinary content gets the monochrome palette. */
 .site-content :is(p,li,td,th,summary,summary strong):not(.travel-caution *):not(.travel-twac *):not(#food-explorer *){color:var(--mono-body)}
 .site-content :is(.airport-access-subheading,.airport-mode-name,.airport-route-stop,.airport-fare-amount,.destination-title,.venue-name-line,.area-intro-title,.travel-topic-title):not(.travel-caution *){color:var(--mono-main)!important}
@@ -1521,22 +1145,13 @@ body{color:var(--mono-body)}
 /* Navigation links remain recognizable through underlines / outlines rather than cyan text. */
 .site-content a:not(.travel-twac a):not(#food-explorer a):hover{color:#FFFFFF!important;text-decoration-color:#FFFFFF!important}
 .site-content .venue-directory-section .venue-secondary-links a{color:var(--mono-body)!important}
-.site-content .airport-direction-button[aria-expanded='true'] .airport-direction-icon{color:#FFFFFF!important}
 /* Neutralize the AIRPORT ACCESS graphic icons, including emoji and airport logos.
    This is intentionally scoped so other category art and MRT line colors remain colored. */
-.site-content .airport-direction-switcher :is(.airport-direction-icon,.airport-direction-indicator,.airport-mode-icon),
-.site-content .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon),
-.site-content .airport-direction-switcher .airport-mode-heading > .airport-mode-icon,
-.site-content .airport-direction-switcher .airport-mode-compact > .airport-mode-icon{
+.site-content .airport-direction-switcher :is(.airport-direction-icon,.airport-direction-indicator,.airport-mode-icon),.site-content .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon){
   filter:none!important;
 }
-.site-content .airport-direction-switcher .airport-direction-icon svg,
-.site-content .airport-direction-switcher .airport-direction-indicator svg{stroke:currentColor!important;}
 /* Remove remaining blue selection glyphs without touching transit lines. */
-.site-content .airport-direction-switcher .airport-direction-button[aria-expanded='true'] .airport-direction-icon,
-.site-content .airport-direction-switcher .airport-direction-indicator{color:#EDEDED!important}
 .site-content .airport-direction-switcher .airport-direction-button{color:var(--mono-main)!important}
-
 
 /* =================== CSS 17: threads-inspired-dark-palette-20261015 =================== */
 
@@ -1555,22 +1170,14 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 .site-content details:not(.travel-caution):not(.travel-twac),
 .site-content .area-directory-section .tab-panel>.area-category-list,
 .site-content .airport-direction-button,
-.site-content .airport-mode-card,
-.site-content .airport-route-overview,
-.site-content .metro-route,
 .site-content .destination-info-group,
 .site-content .destination-card .tab-panel,
-.site-content .airport-check-tools,
-.site-content .airport-check-links a,
 .site-content .venue-directory-section .venue-secondary-links a{
  background:transparent!important;background-image:none!important;box-shadow:none!important;
 }
 .site-content details:not(.travel-caution):not(.travel-twac),
 .site-content .airport-direction-button,
-.site-content .airport-mode-card,
-.site-content .area-directory-section .tab-panel>.area-category-list,
-.site-content .airport-check-tools,
-.site-content .airport-check-links a{border-color:#424242!important;}
+.site-content .area-directory-section .tab-panel>.area-category-list{border-color:#424242!important;}
 .site-content details:not(.travel-caution):not(.travel-twac) > summary,
 .site-content details:not(.travel-caution):not(.travel-twac)[open] > summary,
 .site-content .venue-directory-section li.venue-row,
@@ -1593,46 +1200,30 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 }
 .site-content .venue-directory-section .venue-tag,
 .site-content .venue-directory-section .venue-tag--featured,
-.site-content .venue-directory-section .venue-tag--caution,
-.site-content .selected-value{
+.site-content .venue-directory-section .venue-tag--caution{
  background:transparent!important;border-color:#444444!important;color:#C8C8C8!important;
 }
 /* Main typography: neutral white, gray supporting text. */
-.hero .welcome,.hero h1,.hero h1 span,.site-content h2,.site-content h3,.site-content h4,
-.site-content .destination-title,.site-content .airport-mode-name,
-.site-content .airport-direction-text strong{color:#F7F7F7!important;}
-.hero .tagline,.below-nav,.site-content .section-note,
-.site-content .destination-lead,.site-content .destination-pr,
-.site-content .airport-fare-label,.site-content .airport-fare-time,
-.site-content .metro-transfer-note,.site-content .venue-extra-note,footer{color:#A6A6A6!important;}
+.hero .welcome,.hero h1,.hero h1 span,.site-content h2,.site-content h3,.site-content h4{color:#F7F7F7!important;}
+.hero .tagline,.site-content .section-note,.site-content .destination-lead,.site-content .venue-extra-note,footer{color:#A6A6A6!important;}
 .site-content a:not(.travel-twac a):not(#food-explorer a){color:#F0F0F0!important;text-decoration-color:#747474!important;}
 /* Six entry cards stay recognizable and tappable, but visually quiet. */
 .quick-nav .nav-button:nth-child(n){background:#181818!important;border:1px solid #333333!important;box-shadow:none!important;}
 .quick-nav .nav-button:hover{background:#222222!important;border-color:#505050!important;}
 .quick-nav .nav-icon{filter:none;}
 /* Neutral airport icons; distinct route colors remain functional. */
-.site-content .airport-direction-switcher .airport-direction-icon,
-.site-content .airport-direction-switcher .airport-direction-indicator{color:#DADADA!important;}
 .site-content .airport-direction-switcher :is(.airport-mode-icon,.airport-access .tab-pill img,.airport-access .tab-pill .icon){filter:none!important;}
 /* Travel caution and TWAC maintain role-specific emphasis, but remove over-saturated fills. */
 .site-content details.travel-caution{background:#191815!important;border-color:#545047!important;}
 .site-content details.travel-twac{background:#151A17!important;border-color:#465148!important;}
 .site-content .travel-caution .travel-key-icon{background:#29251D!important;}
 .site-content .travel-twac .travel-key-icon{background:#263029!important;}
-/* Keep explicit route identities and the approved train fare gradients. */
-.site-content .airport-mode-card .airport-fare-item--express{
- background:linear-gradient(180deg,rgba(164,104,210,.22),rgba(164,104,210,.055) 55%,transparent)!important;
-}
-.site-content .airport-mode-card .airport-fare-item--commuter{
- background:linear-gradient(180deg,rgba(60,139,208,.22),rgba(60,139,208,.055) 55%,transparent)!important;
-}
 /* Food search retains its distinctive mint highlight as a functional mini-app. */
 /* Keep active controls legible on narrow mobile layouts. */
 @media(max-width:600px){
  .site-content .tab-pill{min-height:43px;}
  .site-content .airport-direction-button{min-height:128px;}
 }
-
 
 /* =================== CSS 18: threads-selected-pill-inverse-20261015 =================== */
 
@@ -1667,7 +1258,6 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
   outline-offset:3px!important;
 }
 
-
 /* =================== CSS 19: threads-color-icons-and-inverse-pill-fix-20261015 =================== */
 
 /* Restore original full-colour emoji and icon artwork, including selected tabs. */
@@ -1693,7 +1283,6 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 }
 /* Emoji are rendered natively in colour; image logos retain their original appearance. */
 
-
 /* =================== CSS 20: threads-nav-gradient-gold-tags-and-selected-label-fix-20261015 =================== */
 
 /* Keep the ordinary chips neutral; restore only the editorial recommendation gold. */
@@ -1702,12 +1291,6 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
   background:#423A2D!important;
   background-image:none!important;
   border:1px solid #66533B!important;
-}
-/* Restore gold editorial highlights, without reintroducing highlighted backgrounds. */
-.site-content mark.highlight-yellow:not(:has(a)),
-.site-content .venue-list-item mark.highlight-yellow:not(:has(a)) {
-  color:#EBC489!important;
-  background:transparent!important;
 }
 
 /* Category shortcuts: airport express/commuter-style top-to-bottom fade, six muted hues. */
@@ -1731,8 +1314,6 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
   outline-offset:3px;
 }
 
-.quick-nav .nav-subtitle {color:#BDBDBD!important;}
-
 /* WHITE inverse tabs need BLACK text, including nested bold/span labels.
    The old ID-specific :not(#food-explorer *) rule was corrected above. */
 #guide .tab-pill[aria-selected="true"],
@@ -1752,7 +1333,6 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 #guide .tab-pill[aria-selected="true"]:focus-visible {outline:2px solid #F5F5F5!important;outline-offset:3px!important;}
 #guide .tab-pill[aria-selected="false"] {background:transparent!important;color:#C4C4C4!important;border-color:#494949!important;}
 #guide .tab-pill img.inline-category-icon {filter:none!important;}
-
 
 /* =================== CSS 21: area-focus-and-mobile-tap-20261015 =================== */
 
@@ -1778,7 +1358,6 @@ html, body,
 .site-content .area-directory-section .area-category-list > details[open] > summary {
   box-shadow:inset 2px 0 0 #EAEAEA;
 }
-
 
 /* =================== CSS 22: nightmarket-and-editorial-tags-20261015 =================== */
 
@@ -1843,7 +1422,6 @@ html, body,
  .site-content .venue-directory-section details.night-market-directory > summary {padding-left:11px;font-size:12.5px;}
 }
 
-
 /* =================== CSS 23: food-category-list-focus-20261015 =================== */
 
 /* Drinks and night markets share the same in-list focus treatment as area directories.
@@ -1860,48 +1438,20 @@ html, body,
   box-shadow:inset 2px 0 0 #EAEAEA;
 }
 
-
 /* =================== CSS 24: daytrips-editorial-redesign-20261015 =================== */
 
 /* Day trips 2026-10-15: straightforward editorial routes, no numbering or card-in-card UI. */
 #guide .sights-day-trips .destination-redesigned {background:transparent!important;border:1px solid #3B3B3B!important;box-shadow:none!important;overflow:visible;}
-#guide .sights-day-trips .destination-redesigned > .destination-summary {padding:14px 36px 14px 13px;gap:10px;min-height:73px;}
-#guide .sights-day-trips .destination-redesigned .destination-icon {background:transparent!important;width:31px;height:32px;flex-basis:31px;border:0;padding:0;font-size:23px;}
-#guide .sights-day-trips .destination-redesigned .destination-title {color:#F5F5F5;font-size:14px;font-weight:720;}
-#guide .sights-day-trips .destination-redesigned .destination-pr {color:#AAA;font-size:12px;line-height:1.5;}
 #guide .sights-day-trips .destination-redesigned[open] > summary {border-bottom:1px solid #353535;}
 #guide .sights-day-trips .destination-redesigned > .destination-body {margin:0 13px!important;padding:13px 0 16px!important;}
-#guide .sights-day-trips .destination-redesigned .destination-guide-label,
-#guide .sights-day-trips .destination-redesigned .daytrip-section-label {color:#A7A7A7;font-size:11px;letter-spacing:.05em;font-weight:700;margin:2px 0 10px!important;}
+#guide .sights-day-trips .destination-redesigned .destination-guide-label {color:#A7A7A7;font-size:11px;letter-spacing:.05em;font-weight:700;margin:2px 0 10px!important;}
 #guide .sights-day-trips .destination-redesigned .tab-pills {padding:3px 0 13px;margin:0;gap:7px;}
 #guide .sights-day-trips .destination-redesigned .tab-panel {padding:12px 0 0!important;margin:0!important;border-top:1px solid #333!important;border-right:0!important;border-left:0!important;border-bottom:0!important;background:transparent!important;}
 #guide .sights-day-trips .destination-redesigned .tab-panel[hidden] {display:none!important;}
-#guide .sights-day-trips .daytrip-lead {color:#BABABA;font-size:12.5px;line-height:1.75;margin:1px 0 10px;}
 #guide .sights-day-trips .daytrip-option {padding:13px 0 14px;border-top:1px solid #303030;margin:0!important;}
 #guide .sights-day-trips .daytrip-option:first-of-type {border-top:0;}
-#guide .sights-day-trips .daytrip-option-heading {display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 12px;}
-#guide .sights-day-trips .daytrip-option-heading h4 {color:#F2F2F2;font-weight:700;line-height:1.55;margin:0;}
-#guide .sights-day-trips .daytrip-soft-badge {border:1px solid #555;border-radius:5px;padding:2px 6px;color:#C7C7C7;font-size:10px;line-height:1.4;white-space:nowrap;}
-#guide .sights-day-trips .daytrip-journey {display:grid;grid-template-columns:minmax(0,1fr) minmax(76px,1.07fr) minmax(0,1fr);gap:7px;align-items:end;min-width:0;padding:0 0 5px;}
-#guide .sights-day-trips .daytrip-stop {min-width:0;align-self:end;line-height:1.45;overflow-wrap:anywhere;}
-#guide .sights-day-trips .daytrip-stop strong,#guide .sights-day-trips .daytrip-stop a {font-size:12px!important;color:#EBEBEB!important;font-weight:680;line-height:1.5;text-decoration:none!important;}
-#guide .sights-day-trips .daytrip-stop a {border-bottom:1px solid #777;text-underline-offset:3px;}
-#guide .sights-day-trips .daytrip-stop--end {text-align:right;}
-#guide .sights-day-trips .daytrip-line-zone {min-width:0;display:flex;flex-direction:column;gap:7px;align-items:center;padding-bottom:5px;}
-#guide .sights-day-trips .daytrip-line-mode {color:#BFBFBF;font-size:10.5px;line-height:1.35;text-align:center;overflow-wrap:anywhere;}
-#guide .sights-day-trips .daytrip-line {height:2px;background:#969696;width:100%;border:0;box-shadow:none;display:block;}
-#guide .sights-day-trips .daytrip-route-metadata {color:#E1E1E1;font-size:12px;font-weight:650;line-height:1.6;display:flex;gap:7px;flex-wrap:wrap;margin:6px 0 0;}
-#guide .sights-day-trips .daytrip-dotsep {color:#666;font-weight:400;}
-#guide .sights-day-trips .daytrip-subnote {color:#AAA;font-size:12px;line-height:1.75;margin:7px 0 0;}
-#guide .sights-day-trips .daytrip-note {color:#BEBEBE;font-size:12px;line-height:1.8;margin:8px 0 0;padding:0;}
+#guide .sights-day-trips .daytrip-note {color:#BEBEBE;margin:8px 0 0;padding:0;}
 #guide .sights-day-trips .daytrip-note--important {border-left:2px solid #B4B4B4;padding-left:10px;margin:13px 0 0;}
-#guide .sights-day-trips .daytrip-journey--transfer {grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-rows:auto auto;align-items:end;column-gap:6px;row-gap:6px;}
-#guide .sights-day-trips .daytrip-journey--transfer .daytrip-stop--middle {text-align:center;max-width:130px;justify-self:center;}
-#guide .sights-day-trips .daytrip-journey--transfer .daytrip-leg {display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding-bottom:5px;grid-row:2;}
-#guide .sights-day-trips .daytrip-journey--transfer .daytrip-leg:nth-of-type(4) {grid-column:1;}
-#guide .sights-day-trips .daytrip-journey--transfer .daytrip-leg:nth-of-type(6) {grid-column:3;}
-#guide .sights-day-trips .daytrip-transfer-marker {grid-row:2;grid-column:2;display:flex;justify-content:center;align-items:end;align-self:end;min-width:30px;}
-#guide .sights-day-trips .daytrip-transfer-marker span {color:#101010;background:#E5E5E5;border-radius:5px;padding:4px 5px;font-weight:800;font-size:10px;letter-spacing:.02em;line-height:1.25;}
 #guide .sights-day-trips .daytrip-place-group {margin:15px 0 0;padding:13px 0 0;border-top:1px solid #333;}
 #guide .sights-day-trips .daytrip-place-group h4 {color:#C6C6C6;margin:0 0 7px;letter-spacing:.02em;font-weight:720;}
 #guide .sights-day-trips .daytrip-place-list {list-style:none!important;padding:0!important;margin:0!important;}
@@ -1911,131 +1461,14 @@ html, body,
 #guide .sights-day-trips .daytrip-place-list a:hover {color:#FFF!important;border-color:#EEE;}
 @media(max-width:380px) {
   #guide .sights-day-trips .destination-redesigned > .destination-body {margin:0 10px!important;}
-  #guide .sights-day-trips .daytrip-journey {gap:4px;grid-template-columns:minmax(0,1fr) minmax(68px,.94fr) minmax(0,1fr);}
-  #guide .sights-day-trips .daytrip-journey--transfer {grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);}
-  #guide .sights-day-trips .daytrip-stop strong,#guide .sights-day-trips .daytrip-stop a {font-size:11.5px!important;}
-  #guide .sights-day-trips .daytrip-line-mode {font-size:10px;}
   #guide .sights-day-trips .destination-redesigned .tab-pill {font-size:11.5px;}
 }
-
 
 /* =================== CSS 25: daytrips-vertical-timeline-style =================== */
 
 /* Vertical, reading-first day-trip routes. Thread-dark, no animation/glow, 2026-10-15. */
-
-#guide .sights-day-trips .daytrip-timeline-stop {display:grid;grid-template-columns:42px minmax(0,1fr);align-items:center;gap:8px;min-width:0;}
-
-
-#guide .sights-day-trips .daytrip-timeline-name strong {color:inherit;font-size:inherit;font-weight:inherit;}
-#guide .sights-day-trips .daytrip-timeline-name a {font-weight:inherit!important;text-decoration-thickness:1px!important;text-decoration-color:#808080!important;text-underline-offset:3px;}
-#guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-station {color:#D0D0D0;font-weight:700;}
-#guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-name {color:#FFF;font-weight:800;}
-#guide .sights-day-trips .daytrip-timeline-leg {display:grid;grid-template-columns:42px minmax(0,1fr);gap:8px;}
-#guide .sights-day-trips .daytrip-timeline-stem {justify-self:start;margin-left:20px;border-left:2px solid #8B8B8B;height:100%;min-height:45px;}
-#guide .sights-day-trips .daytrip-timeline--transfer .daytrip-timeline-leg:first-of-type .daytrip-timeline-stem {border-left-color:#B3B3B3;}
-#guide .sights-day-trips .daytrip-timeline-mode {color:#BDBDBD;font-size:12.5px;line-height:1.55;word-break:normal;overflow-wrap:anywhere;font-weight:560;}
-#guide .sights-day-trips .daytrip-facts {flex-wrap:wrap;border-top:1px solid #2D2D2D;padding-top:11px;}
-
-
-
-#guide .sights-day-trips .daytrip-option-heading h4 {font-size:13.5px;}
-#guide .sights-day-trips .daytrip-subnote,#guide .sights-day-trips .daytrip-note {font-size:12.5px;line-height:1.8;}
+#guide .sights-day-trips .daytrip-note {font-size:12.5px;line-height:1.8;}
 #guide .sights-day-trips .daytrip-place-group h4 {font-size:12.5px;}
-@media(max-width:355px){
- #guide .sights-day-trips .daytrip-timeline-stop {grid-template-columns:40px minmax(0,1fr);gap:7px;}
- #guide .sights-day-trips .daytrip-timeline-leg {grid-template-columns:40px minmax(0,1fr);gap:7px;}
- #guide .sights-day-trips .daytrip-timeline-stem {margin-left:19px;}
- #guide .sights-day-trips .daytrip-timeline-name {font-size:13.5px;}
- #guide .sights-day-trips .daytrip-timeline-mode {font-size:12px;}
-}
-
-
-/* =================== CSS 26: daytrips-google-map-aligned-timeline =================== */
-
-/* Day-trip timeline v2: aligned Google-Maps-inspired transit directions, mobile-first.
-   Explicit columns for status, route spine, and readable instructions. No glow or animation. */
-#guide .sights-day-trips .daytrip-timeline {
-  
-  display:flex;flex-direction:column;position:relative;
-  width:100%;min-width:0;padding:0;gap:0;
-}
-/* No continuous track underneath hollow stops. Individual colored legs leave visible gaps. */
-#guide .sights-day-trips .daytrip-timeline::before { content:none!important;display:none!important; }
-#guide .sights-day-trips .daytrip-timeline-stop,
-#guide .sights-day-trips .daytrip-timeline-leg {
-  display:grid!important;grid-template-columns:var(--dt-label) var(--dt-axis) minmax(0,1fr)!important;
-  column-gap:var(--dt-gap)!important;align-items:center;position:relative;min-width:0;
-}
-
-#guide .sights-day-trips .daytrip-timeline-station {
-  grid-column:1;grid-row:1;display:block;text-align:center!important;
-  line-height:1.3;white-space:nowrap;letter-spacing:0;
-}
-#guide .sights-day-trips .daytrip-timeline-transfer-tag {
-  grid-column:1;grid-row:1;display:flex;justify-self:center;align-items:center;justify-content:center;
-  max-width:100%;box-sizing:border-box;
-  
-  border:1px solid #f5f5f5;background:#f5f5f5;color:#111!important;
-  font-weight:790;line-height:1!important;letter-spacing:0;white-space:nowrap;
-}
-#guide .sights-day-trips .daytrip-timeline-node {
-  display:block;grid-column:2;grid-row:1;justify-self:center;align-self:center;
-  width:11px;height:11px;border-radius:50%;border:2px solid #e9e9e9;
-  background:transparent;box-shadow:none;
-}
-#guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-node {
-  border:3px solid #f5f5f5;
-  background:#0D0D0D; /* mask the route line behind the ring */
-  
-}
-/* Start and transfer stay hollow; the destination is a solid white stop. */
-#guide .sights-day-trips .daytrip-timeline-stop--end .daytrip-timeline-node {
-  background:#f5f5f5!important;
-  border-color:#f5f5f5!important;
-  box-shadow:0 0 0 2px transparent;
-}
-#guide .sights-day-trips .daytrip-timeline-name {
-  grid-column:3;grid-row:1;display:block;min-width:0;
-  color:#f3f3f3;overflow-wrap:anywhere;
-}
-#guide .sights-day-trips .daytrip-timeline-name a {font-size:inherit!important;line-height:inherit;}
-#guide .sights-day-trips .daytrip-timeline-leg {
-  align-items:center;overflow:visible;
-}
-#guide .sights-day-trips .daytrip-timeline-stem {display:none!important;}
-#guide .sights-day-trips .daytrip-timeline-leg-content {
-  grid-column:3;grid-row:1;display:flex;
-  min-width:0;overflow-wrap:anywhere;
-}
-#guide .sights-day-trips .daytrip-mode-icon {
-  display:inline-flex;align-items:center;justify-content:center;flex:0 0 22px;
-  font-size:19px;line-height:1.2;margin-top:1px;
-}
-#guide .sights-day-trips .daytrip-mode-icon--tra {
-  width:18px;height:18px;object-fit:contain;display:block;
-  filter:brightness(0) invert(1);opacity:.96;margin-top:2px;
-}
-#guide .sights-day-trips .daytrip-mode-body {display:flex;flex-direction:column;}
-#guide .sights-day-trips .daytrip-mode-primary {min-width:0;}
-
-#guide .sights-day-trips .daytrip-mode-badge {
-  display:inline-flex;align-items:center;max-width:100%;
-  border:1px solid #646464;background:transparent;
-  white-space:normal;
-}
-
-/* Restrain ultra-narrow phones without shrinking the main station text excessively. */
-@media(max-width:355px) {
-  #guide .sights-day-trips .daytrip-timeline {--dt-label:40px;--dt-axis:16px;--dt-gap:7px;}
-  #guide .sights-day-trips .daytrip-timeline-transfer-tag {width:39px;height:25px;font-size:10.5px!important;}
-  #guide .sights-day-trips .daytrip-mode-icon {flex-basis:20px;font-size:18px;}
-  #guide .sights-day-trips .daytrip-mode-icon--tra {width:17px;height:17px;}
-  #guide .sights-day-trips .daytrip-mode-primary {gap:5px;}
-  #guide .sights-day-trips .daytrip-mode-badge {font-size:11px;padding:2px 5px;}
-  #guide .sights-day-trips .daytrip-mode-primary strong {font-size:12px;}
-  #guide .sights-day-trips .daytrip-mode-detail {font-size:11.5px;}
-}
-
 
 /* =================== CSS 27: daytrip-route-modes-threads-20261015 =================== */
 
@@ -2049,23 +1482,6 @@ html, body,
   filter: brightness(0) !important;
   opacity:1;
 }
-/* A colored segment maps to each leg, rather than changing the whole timeline:
-   blue for Taiwan Railways / Pingxi, yellow for taxis, neutral gray for buses. */
-#guide .sights-day-trips .daytrip-timeline-leg { --travel-leg:#868686; }
-#guide .sights-day-trips .daytrip-timeline-leg--rail { --travel-leg:#4B99DE; }
-#guide .sights-day-trips .daytrip-timeline-leg--taxi { --travel-leg:#D9B65F; }
-#guide .sights-day-trips .daytrip-timeline-leg--bus { --travel-leg:#898989; }
-#guide .sights-day-trips .daytrip-timeline-leg::before {
-  content:"";position:absolute;
-  top:-8px;bottom:-8px; /* extra gap so the line does not intrude into station rings */
-  left:calc(var(--dt-label) + var(--dt-gap) + var(--dt-axis) / 2);
-  transform:translateX(-50%);
-  width:3px; background:var(--travel-leg);
-  z-index:1;pointer-events:none;border-radius:2px;
-}
-/* Ensure the stops visually cover each colored leg endpoint. */
-#guide .sights-day-trips .daytrip-timeline-stop { z-index:2; }
-#guide .sights-day-trips .daytrip-timeline-node { z-index:3; }
 /* Make different routes in one bubble visibly separate without introducing nested fills. */
 #guide .sights-day-trips .daytrip-option--alternative {
   --choice-accent:#888;
@@ -2073,25 +1489,13 @@ html, body,
   padding:13px 12px 14px!important;
   margin:10px 0 15px!important;
 }
-#guide .sights-day-trips .daytrip-option--taxi-choice { --choice-accent:#D9B65F; }
 #guide .sights-day-trips .daytrip-option--bus-choice { --choice-accent:#939393; }
 #guide .sights-day-trips .daytrip-option--alternative:first-of-type { border-top:1px solid #4A4A4A!important; }
-#guide .sights-day-trips .daytrip-option--alternative .daytrip-option-heading {
-  gap:7px; margin-bottom:9px; flex-wrap:wrap; align-items:center;
-}
-#guide .sights-day-trips .daytrip-option--alternative .daytrip-option-heading h4 {
-  font-size:13.5px; line-height:1.5; font-weight:750;
-}
-#guide .sights-day-trips .daytrip-choice-emoji { font-size:17px;line-height:1.3;flex:0 0 auto; }
-#guide .sights-day-trips .daytrip-option--alternative .daytrip-timeline {margin-top:5px;}
 @media(max-width:355px) {
   #guide .sights-day-trips .daytrip-option--alternative {padding:11px 9px 12px!important;}
-  #guide .sights-day-trips .daytrip-option--alternative .daytrip-option-heading h4 {font-size:12.5px;}
 }
 
-
 /* =================== CSS 28: daytrip-gradients-major-heading-20261015 =================== */
-
 
 /* === 2026-10-15: graded transport choices + true chapter heading === */
 /* Major chapter: same h2 typographic hierarchy as 旅の準備・交通. */
@@ -2119,14 +1523,6 @@ html, body,
     rgba(154,164,174,.025) 140px,
     transparent 205px) !important;
 }
-#guide .sights-day-trips .daytrip-option--taxi-choice {
-  background-image:linear-gradient(180deg,
-    rgba(217,182,95,.25) 0px,
-    rgba(217,182,95,.11) 68px,
-    rgba(217,182,95,.025) 140px,
-    transparent 205px) !important;
-}
-
 
 /* =================== CSS 29: daytrips-four-button-layout-20261015 =================== */
 
@@ -2206,7 +1602,6 @@ html, body,
 }
 @media(prefers-reduced-motion:reduce){#guide .daytrip-destination-button{transition:none;}}
 
-
 /* =================== CSS 30: liquid-edge-reflections-20261015 =================== */
 
 /* Almost-clear glass: minimal fill, very subtle edge refraction, edge highlight flush to the border. */
@@ -2257,7 +1652,7 @@ html, body,
   border-color:rgba(255,255,255,.11)!important;
 }
 .quick-nav .nav-title { color:#F7F7F7!important; }
-.quick-nav .nav-subtitle, .quick-nav .nav-arrow { color:#CCCCCC!important; }
+.quick-nav .nav-subtitle { color:#CCCCCC!important; }
 
 #guide #food-explorer .food-panel {
   position:relative; isolation:isolate; overflow:hidden;
@@ -2306,7 +1701,6 @@ html, body,
 #guide #food-explorer .results-head, #guide #food-explorer .result { border-color:rgba(255,255,255,.10)!important; }
 .quick-nav::before, #guide .food-browser-banner::before { content:none!important; display:none!important; }
 @media(prefers-reduced-motion:reduce){ .quick-nav > .nav-button:nth-child(n){ transition:none!important; } }
-
 
 /* =================== CSS 31: daytrip-alternative-liquid-glow-20261015 =================== */
 
@@ -2367,17 +1761,10 @@ html, body,
   z-index:1;
 }
 #guide .sights-day-trips .daytrip-option--bus-choice { --choice-rgb: 154,164,174; }
-#guide .sights-day-trips .daytrip-option--taxi-choice { --choice-rgb: 217,182,95; }
-#guide .sights-day-trips .daytrip-soft-badge {
-  border-color:rgba(255,255,255,.13);
-  background:rgba(255,255,255,.028);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-}
 @media(max-width:355px){
   #guide .sights-day-trips .daytrip-option--alternative { border-radius:13px; }
   #guide .sights-day-trips .daytrip-option--alternative::after { border-radius:12px; }
 }
-
 
 /* =================== CSS 32: adaptive-pill-edge-fade-20261015 =================== */
 
@@ -2395,7 +1782,6 @@ html, body,
   mask-image:linear-gradient(to right,transparent 0%,#000 16px,#000 calc(100% - 16px),transparent 100%);
 }
 /* The strip remains fully visible if there is no horizontal overflow. */
-
 
 /* =================== CSS 33: back-top-clear-glass-20261015 =================== */
 
@@ -2458,7 +1844,6 @@ html, body,
     inset 0 1px 0 rgba(255,255,255,.12),
     inset 0 -1px 0 rgba(255,255,255,.02)!important;
 }
-
 
 /* =================== CSS 34: directory-divider-and-emergency-rework-20261015 =================== */
 
@@ -2531,16 +1916,11 @@ html, body,
 #guide .emergency-phone-number {font-size:34px;font-weight:800;letter-spacing:.02em;line-height:1.08;font-variant-numeric:tabular-nums;color:#FAFAFA;}
 #guide .emergency-card-action {display:inline-flex;gap:7px;align-items:center;color:#DEDEDE;font-size:12px;font-weight:700;white-space:nowrap;padding-bottom:3px;}
 #guide .emergency-card-action svg {display:block;flex:none;}
-#guide a.emergency-contact-card--support {min-height:0;gap:6px;padding:15px 17px 16px;border-color:rgba(255,255,255,.105)!important;background:transparent!important;}
-#guide .emergency-external-icon {margin-left:auto;color:#9D9D9D;flex:none;}
 #guide .emergency-support-desc {font-size:11.5px;line-height:1.7;color:#A8A8A8;}
-#guide .emergency-support-action {margin-top:3px;color:#D7D7D7;font-size:11.5px;font-weight:650;line-height:1.6;}
 @media(min-width:670px) {
   #guide .emergency-contact-list {grid-template-columns:repeat(2,minmax(0,1fr));}
-  #guide a.emergency-contact-card--support {grid-column:1 / -1;}
 }
 @media(prefers-reduced-motion:reduce){#guide a.emergency-contact-card{transition:none;}}
-
 
 /* =================== CSS 35: daytrip-category-hierarchy-fix-20261016 =================== */
 
@@ -2579,7 +1959,6 @@ html, body,
   margin-top:17px;
 }
 
-
 /* =================== CSS 36: area-daytrip-order-20261016 =================== */
 
 /* Four core categories -> one separator -> city stroll & nearby trips. */
@@ -2600,7 +1979,6 @@ html, body,
   margin-top:0!important;
 }
 
-
 /* =================== CSS 37: food-dictionary-expandable-descriptions-20261016 =================== */
 
 /* Keep the original compact search rows; reveal the original, unmodified description on demand. */
@@ -2614,49 +1992,21 @@ html, body,
 #guide #food-explorer .food-entry-toggle:focus-visible {
   outline:2px solid var(--accent,#83D3B0);outline-offset:3px;
 }
-#guide #food-explorer .food-entry-left,
-#guide #food-explorer .food-entry-static-left { flex:1 1 auto;min-width:0; }
-#guide #food-explorer .food-entry-static-meta,
+#guide #food-explorer .food-entry-left { flex:1 1 auto;min-width:0; }
 #guide #food-explorer .food-entry-toggle .result-meta {flex:0 0 auto;}
 #guide #food-explorer .food-desc-full {
   
   -webkit-mask-image:none;mask-image:none;
 }
-#guide #food-explorer .food-expand-cue {align-items:center;justify-content:flex-end;
-  color:var(--muted);font-size:10px;line-height:1.45;white-space:nowrap;
-  opacity:.88;letter-spacing:0;
-}
-#guide #food-explorer .result.is-expanded .food-expand-cue {color:var(--accent,#83D3B0);}
 #guide #food-explorer .result.is-expanded .desc {line-height:1.7;}
 #guide #food-explorer #results.scrolling {overflow-anchor:none;}
 @media(max-width:350px){
   #guide #food-explorer .food-entry-toggle {gap:5px;}
-  #guide #food-explorer .food-expand-cue {font-size:9.5px;}
 }
-
 
 /* =================== CSS 38: food-drawer-and-16char-lines-v1 =================== */
 
 /* Separate the food dictionary from page flow, without obscuring main guide content. */
-.food-drawer-trigger {
-  position:fixed; right:14px; top:calc(12px + env(safe-area-inset-top)); z-index:120;
-  width:46px; height:46px; display:grid;place-items:center;
-  padding:0; border-radius:50%; cursor:pointer;
-  background:linear-gradient(170deg,rgba(255,255,255,.085),rgba(255,255,255,.022))!important;
-  color:#F6F9F9; border:1px solid rgba(255,255,255,.23);
-  box-shadow:0 5px 20px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.11);
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-  transition:opacity .2s ease,transform .2s ease;
-}
-.food-drawer-trigger::before {
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  padding:.9px;
-  background:conic-gradient(from 190deg,rgba(255,255,255,.03),rgba(255,255,255,.19) 28%,rgba(255,255,255,.045) 52%,rgba(131,211,176,.20) 82%,rgba(255,255,255,.03));
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
-  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
-}
-.food-drawer-trigger:hover {background:rgba(255,255,255,.11)!important;}
-.food-drawer-trigger:focus-visible,.food-drawer-close:focus-visible {outline:2px solid #83D3B0;outline-offset:3px;}
 .food-drawer-backdrop {
   position:fixed; inset:0;z-index:198;
 }
@@ -2679,22 +2029,6 @@ body.food-drawer-open .food-drawer-backdrop {
   visibility:visible;opacity:1;
   transition:opacity .25s ease, visibility 0s;
 }
-body.food-drawer-open .food-drawer-trigger {opacity:0;pointer-events:none;transform:translateX(15px);}
-#guide #food-search .food-drawer-toolbar {
-  flex:0 0 auto;position:relative;z-index:5;justify-content:space-between;align-items:center;gap:10px;
-  padding:calc(11px + env(safe-area-inset-top)) 14px 10px 19px;
-  border-bottom:1px solid rgba(255,255,255,.095);
-  background:rgba(13,13,13,.97);
-}
-#guide #food-search .food-drawer-toolbar-title {
-  font-size:10px;color:#B6BFC0;letter-spacing:.12em;font-weight:760;line-height:1.35;
-}
-#guide #food-search .food-drawer-toolbar-dot {color:#83D3B0;}
-#guide #food-search .food-drawer-close {
-  flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;
-  background:rgba(255,255,255,.048);color:#F7F7F7;cursor:pointer;
-  border:1px solid rgba(255,255,255,.13);border-radius:50%;padding:0;
-}
 #guide #food-search .food-drawer-scroll {
   padding:9px 12px calc(22px + env(safe-area-inset-bottom));
   -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
@@ -2704,7 +2038,6 @@ body.food-drawer-open .food-drawer-trigger {opacity:0;pointer-events:none;transf
  /* The drawer toolbar already says FOOD INDEX. */
 
 /* Preserve the ~15-grapheme faded preview; nothing text-like competes with it. */
-#guide #food-explorer .food-expand-cue {display:none!important;}
 #guide #food-explorer .food-desc-preview {
   max-width:min(15ic,100%);display:block;white-space:nowrap;overflow:hidden;
   -webkit-mask-image:linear-gradient(to right,#000 0%,#000 74%,transparent 100%);
@@ -2721,9 +2054,8 @@ body.food-drawer-open .food-drawer-trigger {opacity:0;pointer-events:none;transf
 #guide #food-explorer .food-entry-toggle {align-items:flex-start;}
 @media(min-width:600px){#guide #food-search .food-drawer-scroll {padding:15px 20px 32px;}}
 @media(prefers-reduced-motion:reduce) {
-  #guide #food-search.food-drawer,.food-drawer-backdrop,.food-drawer-trigger {transition:none!important;}
+  #guide #food-search.food-drawer,.food-drawer-backdrop {transition:none!important;}
 }
-
 
 /* =================== CSS 39: swipe-food-screens-v2 =================== */
 
@@ -2749,8 +2081,7 @@ body.food-drawer-open #guide #food-search.food-drawer {
 }
 .food-drawer-backdrop {
   visibility:hidden;pointer-events:none;
-  
-  
+
 }
 body.food-swipe-active .food-drawer-backdrop,
 body.food-drawer-open .food-drawer-backdrop {
@@ -2766,11 +2097,8 @@ body.food-swipe-dragging #guide > .page-body,
 body.food-swipe-dragging > footer,
 body.food-swipe-dragging #guide #food-search.food-drawer,
 body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
-#guide #food-search .food-drawer-toolbar {display:none!important;}
 #guide #food-search .food-drawer-scroll {
   padding:calc(13px + env(safe-area-inset-top)) 12px calc(22px + env(safe-area-inset-bottom));
-}
-#guide #food-search #food-explorer .kicker {margin-bottom:9px;
 }
 
 /* A subtle visual seam on the drawer edge; not an interactive button. */
@@ -2782,7 +2110,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 @media(min-width:600px) {
   #guide #food-search .food-drawer-scroll {padding:calc(18px + env(safe-area-inset-top)) 20px 32px;}
 }
-
 
 /* =================== CSS 40: food-overlap-deep-layer-mobile-v3 =================== */
 
@@ -2844,11 +2171,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide #food-search #food-explorer .food-panel::before,
 #guide #food-search #food-explorer .food-panel::after {
   content:none!important;display:none!important;
-}
-#guide #food-search #food-explorer .kicker {
-  display:block!important;font-size:10px!important;line-height:1.45;
-  letter-spacing:.12em;margin:0 0 9px!important;
-  padding-right:130px;color:#8DC6AD!important;
 }
 #guide #food-search #food-explorer .food-title {
   font-size:clamp(22px,6.2vw,27px)!important;
@@ -2937,7 +2259,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   #guide #food-search.food-drawer,.food-drawer-backdrop{transition:none!important;}
 }
 
-
 /* =================== CSS 41: food-page-full-height-results-20261016 =================== */
 
 /* The dictionary is a full-screen page, not a scrollable embedded card.
@@ -2977,7 +2298,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   
   -webkit-overflow-scrolling:touch;
 }
-
 
 /* =================== CSS 42: inner-pills-compact-emoji-demo-20261016 =================== */
 
@@ -3043,249 +2363,10 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   }
 }
 
-
-/* =================== CSS 43: airport-route-refinement-20261017 =================== */
-
-/* Airport rail maps: wayfinding-first, compact, with fine route-color highlights.
-   Keep the no-endpoint-dot concept. Scope strictly to airport access. */
-#guide .airport-direction-switcher .airport-mode-card.airport-mode-rail {
-  border-color:rgba(255,255,255,.19)!important;
-  border-radius:15px;
-  padding:14px 13px 15px;
-}
-#guide .airport-direction-switcher .airport-mode-card .metro-route {
-  margin:3px 0 12px;
-  padding:5px 1px 9px;
-}
-#guide .airport-direction-switcher .airport-mode-rail .airport-mode-heading {gap:6px;flex-wrap:nowrap;}
-#guide .airport-direction-switcher .airport-mode-rail .airport-mode-heading .airport-mode-icon {width:21px;flex:0 0 21px;font-size:16px;}
-#guide .airport-direction-switcher .airport-mode-rail .airport-mode-name {font-size:12px;min-width:0;}
-#guide .airport-direction-switcher .airport-mode-rail .airport-mode-recommended {
-  margin-left:auto;flex:0 0 auto;white-space:nowrap;
-  font-size:10px;line-height:1.35;padding:3px 6px;
-}
-/* Labels link route geometry to the traveller's next action. */
-#guide .airport-direction-switcher .metro-route-stops {align-items:start;gap:8px;
-}
-#guide .airport-direction-switcher .metro-route-stops > span {
-  display:flex;flex-direction:column;gap:2px;
-  color:#ECECEC;font-size:12px;line-height:1.45;font-weight:730;
-  min-width:0;
-}
-#guide .airport-direction-switcher .metro-route-stops > span::before {
-  display:block;font-size:9px;font-weight:650;line-height:1.4;
-  letter-spacing:.055em;color:#949494;
-}
-#guide .airport-direction-switcher .metro-route-stops > span:first-child::before {content:"出発";}
-#guide .airport-direction-switcher .metro-route-stops > span:last-child::before {content:"到着";}
-#guide .airport-direction-switcher .metro-route--transfer .metro-route-stops > span:nth-child(2)::before {content:"乗換";}
-#guide .airport-direction-switcher .metro-route--transfer .metro-route-stops {display:grid;grid-template-columns:1fr 1.16fr 1fr;gap:2px;}
-#guide .airport-direction-switcher .metro-route--transfer .metro-route-stops > span {font-size:11px;overflow-wrap:anywhere;}
-#guide .airport-direction-switcher .metro-route--transfer .metro-route-stops > span:nth-child(2) {color:#F5F5F5;}
-/* Service name acts as the compact title for both tracks. */
-#guide .airport-direction-switcher .metro-route-services {margin:11px 0 0;}
-#guide .airport-direction-switcher .metro-service-heading {
-  color:#C4C4C4;font-size:10.5px;font-weight:660;
-  margin-bottom:9px;letter-spacing:.08em;
-}
-#guide .airport-direction-switcher .metro-dual-lines {gap:8px;padding:0 2px;}
-#guide .airport-direction-switcher .metro-service-line {height:3px;border-radius:999px;}
-#guide .airport-direction-switcher .metro-service-express {
-  background:linear-gradient(90deg,#9768BF 0%,#BE81E2 50%,#9768BF 100%)!important;
-  box-shadow:0 0 9px rgba(172,114,208,.18)!important;
-}
-#guide .airport-direction-switcher .metro-service-commuter {
-  background:linear-gradient(90deg,#397EB9 0%,#64A6DB 50%,#397EB9 100%)!important;
-  box-shadow:0 0 9px rgba(67,150,210,.18)!important;
-}
-#guide .airport-direction-switcher .metro-route-key {gap:7px 13px;margin-top:11px;justify-content:center;}
-#guide .airport-direction-switcher .metro-route-key-item {
-  font-size:10.5px;line-height:1.5;gap:5px;
-  color:#BCBCBC!important;
-}
-#guide .airport-direction-switcher .metro-route-key-dot {width:6px;height:6px;flex-basis:6px;}
-/* Songshan transfer: fine white station ring, lines end before the ring. */
-#guide .airport-direction-switcher .metro-transfer-service-labels {margin:12px 0 9px;gap:10px;}
-#guide .airport-direction-switcher .metro-transfer-service-labels span {
-  color:#CFCFCF;font-size:10.5px;font-weight:680;line-height:1.5;
-}
-#guide .airport-direction-switcher .metro-transfer-service-labels span::before {width:6px;height:6px;margin-right:6px;border-radius:50%;}
-#guide .airport-direction-switcher .metro-transfer-track {padding:0 2px;gap:5px;}
-#guide .airport-direction-switcher .metro-transfer-leg {
-  height:3px;border-radius:999px;
-  box-shadow:none!important;
-}
-#guide .airport-direction-switcher .metro-transfer-node {
-  width:13px;height:13px;margin:0;
-  border:2px solid #EAEAEA;background:#0D0D0D!important;
-  box-shadow:none!important;color:transparent;
-}
-#guide .airport-direction-switcher .metro-transfer-node svg {display:none;}
-#guide .airport-direction-switcher .metro-transfer-note {font-size:11px;color:#AAAAAA!important;}
-/* Route-color light is reflected from the top of each fare panel, not a filled tile. */
-#guide .airport-direction-switcher .airport-mode-rail .airport-fare-grid {gap:9px;}
-#guide .airport-direction-switcher .airport-mode-rail .airport-fare-item--express,
-#guide .airport-direction-switcher .airport-mode-rail .airport-fare-item--commuter {
-  --fare-rgb:172,114,208;
-  position:relative;min-width:0;
-  border:1px solid rgba(var(--fare-rgb),.24)!important;
-  border-top-color:rgba(var(--fare-rgb),.58)!important;
-  border-radius:11px!important;
-  background:
-    radial-gradient(110% 73% at 50% -19%,rgba(var(--fare-rgb),.19) 0%,rgba(var(--fare-rgb),.055) 40%,transparent 79%),
-    linear-gradient(180deg,rgba(255,255,255,.017),transparent 90%)!important;
-  padding:11px 10px 10px!important;
-  box-shadow:inset 0 1px 0 rgba(var(--fare-rgb),.08)!important;
-}
-#guide .airport-direction-switcher .airport-mode-rail .airport-fare-item--commuter {--fare-rgb:67,150,210;}
-#guide .airport-direction-switcher .airport-mode-rail .airport-fare-label {color:#CDCDCD!important;font-size:11px;line-height:1.5;}
-#guide .airport-direction-switcher .airport-mode-rail .airport-fare-amount {font-size:19px;line-height:1.2;letter-spacing:-.02em;color:#F7F7F7!important;}
-#guide .airport-direction-switcher .airport-mode-rail .airport-fare-time {font-size:11px;line-height:1.55;color:#ACACAC!important;}
-/* A subtly separated transfer total below the diagram. */
-#guide .airport-direction-switcher .airport-mode-rail .airport-single-fare {
-  border-top:1px solid rgba(255,255,255,.12);
-  padding-top:12px;margin-top:2px;
-}
-@media(max-width:365px){
- #guide .airport-direction-switcher .airport-mode-card.airport-mode-rail {padding:12px 10px 13px;}
- #guide .airport-direction-switcher .metro-route--transfer .metro-route-stops > span {font-size:10.5px;}
- #guide .airport-direction-switcher .airport-mode-rail .airport-fare-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;}
- #guide .airport-direction-switcher .airport-mode-rail .airport-fare-item--express,
- #guide .airport-direction-switcher .airport-mode-rail .airport-fare-item--commuter {padding:9px 7px!important;}
- #guide .airport-direction-switcher .airport-mode-rail .airport-fare-amount {font-size:18px;}
- #guide .airport-direction-switcher .airport-mode-rail .airport-fare-label,
- #guide .airport-direction-switcher .airport-mode-rail .airport-fare-time {font-size:10.5px;}
-}
-
-
-/* =================== CSS 44: airport-unified-station-map-20261017 =================== */
-
-/* One typographic system for airport origin, transfer and destination.
-   No duplicated 出発/到着 captions; the order and connecting lines communicate direction. */
-#guide .airport-direction-switcher .metro-route-stops {display:none!important;}
-#guide .airport-direction-switcher .airport-waypoints {
-  display:grid;align-items:start;column-gap:7px;width:100%;margin:2px 0 10px;
-}
-#guide .airport-direction-switcher .airport-waypoints--direct {grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
-#guide .airport-direction-switcher .airport-waypoints--transfer {grid-template-columns:minmax(0,1fr) minmax(0,1.24fr) minmax(0,1fr);row-gap:10px;margin-bottom:8px;}
-#guide .airport-direction-switcher .airport-waypoint {min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:end;}
-#guide .airport-direction-switcher .airport-waypoint--transfer {align-items:center;}
-#guide .airport-direction-switcher .airport-waypoint--end {align-items:flex-end;}
-#guide .airport-direction-switcher .airport-waypoint-name {
-  display:block;max-width:100%;font-size:11.5px;line-height:1.5;font-weight:740;
-  color:#EFEFEF;overflow-wrap:normal;word-break:keep-all;
-}
-#guide .airport-direction-switcher .airport-waypoint--transfer .airport-waypoint-name {text-align:center;}
-#guide .airport-direction-switcher .airport-waypoint--end .airport-waypoint-name {text-align:right;}
-/* Transfer is communicated by an open station ring on the joined colored segments. */
-#guide .airport-direction-switcher .airport-waypoint-track {
-  grid-column:1 / -1;display:flex;align-items:center;gap:6px;min-height:14px;padding:0 2px;
-}
-#guide .airport-direction-switcher .airport-waypoint-leg {
-  display:block;flex:1 1 0;height:3px;border-radius:999px;background:var(--leg-color);
-}
-#guide .airport-direction-switcher .airport-waypoint-ring {
-  width:12px;height:12px;flex:0 0 12px;border:2px solid #F5F5F5;
-  background:#0D0D0D;border-radius:50%;box-shadow:none;
-}
-/* Existing transit-line key still states which line each color denotes. */
-#guide .airport-direction-switcher .metro-route--transfer .metro-transfer-track,
-#guide .airport-direction-switcher .metro-route--transfer .metro-transfer-service-labels {display:none!important;}
-#guide .airport-direction-switcher .metro-route--transfer .metro-route-key {margin-top:7px!important;}
-#guide .airport-direction-switcher .metro-route--taoyuan .metro-route-services {margin-top:5px;}
-@media(max-width:365px){
- #guide .airport-direction-switcher .airport-waypoint-name{font-size:10.5px;}
- #guide .airport-direction-switcher .airport-waypoints--transfer{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr);column-gap:3px;}
-}
-
-
-/* =================== CSS 45: airport-minimal-redesign-20261017 =================== */
-
-/* K95 guide language: typography + precise line color. Only these four airport rail panels. */
-#guide .airport-direction-switcher .airport-redesign.airport-mode-rail {
-  border:1px solid rgba(255,255,255,.15)!important;
-  border-radius:14px!important;
-  padding:15px 13px 14px!important;
-  background:rgba(255,255,255,.015)!important;
-  box-shadow:none!important;
-}
-#guide .airport-direction-switcher .airport-redesign .airport-mode-heading {margin-bottom:17px;}
-#guide .airport-direction-switcher .airport-redesign .airport-mode-name {color:#F2F2F2!important;font-size:12.5px;}
-#guide .airport-direction-switcher .airport-redesign .airport-mode-recommended {
-  background:transparent!important;color:#BABABA!important;border:1px solid #454545!important;
-  border-radius:999px!important;font-size:9.5px!important;font-weight:650!important;
-}
-/* Two endpoints are printed only once, above the service comparison. */
-#guide .airport-direction-switcher .air-rd-pair {
- display:grid;grid-template-columns:minmax(0,1fr) 41px minmax(0,1fr);align-items:center;gap:8px;
- padding:0 2px 14px;border-bottom:1px solid rgba(255,255,255,.105);
-}
-#guide .airport-direction-switcher .air-rd-pair-name {
- font-size:13px;line-height:1.5;color:#F2F2F2;font-weight:750;letter-spacing:-.025em;min-width:0;
-}
-#guide .airport-direction-switcher .air-rd-pair-name--destination {text-align:right;}
-#guide .airport-direction-switcher .air-rd-pair-arrow {display:flex;align-items:center;color:#7F7F7F;}
-#guide .airport-direction-switcher .air-rd-pair-arrow svg {display:block;width:100%;height:14px;}
-#guide .airport-direction-switcher .air-rd-services {display:grid;grid-template-columns:1fr;gap:0;}
-#guide .airport-direction-switcher .air-rd-service {
- display:grid;grid-template-columns:3px minmax(0,1fr) auto;align-items:center;gap:12px;
- padding:16px 2px 15px;min-height:70px;
-}
-#guide .airport-direction-switcher .air-rd-service + .air-rd-service {border-top:1px solid rgba(255,255,255,.095);}
-#guide .airport-direction-switcher .air-rd-service-track {height:39px;width:3px;border-radius:9px;}
-#guide .airport-direction-switcher .air-rd-service--express .air-rd-service-track {background:#AC72D0;box-shadow:0 0 12px rgba(172,114,208,.15);}
-#guide .airport-direction-switcher .air-rd-service--commuter .air-rd-service-track {background:#4396D2;box-shadow:0 0 12px rgba(67,150,210,.15);}
-#guide .airport-direction-switcher .air-rd-service-main {min-width:0;}
-#guide .airport-direction-switcher .air-rd-service-name {color:#F4F4F4;font-size:14px;font-weight:740;line-height:1.45;letter-spacing:-.015em;white-space:nowrap;}
-#guide .airport-direction-switcher .air-rd-service-name span {font-weight:540;color:#C4C4C4;font-size:12px;}
-#guide .airport-direction-switcher .air-rd-service-caption {color:#919191;font-size:11px;line-height:1.5;margin-top:4px;}
-#guide .airport-direction-switcher .air-rd-service-numbers {display:flex;flex-direction:column;align-items:flex-end;gap:5px;white-space:nowrap;text-align:right;}
-#guide .airport-direction-switcher .air-rd-service-numbers strong {font-size:13.5px;letter-spacing:-.025em;font-variant-numeric:tabular-nums;line-height:1.45;color:#F2F2F2;}
-#guide .airport-direction-switcher .air-rd-service-numbers span {color:#B7B7B7;font-size:11px;font-variant-numeric:tabular-nums;}
-/* Songshan: one vertical wayfinding line. Each segment is tied to the MRT line after that station. */
-#guide .airport-direction-switcher .air-rd-itinerary {padding:0 1px 1px;}
-#guide .airport-direction-switcher .air-rd-step {display:grid;grid-template-columns:23px minmax(0,1fr);gap:12px;min-height:75px;position:relative;}
-#guide .airport-direction-switcher .air-rd-step--destination {min-height:44px;}
-#guide .airport-direction-switcher .air-rd-track-cell {position:relative;display:flex;justify-content:center;}
-#guide .airport-direction-switcher .air-rd-step:not(.air-rd-step--destination) .air-rd-track-cell::after {
- content:"";position:absolute;top:18px;bottom:0;left:10px;width:3px;border-radius:9px;background:var(--air-rd-line);
-}
-#guide .airport-direction-switcher .air-rd-step--brown {--air-rd-line:#B58A51;}
-#guide .airport-direction-switcher .air-rd-step--blue {--air-rd-line:#4396D2;}
-#guide .airport-direction-switcher .air-rd-node {position:relative;z-index:1;display:block;box-sizing:border-box;margin-top:3px;width:16px;height:16px;border-radius:50%;border:2px solid #F3F3F3;background:#0D0D0D;}
-#guide .airport-direction-switcher .air-rd-step--transfer .air-rd-node {width:18px;height:18px;border-width:2.3px;}
-#guide .airport-direction-switcher .air-rd-step--destination .air-rd-node {width:14px;height:14px;margin-top:4px;border:0;background:#F3F3F3;}
-#guide .airport-direction-switcher .air-rd-step-content {padding-bottom:15px;min-width:0;}
-#guide .airport-direction-switcher .air-rd-step--destination .air-rd-step-content {padding-bottom:1px;}
-#guide .airport-direction-switcher .air-rd-station-row {display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;}
-#guide .airport-direction-switcher .air-rd-station-name {color:#F4F4F4;font-size:13.5px;font-weight:760;line-height:1.6;white-space:nowrap;letter-spacing:-.02em;}
-#guide .airport-direction-switcher .air-rd-code-group {display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;}
-#guide .airport-direction-switcher .air-rd-code {font-size:9px;line-height:1.4;font-weight:750;letter-spacing:.015em;padding:1px 4px;border:1px solid currentColor;border-radius:4px;white-space:nowrap;}
-#guide .airport-direction-switcher .air-rd-code--brown {color:#D3AA75;}
-#guide .airport-direction-switcher .air-rd-code--blue {color:#71B4EB;}
-#guide .airport-direction-switcher .air-rd-stop-help {font-size:11px;color:#A6A6A6;line-height:1.5;margin-top:4px;}
-#guide .airport-direction-switcher .air-rd-summary {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid rgba(255,255,255,.12);padding-top:14px;margin-top:5px;}
-#guide .airport-direction-switcher .air-rd-summary > div {display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;padding:0 4px;}
-#guide .airport-direction-switcher .air-rd-summary > div + div {border-left:1px solid rgba(255,255,255,.095);}
-#guide .airport-direction-switcher .air-rd-summary-label {font-size:10px;color:#929292;line-height:1.35;}
-#guide .airport-direction-switcher .air-rd-summary strong {font-size:13px;line-height:1.4;font-variant-numeric:tabular-nums;white-space:nowrap;color:#F0F0F0;font-weight:740;}
-@media(max-width:355px) {
- #guide .airport-direction-switcher .airport-redesign.airport-mode-rail {padding:13px 10px 13px!important;}
- #guide .airport-direction-switcher .air-rd-pair {grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px;}
- #guide .airport-direction-switcher .air-rd-pair-name {font-size:12px;}
- #guide .airport-direction-switcher .air-rd-service {gap:9px;}
- #guide .airport-direction-switcher .air-rd-service-name {font-size:13px;}
- #guide .airport-direction-switcher .air-rd-service-name span {font-size:11px;}
- #guide .airport-direction-switcher .air-rd-service-numbers strong {font-size:12px;}
- #guide .airport-direction-switcher .air-rd-step {gap:9px;}
-}
-
-
 /* =================== CSS 46: airport-selector-integrated-style =================== */
 
 #guide .airport-route-selector .section-top{justify-content:space-between;align-items:center;}
 #guide .airport-route-selector .section-top h2{margin:0}
-#guide .airport-route-selector .hint{color:#999;font-size:10px;letter-spacing:.04em}
 #guide .airport-route-selector .selector{border:1px solid var(--line);border-radius:13px;position:relative;isolation:isolate;background:transparent}
 #guide .airport-route-selector .selrow{min-height:68px;display:grid;grid-template-columns:49px minmax(0,1fr) 15px;gap:11px;align-items:center;padding:9px 15px;position:relative}
 #guide .airport-route-selector .selrow+.selrow{border-top:1px solid #303030}
@@ -3312,7 +2393,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector .timeline-status{grid-column:1;text-align:center;font-size:10.5px;color:#A7A7A7;font-weight:700;white-space:nowrap}
 #guide .airport-route-selector .timeline-status--transfer{background:#F2F2F2;color:#141414;border-radius:5px;font-size:10px;padding:4px 2px}
 #guide .airport-route-selector .node{grid-column:2;grid-row:1;justify-self:center;width:11px;height:11px;border:2px solid #F3F3F3;border-radius:50%;background:var(--bg);z-index:3}
-#guide .airport-route-selector .timeline-stop.transfer .node{width:15px;height:15px;border:3px solid #F5F5F5;box-shadow:0 0 0 3px var(--bg)}
 #guide .airport-route-selector .timeline-stop.end .node{background:#F5F5F5;border-color:#F5F5F5}
 #guide .airport-route-selector .stop-body{grid-column:3;grid-row:1;display:flex;gap:6px 7px;flex-wrap:wrap;min-width:0}
 #guide .airport-route-selector .stop-name{font-size:13px;font-weight:760;line-height:1.5;color:#F5F5F5;overflow-wrap:anywhere}
@@ -3344,7 +2424,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector{--bg:#0D0D0D;--line:#363636;--white:#F4F4F4;--muted:#A6A6A6;--purple:#A978D5;--commuter:#478ED1;--brown:#AE854E;--bannan:#378BC7;min-width:0;margin:8px 0 33px;color:#F4F4F4;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;-webkit-font-smoothing:antialiased}
 #guide .airport-route-selector *{box-sizing:border-box}
 #guide .airport-route-selector [hidden]{display:none!important}
-#guide .airport-route-selector .airport-selector-intro{font-size:12px;color:#A6A6A6;line-height:1.65;margin:0 0 19px}
 #guide .airport-route-selector .section-top{margin-bottom:12px}
 #guide .airport-route-selector .selector{margin-bottom:23px}
 #guide .airport-route-selector .airsel-tab{border:1px solid #555;border-radius:20px;min-height:30px;padding:4px 12px;color:#CBCBCB;font-size:12px;font-weight:700;background:transparent;cursor:pointer;white-space:nowrap;line-height:1.3}
@@ -3365,16 +2444,12 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 @media(max-width:354px){#guide .airport-route-selector .airsel-tabs{gap:5px}#guide .airport-route-selector .airsel-tab{padding-inline:9px}}
 @media(prefers-reduced-motion:reduce){#guide .airport-route-selector .swap{transition:none}}
 
-
-
 /* =================== CSS 47: airsel-v6-taipei-symbol-only =================== */
 
 #guide .airport-route-selector .airsel-company-mark:has(img[src*="Taipei_Metro_Logo"]) {width:28px;flex-basis:28px;}
 #guide .airport-route-selector .airsel-company-mark img[src*="Taipei_Metro_Logo"] {max-width:28px;max-height:20px;}
 
-
 /* =================== CSS 48: airport-ground-options-style =================== */
-
 
 #guide .airport-route-selector .airsel-transport-tab{line-height:1.45;gap:7px;cursor:pointer;white-space:nowrap;font-family:inherit}
 #guide .airport-route-selector .airsel-transport-tab[aria-selected="true"]{background:#F5F5F5;border-color:#F5F5F5}
@@ -3383,31 +2458,20 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector .airsel-ground-details{margin:12px 0 0;display:grid;gap:8px}
 #guide .airport-route-selector .airsel-ground-choice{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;padding:10px 12px;border:1px solid #363636;border-radius:9px;font-size:11.5px;line-height:1.6;color:#CDCDCD}
 #guide .airport-route-selector .airsel-ground-choice strong{font-size:12px;font-weight:730;color:#F5F5F5}
-#guide .airport-route-selector .airsel-ground-notice{border:1px solid #363636;border-radius:9px;padding:12px;color:#BDBDBD;font-size:11.5px;line-height:1.75}
-#guide .airport-route-selector .airsel-ground-message{color:#B8B8B8;font-size:12px;line-height:1.75;margin:2px 0 8px}
 
 #guide .airport-route-selector .route-panel{min-width:0}
 @media(max-width:354px){#guide .airport-route-selector .airsel-transport{gap:6px}#guide .airport-route-selector .airsel-transport-tab{font-size:11.5px;gap:5px;padding:7px 4px}#guide .airport-route-selector .airsel-ground-choice{padding:9px 10px}}
-
 
 /* =================== CSS 49: airport-route-picker-refinement-v8 =================== */
 
 /* A compact, schematic origin–destination chooser.  Scoped; no other sections change. */
 #guide .airport-route-selector{margin-top:3px;}
 
-
 #guide .airport-route-selector .airsel-route-fields{isolation:isolate;
 }
 #guide .airport-route-selector .airsel-route-fields::before{position:absolute;left:25px;top:47px;bottom:47px;width:1.5px;
  background:#6A6A6A;opacity:.64;z-index:0;
 }
-
-#guide .airport-route-selector .sel-route-node{
- width:12px;height:12px;justify-self:center;align-self:center;
- border:2px solid #E8E8E8;background:#101010;border-radius:50%;
- box-shadow:0 0 0 3px #141414;z-index:2;
-}
-#guide .airport-route-selector .selrow--destination .sel-route-node{background:#EAEAEA;}
 #guide .airport-route-selector .airsel-route-fields .sel-value{
  font-family:inherit;
  outline:none;
@@ -3421,7 +2485,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
  #guide .airport-route-selector .airsel-route-fields .selrow--origin::after{left:44px;}
 }
 @media(prefers-reduced-motion:reduce){#guide .airport-route-selector .airsel-route-fields .swap{transition:none;}}
-
 
 /* =================== CSS 50: airport-picker-calm-v9 =================== */
 
@@ -3494,7 +2557,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
  #guide .airport-route-selector #airsel-rail-head-name{font-size:12px;}
 }
 
-
 /* =================== CSS 51: airport-selector-refinements-v10 =================== */
 
 #guide .airport-route-selector .airsel-recommend-badge{
@@ -3516,7 +2578,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 }
 @media(prefers-reduced-motion:reduce){#guide .airport-route-selector .route-panel{transition:none!important;}}
 
-
 /* =================== CSS 52: airport-picker-focused-v11 =================== */
 
 /* Visual focus: two distinct travel endpoints; no duplicate mini-diagram in the picker. */
@@ -3532,9 +2593,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector .airsel-route-fields .selrow--destination{margin-top:10px!important}
 #guide .airport-route-selector .airsel-route-fields .selrow--origin::after{content:none!important}
 #guide .airport-route-selector .airsel-route-fields .selrow--destination{border:1px solid #383838!important}
-
-
-
 
 #guide .airport-route-selector .airsel-route-fields .swap:disabled{opacity:.42;cursor:default}
 
@@ -3572,7 +2630,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
  #guide .airport-route-selector .airsel-transport-ink{transition:none!important}
 }
 
-
 /* =================== CSS 53: airport-motion-refinement-v12 =================== */
 
 #guide .airport-route-selector .airsel-results-inner{overflow:hidden}
@@ -3582,7 +2639,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 @media(prefers-reduced-motion:reduce){
  #guide .airport-route-selector .airsel-route-disclosure{transition:none!important}
 }
-
 
 /* =================== CSS 54: airport-side-by-side-bubbles-v13 =================== */
 
@@ -3601,10 +2657,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector .airsel-route-fields .selrow--destination{
  grid-template-columns:minmax(0,1fr) 7px!important;
  column-gap:4px!important;align-content:center!important;
- 
- 
- 
- 
+
  transition:border-color .25s ease,background-color .25s ease!important;
 }
 #guide .airport-route-selector .airsel-route-fields .selrow:focus-within{
@@ -3614,8 +2667,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 
 #guide .airport-route-selector .airsel-route-fields .sel-label{letter-spacing:.015em!important;}
 #guide .airport-route-selector .airsel-route-fields .sel-value{
- 
- 
+
  color:#F4F4F4!important;
  letter-spacing:-.01em!important;
  
@@ -3653,7 +2705,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
  #guide .airport-route-selector .airsel-route-fields .selrow,
  #guide .airport-route-selector .airsel-route-fields .swap{transition:none!important}
 }
-
 
 /* =================== CSS 55: airport-selection-bubble-only-v14 =================== */
 
@@ -3731,7 +2782,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   #guide .airport-route-selector .airsel-route-fields .sel-choice-bubble{transition:none!important;}
 }
 
-
 /* =================== CSS 56: airsel-bilingual-station-labels-v17 =================== */
 
 /* Official local names are primary; Japanese appears only as a quiet aid. */
@@ -3746,7 +2796,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
  #guide .airport-route-selector .airsel-station-label .stop-name{font-size:12px}
  #guide .airport-route-selector .airsel-station-ja{font-size:10px}
 }
-
 
 /* =================== CSS 57: airport-route-timeline-motion-v21 =================== */
 
@@ -3785,23 +2834,9 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   }
 }
 
-
 /* =================== CSS 58: daytrip-timeline-entrance-v26 =================== */
 
 /* Reuse the airport V25 choreography while preserving the day-trip line palette. */
-#guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-stop{
-  animation:daytrip-station-appear-v26 750ms cubic-bezier(.19,.8,.22,1) both;
-  animation-delay:var(--trip-stop-delay,0ms);
-}
-#guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-leg::before{
-  animation:daytrip-route-draw-v26 720ms cubic-bezier(.18,.76,.2,1) both;
-  animation-delay:var(--trip-leg-delay,0ms);
-  transform-origin:50% 0%;
-}
-#guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-leg-content{
-  animation:daytrip-leg-label-v26 490ms cubic-bezier(.19,.8,.22,1) both;
-  animation-delay:calc(var(--trip-leg-delay,0ms) + 190ms);
-}
 @keyframes daytrip-station-appear-v26{
   from{opacity:0;transform:translate3d(0,12px,0)}
   to{opacity:1;transform:translate3d(0,0,0)}
@@ -3814,121 +2849,11 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   from{opacity:0;transform:translate3d(0,10px,0)}
   to{opacity:1;transform:translate3d(0,0,0)}
 }
-@media(prefers-reduced-motion:reduce){
-  #guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-stop,
-  #guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-leg::before,
-  #guide .sights-day-trips .daytrip-timeline.daytrip-route-animating .daytrip-timeline-leg-content{
-    animation:none!important;
-  }
-}
-
-
-/* =================== CSS 59: daytrip-info-airport-unified-v27 =================== */
-
-/* Airport access and day-trip routes now share one visual information hierarchy.
-   Preserve each route's place names, transport numbers, and existing links. */
-#guide .sights-day-trips .daytrip-timeline {
-  --dt-label:38px; --dt-axis:16px; --dt-gap:9px;
-  margin:7px 0 11px;
-}
-#guide .sights-day-trips .daytrip-timeline-stop {
-  min-height:49px;
-}
-#guide .sights-day-trips .daytrip-timeline-station {
-  font-size:10.5px; font-weight:700; color:#A7A7A7;
-}
-#guide .sights-day-trips .daytrip-timeline-transfer-tag {
-  width:auto; min-width:36px; height:auto; min-height:24px;
-  font-size:10px!important; border-radius:5px; padding:4px 2px!important;
-}
-#guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-node {
-  width:15px;height:15px;box-shadow:0 0 0 3px #0D0D0D;
-}
-#guide .sights-day-trips .daytrip-timeline-name {
-  font-size:13px;font-weight:760;line-height:1.4;
-}
-#guide .sights-day-trips .daytrip-stop-label {
-  display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0;
-}
-#guide .sights-day-trips .daytrip-stop-zh {
-  display:block;font-size:13px;font-weight:760;line-height:1.42;color:#F5F5F5;
-  overflow-wrap:anywhere;
-}
-#guide .sights-day-trips .daytrip-stop-ja {
-  display:block;font-size:10.5px;line-height:1.42;font-weight:560;color:#9E9E9E;
-  overflow-wrap:anywhere;
-}
-#guide .sights-day-trips .daytrip-timeline-name a {
-  display:inline-flex;max-width:100%;color:inherit!important;text-decoration:none!important;
-}
-#guide .sights-day-trips .daytrip-timeline-name a .daytrip-stop-zh {
-  text-decoration:underline;text-decoration-thickness:1px;
-  text-decoration-color:#888;text-underline-offset:3px;
-}
-
-#guide .sights-day-trips .daytrip-timeline-leg-content {
-  padding:12px 0!important;gap:0;align-items:stretch;
-}
-/* Icon colors remain on itinerary-choice buttons; leg labels use the clean airport style. */
-#guide .sights-day-trips .daytrip-timeline-leg-content > .daytrip-mode-icon {display:none!important;}
-#guide .sights-day-trips .daytrip-mode-body {min-width:0;}
-#guide .sights-day-trips .daytrip-mode-primary {
-  display:flex;gap:6px;align-items:center;flex-wrap:wrap;
-  font-size:11px;line-height:1.5;color:#B6B6B6;
-}
-#guide .sights-day-trips .daytrip-mode-primary strong {
-  font-size:11px;line-height:1.5;font-weight:700;color:#BEBEBE;
-}
-#guide .sights-day-trips .daytrip-mode-badge {
-  border-color:#555;border-radius:5px;padding:1px 5px;
-  color:#DADADA;font-size:10.5px;font-weight:730;line-height:1.45;
-}
-#guide .sights-day-trips .daytrip-mode-direction {
-  display:block;font-size:14px;font-weight:730;line-height:1.55;
-  margin:4px 0 0;color:#F3F3F3;overflow-wrap:anywhere;
-}
-#guide .sights-day-trips .daytrip-mode-detail {
-  display:block;font-size:11px;font-weight:500;line-height:1.5;
-  color:#989898;margin-top:3px;overflow-wrap:anywhere;
-}
-#guide .sights-day-trips .daytrip-facts {
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
-  border:0;padding:0;margin:15px 0 0;
-}
-#guide .sights-day-trips .daytrip-fact {
-  display:flex;align-items:center;justify-content:center;flex-direction:column;
-  border:1px solid #383838;border-radius:10px;min-width:0;
-  padding:12px 6px 11px;gap:7px;text-align:center;background:transparent;
-}
-#guide .sights-day-trips .daytrip-fact-label {
-  font-size:10px;font-weight:600;line-height:1.35;color:#A8A8A8;
-}
-#guide .sights-day-trips .daytrip-fact strong {
-  color:#F3F3F3;font-size:13px;line-height:1.4;font-weight:760;
-  overflow-wrap:anywhere;
-}
-@media(max-width:354px) {
-  #guide .sights-day-trips .daytrip-timeline{--dt-label:34px;--dt-axis:16px;--dt-gap:7px;}
-  #guide .sights-day-trips .daytrip-stop-zh{font-size:12px;}
-  #guide .sights-day-trips .daytrip-stop-ja{font-size:10px;}
-  #guide .sights-day-trips .daytrip-mode-direction{font-size:13px;}
-  #guide .sights-day-trips .daytrip-fact strong{font-size:12px;}
-}
-
-
-/* =================== CSS 60: daytrip-notes-compact-v28 =================== */
-
-#guide .sights-day-trips .daytrip-timeline-leg{min-height:76px;}
-#guide .sights-day-trips .daytrip-mode-body{gap:0;}
-#guide .sights-day-trips .daytrip-option-heading:empty{display:none;}
-
 
 /* =================== CSS 61: mobile-map-native-link-fix-v22 =================== */
 
 /* Leave standard OS map-link behavior intact: no overlays, swipe interception or custom popups. */
 #guide a[href^="https://maps.app.goo.gl/"] { touch-action: manipulation; }
-
-
 
 /* =================== v30.1: day-trip routes share the airport route language =================== */
 /* Scoped exclusively to 近郊エリア; does not alter the original airport selector. */
@@ -3958,149 +2883,13 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   content:none!important;display:none!important;
 }
 #guide .daytrip-airport-display .daytrip-option > *{position:relative;z-index:auto;}
-#guide .daytrip-airport-display .daytrip-option-heading{
-  display:flex;align-items:center;gap:8px;margin:0 0 9px!important;
-}
-#guide .daytrip-airport-display .daytrip-option-heading h4{
-  color:#F2F2F2;font-size:13px!important;line-height:1.5;font-weight:730;
-}
-#guide .daytrip-airport-display .daytrip-soft-badge{
-  border:1px solid #585858;background:transparent!important;
-  border-radius:5px;box-shadow:none!important;color:#E5E5E5;
-  font-size:11px;line-height:1.45;font-weight:740;
-}
-/* Same three-column timeline proportions, hollow stops and solid arrival point as 空港アクセス. */
-#guide .daytrip-airport-display .daytrip-airport-timeline{
-  --dt-label:38px;--dt-axis:16px;--dt-gap:9px;
-  display:flex;flex-direction:column;margin:7px 0 12px;padding:0;min-width:0;width:100%;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop,
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-leg{
-  display:grid!important;
-  grid-template-columns:var(--dt-label) var(--dt-axis) minmax(0,1fr)!important;
-  column-gap:var(--dt-gap)!important;align-items:center;min-width:0;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop{
-  min-height:49px;z-index:2;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-station{
-  font-size:10.5px;line-height:1.35;font-weight:700;color:#A7A7A7;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-transfer-tag{
-  width:100%;max-width:42px;height:25px;background:#F2F2F2;color:#141414!important;
-  border:0;border-radius:5px;font-size:10px!important;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-node{
-  width:11px;height:11px;border:2px solid #F3F3F3;border-radius:50%;
-  background:var(--daytrip-panel-bg);box-shadow:0 0 0 2px var(--daytrip-panel-bg);z-index:3;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop--transfer .daytrip-timeline-node{
-  width:15px;height:15px;border-width:3px;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop--end .daytrip-timeline-node{
-  background:#F5F5F5!important;border-color:#F5F5F5!important;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-name{
-  font-size:13px;line-height:1.5;font-weight:760;color:#F5F5F5;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-label{
-  display:flex;flex-direction:column;gap:1px;align-items:flex-start;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-zh{
-  font-size:13px!important;line-height:1.42;font-weight:760;color:#F5F5F5;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-ja{
-  font-size:10.5px!important;line-height:1.42;font-weight:500;color:#9E9E9E;
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-leg{
-  min-height:92px;
-  --travel-leg:var(--daytrip-route-bus);
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-leg--rail{
-  --travel-leg:var(--daytrip-route-blue);
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-leg--taxi{
-  --travel-leg:var(--daytrip-route-taxi);
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-leg::before{
-  top:-9px;bottom:-9px;width:3px;border-radius:3px;
-  background:var(--travel-leg);
-}
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-airport-leg-content{
-  grid-column:3;grid-row:1;display:flex;flex-direction:column;align-items:stretch;
-  gap:0;padding:12px 0!important;min-width:0;
-}
-#guide .daytrip-airport-display .daytrip-airport-leg-meta{
-  display:flex;align-items:center;flex-wrap:wrap;gap:5px 7px;
-  color:#B6B6B6;font-size:11px;line-height:1.5;
-}
-#guide .daytrip-airport-display .daytrip-airport-leg-meta .daytrip-mode-icon{
-  display:inline-flex;flex:0 0 auto;width:16px;height:17px;
-  font-size:13px;line-height:1.25;margin:0;opacity:.85;
-}
-#guide .daytrip-airport-display .daytrip-airport-leg-meta img.daytrip-mode-icon{
-  width:15px;height:15px;object-fit:contain;filter:brightness(0) invert(1);
-}
-#guide .daytrip-airport-display .daytrip-airport-leg-meta .daytrip-mode-primary{
-  display:flex;flex-wrap:wrap;gap:5px 7px;align-items:center;
-}
-#guide .daytrip-airport-display .daytrip-airport-leg-meta .daytrip-mode-badge{
-  padding:0;border:0!important;border-radius:0;background:transparent!important;
-  font-size:11px;font-weight:740;color:#DEDEDE;line-height:1.5;
-}
-#guide .daytrip-airport-display .daytrip-airport-leg-meta .daytrip-mode-primary strong{
-  color:#A9A9A9;font-size:11px;line-height:1.5;font-weight:520;
-}
-#guide .daytrip-airport-display .daytrip-airport-leg-direction{
-  color:#F3F3F3;font-size:14px;line-height:1.55;font-weight:730;
-  margin-top:4px;overflow-wrap:anywhere;
-}
-#guide .daytrip-airport-display .daytrip-airport-leg-direction .daytrip-mode-direction{
-  display:block;color:inherit;font-size:inherit;line-height:inherit;font-weight:inherit;
-}
-#guide .daytrip-airport-display .daytrip-airport-leg-note{
-  margin-top:3px;color:#989898;font-size:11px;line-height:1.5;
-}
-#guide .daytrip-airport-display .daytrip-airport-leg-note .daytrip-mode-detail{
-  display:block;color:inherit;font-size:inherit;line-height:inherit;
-}
-/* Airport-style compact fare/time tiles (two columns when two facts are present). */
-#guide .daytrip-airport-display .daytrip-facts{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
-  border:0;margin:12px 0 0;padding:0;
-}
-#guide .daytrip-airport-display .daytrip-fact{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-width:0;gap:6px;border:1px solid #383838;border-radius:10px;
-  padding:11px 6px 10px;text-align:center;background:transparent;
-}
-#guide .daytrip-airport-display .daytrip-fact-label{
-  color:#A8A8A8;font-size:10px;font-weight:600;
-}
-#guide .daytrip-airport-display .daytrip-fact strong{
-  color:#F3F3F3;font-size:12.5px;font-weight:760;line-height:1.4;
-  overflow-wrap:anywhere;
-}
 /* The optional tour keeps its entire original text after the charter options. */
 #guide .daytrip-airport-display .daytrip-option--tour-combined{
   margin-top:18px!important;padding-top:15px!important;
 }
-#guide .daytrip-airport-display .daytrip-tour-eyebrow{
-  font-size:10.5px;color:#AFAFAF;font-weight:700;letter-spacing:.035em;
-  margin:0 0 8px;
-}
 #guide .daytrip-airport-display .tab-panel > .daytrip-note--important{
   margin:12px 0 6px;
 }
-@media(max-width:354px){
-  #guide .daytrip-airport-display .daytrip-airport-timeline{
-    --dt-label:34px;--dt-gap:7px;
-  }
-  #guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-zh{font-size:12px!important;}
-  #guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-stop-ja{font-size:10px!important;}
-  #guide .daytrip-airport-display .daytrip-airport-leg-direction{font-size:13px;}
-}
-
 
 /* ================ v30.2: EXACT reuse of Airport Access visual DOM + CSS ================ */
 /* Each day-trip route contains the same .airport-route-selector/.route-panel/
@@ -4128,10 +2917,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   width:20px;
   height:20px;
 }
-#guide .sights-day-trips .daytrip-airport-reuse .daytrip-canonical-code{
-  flex:0 0 auto;
-  margin-left:auto;
-}
 #guide .sights-day-trips .daytrip-airport-reuse .timeline-stop a{
   color:inherit;
   text-decoration:none;
@@ -4152,7 +2937,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   #guide .sights-day-trips .daytrip-airport-reuse .rail-title{flex-wrap:wrap}
   #guide .sights-day-trips .daytrip-airport-reuse .daytrip-canonical-head-name{font-size:12px}
 }
-
 
 /* ========= v30.3 — Same underlined transport switch as Airport Access ========= */
 #guide .sights-day-trips .tab-pills.daytrip-transport{
@@ -4286,8 +3070,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 @media(prefers-reduced-motion:reduce){
  #guide .sights-day-trips .daytrip-destination-panel .tab-panels > .tab-panel.daytrip-switch-enter{animation:none!important;will-change:auto}
 }
-#guide .sights-day-trips .daytrip-tra-inline{display:inline-flex;align-items:center;gap:5px}
-#guide .sights-day-trips .daytrip-tra-inline img{display:inline-block;width:16px;height:16px;object-fit:contain;flex:none}
 #guide .sights-day-trips .daytrip-tra-mark.logo-unavailable .daytrip-tra-logo{display:none}
 #guide .sights-day-trips .daytrip-tra-mark.logo-unavailable .daytrip-tra-fallback{display:block}
 
@@ -4304,20 +3086,14 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   overscroll-behavior-x:contain;
 }
 
-
 /* v30.7 — Day-trip heading cleanup + guaranteed white outline icons.
    TRA uses a self-contained inline emblem, not the Airport's image readiness gate. */
-#guide .sights-day-trips .daytrip-tra-mark .daytrip-tra-vector{
-  flex:none;
-  color:#F7F7F7;fill:currentColor;stroke:none;opacity:1;
-}
 #guide .sights-day-trips .daytrip-company-mark:not(.daytrip-tra-mark) svg{
   color:#F7F7F7;stroke:#F7F7F7;fill:none;opacity:1;
   display:block;width:20px;height:20px;
 }
 
 #guide .sights-day-trips .daytrip-tra-mark{overflow:visible;width:22px;height:22px;}
-#guide .sights-day-trips .daytrip-tra-mark .daytrip-tra-vector{display:block!important;width:20px;height:20px;aspect-ratio:1/1;shape-rendering:geometricPrecision;transform:none!important;}
 #guide .daytrip-destination-button-icon .yehliu-icon{display:block;width:26px;height:26px;object-fit:contain;filter:none!important;}
 
 @keyframes daytrip-slide-exit{
@@ -4354,7 +3130,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide a.external-action-link:focus-visible,
 #guide .venue-secondary-links a:focus-visible {outline:2px solid #79b9ff;outline-offset:2px;}
 
-
 /* v30.7 TRA logo redo — use Taiwan Railway original emblem instead of hand-drawn approximation.
    Keep aspect ratio unchanged, independent of the generic airport company image reset. */
 #guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark {
@@ -4390,7 +3165,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 /* Same gold route hue for taxi across Airport Access / Jiufen / day trips. */
 #guide{--taipei-taxi-route:#D9B65F;}
 #guide .sights-day-trips .daytrip-bus-route[data-route="taxi"] .timeline-leg[style*="D9B65F"]::before{background:var(--taipei-taxi-route)!important;}
-
 
 /* v30.9.3 — start navigation to each of the four day-trip destinations. */
 #guide .sights-day-trips .daytrip-destination-panel-heading{
@@ -4452,7 +3226,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   border-top:0!important;
 }
 
-
 /* v30.9.7 — area-only swipe affordance.
    Reuse the existing adaptive data-scroll-fade state: fade only when the
    strip still has off-screen tabs; no extra arrow or scrolling behavior. */
@@ -4468,7 +3241,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 22px,#000 calc(100% - 30px),transparent 100%);
   mask-image:linear-gradient(to right,transparent 0%,#000 22px,#000 calc(100% - 30px),transparent 100%);
 }
-
 
 /* =================== v30.9.10 — responsive, animated four-destination bar =================== */
 /* Keep the original information hierarchy. Reduce the nonessential gaps above
@@ -4575,7 +3347,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   }
 }
 
-
 /* =================== v30.9.17 — route-heading gap reduction (mobile) =================== */
 /* Reduce the unused vertical space above the four destinations' route headings
    by about 60%. Keep station/timeline spacing and touch target heights intact. */
@@ -4599,7 +3370,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
     padding-top:1px!important;
   }
 }
-
 
 /* v30.9.22 — only the three travel-pass descriptions and official links. */
 #guide details.travel-passes {
@@ -4641,7 +3411,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 @media(max-width:360px){
   #guide .travel-passes > .travel-passes-body {padding-left:11px;padding-right:11px;}
 }
-
 
 /* ================= v30.9.26: opt-in LIGHT PREVIEW palette =================
    Only neutral surfaces, text, strokes, and selection contrast change.
@@ -4703,7 +3472,6 @@ html[data-theme="light"] #guide :is(.destination-info-group,.venue-row,.destinat
 html[data-theme="light"] #guide .area-directory-section :is(.area-category-list,.area-directory-group){border-color:#DDE2E3!important;}
 html[data-theme="light"] #guide :is(.travel-key-title,.travel-topic-title,.area-intro-title,.venue-name,.venue-main-link){color:#213038!important;}
 html[data-theme="light"] #guide :is(.travel-key-subtitle,.travel-topic-desc,.venue-row-index,.destination-guide-label,.destination-pr,.venue-extra-note,.area-intro-description){color:#66737A!important;}
-html[data-theme="light"] #guide .selected-value{color:#506169!important;background:#F0F2F2!important;border-color:#CBD4D9!important;}
 /* Accessibility: dark-selected pill on white, unchanged selected/inactive geometry. */
 html[data-theme="light"] #guide :is(.tab-pill,.destination-card .tab-pill)[aria-selected="false"]{
  color:#526168!important;border-color:#C5CED2!important;background:transparent!important;
@@ -4762,10 +3530,6 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .se
  color:#1E3038!important;background:#FFFFFF!important;
 }
 html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-label{color:#65757C!important;}
-html[data-theme="light"] #guide .airport-route-selector .sel-route-node{
- border-color:#344750!important;background:#FFFFFF!important;box-shadow:0 0 0 3px #FFFFFF!important;
-}
-html[data-theme="light"] #guide .airport-route-selector .selrow--destination .sel-route-node{background:#344750!important;}
 html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .swap{
  background:#FFFFFF!important;border-color:#B9C6CC!important;color:#253C47!important;
  box-shadow:0 0 0 5px #F8FAFA!important;
@@ -4773,7 +3537,6 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sw
 html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .swap:hover{background:#EEF3F5!important;}
 html[data-theme="light"] #guide #airport-route-selector :is(.airsel-ground-details,.route-panel,.airsel-results-inner,.airsel-switcher){border-color:#DAE0E3!important;}
 html[data-theme="light"] #guide :is(.airsel-company-mark,.daytrip-company-mark,.airsel-transport-icon,.rail-title svg,.daytrip-mode-icon){color:#293E48!important;}
-html[data-theme="light"] #guide .sights-day-trips .daytrip-airport-leg-meta img.daytrip-mode-icon{filter:brightness(0)!important;}
 /* Results disclosure and service label were hardcoded white in the dark edition. */
 html[data-theme="light"] #guide #airport-route-selector .airsel-route-disclosure{
  color:#314249!important;border-top-color:#D4DCDF!important;background:transparent!important;
@@ -4802,8 +3565,6 @@ html[data-theme="light"] #guide .sights-day-trips button.airsel-ground-choice[ar
 html[data-theme="light"] #guide .airport-route-selector button.airsel-ground-choice[aria-pressed="true"] :is(strong,span){
   color:#243D48!important;-webkit-text-fill-color:#243D48!important;
 }
-html[data-theme="light"] #guide .airport-route-selector .airsel-ground-notice{color:#586A72!important;border-color:#D0DADE!important;}
-html[data-theme="light"] #guide .airport-route-selector .airsel-ground-message{color:#586A72!important;}
 html[data-theme="light"] #guide .airport-route-selector .airsel-transport-tab[aria-selected="false"]{
  color:#526269!important;border-color:#C8D2D7!important;background:transparent!important;
 }
@@ -4833,20 +3594,8 @@ html[data-theme="light"] #guide .venue-directory-section .venue-tag--featured{
 html[data-theme="light"] #guide .venue-directory-section .venue-tag--caution{color:#A94338!important;border-color:#DBB7B3!important;background:#FFF1EF!important;}
 html[data-theme="light"] #guide .venue-directory-section .venue-tag:not(.venue-tag--featured):not(.venue-tag--caution){color:#52636C!important;border-color:#CCD6DA!important;}
 /* Food dictionary drawer follows theme; original green selection remains green. */
-html[data-theme="light"] .food-drawer-trigger{
- color:#23414A!important;background:#FFFFFF!important;border-color:#CBD4D7!important;
- box-shadow:0 3px 13px rgba(26,42,52,.12)!important;
-}
-html[data-theme="light"] .food-drawer-trigger::before{opacity:.22;}
 html[data-theme="light"] #guide #food-search.food-drawer{
  background:#F7F8F7!important;color:#25343A!important;border-left-color:#CBD5D9!important;
-}
-html[data-theme="light"] #guide #food-search .food-drawer-toolbar{
- background:#F7F8F7!important;border-bottom-color:#DCE2E3!important;
-}
-html[data-theme="light"] #guide #food-search .food-drawer-toolbar-title{color:#5D6D74!important;}
-html[data-theme="light"] #guide #food-search .food-drawer-close{
- background:#FFFFFF!important;color:#233A44!important;border-color:#CFD9DD!important;
 }
 html[data-theme="light"] #guide #food-search #food-explorer,
 html[data-theme="light"] #guide #food-explorer{
@@ -4877,7 +3626,6 @@ html[data-theme="light"] .theme-preview-toggle{
 body.food-drawer-open .theme-preview-toggle{opacity:0;pointer-events:none;}
 @media(max-width:355px){.theme-preview-toggle{min-width:71px;right:69px;padding:7px 8px;font-size:10.5px;}}
 @media(prefers-reduced-motion:reduce){.theme-preview-toggle{transition:none;}}
-
 
 /* ========== v30.9.27 Light-mode polish: five requested details ========== */
 /* Travel caution: remove inner dark warning strip without losing priority. */
@@ -4925,8 +3673,7 @@ html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .airsel-t
 }
 /* Emergency cards: visible outline and readable numbers, labels and action icons. */
 html[data-theme="light"] #guide .emergency-intro{color:#66757C!important;}
-html[data-theme="light"] #guide a.emergency-contact-card,
-html[data-theme="light"] #guide a.emergency-contact-card--support{
+html[data-theme="light"] #guide a.emergency-contact-card{
   background:#FFFFFF!important;border:1px solid #C8D3D8!important;
   color:#263941!important;box-shadow:none!important;
 }
@@ -4938,11 +3685,8 @@ html[data-theme="light"] #guide a.emergency-contact-card:focus-visible{outline:2
 html[data-theme="light"] #guide .emergency-card-name,
 html[data-theme="light"] #guide .emergency-phone-number{color:#23363D!important;}
 html[data-theme="light"] #guide .emergency-card-reason,
-html[data-theme="light"] #guide .emergency-support-desc,
-html[data-theme="light"] #guide .emergency-external-icon{color:#64777F!important;}
-html[data-theme="light"] #guide .emergency-card-action,
-html[data-theme="light"] #guide .emergency-support-action{color:#235D79!important;}
-
+html[data-theme="light"] #guide .emergency-support-desc{color:#64777F!important;}
+html[data-theme="light"] #guide .emergency-card-action{color:#235D79!important;}
 
 /* ================= v30.9.28 Light mode finish =================
    Override ONLY light mode. Keep default dark interface untouched. */
@@ -4965,9 +3709,7 @@ html[data-theme="light"] #guide .travel-caution .travel-alert li{
 /* Airport bus/taxi pictograms use the same pictogram-first vocabulary as
    the 4 nearby destination buttons. Make the glyph itself monochrome black. */
 html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback.airsel-ground-icon{
-  
-  
-  
+
   font-size:23px!important;line-height:1!important;
 }
 /* Keep the airport mode navigation free of light mode's filled active card;
@@ -4993,7 +3735,6 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields{
   background:none!important;background-image:none!important;
   border:0!important;box-shadow:none!important;
 }
-
 
 /* ========== v30.9.29: Light-mode surface fixes & daytrip route hierarchy ========== */
 /* Airport selector: the selects themselves were still opaque white; the bubbles stay outline-only. */
@@ -5027,7 +3768,6 @@ html[data-theme="light"] .quick-nav > .nav-button:nth-child(n):hover{
  border-top:1px solid #D7DDE0!important;
 }
 
-
 /* v30.9.30: Light-theme route pictograms and accessible enlarged cost/time */
 html[data-theme="light"] #guide .sights-day-trips .daytrip-company-mark:not(.daytrip-tra-mark) svg{
   color:#253940!important;stroke:#253940!important;fill:none!important;opacity:1!important;
@@ -5052,7 +3792,6 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback
     font-size:12.96px;letter-spacing:-.035em;
   }
 }
-
 
 /* v30.9.31 — compact secondary daytrip disclosures and light hero wordmark */
 #guide .sights-day-trips .daytrip-fold-section{
@@ -5111,19 +3850,12 @@ html[data-theme="light"] #guide .sights-day-trips .daytrip-inline-accordion > su
 html[data-theme="light"] #guide .sights-day-trips .daytrip-inline-accordion .daytrip-place-list li{
   border-bottom-color:#E0E5E7!important;
 }
-html[data-theme="light"] .hero .eyebrow{
-  color:#B3B3B3!important;-webkit-text-fill-color:#B3B3B3!important;
-}
 
 @media (prefers-reduced-motion:reduce){
  #guide .sights-day-trips .daytrip-inline-accordion > summary::after{transition:none!important;}
 }
 
 /* ===================== v30.9.34: Food drawer light-theme contrast and Safari viewport ===================== */
-/* Restore the original mint accent while retaining the visitor-approved K30 neutral text. */
-html[data-theme="light"] .hero .eyebrow .ta{
-  color:#83D3B0!important;-webkit-text-fill-color:#83D3B0!important;
-}
 /* Preserve a distinct outline for the search, search chips, difficulty/category tabs,
    list separators, and food-result controls without reintroducing heavy cards. */
 html[data-theme="light"] #guide #food-search #food-explorer .search-shell{
@@ -5179,10 +3911,6 @@ html[data-theme="light"] #guide .travel-twac .bulleted-list > li {
   color:#304840!important;
   -webkit-text-fill-color:#304840!important;
 }
-html[data-theme="light"] #guide .travel-twac .travel-twac-link {
-  background:#DDEEE4!important;border-color:#A9CEBB!important;
-  color:#19583E!important;-webkit-text-fill-color:#19583E!important;
-}
 /* Topic illustration squares in '旅行前に知っておきたいこと' should not remain
    dark charcoal in the light theme. */
 html[data-theme="light"] #guide .travel-caution .travel-topic-icon {
@@ -5231,18 +3959,10 @@ html[data-theme="light"] #guide .airport-route-selector .timeline-stop.end .node
   border-color:#35454D!important;
   box-shadow:none!important;
 }
-html[data-theme="light"] #guide .sights-day-trips .daytrip-timeline-stop--end .daytrip-timeline-node,
-html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop--end .daytrip-timeline-node {
-  background:#35454D!important;
-  border-color:#35454D!important;
-  box-shadow:none!important;
-}
-
 
 /* v30.9.39 — Airport recommended-label contrast in LIGHT mode only.
    Saturated ochre with readable contrast on the pale surface.
    The dark-mode palette remains unchanged. */
-
 
 /* =================== v30.9.40: airport LIGHT text colors ===================
    Color-only adjustment; preserves dark mode and route functionality. */
@@ -5289,9 +4009,7 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge 
 
 .hero.wrapper .theme-preview-toggle{
   position:absolute!important;z-index:15!important;
-  
-  
-  
+
   padding:0!important;gap:0!important;line-height:1!important;
   display:flex!important;align-items:center!important;justify-content:center!important;
   
@@ -5299,14 +4017,12 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge 
 }
 .hero.wrapper .theme-preview-toggle svg{flex:none;display:block;}
 
-
 /* ========== v30.9.42 patch: header lockup + subtler theme button + system sync ========== */
 .hero.wrapper{position:relative;}
 .hero.wrapper .theme-preview-toggle{
   top:clamp(28px,6vw,44px)!important;
   right:0!important;
-  
-  
+
   border-radius:999px!important;
   border:1px solid rgba(173,181,186,.24)!important;
   
@@ -5395,9 +4111,7 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:hover{
   color:var(--text-heading)!important;
 }
 .hero .tagline{
-  
-  
-  
+
   color:#79848B!important;
 }
 html[data-theme="light"] .hero-brandline{color:#667078;}
@@ -5414,7 +4128,6 @@ html[data-theme="light"] .hero .tagline{color:#758088!important;}
   .hero-lockup-slash::before{width:3px;height:90%;}
   .hero .welcome{margin-top:40px!important;}
 }
-
 
 /* v30.9.42: preserve the mint TA + gray lettering in both appearances.
    Keep the slash geometric (including its short lower tip), not font-dependent. */
@@ -5466,10 +4179,8 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
   pointer-events:none!important;
 }
 @media(max-width:600px){
-  .hero h1.hero-masthead .hero-lockup{font-size:clamp(28px,10vw,49px)!important;}
   .hero h1.hero-masthead .hero-lockup-slash{height:clamp(42px,11vw,54px);}
 }
-
 
 /* ========== v30.9.43 — masthead alignment and v30.9.41 intro typography ========== */
 /* Align the slash to the letter bottoms; no overlong tip above the wordmark. */
@@ -5525,9 +4236,7 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
 #guide{--transfer-ring:#F2F2F2;--transfer-surface:#0D0D0D;}
 html[data-theme="light"] #guide{--transfer-ring:#3D474D;--transfer-surface:#F7F8F7;}
 /* Light transport route transfer badges: dark graphite with white text. */
-html[data-theme="light"] #guide .airport-route-selector .timeline-status--transfer,
-html[data-theme="light"] #guide .sights-day-trips .daytrip-timeline-transfer-tag,
-html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-transfer-tag{
+html[data-theme="light"] #guide .airport-route-selector .timeline-status--transfer{
   background:#3D4348!important;
   color:#FFFFFF!important;
   -webkit-text-fill-color:#FFFFFF!important;
@@ -5535,9 +4244,7 @@ html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeli
   box-shadow:none!important;
 }
 /* Common concentric markers for interchange stations in both themes. */
-#guide .airport-route-selector .timeline-stop.transfer .node,
-#guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-node,
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop--transfer .daytrip-timeline-node{
+#guide .airport-route-selector .timeline-stop.transfer .node{
   box-sizing:border-box!important;
   position:relative!important;
   width:13px!important;
@@ -5547,9 +4254,7 @@ html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeli
   border-radius:50%!important;
   box-shadow:0 0 0 2px var(--transfer-surface)!important;
 }
-#guide .airport-route-selector .timeline-stop.transfer .node::after,
-#guide .sights-day-trips .daytrip-timeline-stop--transfer .daytrip-timeline-node::after,
-#guide .daytrip-airport-display .daytrip-airport-timeline .daytrip-timeline-stop--transfer .daytrip-timeline-node::after{
+#guide .airport-route-selector .timeline-stop.transfer .node::after{
   content:"";
   position:absolute;
   top:50%;left:50%;
@@ -5558,32 +4263,6 @@ html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeli
   background:var(--transfer-ring);
   transform:translate(-50%,-50%);
 }
-/* Same icon treatment for transfer markers on the alternative MRT diagram. */
-#guide .airport-direction-switcher .air-rd-step--transfer .air-rd-node,
-#guide .airport-direction-switcher .metro-transfer-node{
-  position:relative!important;
-  box-sizing:border-box!important;
-  width:13px!important;height:13px!important;
-  border:2px solid var(--transfer-ring)!important;
-  border-radius:50%!important;
-  background:var(--transfer-surface)!important;
-  box-shadow:none!important;
-}
-#guide .airport-direction-switcher .air-rd-step--transfer .air-rd-node::after,
-#guide .airport-direction-switcher .metro-transfer-node::after{
-  content:"";
-  position:absolute;
-  top:50%;left:50%;
-  width:4px;height:4px;
-  border-radius:50%;
-  background:var(--transfer-ring);
-  transform:translate(-50%,-50%);
-}
-#guide .airport-direction-switcher .air-rd-step--transfer .air-rd-node{
-  margin-top:4px!important;
-}
-#guide .airport-direction-switcher .metro-transfer-node{flex:0 0 13px!important;}
-
 
 /* ========== v30.9.44 — restore v30.9.41 welcome; open up wordmark tracking ========== */
 /* The original 30.9.41 welcome was 18px/750 with 0.01em tracking,
@@ -5614,7 +4293,6 @@ html[data-theme="light"] #guide .daytrip-airport-display .daytrip-airport-timeli
     letter-spacing:.07em!important;
   }
 }
-
 
 /* =================== v30.9.45: quieter controls, header spacing and transit labels =================== */
 /* About +200% white space, i.e. three times the prior 17px gap. */
@@ -5680,7 +4358,6 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-mark img
   white-space:normal;line-height:1.7;
 }
 
-
 /* =================== v30.9.46 — pinned directory headings & scroll hints =================== */
 /* The region's title and the selected bubble bar live outside the scrolling
    rows: only the results themselves scroll, not the entire tab panel. */
@@ -5739,7 +4416,6 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-mark img
   scroll-snap-align:none!important;
 }
 
-
 /* =================== v30.9.47 — list heading transition and frameless theme toggle =================== */
 #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{
   scroll-behavior:smooth;
@@ -5767,7 +4443,6 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:focus-visible{
 @media(prefers-reduced-motion:reduce){
   #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{scroll-behavior:auto!important;}
 }
-
 
 /* ================= v30.9.48: pinned directory heading and animated food detail ================= */
 /* Expanded heading lives OUTSIDE the inner list scrollport, beneath the pills
@@ -5884,7 +4559,6 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
   .hero.wrapper .theme-preview-toggle{transition:none!important;}
 }
 
-
 /* v30.9.49 — respect the JavaScript-measured compact food list height.
    The containing section still fills the drawer, but the list itself caps
    at 4–5 visible dishes and independently scrolls (including expanded rows). */
@@ -5894,7 +4568,6 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
   overflow-y:auto!important;
   overscroll-behavior-y:contain;
 }
-
 
 /* ================= v30.9.50 — Safari-safe compact food rows =================
    A zero-sized CSS Grid track can still allow its content to affect row
@@ -5938,14 +4611,12 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
   }
 }
 
-
 /* v30.9.52 — longer restaurant/area teaser: retain the pinned headings,
    inner scroll and bottom-end fade, but show about five entries at once. */
 #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body.teaser-can-scroll:not([data-teaser-end="true"]){
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)!important;
   mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)!important;
 }
-
 
 /* v30.9.53 — compact TWAC official-site badge only; all other links unchanged. */
 #guide .travel-twac a.external-action-link {
@@ -5955,7 +4626,6 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
   max-width:100%!important;
 }
 
-
 /* v30.9.54 — emergency direct-dial support cards, consistent with existing style. */
 #guide a.emergency-contact-card--assistance{gap:8px;min-height:0;padding:15px 17px 16px;}
 #guide a.emergency-contact-card--assistance .emergency-phone-number{font-size:clamp(19px,5vw,27px);font-weight:750;letter-spacing:0;overflow-wrap:anywhere;}
@@ -5963,7 +4633,6 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
 #guide .emergency-official-links{grid-column:1/-1;margin:0;padding:0 3px 2px;}
 #guide .emergency-official-links a{font-size:11.5px;line-height:1.5;text-decoration:underline;text-underline-offset:3px;color:#AFCDD7;}
 html[data-theme="light"] #guide .emergency-official-links a{color:#245E82;}
-
 
 /* v30.9.55 — the original category summary is duplicated in a separate pinned
    heading while expanded. Visibility:hidden kept its 46–68px layout height,
@@ -5996,7 +4665,6 @@ body.food-swipe-active {background:#0d0d0d!important;}
 html[data-theme="light"]:has(body.food-swipe-active),
 html[data-theme="light"] body.food-swipe-active {background:#f7f8f7!important;}
 
-
 /* v30.9.58 — Food Index safe-area edge fades, matching its background.
    Earlier versions suppress ::before/::after on the drawer, so explicitly
    restore the two non-interactive gradient layers here. */
@@ -6024,7 +4692,6 @@ html[data-theme="light"] #guide #food-search.food-drawer::before {
 html[data-theme="light"] #guide #food-search.food-drawer::after {
   background:linear-gradient(to top,#F7F8F7 0%,transparent 100%)!important;
 }
-
 
 /* v30.9.59 — full-viewport Safari drawer chrome bridge.
    Safari can sample the root canvas and the exposed/dimmed home page for its
@@ -6083,7 +4750,6 @@ body.recommend-swipe-active .recommend-drawer,
 body.food-swipe-active #guide #food-search.food-drawer {
   box-shadow:none!important;
 }
-
 
 /* v30.9.65 — compact category pills in the right-hand Food Index.
    Match the 30px mobile / 32px desktop recommendation chips. This is

@@ -1,4 +1,5 @@
-/* TAIPEI CITY GUIDE v30.9.112 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
+/* TAIPEI CITY GUIDE v30.9.113 — data files revalidate with cache:'no-cache' (304 when unchanged) instead of no-store.
+   v30.9.112 — recommendations use curated 2026-10-23 200-venue / 733-branch restaurant database.
    v30.9.96 — same-page location/station switching with custom readable line and station menus.
    v30.9.85: includes curated nearby venues for the existing GPS option.
    v30.9.82: rotating editorial pick, soft variety, distance bands (less fixed picks).
@@ -7,7 +8,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.112';
+  const VERSION='30.9.113';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const backdrop=document.querySelector('.recommend-drawer-backdrop');
@@ -178,7 +179,7 @@
   function stationOrigin(){const x=currentStation();return x?{lat:x.lat,lng:x.lng}:null;}
   async function loadMetroStations(){
     try{
-      const response=await fetch(`food/mrt_stations.json?v=${VERSION}`,{cache:'no-store'});
+      const response=await fetch(`food/mrt_stations.json?v=${VERSION}`,{cache:'no-cache'});
       if(!response.ok)throw new Error('station file unavailable');
       const data=await response.json();
       if(data.schemaVersion!==1||!Array.isArray(data.lines)||!Array.isArray(data.stations))throw new Error('station file invalid');
@@ -201,7 +202,7 @@
   let reviewedNotes=new Map();
   async function loadReviewedNotes(){
     try{
-      const response=await fetch(`food/recommend_notes.json?v=${VERSION}`,{cache:'no-store'});
+      const response=await fetch(`food/recommend_notes.json?v=${VERSION}`,{cache:'no-cache'});
       if(!response.ok)throw new Error('notes unavailable');
       const data=await response.json();
       if(data.schemaVersion!==1||!Array.isArray(data.notes))throw new Error('notes invalid');
@@ -242,7 +243,7 @@
   // carefully maintained editor backup; each chain keeps branch-specific data.
   async function loadNearbyVenues(){
     try{
-      const response=await fetch(`food/nearby.json?v=${VERSION}`,{cache:'no-store'});
+      const response=await fetch(`food/nearby.json?v=${VERSION}`,{cache:'no-cache'});
       if(!response.ok)throw new Error('restaurant database unavailable');
       const data=await response.json();
       if(data.schemaVersion!==1||!Array.isArray(data.venues))throw new Error('restaurant schema invalid');

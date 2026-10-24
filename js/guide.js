@@ -1,4 +1,5 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
+/* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading; back-to-top skips redundant DOM writes. */
 
 /* =================== JS 01: behavior-1 =================== */
 ;
@@ -247,7 +248,11 @@
     let lastY=window.scrollY;
     let hideTimer=null;
     const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+    // Scroll fires every frame; only touch the DOM when visibility actually changes.
+    let backVisible=null;
     function showBack(visible){
+      if(visible===backVisible)return;
+      backVisible=visible;
       back.classList.toggle('show',visible);
       back.tabIndex=visible?0:-1;
       back.setAttribute('aria-hidden',String(!visible));
@@ -925,8 +930,8 @@ spice: ["1", "2", "3", "maybe"].includes(item.spice)
 async function loadData() {
   try {
     const [foodResponse, synonymResponse] = await Promise.all([
-      fetch("./food/foods.csv", { cache: "no-store" }),
-      fetch("./food/synonyms.json", { cache: "no-store" })
+      fetch("./food/foods.csv", { cache: "no-cache" }),
+      fetch("./food/synonyms.json", { cache: "no-cache" })
     ]);
     if (!foodResponse.ok || !synonymResponse.ok) {
       throw new Error("foods.csv または synonyms.json が見つかりません。");
