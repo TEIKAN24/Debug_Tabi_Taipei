@@ -1756,3 +1756,7 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
   font-size:11px;line-height:16px;color:#9A9A9A;
 }
 html[data-theme="light"] #food-recommend-section .food-directory-note{color:#5E6B72;}
+
+/* v30.9.132 — the list's scroll fade is a pseudo-element with visibility:visible, which
+   showed through the hidden list side onto the front. It only exists on the list side. */
+#food-recommend-section .food-flip[data-face="front"] .food-directory::after{visibility:hidden!important;opacity:0!important;}
