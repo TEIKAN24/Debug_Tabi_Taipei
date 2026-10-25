@@ -4769,3 +4769,30 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-f
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-info dd{color:#202020!important;}
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-features li{background:#ECECEC!important;color:#4A4A4A!important;}
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-go{background:#222222!important;color:#FFFFFF!important;}
+
+/* v30.9.140 — Night-market signature dishes, source-aligned with food/foods.csv. */
+#guide #night-markets-section #night-markets-tabs .nm-foods{margin:28px 0 0!important;}
+#guide #night-markets-section #night-markets-tabs .nm-foods-heading{
+  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+  margin:0 0 10px!important;color:#DADADA!important;font-size:14px!important;line-height:1.4!important;font-weight:500;
+}
+#guide #night-markets-section #night-markets-tabs .nm-foods-subtitle{font-size:11px!important;line-height:1.4!important;font-weight:400;color:#8E8E8E!important;}
+#guide #night-markets-section #night-markets-tabs .nm-foods-list{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:7px;
+  padding:0!important;margin:0!important;list-style:none!important;
+}
+#guide #night-markets-section #night-markets-tabs .nm-foods-list>li{
+  display:grid;grid-template-columns:minmax(68px,auto) minmax(0,1fr);align-items:start;gap:10px;
+  margin:0!important;padding:10px 12px!important;list-style:none!important;
+  border-radius:9px;background:#272727!important;min-width:0;
+}
+#guide #night-markets-section #night-markets-tabs .nm-foods-list>li::before,
+#guide #night-markets-section #night-markets-tabs .nm-foods-list>li::marker{content:none!important;}
+#guide #night-markets-section #night-markets-tabs .nm-food-zh{font-size:13px!important;font-weight:650!important;line-height:1.6!important;color:#E8E8E8!important;overflow-wrap:anywhere;}
+#guide #night-markets-section #night-markets-tabs .nm-food-ja{font-size:12px!important;line-height:1.65!important;color:#BDBDBD!important;overflow-wrap:anywhere;min-width:0;}
+#guide #night-markets-section #night-markets-tabs .nm-foods + .nm-go{margin-top:30px!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-foods-heading{color:#3C3C3C!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-foods-subtitle{color:#6C777C!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-foods-list>li{background:#F0F0F0!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-food-zh{color:#242424!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-food-ja{color:#5B6064!important;}
