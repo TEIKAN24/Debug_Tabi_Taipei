@@ -1724,3 +1724,12 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
     font-size:9.5px!important;
   }
 }
+
+/* v30.9.129 — footer spacing, phone first (desktop follows): 12px between the last
+   card and ほかの3軒を見る, and no reserved blank below the note. The hidden advisory
+   no longer keeps a slot; the note takes its natural height. */
+#food-recommend-section .recommend-drawer.is-inline .recommend-more:not([hidden]){
+  top:0!important;margin:12px 0 0!important;
+}
+#food-recommend-section .recommend-drawer.is-inline .recommend-relaxed[hidden]{display:none!important;}
+#food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{min-height:0!important;margin:8px 0 0!important;}

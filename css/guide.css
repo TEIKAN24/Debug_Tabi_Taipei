@@ -4708,3 +4708,10 @@ body.food-swipe-active #guide #food-search.food-drawer {
 }
 /* Backdrop itself must not create a seam on the right edge. */
 .food-drawer-backdrop {box-shadow:none!important;filter:none!important;}
+
+/* v30.9.129 — an open nested menu (e.g. 雑貨) keeps its own title at the top of
+   that menu while its items scroll, and lets go when the menu ends. */
+#guide .venue-directory-section .tab-panel .teaser-scroll-body > details[open] > summary{
+  position:sticky;top:0;z-index:3;background:#0D0D0D!important;
+}
+html[data-theme="light"] #guide .venue-directory-section .tab-panel .teaser-scroll-body > details[open] > summary{background:#F7F8F7!important;}
