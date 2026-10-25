@@ -1,6 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
+   v30.9.129 — nested menus keep their own title at the top of the open menu (no pinned copy).
    v30.9.121 — 🥢 食べる・飲む is an always-open section (no accordion) holding おすすめ ⇄ 一覧. */
 
 /* =================== JS 01: behavior-1 =================== */
@@ -2866,9 +2867,9 @@ update();
   'use strict';
   const guide=document.getElementById('guide');
   if(!guide)return;
-  const panels=[...guide.querySelectorAll(
-    '.venue-directory-section:not(.area-directory-section) .tab-panel.guided-focus-panel, '+
-    '.area-directory-section .tab-panel')];
+  // v30.9.129: the open row's own title now stays at the top of that row
+  // (position:sticky in guide.css) instead of a copy pinned above every row.
+  const panels=[];
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   const owned=new WeakMap();
   function bodyOf(panel){return panel.querySelector(':scope > .indented');}

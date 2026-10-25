@@ -1,4 +1,6 @@
-/* TAIPEI CITY GUIDE v30.9.127 — compact recommendation footer without hidden gaps.
+/* TAIPEI CITY GUIDE v30.9.129 — curated picks (guideTagSource) rank first again until editor badges
+   exist; chain links search Maps in Taipei.
+   v30.9.127 — compact recommendation footer without hidden gaps.
    v30.9.126 — visible back-list fade and corrected front card spacing.
    v30.9.125 — artifact-free flip, reverse-list fade and stable iOS height.
    v30.9.124 — main heading snap and no-focus advanced filter toggle.
@@ -27,7 +29,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.127';
+  const VERSION='30.9.129';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -270,7 +272,8 @@
     if(nearbyCatalog)return nearbyCatalog;
     nearbyCatalog=nearbyVenues.map((r,index)=>({
       name:r.name,url:r.branches[0]?.mapUrl||'',sourceMapUrls:[],
-      guidePick:editorialNotes.has(normalizeNoteName(r.name))||r.awards?.bibGourmand2026||!!r.awards?.highestBowls,
+      // Shops whose tags came from the former ⭐ おすすめリスト stay curated picks.
+      guidePick:!!r.guideTagSource||editorialNotes.has(normalizeNoteName(r.name))||r.awards?.bibGourmand2026||!!r.awards?.highestBowls,
       guideTags:(r.guideTags?.length?r.guideTags:(editorialNotes.get(normalizeNoteName(r.name))?.tags||[]).map(text=>({text,tone:'editorial'}))),
       editorialPick:editorialNotes.has(normalizeNoteName(r.name)),
       category:r.category||'meal',details:'',
@@ -1344,7 +1347,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   function directoryMapUrl(venue){
     // Never send a chain to a particular branch; the visitor chooses the branch on Maps.
     if(directoryIsChain(venue)){
-      return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(venue.name);
+      return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(venue.name+' 台北');
     }
     return venue.branches[0]?.mapUrl||'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(venue.name+' 台北');
   }
