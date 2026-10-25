@@ -1741,7 +1741,18 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
   box-sizing:content-box!important;height:32px!important;min-height:0!important;max-height:32px!important;overflow:hidden!important;
   font-size:11px!important;line-height:16px!important;margin:8px 0 0!important;padding:0!important;
 }
-#food-recommend-section .food-directory::after{display:none!important;}
 #food-recommend-section .food-flip[data-face="back"] .food-flip-inner{height:auto!important;min-height:0!important;}
 #food-recommend-section .food-flip[data-face="back"] .food-flip-front{position:relative!important;inset:auto!important;visibility:hidden!important;}
 #food-recommend-section .food-flip[data-face="back"] .food-flip-back{position:absolute!important;inset:0!important;height:auto!important;}
+
+/* v30.9.131 — list side: a little shorter, with a fade that shows there is more below.
+   A fixed two-line note sits under the list (like the front's note), and reaching the
+   end of the list passes the scroll on to the page instead of trapping it. */
+#food-recommend-section .food-directory-panel{overscroll-behavior-y:auto!important;}
+#food-recommend-section .food-flip-back-body{display:flex!important;flex-direction:column!important;}
+#food-recommend-section .food-flip-back-body>.food-directory{flex:1 1 auto!important;min-height:0!important;}
+#food-recommend-section .food-directory-note{
+  flex:none;box-sizing:content-box;height:32px;overflow:hidden;margin:10px 0 0;padding:0;
+  font-size:11px;line-height:16px;color:#9A9A9A;
+}
+html[data-theme="light"] #food-recommend-section .food-directory-note{color:#5E6B72;}

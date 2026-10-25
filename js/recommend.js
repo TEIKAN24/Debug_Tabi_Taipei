@@ -1,4 +1,5 @@
-/* TAIPEI CITY GUIDE v30.9.130 — 料理種類 can be combined; 推薦レベル (pickLevel 1 精選 / 2 必食) from the
+/* TAIPEI CITY GUIDE v30.9.131 — restaurant data from the 2026-10-25 backup (254 shops).
+   v30.9.130 — 料理種類 can be combined; 推薦レベル (pickLevel 1 精選 / 2 必食) from the
    editor ranks and orders shops; short fixed-size note; the list side keeps the front's size; turns the other way.
    v30.9.129 — curated picks (guideTagSource) rank first again until editor badges
    exist; chain links search Maps in Taipei.
@@ -31,7 +32,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.130';
+  const VERSION='30.9.131';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
