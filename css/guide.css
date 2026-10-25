@@ -4739,3 +4739,40 @@ html[data-theme="light"] #guide .venue-directory-section .tab-panel .teaser-scro
 }
 html[data-theme="light"] #guide .chapter-eyebrow{color:#5E6B72!important;}
 html[data-theme="light"] #guide .chapter-lead{color:#5E6B72!important;}
+
+/* v30.9.135 — 🏮 夜市: one tab per night market (same bubbles as 注目の街歩きエリア),
+   each showing one fixed info card in the style of the recommendation cards.
+   The whole card opens the market in Google Maps. */
+#guide .night-market-section .night-market-panel{padding:6px 0 4px!important;}
+#guide .night-market-section .nm-card{
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto;
+  grid-template-areas:"label pill" "name rate" "foot foot";
+  column-gap:12px;row-gap:5px;align-items:center;
+  padding:16px 16px 14px 18px!important;border:1px solid #4A4A4A;border-radius:14px;background:#232323;
+  color:#F7F7F7!important;text-decoration:none!important;-webkit-tap-highlight-color:transparent;
+}
+#guide .night-market-section .nm-card:focus-visible{outline:2px solid #CCCCCC;outline-offset:2px;}
+#guide .night-market-section .nm-label{grid-area:label;align-self:end;font-size:11px;font-weight:760;letter-spacing:.01em;color:#DEDEDE;}
+#guide .night-market-section .nm-name{grid-area:name;font-size:20px;font-weight:800;line-height:1.25;color:#F7F7F7;}
+#guide .night-market-section .nm-pill{
+  grid-area:pill;justify-self:end;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  padding:4px 10px 4px 8px;border:1px solid #66616B;border-radius:999px;background:rgba(34,34,36,.45);
+  font-size:11px;font-weight:650;line-height:1.2;color:#FBF8FF;
+}
+#guide .night-market-section .nm-rate{grid-area:rate;justify-self:end;display:inline-flex;gap:3px;color:#7A6E60;}
+#guide .night-market-section .nm-foot{grid-area:foot;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 10px;margin-top:6px;}
+#guide .night-market-section .nm-desc{flex:1 1 170px;min-width:0;font-size:12px;line-height:1.55;color:#9A9A9A;}
+#guide .night-market-section .nm-tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-left:auto;}
+#guide .night-market-section .nm-tag{
+  padding:5.5px 8.5px;border:1px solid #626262;border-radius:5px;background:#303030;
+  font-size:10.3px;font-weight:700;line-height:1.1;color:#EEEEEE;white-space:nowrap;
+}
+#guide .night-market-section .nm-tag.is-featured{background:#423A2D;border-color:#66533B;color:#EBC489;}
+html[data-theme="light"] #guide .night-market-section .nm-card{background:#FFFFFF;border-color:#CFCFCF;color:#282828!important;}
+html[data-theme="light"] #guide .night-market-section .nm-label{color:#535353;}
+html[data-theme="light"] #guide .night-market-section .nm-name{color:#282828;}
+html[data-theme="light"] #guide .night-market-section .nm-pill{background:#FEFEFE;border-color:#BDBDBD;color:#2D2D2D;}
+html[data-theme="light"] #guide .night-market-section .nm-rate{color:#B5A68E;}
+html[data-theme="light"] #guide .night-market-section .nm-desc{color:#5E6B72;}
+html[data-theme="light"] #guide .night-market-section .nm-tag{background:#F3F3F3;border-color:#CECECE;color:#454545;}
+html[data-theme="light"] #guide .night-market-section .nm-tag.is-featured{background:#F8EEDB;border-color:#DDC79E;color:#815A1B;}
