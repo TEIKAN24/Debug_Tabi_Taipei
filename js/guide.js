@@ -1,6 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
+   v30.9.133 — five chapters (01–05) with one heading set; the sights chapter follows グルメ; snap targets the chapter number lines.
    v30.9.129 — nested menus keep their own title at the top of the open menu (no pinned copy).
    v30.9.121 — 🥢 食べる・飲む is an always-open section (no accordion) holding おすすめ ⇄ 一覧. */
 
@@ -2551,8 +2552,8 @@ update();
   // Never snap scrollable drawers, inner results, tabs, or programmatic navigation.
   const selectors=[
     '#top',
-    '#guide .page-body > h2[id="3f86bda0-4caa-8049-b865-f2a862bb77c5"]',
-    '#guide #food-recommend-section #recommend-title',
+    // v30.9.133: every chapter starts with its number line (01 · TRAVEL …).
+    '#guide .chapter-eyebrow',
     '#guide .page-body > .sights-day-trips > h3'
   ].join(',');
   const getHeadings=()=>[...document.querySelectorAll(selectors)]
