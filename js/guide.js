@@ -1,6 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
+   v30.9.134 — 注目の街歩きエリア lists show six complete rows in every district.
    v30.9.133 — five chapters (01–05) with one heading set; the sights chapter follows グルメ; snap targets the chapter number lines.
    v30.9.129 — nested menus keep their own title at the top of the open menu (no pinned copy).
    v30.9.121 — 🥢 食べる・飲む is an always-open section (no accordion) holding おすすめ ⇄ 一覧. */
@@ -2759,9 +2760,13 @@ update();
     // Allow more of the existing recommendation list to be read at once.
     // Five complete headings and part of the sixth are the target, while
     // actual row sizes (including tags/secondary lines) determine the height.
-    const visibleCount=Math.min(rows.length,6);
+    // v30.9.134: 注目の街歩きエリア shows six complete rows (all of 赤峰街・中山駅,
+    // down to 体験・その他) with the same rule for every district; other lists keep
+    // five complete rows and part of the sixth.
+    const fullRows=panel.closest('.area-directory-section')?6:5;
+    const visibleCount=Math.min(rows.length,fullRows+1);
     const h=rows.slice(0,visibleCount).map(rowHeight);
-    const natural=h.reduce((total,height,i)=>total+height*(i===5?.48:1),0)+4;
+    const natural=h.reduce((total,height,i)=>total+height*(i===fullRows?.48:1),0)+4;
     const cap=Math.max(260,Math.min(window.innerHeight*.72,560));
     // Expanded lists contain taller shop rows (name, tags, notes). Reserve
     // a larger inner viewport for those, without affecting page scrolling.
