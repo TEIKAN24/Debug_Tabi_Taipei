@@ -1733,3 +1733,15 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-relaxed[hidden]{display:none!important;}
 #food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{min-height:0!important;margin:8px 0 0!important;}
+
+/* v30.9.130 — the note is short and keeps a fixed two-line slot, so a line break never
+   moves the block's edge; no fade on the list; the list side takes exactly the
+   front's size (the front stays in flow, hidden), so nothing below moves up. */
+#food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{
+  box-sizing:content-box!important;height:32px!important;min-height:0!important;max-height:32px!important;overflow:hidden!important;
+  font-size:11px!important;line-height:16px!important;margin:8px 0 0!important;padding:0!important;
+}
+#food-recommend-section .food-directory::after{display:none!important;}
+#food-recommend-section .food-flip[data-face="back"] .food-flip-inner{height:auto!important;min-height:0!important;}
+#food-recommend-section .food-flip[data-face="back"] .food-flip-front{position:relative!important;inset:auto!important;visibility:hidden!important;}
+#food-recommend-section .food-flip[data-face="back"] .food-flip-back{position:absolute!important;inset:0!important;height:auto!important;}
