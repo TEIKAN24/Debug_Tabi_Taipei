@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30.9.163 — stable, self-scrolling chapter pages. */
+/* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.160 — chapters are stacked cards: the next chapter slides over the previous one like a new sheet;
    a chapter's end and start are resting points (one swipe cannot skip a chapter).
    v30.9.150 — align the reverse-side directory bubbles and restore adaptive scroll hints.
@@ -54,13 +54,11 @@
     if (!summary) return;
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (!detail.open || summary.getClientRects().length === 0) return;
-      const chapterBox=summary.closest('.chapter-scroll');
-      if (chapterBox && document.documentElement.classList.contains('chapter-deck-active')) {
-        const offset=summary.getBoundingClientRect().top-chapterBox.getBoundingClientRect().top+chapterBox.scrollTop-8;
-        chapterBox.scrollTo({top:Math.max(0,offset),behavior:reduceMotion.matches?'auto':'smooth'});
-      } else {
-        summary.scrollIntoView({block:'start',inline:'nearest',behavior:reduceMotion.matches?'auto':'smooth'});
-      }
+      summary.scrollIntoView({
+        block: 'start',
+        inline: 'nearest',
+        behavior: reduceMotion.matches ? 'auto' : 'smooth'
+      });
     }));
   }
   // District, drink and night-market subcategory details open in place.
@@ -249,26 +247,14 @@
       if (id === 'day-trips') showTarget(id);
       else revealNavFirstLayer(id);
       if (location.hash && location.protocol !== 'about:') history.replaceState(null,'',location.pathname+location.search);
-      requestAnimationFrame(()=>{
-        const box=anchor.closest('.chapter-scroll');
-        if(box && document.documentElement.classList.contains('chapter-deck-active')){
-          const offset=anchor.getBoundingClientRect().top-box.getBoundingClientRect().top+box.scrollTop-8;
-          box.scrollTo({top:Math.max(0,offset),behavior:reduceMotion.matches?'auto':'smooth'});
-        } else anchor.scrollIntoView({behavior:reduceMotion.matches?'auto':'smooth',block:'start'});
-      });
+      requestAnimationFrame(()=>anchor.scrollIntoView({behavior:reduceMotion.matches?'auto':'smooth',block:'start'}));
     });
   });
   function revealHash(){
     const id=decodeURIComponent(location.hash.replace(/^#/,''));
     if(!id)return;
     const target=showTarget(id);
-    if(target)requestAnimationFrame(()=>{
-      const box=target.closest('.chapter-scroll');
-      if(box && document.documentElement.classList.contains('chapter-deck-active')){
-        const offset=target.getBoundingClientRect().top-box.getBoundingClientRect().top+box.scrollTop-8;
-        box.scrollTo({top:Math.max(0,offset),behavior:'auto'});
-      } else target.scrollIntoView({behavior:'auto',block:'start'});
-    });
+    if(target)requestAnimationFrame(()=>target.scrollIntoView({behavior:'auto',block:'start'}));
   }
   window.addEventListener('hashchange',revealHash);
   // The browser manages history restoration; don't reset scrolling on page load,
@@ -3319,244 +3305,279 @@ update();
   panels.forEach(panel=>sync(panel));
 })();
 
-/* =================== JS 30: viewport chapter deck v30.9.164 =================== */
-;(() => {
+/* v30.9.165 — separate chapter sheets with a single, gesture-triggered turn.
+   The document visits a stationary deck only between the homepage and footer.
+   Each sheet is its own DOM section and scroll area. Only a NEW gesture that
+   begins at the inner scroll boundary may advance a sheet. */
+;(()=>{
   'use strict';
   const deck=document.querySelector('#guide > .page-body');
-  const cards=deck?[...deck.children].filter(el=>el.matches('.chapter-card')):[];
+  const cards=deck?[...deck.children].filter(node=>node.matches('.chapter-card')):[];
   if(cards.length!==5)return;
-  const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const scrolls=[];
-  let active=0, engaged=false, turning=false, touch=null;
-  let exitGuardUntil=0, turnTimer=0, wheelStream=null;
-  let rootTouch=null;
-  const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   const now=()=>performance.now();
-  const overlayOpen=()=>document.body.classList.contains('food-drawer-open') ||
-    document.body.classList.contains('food-swipe-active') ||
+  const scrollers=[];
+  const wheelStreams=new WeakMap();
+  const nestedSelector='input,textarea,select,[contenteditable="true"]';
+  let index=0, engaged=false, turning=false, touch=null, navIgnoreUntil=0;
+  let rootedAt=0, lastRootY=window.scrollY, rootFrame=0, turnTimer=0;
+  let rootStartTouch=null;
+  const overlayOpen=()=>document.body.classList.contains('food-drawer-open')||
+    document.body.classList.contains('food-swipe-active')||
     document.body.classList.contains('food-swipe-dragging');
-  const atTop=el=>el.scrollTop<=3;
-  const atBottom=el=>el.scrollTop+el.clientHeight>=el.scrollHeight-3;
-  const deckY=()=>window.scrollY+deck.getBoundingClientRect().top;
-  const rootLocked=()=>document.documentElement.classList.contains('chapter-deck-active');
-  const getInner=el=>{
-    for(let node=el instanceof Element?el:null;node&& !node.classList.contains('chapter-scroll');node=node.parentElement){
-      if(node.matches('input,textarea,select,[contenteditable="true"]'))return true;
+
+  const atTop=box=>box.scrollTop<=3;
+  const atBottom=box=>box.scrollTop+box.clientHeight>=box.scrollHeight-3;
+  function nestedRegion(target,box){
+    let node=target instanceof Element?target:null;
+    while(node&&node!==box){
+      if(node.matches(nestedSelector))return true;
       const style=getComputedStyle(node);
-      if(/(auto|scroll)/.test(style.overflowY) && node.scrollHeight>node.clientHeight+5)return true;
+      if(/(auto|scroll)/.test(style.overflowY)&&node.scrollHeight>node.clientHeight+4)return true;
+      node=node.parentElement;
     }
     return false;
-  };
-
-  cards.forEach((card,index)=>{
-    let scroller=card.querySelector(':scope > .chapter-scroll');
-    if(!scroller){
-      scroller=document.createElement('div');
-      scroller.className='chapter-scroll';
-      scroller.tabIndex=0;
-      scroller.setAttribute('aria-label',card.querySelector('.chapter-eyebrow')?.textContent.trim()||'Chapter');
-      while(card.firstChild)scroller.appendChild(card.firstChild);
-      card.appendChild(scroller);
-    }
-    scrolls.push(scroller);
-    card.style.setProperty('--chapter-sheet-order',String(index));
+  }
+  function deckY(){return window.scrollY+deck.getBoundingClientRect().top-10;}
+  function insideDeckWindow(){
+    const rect=deck.getBoundingClientRect();
+    return rect.top<window.innerHeight&&rect.bottom>0;
+  }
+  function skipInput(event){return event.target instanceof Element && Boolean(event.target.closest(nestedSelector));}
+  cards.forEach((card,i)=>{
+    const box=document.createElement('div');
+    box.className='chapter-scroll';
+    box.tabIndex=0;
+    box.setAttribute('role','region');
+    box.setAttribute('aria-label',card.querySelector('.chapter-eyebrow')?.textContent.trim()||'Chapter');
+    while(card.firstChild)box.appendChild(card.firstChild);
+    card.appendChild(box);
+    scrollers.push(box);
+    card.dataset.chapterPage=String(i+1).padStart(2,'0');
   });
-  deck.classList.add('chapter-pages-ready');
-  function show(index){
-    active=clamp(index,0,4);
+  deck.classList.add('chapter-deck-ready');
+
+  function paintActive(active){
+    index=Math.max(0,Math.min(cards.length-1,active));
     cards.forEach((card,i)=>{
-      const visible=i===active;
-      card.classList.toggle('is-current',visible);
-      card.classList.remove('is-preparing','is-entering','is-exiting','from-above','from-below');
-      card.setAttribute('aria-hidden',visible?'false':'true');
-      if('inert' in card)card.inert=!visible;
+      const on=i===index;
+      card.classList.toggle('is-current',on);
+      card.classList.remove('is-entering','is-preparing','is-leaving','from-above','from-below');
+      card.setAttribute('aria-hidden',String(!on));
+      card.inert=!on;
     });
   }
-  show(0);
+  paintActive(0);
 
-  function engage(index=active){
-    if(turning)return;
-    if(!engaged){
-      const y=deckY();
-      // Position the deck BEFORE freezing the document's outer scrolling.
+  function stopRootDrift(){
+    rootFrame=0;
+    if(!engaged||turning)return;
+    const delta=window.scrollY-rootedAt;
+    if(Math.abs(delta)>1.5){
+      const old=document.documentElement.style.scrollBehavior;
       document.documentElement.style.scrollBehavior='auto';
-      window.scrollTo(0,y);
-      document.documentElement.style.scrollBehavior='';
-      document.documentElement.classList.add('chapter-deck-active');
-      document.body.classList.add('chapter-deck-active');
-      engaged=true;
+      window.scrollTo({top:rootedAt,behavior:'instant'});
+      document.documentElement.style.scrollBehavior=old;
     }
-    if(index!==active)show(index);
-    wheelStream=null;
+  }
+  function engage(target=index,fromHome=false){
+    if(turning||overlayOpen())return;
+    const first=!engaged;
+    const anchor=deckY();
+    engaged=true;
+    navIgnoreUntil=now()+850;
+    rootedAt=Math.max(0,anchor);
+    document.documentElement.classList.add('chapter-deck-active');
+    document.body.classList.add('chapter-deck-active');
+    // There is only ONE document positioning adjustment on entry.
+    const old=document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior='auto';
+    window.scrollTo({top:rootedAt,behavior:'instant'});
+    document.documentElement.style.scrollBehavior=old;
+    if(target!==index)paintActive(target);
+    if(first&&fromHome&&!reduced.matches){
+      const card=cards[index];
+      card.classList.add('arrive-from-home');
+      window.setTimeout(()=>card.classList.remove('arrive-from-home'),540);
+    }
   }
   function leave(direction){
     if(turning)return;
     engaged=false;
-    exitGuardUntil=now()+1050;
+    navIgnoreUntil=now()+1250;
     document.documentElement.classList.remove('chapter-deck-active');
     document.body.classList.remove('chapter-deck-active');
-    wheelStream=null;
-    const y=deckY();
-    requestAnimationFrame(()=>{
-      // Allow leaving the first/last page without getting stuck in the deck.
-      const dest=direction<0?Math.max(0,y-window.innerHeight*.88):y+deck.offsetHeight+30;
-      window.scrollTo({top:dest,behavior:motion.matches?'instant':'smooth'});
-    });
+    const anchor=deckY();
+    const footer=document.querySelector('body > footer');
+    const y=direction<0?0:(footer ? window.scrollY+footer.getBoundingClientRect().top-22 : anchor+deck.offsetHeight+44);
+    window.scrollTo({top:y,behavior:reduced.matches?'instant':'smooth'});
   }
-
   function turn(direction){
-    if(turning||overlayOpen())return;
-    const next=active+direction;
-    if(next<0||next>=5){leave(direction);return;}
-    engaged||engage();
+    if(turning||overlayOpen()||!engaged)return;
+    const next=index+direction;
+    if(next<0||next>=cards.length){leave(direction);return;}
     turning=true;
+    navIgnoreUntil=now()+800;
     clearTimeout(turnTimer);
-    const from=cards[active],to=cards[next];
-    const previous=active;
-    active=next;
+    const from=cards[index],to=cards[next];
     to.inert=false;
     to.setAttribute('aria-hidden','false');
+    to.classList.remove('is-current','is-entering','is-leaving','from-above','from-below');
     to.classList.add('is-preparing',direction>0?'from-below':'from-above');
-    from.classList.add('is-exiting');
+    from.classList.add('is-leaving');
     document.body.classList.add('chapter-turning');
-    // Fix the starting animation frame; no layout/height/scroll position
-    // corrections while the gesture or browser momentum is still active.
+    // The viewport itself remains stationary during the page turn.
     void to.offsetWidth;
-    requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
       to.classList.remove('is-preparing');
       to.classList.add('is-entering');
-    });
-    const end=()=>{
-      cards.forEach((card,i)=>{
-        const isCurrent=i===next;
-        card.classList.toggle('is-current',isCurrent);
-        card.classList.remove('is-preparing','is-entering','is-exiting','from-below','from-above');
-        card.setAttribute('aria-hidden',String(!isCurrent));
-        card.inert=!isCurrent;
-      });
+    }));
+    const done=()=>{
+      paintActive(next);
       turning=false;
       document.body.classList.remove('chapter-turning');
-      wheelStream=null;
+      navIgnoreUntil=now()+420;
     };
-    turnTimer=setTimeout(end,motion.matches?40:570);
+    turnTimer=setTimeout(done,reduced.matches?70:565);
   }
-
-  // The homepage has its own naturally scrollable hero. Crossing into the
-  // deck is caught before browser momentum can skip past chapter 01.
-  window.addEventListener('wheel',e=>{
+  // Root-page → card entry and card → footer return. A single long downward
+  // swipe must not skip the entire chapter deck, even with scroll inertia.
+  window.addEventListener('wheel',event=>{
     if(engaged){
-      if(turning&&e.cancelable)e.preventDefault();
+      if(overlayOpen())return;
+      if(turning||!event.target.closest('.chapter-scroll')){
+        if(event.cancelable)event.preventDefault();
+      }
       return;
     }
-    if(now()<exitGuardUntil || overlayOpen()||Math.abs(e.deltaY)<=Math.abs(e.deltaX))return;
-    const y=window.scrollY, start=deckY(), stop=start+deck.offsetHeight;
-    if(e.deltaY>0 && y<start && y+e.deltaY>=start-30){
-      if(e.cancelable)e.preventDefault();
-      engage(0);
-    }else if(e.deltaY<0 && y>stop && y+e.deltaY<=stop+30){
-      if(e.cancelable)e.preventDefault();
-      engage(4);
+    if(now()<navIgnoreUntil||overlayOpen())return;
+    if(Math.abs(event.deltaY)<4||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
+    const y=window.scrollY,entry=deckY(),exit=entry+deck.offsetHeight;
+    if(event.deltaY>0 && y<entry && y+event.deltaY>=entry-32){
+      if(event.cancelable)event.preventDefault();
+      engage(0,true);
+    }else if(event.deltaY<0 && y>exit && y+event.deltaY<=exit+32){
+      if(event.cancelable)event.preventDefault();
+      engage(4,false);
     }
   },{passive:false,capture:true});
-  window.addEventListener('touchstart',e=>{
-    if(e.touches.length!==1){rootTouch=null;return;}
-    rootTouch={y:e.touches[0].clientY,scrollY:window.scrollY};
+  window.addEventListener('touchstart',event=>{
+    if(event.touches.length!==1){rootStartTouch=null;return;}
+    rootStartTouch={x:event.touches[0].clientX,y:event.touches[0].clientY,scrollY:window.scrollY};
   },{passive:true,capture:true});
-  window.addEventListener('touchmove',e=>{
-    if(turning){if(e.cancelable)e.preventDefault();return;}
-    if(engaged || !rootTouch || now()<exitGuardUntil||overlayOpen())return;
-    const delta=rootTouch.y-e.touches[0].clientY;
-    const start=deckY(),stop=start+deck.offsetHeight;
-    if(delta>0 && rootTouch.scrollY<start && rootTouch.scrollY+delta>=start-18){
-      if(e.cancelable)e.preventDefault();
-      engage(0);
-      rootTouch=null;
-    }else if(delta<0 && rootTouch.scrollY>stop && rootTouch.scrollY+delta<=stop+18){
-      if(e.cancelable)e.preventDefault();
-      engage(4);
-      rootTouch=null;
+  window.addEventListener('touchmove',event=>{
+    if(turning){if(event.cancelable)event.preventDefault();return;}
+    if(engaged){
+      if(overlayOpen())return;
+      if(!event.target.closest('.chapter-scroll')&&event.cancelable)event.preventDefault();
+      return;
+    }
+    if(!rootStartTouch||now()<navIgnoreUntil||overlayOpen())return;
+    const dx=event.touches[0].clientX-rootStartTouch.x;
+    const dy=event.touches[0].clientY-rootStartTouch.y;
+    if(Math.abs(dx)>Math.abs(dy)*1.2)return;
+    const entry=deckY(),exit=entry+deck.offsetHeight;
+    if(dy < -20 && rootStartTouch.scrollY<entry && rootStartTouch.scrollY-dy>=entry-18){
+      if(event.cancelable)event.preventDefault();
+      engage(0,true);rootStartTouch=null;
+    }else if(dy>20 && rootStartTouch.scrollY>exit&&rootStartTouch.scrollY-dy<=exit+18){
+      if(event.cancelable)event.preventDefault();
+      engage(4,false);rootStartTouch=null;
     }
   },{passive:false,capture:true});
-  window.addEventListener('touchend',()=>{rootTouch=null;},{passive:true,capture:true});
+  window.addEventListener('touchend',()=>{rootStartTouch=null;},{passive:true,capture:true});
   window.addEventListener('scroll',()=>{
-    if(engaged||now()<exitGuardUntil||overlayOpen())return;
-    const y=window.scrollY,start=deckY(),end=start+deck.offsetHeight;
-    // Safety net for Safari's post-touch inertial scroll.
-    if(y>=start-4&&y<end-12)engage(y>=start+deck.offsetHeight*.68?4:0);
+    const y=window.scrollY;
+    if(engaged){
+      if(!rootFrame)rootFrame=requestAnimationFrame(stopRootDrift);
+    }else if(now()>=navIgnoreUntil&&!overlayOpen()){
+      const entry=deckY(),exit=entry+deck.offsetHeight;
+      const down=y>lastRootY+1,up=y<lastRootY-1;
+      if(down && lastRootY<entry-8 && y>=entry-8){
+        engage(0,true);
+      }else if(up && lastRootY>exit+8 && y<=exit+8){
+        engage(4,false);
+      }
+    }
+    lastRootY=y;
   },{passive:true});
 
-  function onTouchStart(event){
-    if(!engaged||turning||overlayOpen()||event.touches.length!==1||getInner(event.target)){touch=null;return;}
-    const p=event.touches[0],box=event.currentTarget;
+  // Preserve nested vertical scroll areas (area lists, back-side directory,
+  // popup, etc.) and left/right bubble swipes. They own their own gestures.
+  function startTouch(event){
+    touch=null;
+    if(!engaged||turning||overlayOpen()||event.touches.length!==1)return;
+    const box=event.currentTarget;
+    if(box!==scrollers[index]||nestedRegion(event.target,box))return;
+    const p=event.touches[0];
     touch={box,x:p.clientX,y:p.clientY,top:atTop(box),bottom:atBottom(box),vertical:false,cancelled:false};
   }
-  function onTouchMove(event){
+  function moveTouch(event){
     const s=touch;
     if(!s||s.box!==event.currentTarget||event.touches.length!==1)return;
-    const t=event.touches[0],dx=t.clientX-s.x,dy=t.clientY-s.y;
-    if(Math.abs(dx)>Math.abs(dy)*1.12 && Math.abs(dx)>12){s.cancelled=true;return;}
-    if(Math.abs(dy)<10||Math.abs(dy)<Math.abs(dx)*1.2)return;
+    const p=event.touches[0],dx=p.clientX-s.x,dy=p.clientY-s.y;
+    if(Math.abs(dx)>Math.abs(dy)*1.15 && Math.abs(dx)>13){s.cancelled=true;return;}
+    if(Math.abs(dy)<12||Math.abs(dy)<Math.abs(dx)*1.25)return;
     s.vertical=true;
     if(((dy<0&&s.bottom)||(dy>0&&s.top))&&event.cancelable)event.preventDefault();
   }
-  function onTouchEnd(event){
+  function endTouch(event){
     const s=touch;touch=null;
     if(!s||s.box!==event.currentTarget||s.cancelled||!s.vertical||turning||overlayOpen())return;
-    const point=event.changedTouches?.[0];if(!point)return;
-    const dx=point.clientX-s.x,dy=point.clientY-s.y;
-    if(Math.abs(dy)<56||Math.abs(dy)<Math.abs(dx)*1.25)return;
-    // Only an entirely new gesture started at the edge may switch.
+    const p=event.changedTouches?.[0];if(!p)return;
+    const dx=p.clientX-s.x,dy=p.clientY-s.y;
+    if(Math.abs(dy)<56||Math.abs(dy)<Math.abs(dx)*1.3)return;
     if(dy<0&&s.bottom&&atBottom(s.box))turn(1);
     else if(dy>0&&s.top&&atTop(s.box))turn(-1);
   }
   function onWheel(event){
-    if(!engaged)return;
+    if(!engaged||event.currentTarget!==scrollers[index])return;
     if(turning){if(event.cancelable)event.preventDefault();return;}
     const box=event.currentTarget;
-    if(overlayOpen()||getInner(event.target))return;
-    const dy=event.deltaY;
-    if(Math.abs(dy)<3||Math.abs(event.deltaX)>=Math.abs(dy))return;
-    const dir=dy>0?1:-1;
-    const edge=dir>0?atBottom(box):atTop(box);
-    const stamp=now();
-    if(!wheelStream||stamp-wheelStream.last>270||wheelStream.dir!==dir){
-      wheelStream={last:stamp,dir,eligible:edge,amount:0};
+    if(overlayOpen()||nestedRegion(event.target,box))return;
+    if(Math.abs(event.deltaY)<3||Math.abs(event.deltaX)>=Math.abs(event.deltaY))return;
+    const dir=event.deltaY>0?1:-1;
+    const edge=dir>0?atBottom(box):atTop(box),stamp=now();
+    let state=wheelStreams.get(box);
+    if(!state||stamp-state.last>310||state.dir!==dir){
+      state={last:stamp,dir,eligible:edge&&stamp>navIgnoreUntil,sum:0};
     }
-    wheelStream.last=stamp;
-    if(!edge)wheelStream.eligible=false;
+    state.last=stamp;
+    if(!edge)state.eligible=false;
     if(edge){
       if(event.cancelable)event.preventDefault();
-      if(wheelStream.eligible){
-        wheelStream.amount+=Math.abs(dy);
-        if(wheelStream.amount>88){wheelStream.eligible=false;turn(dir);}
+      if(state.eligible){
+        state.sum+=Math.abs(event.deltaY);
+        if(state.sum>92){state.eligible=false;turn(dir);}
       }
     }
+    wheelStreams.set(box,state);
   }
-  scrolls.forEach(box=>{
-    box.addEventListener('touchstart',onTouchStart,{passive:true});
-    box.addEventListener('touchmove',onTouchMove,{passive:false});
-    box.addEventListener('touchend',onTouchEnd,{passive:true});
+  scrollers.forEach((box,i)=>{
+    box.addEventListener('touchstart',startTouch,{passive:true});
+    box.addEventListener('touchmove',moveTouch,{passive:false});
+    box.addEventListener('touchend',endTouch,{passive:true});
     box.addEventListener('touchcancel',()=>touch=null,{passive:true});
     box.addEventListener('wheel',onWheel,{passive:false});
     box.addEventListener('keydown',event=>{
-      if(turning||overlayOpen()||getInner(event.target))return;
+      if(!engaged||turning||overlayOpen()||skipInput(event)||nestedRegion(event.target,box))return;
       const dir=['PageDown','ArrowDown'].includes(event.key)?1:
         ['PageUp','ArrowUp'].includes(event.key)?-1:0;
-      if(dir && (dir>0?atBottom(box):atTop(box))){event.preventDefault();turn(dir);}
+      if(dir&&(dir>0?atBottom(box):atTop(box))){event.preventDefault();turn(dir);}
     });
   });
 
-  // Existing six homepage buttons keep their original expansion/navigation logic.
-  // Engage the correct fixed page early so their scrollIntoView target is visible.
-  document.querySelectorAll('.nav-button[data-target], .hero-title-link[data-target], .section-jump-button[data-target]').forEach(button=>{
-    button.addEventListener('click',()=>{
-      const id=button.dataset.target;
+  // Existing shortcuts retain their native expansion and category logic.
+  // We only make the correct chapter visible before the old handler runs.
+  document.querySelectorAll('.nav-button[data-target],.hero-title-link[data-target],.section-jump-button[data-target]').forEach(link=>{
+    link.addEventListener('click',()=>{
+      const id=link.dataset.target;
       const target=document.getElementById(id);
-      const chapter=target?.closest('.chapter-card') ||
-        (id==='day-trips'?cards[2]:null);
-      if(chapter){engage(cards.indexOf(chapter));}
+      const card=target?.closest('.chapter-card')||(id==='day-trips'?cards[2]:null);
+      if(card)engage(cards.indexOf(card));
     },{capture:true});
   });
+  // Deep links and browser restoration are still supported.
   if(location.hash){
     const node=document.getElementById(decodeURIComponent(location.hash.slice(1)));
     const card=node?.closest('.chapter-card');

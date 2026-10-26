@@ -5124,96 +5124,112 @@ html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
   mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
 }
 
-
-/* v30.9.164 — single viewport fixed chapter deck. Each chapter owns its
-   internal scrolling, without changing any neighbour's page position. */
-#guide .page-body.chapter-pages-ready{
-  position:relative;isolation:isolate;
+/* v30.9.165 — five independent editorial sheets, not one shared content pane.
+   Body scrolls from homepage to deck; chapter content scrolls only INSIDE its
+   fixed-size sheet. Page turns are discrete rather than scroll-driven. */
+#guide > .page-body.chapter-deck-ready{
+  position:relative;
+  isolation:isolate;
   box-sizing:border-box;
-  height:calc(100svh - 14px);min-height:500px;
-  padding:0;overflow:hidden;
+  height:calc(100svh - 44px);
+  min-height:390px;
   margin:0;
+  padding:0;
+  overflow:visible;
+  overflow-anchor:none;
 }
-#guide .page-body.chapter-pages-ready > .chapter-card{
-  position:absolute;inset:0 6px 0;
+#guide > .page-body.chapter-deck-ready > .chapter-card{
+  position:absolute;
+  top:0;
+  bottom:-15px; /* 15px outward extension: not padding */
+  left:-9px;right:-9px; /* previous -6px plus 3px each side */
+  height:auto;min-height:0;max-height:none;
+  padding:0;margin:0;
   box-sizing:border-box;
-  height:100%;max-height:none;min-height:0;
-  margin:0;padding:0;
-  border:1px solid #383838;border-radius:22px;
-  background:#141414;
-  box-shadow:0 8px 30px rgba(0,0,0,.23);
-  opacity:0;transform:translate3d(0,105%,0);
-  visibility:hidden;pointer-events:none;
   overflow:hidden;
+  border:1px solid #353535;
+  border-radius:24px;
+  background:#141414;
+  box-shadow:0 10px 32px rgba(0,0,0,.29);
+  visibility:hidden;
+  pointer-events:none;
+  opacity:0;
+  transform:translate3d(0,108%,0);
   z-index:1;
+  overflow-anchor:none;
 }
-#guide .page-body.chapter-pages-ready > .chapter-card.is-current{
-  opacity:1;transform:translate3d(0,0,0);
-  visibility:visible;pointer-events:auto;
-  z-index:4;
+#guide > .page-body.chapter-deck-ready > .chapter-card.is-current{
+  visibility:visible;pointer-events:auto;opacity:1;
+  transform:translate3d(0,0,0);z-index:3;
 }
-#guide .page-body.chapter-pages-ready > .chapter-card.is-exiting{
-  opacity:.56;transform:scale(.977);
+#guide > .page-body.chapter-deck-ready > .chapter-card.is-leaving{
   visibility:visible;pointer-events:none;
-  z-index:2;
-  transition:transform .52s cubic-bezier(.16,.75,.23,1),opacity .52s ease;
+  opacity:.47;transform:scale(.975) translate3d(0,-4px,0);
+  filter:brightness(.78);z-index:2;
+  transition:transform .50s cubic-bezier(.21,.78,.26,1),opacity .5s ease,filter .5s ease;
 }
-#guide .page-body.chapter-pages-ready > .chapter-card.is-preparing{
-  visibility:visible;pointer-events:none;
-  opacity:1;transform:translate3d(0,105%,0);
+#guide > .page-body.chapter-deck-ready > .chapter-card.is-preparing{
+  visibility:visible;opacity:1;pointer-events:none;
+  transform:translate3d(0,107%,0);
   transition:none;z-index:5;
 }
-#guide .page-body.chapter-pages-ready > .chapter-card.is-preparing.from-above{
-  transform:translate3d(0,-105%,0);
+#guide > .page-body.chapter-deck-ready > .chapter-card.is-preparing.from-above{
+  transform:translate3d(0,-107%,0);
 }
-#guide .page-body.chapter-pages-ready > .chapter-card.is-entering{
-  visibility:visible;pointer-events:none;
-  opacity:1;transform:translate3d(0,0,0);
-  transition:transform .52s cubic-bezier(.20,.80,.23,1);
+#guide > .page-body.chapter-deck-ready > .chapter-card.is-entering{
+  visibility:visible;opacity:1;pointer-events:none;
+  transform:translate3d(0,0,0);
+  transition:transform .5s cubic-bezier(.19,.78,.23,1);
   z-index:5;
 }
-#guide .page-body.chapter-pages-ready .chapter-scroll{
+#guide > .page-body.chapter-deck-ready > .chapter-card.arrive-from-home{
+  animation:chapter-arrive-home .52s cubic-bezier(.18,.78,.23,1) both;
+}
+@keyframes chapter-arrive-home{
+  from{opacity:.6;transform:translate3d(0,55px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+#guide > .page-body.chapter-deck-ready .chapter-scroll{
+  position:relative;
+  width:100%;height:100%;
   box-sizing:border-box;
-  height:100%;width:100%;min-height:0;
+  padding:22px 16px 30px; /* existing content padding preserved */
   overflow-y:auto;overflow-x:hidden;
   overscroll-behavior-y:contain;
-  -webkit-overflow-scrolling:touch;
-  padding:20px 16px 27px;
   touch-action:auto;
+  -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
 }
-#guide .page-body.chapter-pages-ready .chapter-scroll::-webkit-scrollbar{display:none;}
-#guide .page-body.chapter-pages-ready .chapter-scroll > .chapter-eyebrow:first-of-type{margin-top:0!important;}
-#guide .page-body.chapter-pages-ready .chapter-scroll > .jump-anchor{scroll-margin-top:6px;}
-#guide .page-body.chapter-pages-ready .chapter-card.is-entering .chapter-scroll > .chapter-eyebrow{
-  animation:chapter-label-arrive .52s cubic-bezier(.17,.80,.25,1) both;
+#guide > .page-body.chapter-deck-ready .chapter-scroll::-webkit-scrollbar{display:none;}
+#guide > .page-body.chapter-deck-ready .chapter-scroll > .jump-anchor{scroll-margin-top:8px;}
+#guide > .page-body.chapter-deck-ready .chapter-scroll > .chapter-eyebrow:first-child,
+#guide > .page-body.chapter-deck-ready .chapter-scroll > .jump-anchor + .chapter-eyebrow{
+  margin-top:0!important;
 }
-#guide .page-body.chapter-pages-ready .chapter-card.is-entering .chapter-scroll > .chapter-eyebrow + h2{
-  animation:chapter-title-arrive .52s cubic-bezier(.17,.80,.25,1) both;
+#guide > .page-body.chapter-deck-ready > .chapter-card.is-entering .chapter-scroll > .chapter-eyebrow,
+#guide > .page-body.chapter-deck-ready > .chapter-card.is-entering .chapter-scroll > .jump-anchor + .chapter-eyebrow{
+  animation:chapter-sheet-number .50s cubic-bezier(.16,.78,.23,1) both;
 }
-@keyframes chapter-label-arrive{0%{transform:scale(1.22);transform-origin:left center}100%{transform:scale(1)}}
-@keyframes chapter-title-arrive{0%{transform:scale(1.07);transform-origin:left center}100%{transform:scale(1)}}
+#guide > .page-body.chapter-deck-ready > .chapter-card.is-entering .chapter-scroll > .chapter-eyebrow + h2{
+  animation:chapter-sheet-title .50s cubic-bezier(.16,.78,.23,1) both;
+}
+@keyframes chapter-sheet-number{from{transform:scale(1.28);transform-origin:left top}to{transform:scale(1);transform-origin:left top}}
+@keyframes chapter-sheet-title{from{transform:scale(1.08);transform-origin:left top}to{transform:scale(1);transform-origin:left top}}
+html[data-theme="light"] #guide > .page-body.chapter-deck-ready > .chapter-card{
+  background:#FFFFFF;border-color:#D5DBDF;
+  box-shadow:0 10px 32px rgba(18,29,42,.14);
+}
 html.chapter-deck-active,body.chapter-deck-active{
   overscroll-behavior-y:none;
-  overflow:hidden!important;
-}
-html[data-theme="light"] #guide .page-body.chapter-pages-ready > .chapter-card{
-  background:#fff;
-  border-color:#d5dbdf;
-  box-shadow:0 10px 30px rgba(20,30,40,.13);
 }
 @media(min-width:600px){
-  #guide .page-body.chapter-pages-ready > .chapter-card{left:0;right:0;border-radius:24px;}
-  #guide .page-body.chapter-pages-ready .chapter-scroll{padding:25px 23px 34px;}
+  #guide > .page-body.chapter-deck-ready > .chapter-card{left:-15px;right:-15px;border-radius:25px;}
+  #guide > .page-body.chapter-deck-ready .chapter-scroll{padding:28px 24px 34px;}
 }
 @media(prefers-reduced-motion:reduce){
-  #guide .page-body.chapter-pages-ready > .chapter-card,
-  #guide .page-body.chapter-pages-ready .chapter-card.is-entering .chapter-scroll > .chapter-eyebrow,
-  #guide .page-body.chapter-pages-ready .chapter-card.is-entering .chapter-scroll > .chapter-eyebrow + h2{
+  #guide > .page-body.chapter-deck-ready > .chapter-card,
+  #guide > .page-body.chapter-deck-ready > .chapter-card.is-entering .chapter-scroll > .chapter-eyebrow,
+  #guide > .page-body.chapter-deck-ready > .chapter-card.is-entering .chapter-scroll > .chapter-eyebrow + h2{
     transition:none!important;animation:none!important;
   }
 }
-/* Prevent browser scroll anchoring from nudging the fixed deck when a long
-   route map or an accordion expands inside the current sheet. */
-html.chapter-deck-active,body.chapter-deck-active,
-#guide .page-body.chapter-pages-ready{overflow-anchor:none!important;}
