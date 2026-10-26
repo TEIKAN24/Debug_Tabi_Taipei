@@ -3439,7 +3439,7 @@ update();
 })();
 
 
-/* =================== JS 31: chapter cards v30.9.161 =================== */
+/* =================== JS 31: chapter cards v30.9.162 =================== */
 (()=>{
   'use strict';
   const cards=[...document.querySelectorAll('#guide .page-body > .chapter-card')];
@@ -3513,11 +3513,14 @@ update();
   const observer=new ResizeObserver(queueLayout);
   cards.forEach(card=>observer.observe(card));
   observer.observe(document.body);
-  // ---- Page turn (touch). The page scrolls natively inside a chapter. When a
-  // swipe ends between two chapters, the sheet glides slowly to the next or back
-  // to the current one; momentum that reaches a chapter's end or start lands
-  // there softly. A second swipe is needed to turn to the next chapter.
+  // ---- Page turn (touch). The page scrolls natively inside a chapter. Turning
+  // to the next chapter takes two swipes: the first one that reaches a chapter's
+  // end only stops there (a pull past it glides back); the next swipe from that
+  // resting end turns the page. Going back up works the same way at a chapter's
+  // start. Momentum that reaches an end or a start lands there softly.
   let touching=false,moved=false,startY=0,samples=[],anim=0,guard=null,quietTimer=0;
+  let armedEnd=null,armedStart=null;   // resting points where the next swipe may turn
+  const near=(a,b)=>a!==null&&Math.abs(a-b)<=8;
   const sample=()=>{const t=performance.now();samples.push([t,window.scrollY]);while(samples.length>8||(samples.length>2&&t-samples[0][0]>120))samples.shift();};
   const velocity=()=>{if(samples.length<2)return 0;const a=samples[0],b=samples[samples.length-1];return (b[1]-a[1])/Math.max(16,b[0]-a[0]);};
   const restIndex=y=>rests.findIndex(([s,e])=>y>=s-2&&y<=e+2);
@@ -3539,6 +3542,9 @@ update();
   const stopGlide=()=>{if(anim){cancelAnimationFrame(anim);anim=0;}};
   window.addEventListener('touchstart',event=>{
     stopGlide();guard=null;
+    // Leaving a resting end/start (by reading on) forgets it.
+    if(!near(armedEnd,window.scrollY))armedEnd=null;
+    if(!near(armedStart,window.scrollY))armedStart=null;
     touching=event.touches.length===1;moved=false;startY=window.scrollY;samples=[];sample();
     touchY=event.touches[0]?.clientY||0;
   },{passive:true});
@@ -3553,20 +3559,29 @@ update();
     const here=restIndex(y);
     if(here>=0){
       // Released inside a chapter: let it coast, but land softly at its edges.
-      guard=rests[here];
+      const [s,e]=rests[here];
+      guard=rests[here];guard.from=startY;
+      // Reading down to the very end (or up to the very start) counts as the first swipe.
+      if(Math.abs(y-e)<=2&&startY<e-8)armedEnd=e;
+      if(Math.abs(y-s)<=2&&startY>s+8)armedStart=s;
       return;
     }
     const after=rests.findIndex(([s])=>s>y);
     if(after<=0)return;
     const [,A]=rests[after-1],[B]=rests[after];
     const progress=(y-A)/Math.max(1,B-A);
-    // A swipe that began inside a chapter stops at that chapter's end (or start) first.
+    const down=Math.abs(v)>0.05?v>0:y>startY;
     let target;
-    if(startY<A-8)target=A;
-    else if(startY>B+8)target=B;
-    else if(v>0.05)target=progress>0.22?B:A;
-    else if(v<-0.05)target=progress<0.78?A:B;
-    else target=progress<0.5?A:B;
+    if(down){
+      // Turn only from a resting end that already stopped one swipe.
+      if(near(startY,A)&&near(armedEnd,A)&&progress>0.12)target=B;
+      else{target=A;armedEnd=A;}
+    }else{
+      if(near(startY,B)&&near(armedStart,B)&&progress<0.88)target=A;
+      else{target=B;armedStart=B;}
+    }
+    if(target===B&&down){armedEnd=null;armedStart=null;}
+    if(target===A&&!down){armedStart=null;armedEnd=null;}
     const duration=Math.min(1150,Math.max(720,640+520*Math.abs(target-y)/view));
     glide(target,duration,v);
   };
@@ -3576,15 +3591,22 @@ update();
   window.addEventListener('scroll',()=>{
     if(touching){sample();return;}
     if(!guard||anim)return;
-    const y=window.scrollY,[s,e]=guard;
+    const y=window.scrollY,[s,e]=guard,from=guard.from;
     if(y>e+1||y<s-1){
+      // Momentum reached the end (or start): land there; that was the first swipe.
       const v=velocity();guard=null;
+      if(y>e)armedEnd=e;else armedStart=s;
       glide(y>e?e:s,560,v);
       return;
     }
     sample();
     clearTimeout(quietTimer);
-    quietTimer=setTimeout(()=>{guard=null;},220);
+    quietTimer=setTimeout(()=>{
+      const end=window.scrollY;
+      if(Math.abs(end-e)<=2&&from<e-8)armedEnd=e;
+      if(Math.abs(end-s)<=2&&from>s+8)armedStart=s;
+      guard=null;
+    },220);
   },{passive:true});
   layout();
 })();
