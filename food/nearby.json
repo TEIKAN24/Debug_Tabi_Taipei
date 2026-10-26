@@ -1,7 +1,1320 @@
 {
   "schemaVersion": 1,
-  "source": "TAIPEI 店家分店管理編輯器 v1.18 · 2026-10-25",
+  "source": "TAIPEI 店家分店管理編輯器 v1.18 · 2026-10-26",
   "venues": [
+    {
+      "id": "food-added-mvp1n6iu-brdjh",
+      "name": "女娘的店",
+      "industries": [
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ビブグルマン",
+          "tone": "featured"
+        },
+        {
+          "text": "人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 1,
+      "branches": [
+        {
+          "id": "food-added-mvp1n6iu-brdjh-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.1183404,
+          "lng": 121.5360648,
+          "address": "臺北市士林區天和里天母東路97號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%A5%B3%E5%A8%98%E7%9A%84%E5%BA%97/@25.1183404,121.5334899,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ae7fe45a86db:0x4a65db00a9e32956!8m2!3d25.1183404!4d121.5360648!16s%2Fg%2F1tg7pq9b?hl=zh-TW&entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp1j76z-obkjt",
+      "name": "宋江餡餅粥",
+      "industries": [
+        "小籠包・点心"
+      ],
+      "industryVerified": "推估",
+      "category": "dumpling",
+      "displayType": "小籠包・点心",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        },
+        {
+          "text": "牛肉餡餅",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp1j76z-obkjt-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.1187088,
+          "lng": 121.5259676,
+          "address": "台北市士林區天母北路2號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%AE%8B%E6%B1%9F%E9%A4%A1%E9%A4%85%E7%B2%A5/@25.1187088,121.5233927,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ae87dc1c4fd9:0x2e295d5b3788929d!8m2!3d25.1187088!4d121.5259676!16s%2Fg%2F1vyk06b1?hl=zh-TW&entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp1hal8-v4uph",
+      "name": "豐盛號",
+      "industries": [
+        "モーニング"
+      ],
+      "industryVerified": "推估",
+      "category": "breakfast",
+      "displayType": "朝食",
+      "volume": [],
+      "timeBands": [
+        "morning",
+        "lunch",
+        "afternoon"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp1hal8-v4uph-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0950428,
+          "lng": 121.5262957,
+          "address": "台北市士林區中正路223巷4號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E8%B1%90%E7%9B%9B%E8%99%9F-%E5%A3%AB%E6%9E%97%E5%BA%97/@25.0950428,121.5237208,17z/data=!3m1!4b1!4m6!3m5!1s0x3442aea33801f8eb:0xe0edc7b8544497f2!8m2!3d25.0950428!4d121.5262957!16s%2Fg%2F1ydpvbjqg?hl=zh-TW&entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon"
+          ],
+          "days": {
+            "mon": [
+              [
+                "06:30",
+                "14:30"
+              ]
+            ],
+            "tue": [
+              [
+                "06:30",
+                "14:30"
+              ]
+            ],
+            "wed": [
+              [
+                "06:30",
+                "14:30"
+              ]
+            ],
+            "thu": [
+              [
+                "06:30",
+                "14:30"
+              ]
+            ],
+            "fri": [
+              [
+                "06:30",
+                "14:30"
+              ]
+            ],
+            "sat": [
+              [
+                "06:30",
+                "14:30"
+              ]
+            ],
+            "sun": [
+              [
+                "06:30",
+                "14:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp19sdm-8qtmd",
+      "name": "鵝肉川",
+      "industries": [
+        "レストラン",
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "ガチョウ肉料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": true,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "branch-mvp19yyb-3lip50",
+          "label": "鵝肉川-劍潭總店",
+          "name": "鵝肉川 鵝肉川-劍潭總店",
+          "lat": 25.0844348,
+          "lng": 121.5233259,
+          "address": "台北市士林區承德路四段140號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%B5%9D%E8%82%89%E5%B7%9D-%E5%8A%8D%E6%BD%AD%E7%B8%BD%E5%BA%97/@25.0843581,121.5235517,17z/data=!4m6!3m5!1s0x3442aeb2342bd541:0xeb8079a0c1e41ac8!8m2!3d25.0844348!4d121.5233259!16s%2Fg%2F1ptwppvch?hl=zh-TW&entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "tue": [],
+            "wed": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        },
+        {
+          "id": "branch-mvp1bjjk-w09klq",
+          "label": "鵝肉川-光復店",
+          "name": "鵝肉川 鵝肉川-光復店",
+          "lat": 25.0489618,
+          "lng": 121.558027,
+          "address": "臺北市松山區吉祥里光復北路7號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%B5%9D%E8%82%89%E5%B7%9D-%E5%85%89%E5%BE%A9%E5%BA%97/@25.0489618,121.5554521,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abe93a366d41:0xb524f35a2d5bf7d!8m2!3d25.0489618!4d121.558027!16s%2Fg%2F11yhcq339f?hl=zh-TW&entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "tue": [],
+            "wed": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp15ara-7ebbn",
+      "name": "松竹園",
+      "industries": [
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ビブグルマン",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp15ara-7ebbn-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.1398123,
+          "lng": 121.5676159,
+          "address": "台北市士林區永公路546號",
+          "mapUrl": "https://www.google.com/maps/place/%E6%9D%BE%E7%AB%B9%E5%9C%92/@25.1398123,121.565041,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ad91a628dcc7:0xec5fcbcf6ad3c989!8m2!3d25.1398123!4d121.5676159!16s%2Fg%2F1tw_kyng?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:30",
+                "16:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:30",
+                "16:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:30",
+                "16:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "16:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "16:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "16:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "16:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp0z7bo-3lpvs",
+      "name": "興蓬萊台菜餐廳",
+      "industries": [
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": true,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ミシュラン掲載",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "branch-mvp10co0-hvckkl",
+          "label": "興蓬萊台菜海鮮餐廳",
+          "name": "興蓬萊台菜餐廳 興蓬萊台菜海鮮餐廳",
+          "lat": 25.1204659,
+          "lng": 121.5309519,
+          "address": "臺北市士林區天玉里中山北路七段55號",
+          "mapUrl": "https://www.google.com/maps/place/%E8%88%88%E8%93%AC%E8%90%8A%E5%8F%B0%E8%8F%9C%E6%B5%B7%E9%AE%AE%E9%A4%90%E5%BB%B3/@25.1161685,121.5260483,16z/data=!4m6!3m5!1s0x3442ae7eb3646d51:0xab8216c4981e2a56!8m2!3d25.1204659!4d121.5309519!16s%2Fg%2F1tfknfwb?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [],
+            "wed": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        },
+        {
+          "id": "branch-mvp11ah3-h814u1",
+          "label": "興蓬萊台菜餐廳 大葉高島屋店",
+          "name": "興蓬萊台菜餐廳 興蓬萊台菜餐廳 大葉高島屋店",
+          "lat": 25.1118713,
+          "lng": 121.5314445,
+          "address": "台北市士林區忠誠路二段55號12樓",
+          "mapUrl": "https://www.google.com/maps/place/%E8%88%88%E8%93%AC%E8%90%8A%E5%8F%B0%E8%8F%9C%E9%A4%90%E5%BB%B3+%E5%A4%A7%E8%91%89%E9%AB%98%E5%B3%B6%E5%B1%8B%E5%BA%97/@25.1118713,121.5288696,17z/data=!3m2!4b1!5s0x3442ae8389040b75:0xbe246254e0b7495c!4m6!3m5!1s0x3442af2061c60205:0x386ebba05f94d8aa!8m2!3d25.1118713!4d121.5314445!16s%2Fg%2F11svyr1m75?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "14:50"
+              ],
+              [
+                "17:00",
+                "20:50"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "14:50"
+              ],
+              [
+                "17:00",
+                "20:50"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp0tsw8-i8pkb",
+      "name": "金蓬萊遵古台菜餐廳",
+      "industries": [
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ミシュラン⭐️",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp0tsw8-i8pkb-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.1182996,
+          "lng": 121.5362517,
+          "address": "台北市士林區天母東路101號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%87%91%E8%93%AC%E8%90%8A%E9%81%B5%E5%8F%A4%E5%8F%B0%E8%8F%9C%E9%A4%90%E5%BB%B3/@25.1182996,121.5336768,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ae7fe527654f:0x943ba6a9916744a7!8m2!3d25.1182996!4d121.5362517!16s%2Fg%2F1vbl58b6?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [],
+            "wed": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:30",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:30",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:30",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "15:00"
+              ],
+              [
+                "17:30",
+                "21:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "15:00"
+              ],
+              [
+                "17:30",
+                "21:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp0ahe7-oujzj",
+      "name": "小廢墟咖啡",
+      "industries": [
+        "カフェ"
+      ],
+      "industryVerified": "推估",
+      "category": "cafe",
+      "displayType": "カフェ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp0ahe7-oujzj-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9907454,
+          "lng": 121.5710489,
+          "address": "臺北市文山區木新里木柵路三段242號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%B0%8F%E5%BB%A2%E5%A2%9F%E5%92%96%E5%95%A1/@24.9862643,121.5700254,16.42z/data=!4m6!3m5!1s0x3442aa707f1ced3f:0x56f153d0ce3ab4b1!8m2!3d24.9907454!4d121.5710489!16s%2Fg%2F11bzn45fdh?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "13:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "13:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "13:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "13:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "13:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "13:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp099j5-znrho",
+      "name": "古早味蛋餅飯糰",
+      "industries": [
+        "モーニング"
+      ],
+      "industryVerified": "推估",
+      "category": "breakfast",
+      "displayType": "朝食",
+      "volume": [],
+      "timeBands": [
+        "morning"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ローカル",
+          "tone": "editorial"
+        },
+        {
+          "text": "伝統",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp099j5-znrho-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9881984,
+          "lng": 121.5763168,
+          "address": "臺北市文山區萬興里萬壽路14號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%8F%A4%E6%97%A9%E5%91%B3%E8%9B%8B%E9%A4%85%E9%A3%AF%E7%B3%B0/@24.9881984,121.5763168,15z/data=!4m6!3m5!1s0x3442aa7b8e3a370f:0xb0a695313fc1882f!8m2!3d24.9881984!4d121.5763168!16s%2Fg%2F11c2pljwvc?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "morning"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "06:00",
+                "10:30"
+              ]
+            ],
+            "wed": [
+              [
+                "06:00",
+                "10:30"
+              ]
+            ],
+            "thu": [
+              [
+                "06:00",
+                "10:30"
+              ]
+            ],
+            "fri": [
+              [
+                "06:00",
+                "10:30"
+              ]
+            ],
+            "sat": [
+              [
+                "06:00",
+                "10:30"
+              ]
+            ],
+            "sun": []
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvo151ae-seqrv",
+      "name": "幸福清粥小菜館",
+      "industries": [
+        "台湾料理",
+        "小吃"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "清粥小菜",
+      "volume": [],
+      "timeBands": [
+        "night",
+        "late"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvo151ae-seqrv-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0825515,
+          "lng": 121.5091673,
+          "address": "臺北市士林區富光里延平北路五段163巷29弄8號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%B9%B8%E7%A6%8F%E6%B8%85%E7%B2%A5%E5%B0%8F%E8%8F%9C%E9%A4%A8/@25.0825563,121.5065924,17z/data=!3m1!4b1!4m6!3m5!1s0x3442afddbee8202f:0xc63705ace1640b3d!8m2!3d25.0825515!4d121.5091673!16s%2Fg%2F11mwjpbj5t?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "night",
+            "late"
+          ],
+          "days": {
+            "mon": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "tue": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "wed": [],
+            "thu": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "fri": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "sat": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "sun": []
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvo0sh2j-ly5ms",
+      "name": "小品雅廚",
+      "industries": [
+        "小吃",
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "清粥小菜",
+      "volume": [],
+      "timeBands": [
+        "night",
+        "late"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": true,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvo0sh2j-ly5ms-main",
+          "label": "原有店家",
+          "name": "小品雅廚 原有店家",
+          "lat": 25.0630748,
+          "lng": 121.5288669,
+          "address": "臺北市中山區新福里中原街130號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%B0%8F%E5%93%81%E9%9B%85%E5%BB%9A/@25.0630748,121.5152958,15z/data=!4m6!3m5!1s0x3442a95ba442f6d5:0x4ce5d3cf63b15b63!8m2!3d25.0630748!4d121.5288669!16s%2Fg%2F1td405gk?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "night",
+            "late"
+          ],
+          "days": {
+            "mon": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "tue": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "wed": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "thu": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "fri": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "sat": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "sun": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ]
+          },
+          "timeSource": "",
+          "timeCheckedAt": ""
+        },
+        {
+          "id": "branch-mvo10b22-czxb8o",
+          "label": "小品雅廚 市府店",
+          "name": "小品雅廚 小品雅廚 市府店",
+          "lat": 25.041342,
+          "lng": 121.566127,
+          "address": "臺北市信義區興雅里忠孝東路五段37號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E5%B0%8F%E5%93%81%E9%9B%85%E5%BB%9A+%E5%B8%82%E5%BA%9C%E5%BA%97/@25.04038,121.5621444,17.29z/data=!4m6!3m5!1s0x3442ab2d8be991ed:0x1f8b3393471499d2!8m2!3d25.041342!4d121.566127!16s%2Fg%2F11z9q3148x?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "night",
+            "late"
+          ],
+          "days": {
+            "mon": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "tue": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "wed": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "thu": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "fri": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "sat": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ],
+            "sun": [
+              [
+                "18:00",
+                "05:00"
+              ]
+            ]
+          },
+          "timeSource": "",
+          "timeCheckedAt": ""
+        }
+      ]
+    },
     {
       "id": "food-added-mvnu0bzz-e9t62",
       "name": "萬有全涮羊肉",
@@ -15583,11 +16896,15 @@
         {
           "text": "おしゃれ",
           "tone": "editorial"
+        },
+        {
+          "text": "音楽好き必見",
+          "tone": "editorial"
         }
       ],
       "awardDish": "",
       "irregularHours": false,
-      "pickLevel": 0,
+      "pickLevel": 1,
       "branches": [
         {
           "id": "food-original-0018-main",
@@ -39321,11 +40638,12 @@
       "name": "阿城鵝肉 吉林二店",
       "industries": [
         "ごはん系",
-        "レストラン"
+        "レストラン",
+        "台湾料理"
       ],
       "industryVerified": "推估",
-      "category": "rice",
-      "displayType": "ごはん系",
+      "category": "meal",
+      "displayType": "ガチョウ肉料理",
       "volume": [
         "hearty"
       ],
@@ -46756,11 +48074,12 @@
       "name": "313鵝肉擔",
       "industries": [
         "レストラン",
-        "小吃"
+        "小吃",
+        "台湾料理"
       ],
       "industryVerified": "推估",
-      "category": "snack",
-      "displayType": "屋台料理・軽食",
+      "category": "meal",
+      "displayType": "ガチョウ肉料理",
       "volume": [
         "light",
         "hearty"
@@ -48148,11 +49467,12 @@
       "industries": [
         "レストラン",
         "ごはん系",
-        "麺類"
+        "麺類",
+        "台湾料理"
       ],
       "industryVerified": "推估",
-      "category": "noodle",
-      "displayType": "麺類",
+      "category": "meal",
+      "displayType": "ガチョウ肉料理",
       "volume": [
         "hearty"
       ],
