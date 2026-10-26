@@ -1,6 +1,8 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
+   v30.9.143 — the food dictionary is a floating window pulled in from the right; 常用字リスト panel.
+   v30.9.142 — 名物 tiles open the food dictionary drawer with that dish.
    v30.9.134 — 注目の街歩きエリア lists show six complete rows in every district.
    v30.9.133 — five chapters (01–05) with one heading set; the sights chapter follows グルメ; snap targets the chapter number lines.
    v30.9.129 — nested menus keep their own title at the top of the open menu (no pinned copy).
@@ -485,7 +487,8 @@ function addHighlightedText(parent, value, terms) {
 }
 function drawFilters() {
   filters.replaceChildren();
-  for (const cat of cats) {
+  // v30.9.143: no すべて chip; tapping the active level again shows every level.
+  for (const cat of cats.slice(1)) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `pill${selected === cat ? " active" : ""}`;
@@ -497,7 +500,7 @@ function drawFilters() {
     n.textContent = ` ${cat === cats[0] ? foods.length : foods.filter(f => f.category === cat).length}`;
     button.append(label, n);
     button.addEventListener("click", () => {
-      selected = cat;
+      selected = selected === cat ? cats[0] : cat;
       drawFilters();
       drawResults();
     });
@@ -801,12 +804,62 @@ if (expandable) {
 function onSearch() {
   clear.classList.toggle("visible", input.value.length > 0);
   drawResults();
+  // The emoji and common-character buttons show which one is in the search box.
+  foodExplorer.querySelectorAll("[data-example]").forEach(button =>
+    button.setAttribute("aria-pressed", String(input.value === button.dataset.example)));
 }
 input.addEventListener("input", onSearch);
+// v30.9.143: 常用字リスト — emoji, common characters and the level filter in a panel
+// that opens over the list and stays open until toggled, tapped outside or Esc.
+const toolsToggle = foodExplorer.querySelector("#food-tools-toggle");
+const toolsPanel = foodExplorer.querySelector("#food-tools-panel");
+function setToolsOpen(open) {
+  if (!toolsToggle || !toolsPanel) return;
+  toolsPanel.hidden = !open;
+  toolsToggle.setAttribute("aria-expanded", String(open));
+}
+toolsToggle?.addEventListener("click", () => setToolsOpen(toolsPanel.hidden));
+foodExplorer.addEventListener("click", event => {
+  // composedPath() still holds chips that were re-drawn by the click itself.
+  const inTools = event.composedPath().some(node => node instanceof Element && node.classList.contains("food-tools"));
+  if (toolsPanel && !toolsPanel.hidden && !inTools) setToolsOpen(false);
+});
+foodExplorer.addEventListener("keydown", event => {
+  if (event.key === "Escape" && toolsPanel && !toolsPanel.hidden) {
+    event.preventDefault();event.stopPropagation();
+    setToolsOpen(false);toolsToggle.focus({preventScroll:true});
+  }
+});
+document.getElementById("food-search")?.addEventListener("food-search-closed", () => setToolsOpen(false));
+// v30.9.142: a 名物 tile in 🏮 夜市 opens this dictionary with the dish searched,
+// all levels shown, and the dish itself opened when its name matches exactly.
+function showDishInSearch(query) {
+  selected = cats[0];
+  drawFilters();
+  input.value = query;
+  onSearch();
+  // Open the dish whose name (or one of its ／ names) is the query; with a
+  // single result, open that one.
+  const key = normalized(query);
+  const rows = [...results.querySelectorAll(".result")];
+  const row = rows.find(item => normalized(item.dataset.dishName || "").split(/[／/]/).includes(key))
+    || (rows.length === 1 && rows[0].classList.contains("food-entry-expandable") ? rows[0] : null);
+  if (row) {
+    expandedDishName = row.dataset.dishName;
+    setFoodEntryExpanded(row, true);
+  }
+}
+document.addEventListener("click", event => {
+  const tile = event.target instanceof Element && event.target.closest(".nm-specialty[data-food-query]");
+  if (!tile) return;
+  showDishInSearch(tile.dataset.foodQuery);
+  document.dispatchEvent(new CustomEvent("tabi:open-food-search"));
+});
 clear.addEventListener("click", () => { input.value = ""; onSearch(); input.blur(); });
 foodExplorer.querySelectorAll("[data-example]").forEach(button => {
   button.addEventListener("click", () => {
-    input.value = button.dataset.example;
+    // A tapped emoji or character replaces the search; tapping it again clears it.
+    input.value = input.value === button.dataset.example ? "" : button.dataset.example;
     onSearch();
     input.blur();
   });
@@ -1221,6 +1274,10 @@ loadData();
       window.setTimeout(()=>{if(!opened&&!drag){body.classList.remove('food-swipe-active');syncChrome(false);}drawer.removeEventListener('transitionend',onEnd);},360);
     }
   }
+  // Other parts of the page (e.g. 名物 tiles) can open the dictionary.
+  document.addEventListener('tabi:open-food-search',()=>{syncChrome(true);settle(true);});
+  // The floating window leaves the dimmed page visible around it: a tap there closes it.
+  backdrop?.addEventListener('click',()=>{if(opened&&!drag)settle(false);});
   function blockTarget(target){
     if(!(target instanceof Element))return false;
     if(target.closest('input,textarea,select,[contenteditable="true"],video,audio'))return true;
