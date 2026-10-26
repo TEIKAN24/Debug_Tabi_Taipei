@@ -1,5 +1,6 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
-/* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
+/* v30.9.150 — align the reverse-side directory bubbles and restore adaptive scroll hints.
+   v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
    v30.9.148 — route horizontal gestures inside bubble panels and preserve food drawer swipe.
    v30.9.147 — active difficulty chip, drawer-close reset and keyboard-safe search clear.
@@ -1305,7 +1306,7 @@ loadData();
   }
 })();
 
-/* =================== JS 06c: restaurant-directory-content-swipe-v30.9.149 =================== */
+/* =================== JS 06c: restaurant-directory-content-swipe-v30.9.150 =================== */
 (() => {
   'use strict';
   // The reverse-side genre bubbles and its list are created/updated by
@@ -1316,6 +1317,53 @@ loadData();
   const face=document.getElementById('food-flip-back');
   if(!list||!strip||!face)return;
   let gesture=null,suppressClickUntil=0,entryAnimation=null;
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let alignFrame=0;
+  // Mirror the existing recommendation bubble-strip behavior: the active
+  // category settles in the second visual slot, and a clipped previous bubble
+  // plus adaptive fades hint at additional categories. No chip geometry changes.
+  const syncDirectoryFade=()=>{
+    if(!strip.clientWidth){strip.removeAttribute('data-scroll-fade');return;}
+    const remaining=strip.scrollWidth-strip.clientWidth;
+    if(remaining<=3){strip.removeAttribute('data-scroll-fade');return;}
+    strip.dataset.scrollFade=strip.scrollLeft<=3?'end':
+      strip.scrollLeft>=remaining-3?'start':'both';
+  };
+  const alignDirectoryActive=()=>{
+    const buttons=[...strip.querySelectorAll(':scope > button.food-directory-tab')];
+    const selected=buttons.find(button=>button.getAttribute('aria-selected')==='true');
+    if(!selected||!strip.clientWidth)return;
+    const index=buttons.indexOf(selected);
+    const gap=parseFloat(getComputedStyle(strip).columnGap)||0;
+    const previous=buttons[index-1];
+    const leftSpace=previous?Math.round(previous.offsetWidth/2+gap+2):2;
+    const last=buttons[buttons.length-1];
+    const followingWidth=last.getBoundingClientRect().right-selected.getBoundingClientRect().right;
+    // Invisible scrollable tail allows the final categories to use the same
+    // position as the middle ones, without moving or resizing real bubbles.
+    const tail=Math.max(0,Math.ceil(strip.clientWidth-leftSpace-selected.offsetWidth-followingWidth-12));
+    strip.style.setProperty('--food-directory-tail-space',tail+'px');
+    const max=Math.max(0,strip.scrollWidth-strip.clientWidth);
+    const wanted=strip.scrollLeft+selected.getBoundingClientRect().left-strip.getBoundingClientRect().left-leftSpace;
+    const destination=Math.max(0,Math.min(max,wanted));
+    if(Math.abs(destination-strip.scrollLeft)>2)
+      strip.scrollTo({left:destination,behavior:reduceMotion.matches?'auto':'smooth'});
+    syncDirectoryFade();
+  };
+  const scheduleDirectoryAlignment=()=>{
+    cancelAnimationFrame(alignFrame);
+    alignFrame=requestAnimationFrame(alignDirectoryActive);
+  };
+  // recommend.js recreates the category buttons on each selection, so watch
+  // replacement as well as clicks/swipes and keyboard-based selection.
+  new MutationObserver(scheduleDirectoryAlignment).observe(strip,{childList:true});
+  strip.addEventListener('click',event=>{
+    if(event.target.closest('button.food-directory-tab'))scheduleDirectoryAlignment();
+  });
+  strip.addEventListener('scroll',syncDirectoryFade,{passive:true});
+  if('ResizeObserver' in window)new ResizeObserver(scheduleDirectoryAlignment).observe(strip);
+  window.addEventListener('resize',scheduleDirectoryAlignment,{passive:true});
+  scheduleDirectoryAlignment();
   const touchById=(touches,id)=>{
     for(const touch of touches)if(touch.identifier===id)return touch;
     return null;
@@ -1358,7 +1406,7 @@ loadData();
     if(current<0||next<0||next>=buttons.length)return;
     // Use original category selection; do not rebuild data or rewrite bubble markup.
     buttons[next].click();
-    buttons[next].scrollIntoView({behavior:'smooth',inline:'nearest',block:'nearest'});
+    scheduleDirectoryAlignment();
     if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && list.animate){
       entryAnimation?.cancel();
       entryAnimation=list.animate([

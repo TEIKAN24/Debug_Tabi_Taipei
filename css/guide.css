@@ -5100,3 +5100,26 @@ html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
 }
 /* The existing restaurant directory retains its own vertical momentum scrolling. */
 #food-recommend-section #food-directory-panel {touch-action:pan-y;}
+
+/* v30.9.150 — reverse-side restaurant directory: adaptive bubble alignment
+   and scroll-edge hints. Only scroll behavior and mask change; chip sizes,
+   padding, list height and spacing remain exactly as in v30.9.149. */
+#food-recommend-section .food-directory-tabs::after{
+  content:"";
+  display:block;
+  flex:0 0 var(--food-directory-tail-space,0px);
+  height:1px;
+  pointer-events:none;
+}
+#food-recommend-section .food-directory-tabs[data-scroll-fade="end"]{
+  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 16px),transparent 100%);
+  mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 16px),transparent 100%);
+}
+#food-recommend-section .food-directory-tabs[data-scroll-fade="start"]{
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 100%);
+  mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 100%);
+}
+#food-recommend-section .food-directory-tabs[data-scroll-fade="both"]{
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
+}
