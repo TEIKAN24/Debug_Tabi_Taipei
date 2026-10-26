@@ -4935,3 +4935,29 @@ html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result{border-bottom-color:#DDDDDD!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result .dish{color:#1E1E1E!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result .desc,html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result-meta .tag{color:#5E6B72!important;}
+
+/* v30.9.144 — compact floating window (about four dishes visible), centred vertically,
+   95% opaque; the gold glow fades out at both sides. The page behind no longer moves:
+   it is blurred and dimmed by the backdrop's own filter (no background colour, so
+   Safari does not paint solid bars at the top and bottom of the screen). */
+body #guide #food-search.food-drawer.is-floating{
+  inset:auto 12px auto auto!important;
+  height:min(490px,calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
+  top:max(calc(12px + env(safe-area-inset-top,0px)),calc(50dvh - 245px))!important;bottom:auto!important;
+  background:rgba(14,14,14,.95)!important;
+}
+@media(min-width:600px){body #guide #food-search.food-drawer.is-floating{
+  right:16px!important;height:min(600px,calc(100dvh - 32px))!important;top:max(16px,calc(50dvh - 300px))!important;
+}}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating{background:rgba(247,248,247,.95)!important;}
+body #guide #food-search.food-drawer.is-floating .food-list::before{
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent);
+  mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent);
+}
+html body .food-drawer-backdrop{
+  background:transparent!important;
+  -webkit-backdrop-filter:blur(7px) brightness(.68);backdrop-filter:blur(7px) brightness(.68);
+}
+html[data-theme="light"] body .food-drawer-backdrop{
+  -webkit-backdrop-filter:blur(7px) brightness(.84);backdrop-filter:blur(7px) brightness(.84);
+}

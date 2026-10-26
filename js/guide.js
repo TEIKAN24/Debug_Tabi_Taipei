@@ -1,6 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
+   v30.9.144 — compact floating window; the page behind stays put (blur + dim); browser bars keep the page colour.
    v30.9.143 — the food dictionary is a floating window pulled in from the right; 常用字リスト panel.
    v30.9.142 — 名物 tiles open the food dictionary drawer with that dish.
    v30.9.134 — 注目の街歩きエリア lists show six complete rows in every district.
@@ -1218,13 +1219,15 @@ loadData();
     raf=0;progress=scheduledProgress;
     body.style.setProperty('--food-swipe-px',(width()*progress).toFixed(2)+'px');
     body.style.setProperty('--food-swipe-progress',progress.toFixed(4));
-    body.style.setProperty('--food-main-shift',(-26*progress).toFixed(2)+'px');
+    // The page stays put behind the floating window (only blurred and dimmed).
+    body.style.setProperty('--food-main-shift',drawer.classList.contains('is-floating')?'0px':(-26*progress).toFixed(2)+'px');
   }
   function lockPage(){
     if(savedStyle)return;
     // iOS Safari samples the page surface for its top/bottom browser chrome.
     // The search view is bright when light mode is selected.
-    const theme=document.querySelector('meta[name="theme-color"]');
+    // The floating window leaves the page visible; the browser bars keep the page's colour.
+    const theme=drawer.classList.contains('is-floating')?null:document.querySelector('meta[name="theme-color"]');
     if(theme)theme.setAttribute('content',html.dataset.theme==='light'?'#F7F8F7':'#0D0D0D');
     savedY=window.scrollY;
     savedStyle={position:body.style.position,top:body.style.top,width:body.style.width,overflow:body.style.overflow};
@@ -1233,7 +1236,7 @@ loadData();
     body.style.width='100%';body.style.overflow='hidden';
   }
   function syncChrome(active){
-    const meta=document.querySelector('meta[name="theme-color"]');
+    const meta=drawer.classList.contains('is-floating')?null:document.querySelector('meta[name="theme-color"]');
     if(meta)meta.setAttribute('content',active?(html.dataset.theme==='light'?'#F7F8F7':'#0D0D0D'):(html.dataset.theme==='light'?'#F7F8F7':'#111417'));
   }
   function unlockPage(){
