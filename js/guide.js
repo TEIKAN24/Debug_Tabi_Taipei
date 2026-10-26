@@ -1,6 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
+   v30.9.145 — common-keyword selection and tag/synonym lookup repairs; compact 2×2 difficulty filters.
    v30.9.144 — compact floating window; the page behind stays put (blur + dim); browser bars keep the page colour.
    v30.9.143 — the food dictionary is a floating window pulled in from the right; 常用字リスト panel.
    v30.9.142 — 名物 tiles open the food dictionary drawer with that dish.
@@ -419,8 +420,10 @@ const normalized = s => String(s).normalize("NFKC").toLocaleLowerCase();
 
 // Synonym groups are loaded from synonyms.json, then normalized for searching.
 function variantsFor(term) {
-  const group = normalizedGroups.find(group => group.includes(term));
-  return group || [term];
+  // Match every exact synonym group, not just the first one. A keyword can be
+  // shared by related aliases; tags remain searchable independently below.
+  const equivalent = normalizedGroups.filter(group => group.includes(term));
+  return [...new Set([term, ...equivalent.flat()])];
 }
 function searchTerms() {
   return normalized(input.value.trim()).split(/\s+/).filter(Boolean);
@@ -504,6 +507,8 @@ function drawFilters() {
       selected = selected === cat ? cats[0] : cat;
       drawFilters();
       drawResults();
+      // Selecting a difficulty closes the quick-search panel.
+      setToolsOpen(false);
     });
     filters.append(button);
   }
@@ -820,10 +825,13 @@ function setToolsOpen(open) {
   toolsToggle.setAttribute("aria-expanded", String(open));
 }
 toolsToggle?.addEventListener("click", () => setToolsOpen(toolsPanel.hidden));
-foodExplorer.addEventListener("click", event => {
-  // composedPath() still holds chips that were re-drawn by the click itself.
-  const inTools = event.composedPath().some(node => node instanceof Element && node.classList.contains("food-tools"));
-  if (toolsPanel && !toolsPanel.hidden && !inTools) setToolsOpen(false);
+document.addEventListener("pointerdown", event => {
+  // Close on any outside tap, including the backdrop. Clicks inside the
+  // popup are handled separately, after the selection is applied.
+  if (!toolsPanel || toolsPanel.hidden) return;
+  if (!(event.target instanceof Element) || !event.target.closest(".food-tools")) {
+    setToolsOpen(false);
+  }
 });
 foodExplorer.addEventListener("keydown", event => {
   if (event.key === "Escape" && toolsPanel && !toolsPanel.hidden) {
@@ -862,6 +870,7 @@ foodExplorer.querySelectorAll("[data-example]").forEach(button => {
     // A tapped emoji or character replaces the search; tapping it again clears it.
     input.value = input.value === button.dataset.example ? "" : button.dataset.example;
     onSearch();
+    setToolsOpen(false);
     input.blur();
   });
 });

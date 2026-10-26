@@ -4961,3 +4961,60 @@ html body .food-drawer-backdrop{
 html[data-theme="light"] body .food-drawer-backdrop{
   -webkit-backdrop-filter:blur(7px) brightness(.84);backdrop-filter:blur(7px) brightness(.84);
 }
+
+/* v30.9.145 — compact common-character overlay; two rows of difficulty
+   choices, more vertical room for content, and no stationary grey rule
+   against the gold result-list glow. */
+body #guide #food-search.food-drawer.is-floating .search-shell{
+  margin-top:9px!important; /* half of v30.9.144's 18px gap */
+}
+body #guide #food-search.food-drawer.is-floating .food-tools{margin-top:9px!important;}
+body #guide #food-search.food-drawer.is-floating .food-tools-toggle{
+  min-height:29px!important;padding:0 10px 0 11px!important;
+  font-size:12px!important;gap:3px!important;
+}
+body #guide #food-search.food-drawer.is-floating .food-tools-toggle .food-tools-chevron{width:12px;height:12px;}
+body #guide #food-search.food-drawer.is-floating .food-tools-panel{
+  top:calc(100% + 6px)!important;padding:12px 14px 13px!important;
+}
+body #guide #food-search.food-drawer.is-floating .food-tools-label{
+  margin-bottom:8px!important;font-size:12px!important;
+}
+body #guide #food-search.food-drawer.is-floating .quick,
+body #guide #food-search.food-drawer.is-floating .food-chars{gap:7px!important;}
+body #guide #food-search.food-drawer.is-floating .food-chars{margin:8px 0 13px!important;}
+body #guide #food-search.food-drawer.is-floating #food-explorer .quick button{
+  width:44px!important;height:44px!important;font-size:22px!important;
+}
+body #guide #food-search.food-drawer.is-floating .food-char{height:34px!important;font-size:15px!important;}
+body #guide #food-search.food-drawer.is-floating .filters{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:7px!important;overflow:visible!important;padding:0!important;
+}
+body #guide #food-search.food-drawer.is-floating .filters .pill{
+  justify-content:center!important;min-width:0!important;width:100%!important;
+  min-height:33px!important;padding:0 7px!important;font-size:11.5px!important;
+}
+body #guide #food-search.food-drawer.is-floating .food-list{margin-top:14px!important;}
+body #guide #food-search.food-drawer.is-floating .results-head{
+  border:0!important;border-bottom:none!important;box-shadow:none!important;
+}
+body #guide #food-search.food-drawer.is-floating #results{border-top:0!important;}
+/* Light-mode legacy selectors had three IDs and kept a 1px line over the
+   pinned gold glow despite the floating-window override above. */
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating #food-explorer .results-head,
+html[data-theme="dark"] body #guide #food-search.food-drawer.is-floating #food-explorer .results-head{
+  border-bottom:0!important;border-top:0!important;box-shadow:none!important;
+}
+body #guide #food-search.food-drawer.is-floating .food-list::before{
+  background:linear-gradient(to bottom,
+    rgba(176,138,70,0) 0%,rgba(176,138,70,.35) 22%,
+    rgba(176,138,70,.13) 54%,rgba(176,138,70,0) 100%)!important;
+}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-list::before{
+  background:linear-gradient(to bottom,
+    rgba(201,160,80,0) 0%,rgba(201,160,80,.25) 22%,
+    rgba(201,160,80,.09) 54%,rgba(201,160,80,0) 100%)!important;
+}
+body #guide #food-search.food-drawer.is-floating .food-tools-panel{padding-bottom:9px!important;}
+body #guide #food-search.food-drawer.is-floating .food-chars{margin-bottom:9px!important;}
