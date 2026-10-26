@@ -3,6 +3,3055 @@
   "source": "TAIPEI 店家分店管理編輯器 v1.18 · 2026-10-26",
   "venues": [
     {
+      "id": "food-added-mvp8p5vu-108d4",
+      "name": "BAKO烤甜甜圈專賣店",
+      "industries": [
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ドーナツ",
+          "tone": "editorial"
+        },
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp8p5vu-108d4-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.1052478,
+          "lng": 121.522946,
+          "address": "臺北市士林區德行里德行西路54之1號",
+          "mapUrl": "https://www.google.com/maps/place/BAKO%E7%83%A4%E7%94%9C%E7%94%9C%E5%9C%88%E5%B0%88%E8%B3%A3%E5%BA%97/@25.1052526,121.5203711,17z/data=!3m1!4b1!4m6!3m5!1s0x3442af30435484ff:0xe02f1759dbe7051f!8m2!3d25.1052478!4d121.522946!16s%2Fg%2F11rtlv3cxg?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "tue": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "wed": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "thu": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp8nfnl-u8xto",
+      "name": "福吉hoki手作甜甜圈",
+      "industries": [
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "手作りドーナツ",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp8nfnl-u8xto-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.039814,
+          "lng": 121.5310206,
+          "address": "臺北市中正區幸市里濟南路二段48巷7-2號",
+          "mapUrl": "https://www.google.com/maps/place/%E7%A6%8F%E5%90%89hoki%E6%89%8B%E4%BD%9C%E7%94%9C%E7%94%9C%E5%9C%88/@25.039814,121.5310206,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a96a81678b23:0xba7e64ce5fc29424!8m2!3d25.039814!4d121.5310206!16s%2Fg%2F11v5sn3_z3?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "tue": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "wed": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "thu": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "19:00"
+              ]
+            ],
+            "sat": [],
+            "sun": []
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp8flpf-d9ro3",
+      "name": "吃．甜甜圈 Donut worry!",
+      "industries": [
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "台湾ドーナツ",
+          "tone": "editorial"
+        },
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp8flpf-d9ro3-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.045815,
+          "lng": 121.5144443,
+          "address": "台北市中正區開封街一段2-55號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%90%83%EF%BC%8E%E7%94%9C%E7%94%9C%E5%9C%88+Donut+worry!%EF%BC%88IG:eat_donuts2025)/@25.0465254,121.5138676,16.97z/data=!4m6!3m5!1s0x3442a9558005cbbf:0x25d86d3e44efcd69!8m2!3d25.045815!4d121.5144443!16s%2Fg%2F11xcxh_q3p?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp8bcld-annhg",
+      "name": "台灣人ㄟ脆皮鮮奶甜甜圈",
+      "industries": [
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": true,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "台湾ドーナツ",
+          "tone": "editorial"
+        },
+        {
+          "text": "人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "branch-mvp8c5fy-r0te34",
+          "label": "台灣人ㄟ脆皮鮮奶甜甜圈 晴光店",
+          "name": "台灣人ㄟ脆皮鮮奶甜甜圈 台灣人ㄟ脆皮鮮奶甜甜圈 晴光店",
+          "lat": 25.0643802,
+          "lng": 121.5250388,
+          "address": "台北市中山區雙城街17巷24號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%8F%B0%E7%81%A3%E4%BA%BA%E3%84%9F%E8%84%86%E7%9A%AE%E9%AE%AE%E5%A5%B6%E7%94%9C%E7%94%9C%E5%9C%88%E6%99%B4%E5%85%89%E5%BA%97/@25.0646392,121.5214345,16.68z/data=!4m6!3m5!1s0x3442a944d129b153:0xc9053d1fa390a4b2!8m2!3d25.0643802!4d121.5250388!16s%2Fg%2F11cm_3xlnc?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        },
+        {
+          "id": "branch-mvp8cw7q-ne89xq",
+          "label": "台灣人ㄟ脆皮鮮奶甜甜圈 忠孝店",
+          "name": "台灣人ㄟ脆皮鮮奶甜甜圈 台灣人ㄟ脆皮鮮奶甜甜圈 忠孝店",
+          "lat": 25.0413249,
+          "lng": 121.5405856,
+          "address": "台北市大安區忠孝東路三段216巷3弄12號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%8F%B0%E7%81%A3%E4%BA%BA%E3%84%9F%E8%84%86%E7%9A%AE%E9%AE%AE%E5%A5%B6%E7%94%9C%E7%94%9C%E5%9C%88+%E5%BF%A0%E5%AD%9D%E5%BA%97/@25.0413297,121.5380107,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ab00147f333d:0x1974d32fac551d4f!8m2!3d25.0413249!4d121.5405856!16s%2Fg%2F11w1c0t4l8?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp86gq8-kqplf",
+      "name": "一脆鮮奶脆皮甜甜圏",
+      "industries": [
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": true,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "台湾ドーナツ",
+          "tone": "editorial"
+        },
+        {
+          "text": "人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "branch-mvp86vpb-k0ia2x",
+          "label": "一脆鮮奶脆皮甜甜圈總店",
+          "name": "一脆鮮奶脆皮甜甜圏 一脆鮮奶脆皮甜甜圈總店",
+          "lat": 25.0429189,
+          "lng": 121.5058363,
+          "address": "台北市萬華區成都路61號",
+          "mapUrl": "https://www.google.com/maps/place/%E4%B8%80%E8%84%86%E9%AE%AE%E5%A5%B6%E8%84%86%E7%9A%AE%E7%94%9C%E7%94%9C%E5%9C%88%E7%B8%BD%E5%BA%97/@25.0429237,121.5032614,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a90900c3af8f:0x726f6f1588eaae22!8m2!3d25.0429189!4d121.5058363!16s%2Fg%2F11j30rc6n6?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "22:30"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "22:30"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "22:30"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "22:30"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "22:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "22:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "22:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        },
+        {
+          "id": "branch-mvp888zh-dwfacb",
+          "label": "脆得鮮奶香脆甜甜圈忠孝店",
+          "name": "一脆鮮奶脆皮甜甜圏 脆得鮮奶香脆甜甜圈忠孝店",
+          "lat": 25.0417291,
+          "lng": 121.5512945,
+          "address": "台北市大安區忠孝東路四段195-1號",
+          "mapUrl": "https://www.google.com/maps/place/%E8%84%86%E5%BE%97%E9%AE%AE%E5%A5%B6%E9%A6%99%E8%84%86%E7%94%9C%E7%94%9C%E5%9C%88%E5%BF%A0%E5%AD%9D%E5%BA%97/@25.0417339,121.5487196,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ab2e2afd9f0f:0xc2c351347c0bef47!8m2!3d25.0417291!4d121.5512945!16s%2Fg%2F11sqt68vmb?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp81yjk-siibz",
+      "name": "吉那圈咖啡",
+      "industries": [
+        "カフェ",
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "cafe",
+      "displayType": "カフェ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "チュロス",
+          "tone": "editorial"
+        },
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp81yjk-siibz-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0403894,
+          "lng": 121.55644,
+          "address": "台北市大安區光復南路 260 巷 24 號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%90%89%E9%82%A3%E5%9C%88%E5%92%96%E5%95%A1/@25.0403894,121.55644,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abc648fc0df9:0x205a2be8ea5cd8c5!8m2!3d25.0403894!4d121.55644!16s%2Fg%2F11c47yhqxg?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp7y17y-smlbk",
+      "name": "雙連圓仔湯",
+      "industries": [
+        "スイーツ",
+        "小吃",
+        "アイス"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "燒麻糬",
+          "tone": "editorial"
+        },
+        {
+          "text": "人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp7y17y-smlbk-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0573247,
+          "lng": 121.5189585,
+          "address": "臺北市大同區光能里民生西路136號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9B%99%E9%80%A3%E5%9C%93%E4%BB%94%E6%B9%AF/@25.0573247,121.5189585,17z/data=!4m16!1m9!3m8!1s0x3442a96a11391b2b:0xf14198f38b3a86e5!2z6ZuZ6YCj5ZyT5LuU5rmv!8m2!3d25.0573247!4d121.5189585!9m1!1b1!16s%2Fg%2F11b6zxlshq!3m5!1s0x3442a96a11391b2b:0xf14198f38b3a86e5!8m2!3d25.0573247!4d121.5189585!16s%2Fg%2F11b6zxlshq?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp7t8sc-jmsn9",
+      "name": "KAKIGORI TOSHIHIKO",
+      "industries": [
+        "アイス"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "アイス",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "かき氷",
+          "tone": "editorial"
+        },
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp7t8sc-jmsn9-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0232114,
+          "lng": 121.5247093,
+          "address": "台北市中正區金門街 2-2 號",
+          "mapUrl": "https://www.google.com/maps/place/KAKIGORI+TOSHIHIKO/@25.0232114,121.5247093,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a955ca373515:0xcd13941a9e51f37f!8m2!3d25.0232114!4d121.5247093!16s%2Fg%2F11gjs01ftx?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "13:00",
+                "20:00"
+              ]
+            ],
+            "tue": [
+              [
+                "13:00",
+                "20:00"
+              ]
+            ],
+            "wed": [
+              [
+                "13:00",
+                "20:00"
+              ]
+            ],
+            "thu": [
+              [
+                "13:00",
+                "20:00"
+              ]
+            ],
+            "fri": [
+              [
+                "13:00",
+                "20:00"
+              ]
+            ],
+            "sat": [
+              [
+                "13:00",
+                "20:00"
+              ]
+            ],
+            "sun": [
+              [
+                "13:00",
+                "20:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp7qjo7-sdrkk",
+      "name": "拾米屋 SheMe house",
+      "industries": [
+        "カフェ",
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "cafe",
+      "displayType": "カフェ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "シフォンケーキ",
+          "tone": "editorial"
+        },
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp7qjo7-sdrkk-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.137058,
+          "lng": 121.504303,
+          "address": "臺北市北投區泉源路12號3樓",
+          "mapUrl": "https://www.google.com/maps/place/%E6%8B%BE%E7%B1%B3%E5%B1%8B+SheMe+house/@25.137058,121.504303,17z/data=!4m16!1m9!3m8!1s0x3442ae51c6fd84c5:0x82429cc601bae770!2z5ou-57Gz5bGLIFNoZU1lIGhvdXNl!8m2!3d25.137058!4d121.504303!9m1!1b1!16s%2Fg%2F11ydk6zs0!3m5!1s0x3442ae51c6fd84c5:0x82429cc601bae770!8m2!3d25.137058!4d121.504303!16s%2Fg%2F11ydk6zs0?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "12:00",
+                "20:00"
+              ]
+            ],
+            "wed": [
+              [
+                "12:00",
+                "20:00"
+              ]
+            ],
+            "thu": [
+              [
+                "12:00",
+                "20:00"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "20:00"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "20:00"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "20:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp7myme-49hld",
+      "name": "在室。甜點｜En vie Pâtisserie",
+      "industries": [
+        "スイーツ",
+        "カフェ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "サントノレ",
+          "tone": "editorial"
+        },
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp7myme-49hld-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0619909,
+          "lng": 121.5285078,
+          "address": "臺北市中山區新生里新生北路二段149巷26號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%9C%A8%E5%AE%A4%E3%80%82%E7%94%9C%E9%BB%9E%EF%BD%9CEn+vie+P%C3%A2tisserie/@25.0619909,121.5285078,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a9f8edcd9369:0xf240243a39890d53!8m2!3d25.0619909!4d121.5285078!16s%2Fg%2F11f8m8m8pd?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "12:00",
+                "18:45"
+              ]
+            ],
+            "tue": [
+              [
+                "12:00",
+                "18:45"
+              ]
+            ],
+            "wed": [],
+            "thu": [
+              [
+                "12:00",
+                "18:45"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "18:45"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "18:45"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "18:45"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp7kihl-1ymg6",
+      "name": "榕美樹館",
+      "industries": [
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "豆花",
+          "tone": "editorial"
+        },
+        {
+          "text": "人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 1,
+      "branches": [
+        {
+          "id": "food-added-mvp7kihl-1ymg6-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0569138,
+          "lng": 121.5208285,
+          "address": "台北市中山區民生西路 66 巷 21 號一樓",
+          "mapUrl": "https://www.google.com/maps/place/%E6%A6%95%E7%BE%8E%E6%A8%B9%E9%A4%A8/@25.0569138,121.5208285,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a9257df13fab:0xd2a337bfda715ee0!8m2!3d25.0569138!4d121.5208285!16s%2Fg%2F11mfw7rns8?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "12:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "12:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "12:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "12:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "21:30"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "21:30"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "21:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp7ge7g-2eo7i",
+      "name": "Timchi’s週末肉桂捲",
+      "industries": [
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "シナモンロール",
+          "tone": "editorial"
+        },
+        {
+          "text": "カヌレ",
+          "tone": "editorial"
+        },
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 1,
+      "branches": [
+        {
+          "id": "food-added-mvp7ge7g-2eo7i-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0539266,
+          "lng": 121.6151996,
+          "address": "臺北市南港區中南里中南街50號",
+          "mapUrl": "https://www.google.com/maps/place/Timchi%E2%80%99s%E9%80%B1%E6%9C%AB%E8%82%89%E6%A1%82%E6%8D%B2/@25.0539266,121.6151996,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ab13b8d6cc93:0x360457876432700c!8m2!3d25.0539266!4d121.6151996!16s%2Fg%2F11rrr1v1qd?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "13:00",
+                "19:00"
+              ]
+            ],
+            "tue": [],
+            "wed": [
+              [
+                "13:00",
+                "19:00"
+              ]
+            ],
+            "thu": [
+              [
+                "13:00",
+                "19:00"
+              ]
+            ],
+            "fri": [
+              [
+                "13:00",
+                "19:00"
+              ]
+            ],
+            "sat": [
+              [
+                "13:00",
+                "19:00"
+              ]
+            ],
+            "sun": [
+              [
+                "13:00",
+                "19:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp7d2fc-eqif4",
+      "name": "216粉圓大王",
+      "industries": [
+        "スイーツ",
+        "小吃"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "morning",
+        "lunch",
+        "afternoon",
+        "night",
+        "late"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp7d2fc-eqif4-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0394667,
+          "lng": 121.5525829,
+          "address": "台北市大安區忠孝東路四段216巷40弄3號1樓",
+          "mapUrl": "https://www.google.com/maps/place/216%E7%B2%89%E5%9C%93%E5%A4%A7%E7%8E%8B/@25.0394667,121.5525829,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abcf5fbd4bf5:0xa5c9ff797cf616e3!8m2!3d25.0394667!4d121.5525829!16s%2Fg%2F119v7brm6?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night",
+            "late"
+          ],
+          "days": {
+            "mon": [
+              [
+                "00:00",
+                "10:30"
+              ],
+              [
+                "11:30",
+                "22:30"
+              ]
+            ],
+            "tue": [
+              [
+                "11:30",
+                "22:30"
+              ]
+            ],
+            "wed": [
+              [
+                "11:30",
+                "22:30"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "22:30"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "23:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "23:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "00:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp7bkxb-tdv4l",
+      "name": "amamotobros",
+      "industries": [
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp7bkxb-tdv4l-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0384342,
+          "lng": 121.5549713,
+          "address": "臺北市大安區車層里仁愛路四段377號",
+          "mapUrl": "https://www.google.com/maps/place/amamotobros/@25.0384342,121.5549713,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abadc1659e63:0x598e207edac94a3a!8m2!3d25.0384342!4d121.5549713!16s%2Fg%2F11jzgw43ch?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:30",
+                "17:00"
+              ]
+            ],
+            "tue": [],
+            "wed": [],
+            "thu": [
+              [
+                "11:30",
+                "17:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "17:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "17:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "17:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp78b3p-at1qa",
+      "name": "Lady M",
+      "industries": [
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ケーキ",
+          "tone": "editorial"
+        },
+        {
+          "text": "人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp78b3p-at1qa-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0408963,
+          "lng": 121.5563338,
+          "address": "台北市大安區光復南路240巷26號1樓",
+          "mapUrl": "https://www.google.com/maps/place/Lady+M+%E5%8F%B0%E5%8C%97%E6%97%97%E8%89%A6%E5%BA%97/@25.0408963,121.5563338,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abc65002657b:0x40c1652b4d802977!8m2!3d25.0408963!4d121.5563338!16s%2Fg%2F11dx8px8m8?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp736hw-jhbw6",
+      "name": "巢 nido",
+      "industries": [
+        "カフェ",
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "cafe",
+      "displayType": "カフェ",
+      "volume": [],
+      "timeBands": [
+        "afternoon",
+        "night",
+        "late"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "プリン",
+          "tone": "editorial"
+        },
+        {
+          "text": "人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp736hw-jhbw6-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0412135,
+          "lng": 121.5691695,
+          "address": "台北市信義區忠孝東路五段183號2樓",
+          "mapUrl": "https://www.google.com/maps/place/%E5%B7%A2+nido/@25.0412135,121.5691695,17z/data=!4m15!1m8!3m7!1s0x3442abbecf89a70d:0x2074bf6798bc157f!2z5beiIG5pZG8!8m2!3d25.0412135!4d121.5691695!10e5!16s%2Fg%2F1tj30thh!3m5!1s0x3442abbecf89a70d:0x2074bf6798bc157f!8m2!3d25.0412135!4d121.5691695!16s%2Fg%2F1tj30thh?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "afternoon",
+            "night",
+            "late"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "14:03",
+                "00:00"
+              ]
+            ],
+            "wed": [
+              [
+                "14:03",
+                "00:00"
+              ]
+            ],
+            "thu": [
+              [
+                "14:03",
+                "00:00"
+              ]
+            ],
+            "fri": [
+              [
+                "14:03",
+                "00:00"
+              ]
+            ],
+            "sat": [
+              [
+                "14:03",
+                "00:00"
+              ]
+            ],
+            "sun": [
+              [
+                "14:03",
+                "00:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp6xiid-7bzpw",
+      "name": "欣葉小聚",
+      "industries": [
+        "レストラン",
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "人気",
+          "tone": "editorial"
+        },
+        {
+          "text": "ミシュランガイド掲載",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp6xiid-7bzpw-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0585837,
+          "lng": 121.6160675,
+          "address": "台北市南港區經貿二路166號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E6%AC%A3%E8%91%89%E5%B0%8F%E8%81%9A+%E5%8D%97%E6%B8%AF%E5%BA%97/@25.0585837,121.6160675,17z/data=!3m1!4b1!4m6!3m5!1s0x3442aca7c4c27ea9:0x3361eeb867b1db59!8m2!3d25.0585837!4d121.6160675!16s%2Fg%2F11c6cqt135?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp6sqid-3uubo",
+      "name": "川畝園麵食館",
+      "industries": [
+        "小籠包・点心",
+        "レストラン"
+      ],
+      "industryVerified": "推估",
+      "category": "dumpling",
+      "displayType": "小籠包・点心",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        },
+        {
+          "text": "ミシュランガイド掲載",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 1,
+      "branches": [
+        {
+          "id": "food-added-mvp6sqid-3uubo-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0588524,
+          "lng": 121.5179749,
+          "address": "台北市大同區承德路二段120號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E5%B7%9D%E7%95%9D%E5%9C%92%E9%BA%B5%E9%A3%9F%E9%A4%A8/@25.0588524,121.5179749,17z/data=!4m15!1m8!3m7!1s0x3442a96bf0416d53:0xb8427d6034ec1445!2z5bed55Wd5ZyS6bq16aOf6aSo!8m2!3d25.0588524!4d121.5179749!10e5!16s%2Fg%2F11cn0r0nzj!3m5!1s0x3442a96bf0416d53:0xb8427d6034ec1445!8m2!3d25.0588524!4d121.5179749!16s%2Fg%2F11cn0r0nzj?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "13:30"
+              ],
+              [
+                "16:30",
+                "19:30"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "13:30"
+              ],
+              [
+                "16:30",
+                "19:30"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "13:30"
+              ],
+              [
+                "16:30",
+                "19:30"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "13:30"
+              ],
+              [
+                "16:30",
+                "19:30"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "13:30"
+              ],
+              [
+                "16:30",
+                "19:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "13:30"
+              ],
+              [
+                "16:30",
+                "19:30"
+              ]
+            ],
+            "sun": []
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp6q8zm-xl6q3",
+      "name": "施家鮮肉湯圓",
+      "industries": [
+        "レストラン",
+        "小吃"
+      ],
+      "industryVerified": "推估",
+      "category": "snack",
+      "displayType": "屋台料理・軽食",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "人気",
+          "tone": "editorial"
+        },
+        {
+          "text": "ミシュランガイド掲載",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 1,
+      "branches": [
+        {
+          "id": "food-added-mvp6q8zm-xl6q3-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.065153,
+          "lng": 121.5109816,
+          "address": "臺北市大同區隆和里延平北路三段58號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E6%96%BD%E5%AE%B6%E9%AE%AE%E8%82%89%E6%B9%AF%E5%9C%93/@25.065153,121.5109816,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a93ed402014f:0xa33b65b0ae009a2f!8m2!3d25.065153!4d121.5109816!16s%2Fg%2F1td4gttr?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [],
+            "wed": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp6m9t1-fuc4w",
+      "name": "江牛樓",
+      "industries": [
+        "レストラン",
+        "台湾料理",
+        "麺類"
+      ],
+      "industryVerified": "推估",
+      "category": "noodle",
+      "displayType": "麺類",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "牛肉麺",
+          "tone": "editorial"
+        },
+        {
+          "text": "ミシュランガイド掲載",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp6m9t1-fuc4w-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0557099,
+          "lng": 121.5107829,
+          "address": "台北市大同區民樂街6號",
+          "mapUrl": "https://www.google.com/maps/place/%E6%B1%9F%E7%89%9B%E6%A8%93/@25.0557099,121.5107829,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a925115d13cf:0x5e806f3067dbf4dd!8m2!3d25.0557099!4d121.5107829!16s%2Fg%2F11vj2bzphx?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [],
+            "wed": [
+              [
+                "12:00",
+                "18:00"
+              ]
+            ],
+            "thu": [
+              [
+                "12:00",
+                "18:00"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "18:00"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "18:00"
+              ]
+            ],
+            "sun": []
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp6hral-te7ts",
+      "name": "明福台菜",
+      "industries": [
+        "レストラン",
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "高級",
+          "tone": "caution"
+        },
+        {
+          "text": "ミシュラン⭐️",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp6hral-te7ts-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0616562,
+          "lng": 121.524265,
+          "address": "台北市中山區中山北路二段137巷18號之1",
+          "mapUrl": "https://www.google.com/maps/place/%E6%98%8E%E7%A6%8F%E5%8F%B0%E8%8F%9C/@25.061661,121.5216901,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a94342ba081b:0x8350490e74b2b7b!8m2!3d25.0616562!4d121.524265!16s%2Fg%2F12m9k5kjq?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "12:00",
+                "14:00"
+              ],
+              [
+                "18:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "12:00",
+                "14:00"
+              ],
+              [
+                "18:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "12:00",
+                "14:00"
+              ],
+              [
+                "18:00",
+                "21:00"
+              ]
+            ],
+            "thu": [],
+            "fri": [
+              [
+                "12:00",
+                "14:00"
+              ],
+              [
+                "18:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "14:00"
+              ],
+              [
+                "18:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "14:00"
+              ],
+              [
+                "18:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp6etg8-m5boq",
+      "name": "米香",
+      "industries": [
+        "レストラン",
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "高級",
+          "tone": "caution"
+        },
+        {
+          "text": "ミシュラン⭐️",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp6etg8-m5boq-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0804887,
+          "lng": 121.5538967,
+          "address": "台北市中山區樂群二路55號3樓",
+          "mapUrl": "https://www.google.com/maps/place/%E7%B1%B3%E9%A6%99%E5%8F%B0%E8%8F%9C%E9%A4%90%E5%BB%B3/@25.0804887,121.5538967,17z/data=!4m15!1m8!3m7!1s0x3442ac0d6a2f18f7:0xa34f0b194a86aae5!2z57Gz6aaZ5Y-w6I-c6aSQ5buz!8m2!3d25.0804887!4d121.5538967!10e9!16s%2Fg%2F11cmzjqpql!3m5!1s0x3442ac0d6a2f18f7:0xa34f0b194a86aae5!8m2!3d25.0804887!4d121.5538967!16s%2Fg%2F11cmzjqpql?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ],
+            "tue": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ],
+            "wed": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:30",
+                "21:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:30",
+                "21:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp6cvgl-djg47",
+      "name": "好嶼",
+      "industries": [
+        "レストラン",
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "創作台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "高級",
+          "tone": "caution"
+        },
+        {
+          "text": "ミシュラン⭐️",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp6cvgl-djg47-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0363715,
+          "lng": 121.5532452,
+          "address": "臺北市大安區仁愛路四段300巷20弄17號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%A5%BD%E5%B6%BC/@25.0363715,121.543718,16z/data=!4m6!3m5!1s0x3442ab6a5fb316c3:0xceac9da7284eec1f!8m2!3d25.0363715!4d121.5532452!16s%2Fg%2F11rk6y2gxx?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "18:30",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "18:30",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "18:30",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "18:30",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "sun": []
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp68ltk-73sgy",
+      "name": "富錦樹台菜香檳 敦北店",
+      "industries": [
+        "レストラン",
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "高級",
+          "tone": "caution"
+        },
+        {
+          "text": "おすすめ",
+          "tone": "featured"
+        },
+        {
+          "text": "ミシュラン⭐️",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 1,
+      "branches": [
+        {
+          "id": "food-added-mvp68ltk-73sgy-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0565316,
+          "lng": 121.5527738,
+          "address": "台北市松山區敦化北路199巷17號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E5%AF%8C%E9%8C%A6%E6%A8%B9%E5%8F%B0%E8%8F%9C%E9%A6%99%E6%AA%B3+%E6%95%A6%E5%8C%97%E5%BA%97/@25.0565316,121.5527738,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abeeb8cfa39d:0x29ae480e77529935!8m2!3d25.0565316!4d121.5527738!16s%2Fg%2F11b70kcv5f?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp66097-nfvbr",
+      "name": "欣葉・鐘菜",
+      "industries": [
+        "レストラン",
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ミシュラン⭐️",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp66097-nfvbr-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.08047,
+          "lng": 121.559396,
+          "address": "臺北市中山區金泰里樂群二路199號",
+          "mapUrl": "https://www.google.com/maps/place/%E6%AC%A3%E8%91%89%E3%83%BB%E9%90%98%E8%8F%9C/@25.08047,121.559396,17z/data=!4m15!1m8!3m7!1s0x3442addc72c5f367:0x6e5832035292ce1f!2z5qyj6JGJ44O76ZCY6I-c!8m2!3d25.08047!4d121.559396!10e5!16s%2Fg%2F11j8f144fd!3m5!1s0x3442addc72c5f367:0x6e5832035292ce1f!8m2!3d25.08047!4d121.559396!16s%2Fg%2F11j8f144fd?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:30",
+                "15:00"
+              ],
+              [
+                "17:00",
+                "21:30"
+              ]
+            ],
+            "tue": [
+              [
+                "11:30",
+                "15:00"
+              ],
+              [
+                "17:00",
+                "21:30"
+              ]
+            ],
+            "wed": [
+              [
+                "11:30",
+                "15:00"
+              ],
+              [
+                "17:00",
+                "21:30"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "15:00"
+              ],
+              [
+                "17:00",
+                "21:30"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "15:00"
+              ],
+              [
+                "17:00",
+                "21:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "15:00"
+              ],
+              [
+                "17:00",
+                "21:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "15:00"
+              ],
+              [
+                "17:00",
+                "21:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp63wur-vobr0",
+      "name": "logy",
+      "industries": [
+        "レストラン",
+        "各国・創作料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "創作料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "高級",
+          "tone": "caution"
+        },
+        {
+          "text": "ミシュラン⭐️⭐️",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp63wur-vobr0-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0749007,
+          "lng": 121.5748154,
+          "address": "臺北市內湖區港墘里Lane258,RuiguangRd,39號1F",
+          "mapUrl": "https://www.google.com/maps/place/logy/@25.0749007,121.5748154,17z/data=!4m15!1m8!3m7!1s0x3442abe184aa6035:0xcdb87c1635c986ff!2slogy!8m2!3d25.0749007!4d121.5748154!10e5!16s%2Fg%2F11ffvvj6zl!3m5!1s0x3442abe184aa6035:0xcdb87c1635c986ff!8m2!3d25.0749007!4d121.5748154!16s%2Fg%2F11ffvvj6zl?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [],
+            "wed": [
+              [
+                "18:30",
+                "22:30"
+              ]
+            ],
+            "thu": [
+              [
+                "18:30",
+                "22:30"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "15:00"
+              ],
+              [
+                "18:30",
+                "22:30"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "15:00"
+              ],
+              [
+                "18:30",
+                "22:30"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "15:00"
+              ],
+              [
+                "18:30",
+                "22:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp60w8t-2mvb7",
+      "name": "EIKA 盈科",
+      "industries": [
+        "レストラン",
+        "各国・創作料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "創作日本料理",
+      "volume": [],
+      "timeBands": [
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "高級",
+          "tone": "caution"
+        },
+        {
+          "text": "ミシュラン⭐️⭐️",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp60w8t-2mvb7-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0574787,
+          "lng": 121.5105154,
+          "address": "",
+          "mapUrl": "https://www.google.com/maps/place/EIKA+%E7%9B%88%E7%A7%91/@25.0574787,121.5105154,17z/data=!4m15!1m8!3m7!1s0x3442a91503a4ac9d:0x4591089dea6d269d!2zRUlLQSDnm4jnp5E!8m2!3d25.0574787!4d121.5105154!10e5!16s%2Fg%2F11t_z36k4n!3m5!1s0x3442a91503a4ac9d:0x4591089dea6d269d!8m2!3d25.0574787!4d121.5105154!16s%2Fg%2F11t_z36k4n?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [],
+            "wed": [
+              [
+                "18:00",
+                "23:00"
+              ]
+            ],
+            "thu": [
+              [
+                "18:00",
+                "23:00"
+              ]
+            ],
+            "fri": [
+              [
+                "18:00",
+                "23:00"
+              ]
+            ],
+            "sat": [
+              [
+                "18:00",
+                "23:00"
+              ]
+            ],
+            "sun": [
+              [
+                "18:00",
+                "23:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp5w0xb-rsbj2",
+      "name": "Taïrroir 態芮",
+      "industries": [
+        "レストラン",
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "創作台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "高級",
+          "tone": "caution"
+        },
+        {
+          "text": "ミシュラン⭐️⭐️⭐️",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp5w0xb-rsbj2-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.08278,
+          "lng": 121.5591771,
+          "address": "臺北市中山區金泰里樂群三路299號6樓",
+          "mapUrl": "https://www.google.com/maps/place/Ta%C3%AFrroir+%E6%85%8B%E8%8A%AE/@25.08278,121.5591771,17z/data=!4m15!1m8!3m7!1s0x3442ac12dcb0db21:0xcb076a56d33369dc!2zVGHDr3Jyb2lyIOaFi-iKrg!8m2!3d25.08278!4d121.5591771!10e5!16s%2Fg%2F11byzd45wd!3m5!1s0x3442ac12dcb0db21:0xcb076a56d33369dc!8m2!3d25.08278!4d121.5591771!16s%2Fg%2F11byzd45wd?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "18:30",
+                "22:30"
+              ]
+            ],
+            "tue": [],
+            "wed": [],
+            "thu": [
+              [
+                "18:30",
+                "22:30"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "18:30",
+                "22:30"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "18:30",
+                "22:30"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "18:30",
+                "22:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvp5pjuy-r3y6k",
+      "name": "頤宮",
+      "industries": [
+        "レストラン",
+        "各国・創作料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "広東料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "高級",
+          "tone": "caution"
+        },
+        {
+          "text": "ミシュラン⭐️⭐️⭐️",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvp5pjuy-r3y6k-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0491485,
+          "lng": 121.5168698,
+          "address": "台北市大同區承德路一段3號17樓",
+          "mapUrl": "https://www.google.com/maps/place/%E9%A0%A4%E5%AE%AE%E4%B8%AD%E9%A4%90%E5%BB%B3/@25.0491533,121.5142949,17z/data=!3m1!5s0x36ef31d83d17a355:0x5ceaf7ca0c610029!4m10!3m9!1s0x3442a96d752e86af:0x90777b7140abcdea!5m3!1s2026-11-22!4m1!1i2!8m2!3d25.0491485!4d121.5168698!16s%2Fg%2F12m8z8y35?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ],
+            "wed": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ],
+            "thu": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "18:00",
+                "21:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-26"
+        }
+      ]
+    },
+    {
       "id": "food-added-mvp1n6iu-brdjh",
       "name": "女娘的店",
       "industries": [
@@ -25,12 +3074,12 @@
       },
       "guideTags": [
         {
-          "text": "ビブグルマン",
-          "tone": "featured"
-        },
-        {
           "text": "人気",
           "tone": "editorial"
+        },
+        {
+          "text": "ビブグルマンに選出",
+          "tone": "featured"
         }
       ],
       "awardDish": "",
@@ -528,7 +3577,7 @@
       },
       "guideTags": [
         {
-          "text": "ビブグルマン",
+          "text": "ビブグルマンに選出",
           "tone": "featured"
         }
       ],
@@ -650,7 +3699,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン掲載",
+          "text": "ミシュランガイド掲載",
           "tone": "featured"
         }
       ],
@@ -1583,6 +4632,10 @@
         {
           "text": "ヤギ肉鍋",
           "tone": "editorial"
+        },
+        {
+          "text": "ミシュランガイド掲載",
+          "tone": "featured"
         }
       ],
       "awardDish": "",
@@ -1760,16 +4813,16 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン",
-          "tone": "featured"
+          "text": "伝統",
+          "tone": "editorial"
         },
         {
           "text": "超行列店",
-          "tone": "caution"
+          "tone": "featured"
         },
         {
-          "text": "伝統",
-          "tone": "editorial"
+          "text": "ビブグルマン常連",
+          "tone": "featured"
         }
       ],
       "awardDish": "",
@@ -3985,7 +7038,7 @@
         },
         {
           "text": "おすすめ",
-          "tone": "editorial"
+          "tone": "featured"
         }
       ],
       "awardDish": "",
@@ -10462,7 +13515,15 @@
       },
       "guideTags": [
         {
-          "text": "「芝芝金萱」おすすめ",
+          "text": "おすすめ",
+          "tone": "featured"
+        },
+        {
+          "text": "芝芝金萱",
+          "tone": "editorial"
+        },
+        {
+          "text": "高山金萱",
           "tone": "editorial"
         }
       ],
@@ -30119,7 +33180,7 @@
         },
         {
           "text": "ビブグルマンに選出",
-          "tone": "editorial"
+          "tone": "featured"
         }
       ],
       "awardDish": "",
@@ -39763,11 +42824,11 @@
         },
         {
           "text": "孤独のグルメ",
-          "tone": "editorial"
+          "tone": "featured"
         },
         {
           "text": "八角なし",
-          "tone": "editorial"
+          "tone": "caution"
         }
       ],
       "awardDish": "",
@@ -39865,11 +42926,11 @@
         },
         {
           "text": "おすすめ",
-          "tone": "editorial"
+          "tone": "featured"
         },
         {
           "text": "八角なし",
-          "tone": "editorial"
+          "tone": "caution"
         }
       ],
       "awardDish": "魯肉飯",
@@ -40046,16 +43107,16 @@
       },
       "guideTags": [
         {
-          "text": "外国人に人気",
-          "tone": "editorial"
-        },
-        {
           "text": "目玉焼き乗せ",
           "tone": "editorial"
         },
         {
-          "text": "八角なし",
+          "text": "人気",
           "tone": "editorial"
+        },
+        {
+          "text": "八角なし",
+          "tone": "caution"
         }
       ],
       "awardDish": "",
@@ -40342,12 +43403,8 @@
           "tone": "editorial"
         },
         {
-          "text": "ビブグルマンに選出",
-          "tone": "editorial"
-        },
-        {
           "text": "八角なし",
-          "tone": "editorial"
+          "tone": "caution"
         },
         {
           "text": "ミシュラン ビブグルマン 2026",
@@ -40567,7 +43624,7 @@
         },
         {
           "text": "八角なし",
-          "tone": "editorial"
+          "tone": "caution"
         }
       ],
       "awardDish": "",
@@ -40749,11 +43806,11 @@
       },
       "guideTags": [
         {
-          "text": "台湾豚角煮丼",
+          "text": "人気",
           "tone": "editorial"
         },
         {
-          "text": "人気",
+          "text": "豚角煮丼",
           "tone": "editorial"
         },
         {
@@ -41592,6 +44649,10 @@
         {
           "text": "人気",
           "tone": "editorial"
+        },
+        {
+          "text": "ミシュランガイド掲載",
+          "tone": "featured"
         }
       ],
       "awardDish": "",
@@ -42553,7 +45614,7 @@
         },
         {
           "text": "おすすめ",
-          "tone": "editorial"
+          "tone": "featured"
         }
       ],
       "awardDish": "",
@@ -43137,12 +46198,12 @@
       },
       "guideTags": [
         {
-          "text": "ビブグルマンに選出",
-          "tone": "editorial"
+          "text": "臭豆腐",
+          "tone": "caution"
         },
         {
-          "text": "独特の香り",
-          "tone": "editorial"
+          "text": "ビブグルマンに選出",
+          "tone": "featured"
         }
       ],
       "awardDish": "",
@@ -51070,7 +54131,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -51190,7 +54251,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -51316,7 +54377,11 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ミシュラングリーンスター",
+          "tone": "featured"
+        },
+        {
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -51663,7 +54728,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -51758,7 +54823,11 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "老舗",
+          "tone": "editorial"
+        },
+        {
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -51855,7 +54924,7 @@
       ],
       "industryVerified": "推估",
       "category": "meal",
-      "displayType": "台湾料理",
+      "displayType": "創作台湾料理",
       "volume": [
         "hearty"
       ],
@@ -51872,11 +54941,15 @@
       },
       "guideTags": [
         {
+          "text": "四川風味",
+          "tone": "editorial"
+        },
+        {
           "text": "ベジ",
           "tone": "veg"
         },
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -51999,7 +55072,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -52098,7 +55171,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -52196,7 +55269,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -52320,7 +55393,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -52443,7 +55516,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -52534,7 +55607,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -52647,7 +55720,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -52732,7 +55805,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -52821,8 +55894,8 @@
         "小吃"
       ],
       "industryVerified": "推估",
-      "category": "dumpling",
-      "displayType": "餃子",
+      "category": "noodle",
+      "displayType": "麺類",
       "volume": [
         "light",
         "hearty"
@@ -52842,7 +55915,11 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "老舗",
+          "tone": "editorial"
+        },
+        {
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
@@ -52940,7 +56017,7 @@
       },
       "guideTags": [
         {
-          "text": "ミシュラン ビブグルマン 2026",
+          "text": "ビブグルマン常連",
           "tone": "featured"
         }
       ],
