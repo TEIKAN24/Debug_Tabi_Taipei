@@ -4741,11 +4741,11 @@ html[data-theme="light"] #guide .chapter-eyebrow{color:#5E6B72!important;}
 html[data-theme="light"] #guide .chapter-lead{color:#5E6B72!important;}
 
 
-/* v30.9.151 — soft five-color chapter gradient bands. Applied ONLY to
-   the small 01–05 eyebrow line, without changing document flow, typography,
-   card dimensions, or the restaurant flip section. */
+/* v30.9.152 — five chapter number-line bands: a more visible 25px gradient,
+   with only the label + band shifted up 10px visually; layout flow unchanged. */
 #guide .chapter-eyebrow{
   position:relative;
+  top:-10px;
   isolation:isolate;
 }
 #guide .chapter-eyebrow::before{
@@ -4753,52 +4753,56 @@ html[data-theme="light"] #guide .chapter-lead{color:#5E6B72!important;}
   position:absolute;
   z-index:-1;
   pointer-events:none;
-  inset:-8px -12px;
-  border-radius:7px;
+  top:50%;
+  left:-12px;
+  right:-12px;
+  height:25px;
+  transform:translateY(-50%);
+  border-radius:6px;
   background:linear-gradient(90deg,
     var(--chapter-tint, rgba(115,125,135,.24)) 0%,
     var(--chapter-tint-fade, rgba(115,125,135,.08)) 48%,
     transparent 100%);
 }
 #guide .chapter-eyebrow--travel{
-  --chapter-tint:rgba(96,127,145,.31);
-  --chapter-tint-fade:rgba(96,127,145,.12);
+  --chapter-tint:rgba(96,127,145,.47);
+  --chapter-tint-fade:rgba(96,127,145,.20);
 }
 #guide .chapter-eyebrow--gourmet{
-  --chapter-tint:rgba(164,122,80,.30);
-  --chapter-tint-fade:rgba(164,122,80,.12);
+  --chapter-tint:rgba(164,122,80,.46);
+  --chapter-tint-fade:rgba(164,122,80,.20);
 }
 #guide .chapter-eyebrow--sights{
-  --chapter-tint:rgba(112,138,120,.30);
-  --chapter-tint-fade:rgba(112,138,120,.11);
+  --chapter-tint:rgba(112,138,120,.46);
+  --chapter-tint-fade:rgba(112,138,120,.19);
 }
 #guide .chapter-eyebrow--city-walk{
-  --chapter-tint:rgba(130,117,142,.31);
-  --chapter-tint-fade:rgba(130,117,142,.12);
+  --chapter-tint:rgba(130,117,142,.46);
+  --chapter-tint-fade:rgba(130,117,142,.20);
 }
 #guide .chapter-eyebrow--emergency{
-  --chapter-tint:rgba(161,106,105,.29);
-  --chapter-tint-fade:rgba(161,106,105,.11);
+  --chapter-tint:rgba(161,106,105,.44);
+  --chapter-tint-fade:rgba(161,106,105,.19);
 }
 html[data-theme="light"] #guide .chapter-eyebrow--travel{
-  --chapter-tint:rgba(96,127,145,.19);
-  --chapter-tint-fade:rgba(96,127,145,.075);
+  --chapter-tint:rgba(96,127,145,.33);
+  --chapter-tint-fade:rgba(96,127,145,.14);
 }
 html[data-theme="light"] #guide .chapter-eyebrow--gourmet{
-  --chapter-tint:rgba(164,122,80,.18);
-  --chapter-tint-fade:rgba(164,122,80,.072);
+  --chapter-tint:rgba(164,122,80,.32);
+  --chapter-tint-fade:rgba(164,122,80,.14);
 }
 html[data-theme="light"] #guide .chapter-eyebrow--sights{
-  --chapter-tint:rgba(112,138,120,.19);
-  --chapter-tint-fade:rgba(112,138,120,.073);
+  --chapter-tint:rgba(112,138,120,.33);
+  --chapter-tint-fade:rgba(112,138,120,.14);
 }
 html[data-theme="light"] #guide .chapter-eyebrow--city-walk{
-  --chapter-tint:rgba(130,117,142,.18);
-  --chapter-tint-fade:rgba(130,117,142,.074);
+  --chapter-tint:rgba(130,117,142,.32);
+  --chapter-tint-fade:rgba(130,117,142,.14);
 }
 html[data-theme="light"] #guide .chapter-eyebrow--emergency{
-  --chapter-tint:rgba(161,106,105,.18);
-  --chapter-tint-fade:rgba(161,106,105,.073);
+  --chapter-tint:rgba(161,106,105,.32);
+  --chapter-tint-fade:rgba(161,106,105,.14);
 }
 
 
