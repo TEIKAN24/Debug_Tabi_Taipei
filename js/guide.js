@@ -3294,3 +3294,133 @@ update();
   });
   panels.forEach(panel=>sync(panel));
 })();
+
+
+/* v30.9.154 — chapter-scene-transition-v154.
+   Keep the existing document flow intact. Only an intentional downward page
+   scroll crossing a chapter header triggers a brief editorial transition.
+   Native page scrolling, in-chapter gestures and jump-navigation are preserved. */
+(() => {
+  'use strict';
+  const headings=[...document.querySelectorAll('#guide .chapter-eyebrow')];
+  if(headings.length!==5 || !('requestAnimationFrame' in window))return;
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const overlay=document.createElement('div');
+  overlay.className='chapter-scene-curtain';
+  overlay.setAttribute('aria-hidden','true');
+  overlay.innerHTML='<div class="chapter-scene-curtain__content">'
+    +'<span class="chapter-scene-curtain__rule"></span>'
+    +'<p class="chapter-scene-curtain__number"></p>'
+    +'<p class="chapter-scene-curtain__title"></p>'
+    +'<p class="chapter-scene-curtain__progress"></p></div>';
+  document.body.appendChild(overlay);
+  const number=overlay.querySelector('.chapter-scene-curtain__number');
+  const title=overlay.querySelector('.chapter-scene-curtain__title');
+  const progress=overlay.querySelector('.chapter-scene-curtain__progress');
+  let previousY=window.scrollY;
+  let previousTops=headings.map(node=>node.getBoundingClientRect().top);
+  let scrollFrame=0,active=false,manualScrollAt=0,suspendUntil=0;
+  let touchStart=null;
+  const now=()=>performance.now();
+  const skip=()=>reduced.matches || active || now()<suspendUntil
+    || document.body.classList.contains('food-drawer-open')
+    || document.body.classList.contains('food-swipe-active')
+    || document.body.classList.contains('food-swipe-dragging')
+    || document.activeElement?.matches('input,textarea,select,[contenteditable="true"]');
+  const recalibrate=()=>{
+    previousY=window.scrollY;
+    previousTops=headings.map(node=>node.getBoundingClientRect().top);
+  };
+  // Ignore direct navigation and the smooth scrolling it initiates.
+  document.addEventListener('click', event=>{
+    if(event.target.closest('a[href^="#"],.nav-button,.section-jump-button,.hero-title-link,[data-target]')){
+      suspendUntil=now()+1600;
+    }
+  },true);
+  window.addEventListener('wheel',event=>{
+    if(event.deltaY>0 && Math.abs(event.deltaY)>Math.abs(event.deltaX))manualScrollAt=now();
+  },{passive:true});
+  window.addEventListener('touchstart',event=>{
+    if(event.touches.length===1)touchStart={x:event.touches[0].clientX,y:event.touches[0].clientY};
+    else touchStart=null;
+  },{passive:true});
+  window.addEventListener('touchmove',event=>{
+    if(!touchStart||event.touches.length!==1)return;
+    const dx=event.touches[0].clientX-touchStart.x;
+    const dy=event.touches[0].clientY-touchStart.y;
+    if(dy < -10 && Math.abs(dy)>Math.abs(dx)*1.25)manualScrollAt=now();
+  },{passive:true});
+  window.addEventListener('touchend',()=>{touchStart=null;},{passive:true});
+  window.addEventListener('touchcancel',()=>{touchStart=null;},{passive:true});
+  window.addEventListener('keydown',event=>{
+    if(['ArrowDown','PageDown',' ','End'].includes(event.key) &&
+      !event.target?.closest?.('input,textarea,select,[contenteditable="true"]'))manualScrollAt=now();
+  });
+
+  function changeChapter(index){
+    if(skip())return;
+    active=true;
+    const eyebrow=headings[index];
+    const heading=eyebrow.nextElementSibling;
+    // Only text sourced from the already existing chapter headings.
+    number.textContent=eyebrow.textContent.trim();
+    title.textContent=heading?.matches('h2') ? heading.textContent.trim() : 'グルメ';
+    progress.textContent=String(index+1).padStart(2,'0')+' / 05';
+    overlay.classList.remove('is-arriving');
+    overlay.classList.add('is-covering');
+    // Cover the previous chapter BEFORE positioning the new one.
+    window.setTimeout(()=>{
+      if(!eyebrow.isConnected){overlay.classList.remove('is-covering');active=false;return;}
+      // 'auto' bypasses the site's html{scroll-behavior:smooth} during the covered jump.
+      const html=document.documentElement;
+      const prior=html.style.scrollBehavior;
+      html.style.scrollBehavior='auto';
+      const target=Math.max(0,window.scrollY+eyebrow.getBoundingClientRect().top-24);
+      window.scrollTo({top:target,behavior:'instant'});
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        // Top-level accordions can automatically fold when they leave view.
+        // Compensate for any resulting layout shift before uncovering the scene.
+        const delta=eyebrow.getBoundingClientRect().top-24;
+        if(Math.abs(delta)>2){
+          window.scrollTo({top:Math.max(0,window.scrollY+delta),behavior:'instant'});
+        }
+        html.style.scrollBehavior=prior;
+        overlay.classList.remove('is-covering');
+        overlay.classList.add('is-arriving');
+        window.setTimeout(()=>{
+          overlay.classList.remove('is-arriving');
+          active=false;
+          // Do not re-trigger from the subsequent scroll/resize/accordion reflow.
+          suspendUntil=now()+150;
+          recalibrate();
+        },390);
+      }));
+    },200);
+  }
+
+  function scan(){
+    scrollFrame=0;
+    const y=window.scrollY;
+    const tops=headings.map(node=>node.getBoundingClientRect().top);
+    const moved=y-previousY;
+    const gate=window.innerHeight*.88;
+    const canTrigger=!skip() && now()-manualScrollAt<1050 && moved>1.5;
+    if(canTrigger){
+      // Header #1 has no preceding chapter. Switch only at the four boundaries.
+      for(let i=1;i<headings.length;i++){
+        if(previousTops[i]>gate && tops[i]<=gate && tops[i]>-window.innerHeight*.3){
+          previousY=y;previousTops=tops;
+          changeChapter(i);
+          return;
+        }
+      }
+    }
+    previousY=y;
+    previousTops=tops;
+  }
+  window.addEventListener('scroll',()=>{
+    if(!scrollFrame)scrollFrame=requestAnimationFrame(scan);
+  },{passive:true});
+  window.addEventListener('resize',recalibrate,{passive:true});
+  window.addEventListener('pageshow',recalibrate);
+})();
