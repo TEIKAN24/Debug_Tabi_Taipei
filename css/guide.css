@@ -5085,3 +5085,18 @@ body #guide #food-search.food-drawer.is-floating .clear{
 @media(prefers-reduced-motion:reduce) {
   #guide .bubble-swipe-content > .tab-panel.bubble-swipe-enter {animation:none;}
 }
+
+/* v30.9.149 — FunPASS featured badge; keep pass heading and link layout unchanged. */
+#guide .travel-passes .pass-recommend-badge {
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-left:5px;padding:2px 5px;border-radius:5px;
+  border:1px solid #66533B;background:#423A2D;color:#EBC489;
+  font:720 9px/1.3 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  white-space:nowrap;vertical-align:middle;letter-spacing:0;
+}
+html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
+  color:#96620B;border-color:#E6C785;background:#FFF7E6;
+  -webkit-text-fill-color:#96620B;
+}
+/* The existing restaurant directory retains its own vertical momentum scrolling. */
+#food-recommend-section #food-directory-panel {touch-action:pan-y;}

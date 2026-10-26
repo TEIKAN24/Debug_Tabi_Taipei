@@ -1305,6 +1305,78 @@ loadData();
   }
 })();
 
+/* =================== JS 06c: restaurant-directory-content-swipe-v30.9.149 =================== */
+(() => {
+  'use strict';
+  // The reverse-side genre bubbles and its list are created/updated by
+  // recommend.js. Click its real buttons so aria-selected, counts, scroll
+  // position, and category data remain owned by the existing controller.
+  const list=document.getElementById('food-directory-panel');
+  const strip=document.getElementById('food-directory-tabs');
+  const face=document.getElementById('food-flip-back');
+  if(!list||!strip||!face)return;
+  let gesture=null,suppressClickUntil=0,entryAnimation=null;
+  const touchById=(touches,id)=>{
+    for(const touch of touches)if(touch.identifier===id)return touch;
+    return null;
+  };
+  list.addEventListener('touchstart',event=>{
+    gesture=null;
+    if(event.touches.length!==1 || face.inert || face.getAttribute('aria-hidden')==='true')return;
+    const target=event.target;
+    if(target.closest('input,textarea,select,[contenteditable="true"],video,audio'))return;
+    // Nested horizontal lists, if added later, must keep their own gestures.
+    for(let node=target instanceof Element?target:null;node&&node!==list;node=node.parentElement){
+      if(node.scrollWidth>node.clientWidth+5 && /(auto|scroll|overlay)/.test(getComputedStyle(node).overflowX))return;
+    }
+    const touch=event.touches[0];
+    // Respect iOS system back/forward gestures at the very screen edge.
+    if(touch.clientX<18||touch.clientX>window.innerWidth-18)return;
+    gesture={id:touch.identifier,x:touch.clientX,y:touch.clientY,axis:null};
+  },{passive:true});
+  list.addEventListener('touchmove',event=>{
+    if(!gesture)return;
+    const touch=touchById(event.changedTouches,gesture.id);
+    if(!touch)return;
+    const dx=touch.clientX-gesture.x,dy=touch.clientY-gesture.y;
+    if(!gesture.axis && Math.hypot(dx,dy)>12){
+      if(Math.abs(dy)>Math.abs(dx)*1.12){gesture.axis='vertical';return;}
+      if(Math.abs(dx)>Math.abs(dy)*1.25)gesture.axis='horizontal';
+    }
+    if(gesture.axis==='horizontal'&&event.cancelable)event.preventDefault();
+  },{passive:false});
+  list.addEventListener('touchend',event=>{
+    if(!gesture)return;
+    const touch=touchById(event.changedTouches,gesture.id);
+    if(!touch)return;
+    const state=gesture;gesture=null;
+    const dx=touch.clientX-state.x,dy=touch.clientY-state.y;
+    if(state.axis!=='horizontal'||Math.abs(dx)<52||Math.abs(dx)<Math.abs(dy)*1.25)return;
+    const buttons=[...strip.querySelectorAll('button.food-directory-tab')];
+    const current=buttons.findIndex(button=>button.getAttribute('aria-selected')==='true');
+    const next=current+(dx<0?1:-1);
+    if(current<0||next<0||next>=buttons.length)return;
+    // Use original category selection; do not rebuild data or rewrite bubble markup.
+    buttons[next].click();
+    buttons[next].scrollIntoView({behavior:'smooth',inline:'nearest',block:'nearest'});
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && list.animate){
+      entryAnimation?.cancel();
+      entryAnimation=list.animate([
+        {opacity:.76,transform:`translate3d(${dx<0?22:-22}px,0,0)`},
+        {opacity:1,transform:'translate3d(0,0,0)'}
+      ],{duration:220,easing:'ease-out'});
+    }
+    suppressClickUntil=performance.now()+450;
+  },{passive:true});
+  list.addEventListener('touchcancel',()=>{gesture=null;},{passive:true});
+  // Swiping across a restaurant link must not accidentally open Google Maps.
+  list.addEventListener('click',event=>{
+    if(event.isTrusted&&performance.now()<suppressClickUntil){
+      event.preventDefault();event.stopImmediatePropagation();
+    }
+  },true);
+})();
+
 /* =================== JS 07: adaptive-pill-edge-fade-script =================== */
 ;
 
@@ -1442,6 +1514,8 @@ loadData();
     // The content below bubble tabs owns horizontal swipes for category changes.
     // The document-level food drawer must never steal those gestures.
     if(target.closest('#guide .tab-panels, #guide .tab-pills'))return true;
+    // The reverse-side cuisine directory now owns its own horizontal swipes.
+    if(target.closest('#food-directory-panel, #food-directory-tabs'))return true;
     // Interactive links should always receive taps; opening the food drawer must not cancel them.
     if(target.closest('a[href]'))return true;
     if(target.closest('#airsel-transport-tabs, #airport-route-selector .route-panel'))return true;
