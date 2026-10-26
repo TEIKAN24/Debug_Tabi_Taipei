@@ -1,6 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
+   v30.9.146 — keep drawer steady when common-character / difficulty chips are tapped.
    v30.9.145 — common-keyword selection and tag/synonym lookup repairs; compact 2×2 difficulty filters.
    v30.9.144 — compact floating window; the page behind stays put (blur + dim); browser bars keep the page colour.
    v30.9.143 — the food dictionary is a floating window pulled in from the right; 常用字リスト panel.
@@ -1293,6 +1294,10 @@ loadData();
   function blockTarget(target){
     if(!(target instanceof Element))return false;
     if(target.closest('input,textarea,select,[contenteditable="true"],video,audio'))return true;
+    // Do not interpret an imprecise horizontal tap over dictionary controls
+    // as a drawer-closing swipe: that shifted the whole popup mid-selection.
+    // Neutral drawer space remains swipeable, preserving the existing gesture.
+    if(target.closest('#food-search button, #food-search .food-tools, #food-search #results'))return true;
     // Interactive links should always receive taps; opening the food drawer must not cancel them.
     if(target.closest('a[href]'))return true;
     if(target.closest('#airsel-transport-tabs, #airport-route-selector .route-panel'))return true;
