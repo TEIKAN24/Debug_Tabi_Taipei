@@ -5123,3 +5123,49 @@ html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
   -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
   mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
 }
+
+/* v30.9.160 — chapters as stacked sheets. Each chapter is a card (rounded, framed,
+   at least one screen tall) that stays put when its end is reached while the next
+   card slides up over it. Resting points: the top of the page, each chapter
+   (anywhere inside a long one) and the footer — a single swipe cannot skip past a
+   chapter's end. The arriving chapter's number line starts large and settles. */
+html.chapter-snapping{scroll-snap-type:y mandatory;}
+/* Mouse wheels and trackpads move in small steps: no resting points there, the
+   sheets still slide over each other as the page scrolls. */
+@media (hover:hover) and (pointer:fine){html.chapter-snapping{scroll-snap-type:none;}}
+.chapter-snaps{position:absolute;left:0;top:0;width:1px;height:0;pointer-events:none;visibility:hidden;}
+.chapter-snaps>div{position:absolute;left:0;width:1px;scroll-snap-align:start;scroll-snap-stop:always;}
+.chapter-mark{height:0;margin:0;padding:0;}
+#guide .page-body > .chapter-card{
+  position:sticky;top:var(--card-stick,var(--chapter-top,10px));z-index:0;isolation:isolate;
+  box-sizing:border-box;min-height:var(--chapter-min,calc(100svh - 22px));
+  margin:0 -6px 18px;padding:22px 16px 30px;
+  border:1px solid #2A2A2A;border-radius:24px;background:#141414;
+  box-shadow:0 -14px 34px rgba(0,0,0,.5);
+  transform-origin:50% var(--cover-origin,50%);
+}
+#guide .page-body > .chapter-card:last-child{margin-bottom:28px;}
+#guide .page-body > .chapter-card::after{
+  content:"";position:absolute;inset:-1px;border-radius:inherit;background:#0D0D0D;
+  opacity:0;pointer-events:none;z-index:200;
+}
+#guide .page-body > .chapter-card.is-covered{transform:scale(calc(1 - .06 * var(--cover,0)));}
+#guide .page-body > .chapter-card.is-covered::after{opacity:calc(var(--cover,0) * .78);}
+#guide .page-body > .chapter-card.is-entering > .chapter-eyebrow{
+  transform:scale(calc(1 + 1.1 * (1 - var(--enter,1))));transform-origin:0 0;
+}
+#guide .page-body > .chapter-card.is-entering > :not(.chapter-eyebrow):not(.jump-anchor){
+  transform:translateY(calc(17px * (1 - var(--enter,1))));
+}
+#guide .page-body > .chapter-card > .chapter-eyebrow:first-child,
+#guide .page-body > .chapter-card > .jump-anchor + .chapter-eyebrow{margin-top:0!important;}
+html[data-theme="light"] #guide .page-body > .chapter-card{
+  background:#FFFFFF;border-color:#DCE1E2;box-shadow:0 -12px 30px rgba(0,0,0,.10);
+}
+html[data-theme="light"] #guide .page-body > .chapter-card::after{background:#F7F8F7;}
+@media (min-width:600px){
+  #guide .page-body > .chapter-card{margin:0 -12px 22px;padding:28px 24px 34px;}
+}
+@media (prefers-reduced-motion:reduce){
+  #guide .page-body > .chapter-card{transform:none!important;}
+}

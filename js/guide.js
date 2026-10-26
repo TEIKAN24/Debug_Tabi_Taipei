@@ -1,5 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
-/* v30.9.150 — align the reverse-side directory bubbles and restore adaptive scroll hints.
+/* v30.9.160 — chapters are stacked cards: the next chapter slides over the previous one like a new sheet;
+   a chapter's end and start are resting points (one swipe cannot skip a chapter).
+   v30.9.150 — align the reverse-side directory bubbles and restore adaptive scroll hints.
    v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
    v30.9.148 — route horizontal gestures inside bubble panels and preserve food drawer swipe.
@@ -2891,6 +2893,8 @@ update();
   'use strict';
   // Snap near top-level guide headings after *manual* viewport scrolling only.
   // Never snap scrollable drawers, inner results, tabs, or programmatic navigation.
+  // v30.9.160: chapter cards bring their own snapping (JS 31) — this one stays off.
+  if(document.querySelector('#guide .chapter-card'))return;
   const selectors=[
     '#top',
     // v30.9.133: every chapter starts with its number line (01 · TRAVEL …).
@@ -3142,7 +3146,8 @@ update();
   'use strict';
   const guide=document.getElementById('guide');
   if(!guide)return;
-  const roots=[...guide.querySelectorAll('.page-body > details.root-accordion')];
+  // v30.9.160: chapters are cards; root accordions sit inside them.
+  const roots=[...guide.querySelectorAll('.page-body details.root-accordion')];
   const airport=guide.querySelector('#airport-route-selector');
   const daytrip=guide.querySelector('.sights-day-trips');
   let folding=false;
@@ -3155,13 +3160,13 @@ update();
       if(id==='travel')return 'travel';
       if(id==='sights')return roots.find(root=>root.id==='3f56bda0-4caa-8046-a491-c25321b680c1')||null;
       return ({food:null,
-               areas:roots.find(root=>root.classList.contains('area-directory-section')),
+               areas:roots.find(root=>root.id==='3f66bda0-4caa-800d-95db-dea98f822273'),
                experiences:roots.find(root=>root.id==='3f76bda0-4caa-80d2-8841-c76e1f8f749a'),
                souvenirs:roots.find(root=>root.id==='3f66bda0-4caa-8038-8328-e8b12e95336f')})[id]||null;
     }
     // The independent flip is not an accordion owner.
     if(element.closest('#guide .food-flip-section'))return null;
-    const root=element.closest('#guide .page-body > details.root-accordion');
+    const root=element.closest('#guide .page-body details.root-accordion');
     if(root)return root;
     if(element.closest('#guide #airport-route-selector'))return airport;
     if(element.closest('#guide .sights-day-trips'))return daytrip;
@@ -3172,13 +3177,18 @@ update();
   for(const kind of ['wheel','touchstart','pointerdown']){
     window.addEventListener(kind,()=>{++anchorVersion;},{passive:true,capture:true});
   }
-  function foldOtherBlocks(owner){
+  // Only blocks of the same chapter card fold; other chapters are separate sheets.
+  const cardOf=owner=>owner==='travel'?guide.querySelector('#chapter-01'):owner?.closest?.('.chapter-card')||null;
+  function foldOtherBlocks(owner,everywhere=false){
+    // A home navigation bubble tidies every chapter; a tap inside a chapter only its own.
+    const card=everywhere?null:cardOf(owner);
+    const inCard=element=>!card||card.contains(element);
     roots.forEach(root=>{
-      if(root===owner || !root.open)return;
+      if(root===owner || !root.open || !inCard(root))return;
       root.querySelectorAll('details[open]').forEach(child=>{child.open=false;});
       root.open=false;
     });
-    if(daytrip && owner!==daytrip){
+    if(daytrip && owner!==daytrip && inCard(daytrip)){
       daytrip.querySelectorAll('.daytrip-destination-buttons > .daytrip-destination-button').forEach(button=>{
         if(button.getAttribute('aria-expanded')==='true'){
           button.setAttribute('aria-expanded','false');
@@ -3189,7 +3199,7 @@ update();
       daytrip.querySelectorAll('.daytrip-destination-panel').forEach(panel=>{panel.hidden=true;});
       daytrip.classList.remove('daytrip-mode-compact');
     }
-    if(airport && owner!==airport){
+    if(airport && owner!==airport && inCard(airport)){
       const disclosure=airport.querySelector('#airsel-route-disclosure');
       if(disclosure?.getAttribute('aria-expanded')==='true')disclosure.click();
     }
@@ -3202,7 +3212,7 @@ update();
     if(!event.target.closest('button, summary, a, input, select, [role="tab"]'))return;
     folding=true;
     try{
-      foldOtherBlocks(owner);
+      foldOtherBlocks(owner,!!event.target.closest('.quick-nav > .nav-button'));
     }finally{folding=false;}
   },true);
 })();
@@ -3423,4 +3433,93 @@ update();
   },{passive:true});
   window.addEventListener('resize',recalibrate,{passive:true});
   window.addEventListener('pageshow',recalibrate);
+})();
+
+
+/* =================== JS 31: chapter cards v30.9.160 =================== */
+(()=>{
+  'use strict';
+  const cards=[...document.querySelectorAll('#guide .page-body > .chapter-card')];
+  if(!cards.length)return;
+  const root=document.documentElement;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+  // Small-viewport height and safe areas, measured once per layout pass.
+  const probe=document.createElement('div');
+  probe.setAttribute('aria-hidden','true');
+  probe.style.cssText='position:fixed;left:0;top:0;width:0;height:100svh;box-sizing:border-box;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none;';
+  document.body.append(probe);
+  // Each chapter's in-flow position (a sticky card reports where it is stuck).
+  const marks=cards.map(card=>{const mark=document.createElement('div');mark.className='chapter-mark';mark.setAttribute('aria-hidden','true');card.before(mark);return mark;});
+  // Resting areas for scroll snapping: the top of the page, every chapter, the footer.
+  const snaps=document.createElement('div');
+  snaps.className='chapter-snaps';snaps.setAttribute('aria-hidden','true');
+  document.body.append(snaps);
+  let gapTop=10,gapBottom=12,raf=0,layoutRaf=0;
+  function layout(){
+    layoutRaf=0;
+    const cs=getComputedStyle(probe);
+    const safeTop=parseFloat(cs.paddingTop)||0,safeBottom=parseFloat(cs.paddingBottom)||0;
+    const V=probe.offsetHeight||window.innerHeight;
+    gapTop=safeTop+10;gapBottom=safeBottom+12;
+    root.style.setProperty('--chapter-top',gapTop+'px');
+    root.style.setProperty('--chapter-min',Math.max(320,V-gapTop-gapBottom)+'px');
+    const y=window.scrollY;
+    // The page's scroll-padding-top shifts every resting point; an area rests
+    // anywhere from "its top at the top" to "its bottom at the bottom".
+    const pad=parseFloat(getComputedStyle(root).scrollPaddingTop)||0;
+    const areas=[];
+    const firstTop=marks[0].getBoundingClientRect().top+y;
+    areas.push([pad,Math.max(1,firstTop-gapTop-pad)]);
+    let lastEnd=0;
+    cards.forEach((card,i)=>{
+      const H=card.offsetHeight,T=marks[i].getBoundingClientRect().top+y;
+      // A long chapter scrolls normally and stops when its bottom edge is reached.
+      card.style.setProperty('--card-stick',Math.min(gapTop,V-gapBottom-H)+'px');
+      areas.push([T-gapTop+pad,Math.max(1,H+gapTop+gapBottom-pad)]);
+      lastEnd=T+H+gapBottom;
+    });
+    areas.push([lastEnd,Math.max(1,root.scrollHeight-lastEnd)]);
+    while(snaps.children.length<areas.length)snaps.append(document.createElement('div'));
+    while(snaps.children.length>areas.length)snaps.lastChild.remove();
+    areas.forEach(([top,height],i)=>{
+      const el=snaps.children[i];
+      el.style.top=Math.round(top)+'px';el.style.height=Math.max(1,Math.round(height))+'px';
+    });
+    root.classList.add('chapter-snapping');
+    paint();
+  }
+  const queueLayout=()=>{if(!layoutRaf)layoutRaf=requestAnimationFrame(layout);};
+  // The next sheet covers the previous one; the previous one recedes and fades,
+  // and the arriving chapter's number line starts large and settles.
+  function paint(){
+    raf=0;
+    const V=window.innerHeight,still=reduce.matches;
+    const tops=cards.map(card=>card.getBoundingClientRect().top);
+    cards.forEach((card,i)=>{
+      const top=tops[i];
+      const enter=Math.min(1,Math.max(0,(V-top)/Math.max(1,V-gapTop)));
+      const entering=!still&&i>0&&enter<1&&top<V;
+      card.classList.toggle('is-entering',entering);
+      if(entering)card.style.setProperty('--enter',enter.toFixed(3));
+      const next=tops[i+1];
+      const cover=next===undefined?0:Math.min(1,Math.max(0,(V-next)/Math.max(1,V-gapTop)));
+      const covered=!still&&cover>0;
+      card.classList.toggle('is-covered',covered);
+      if(covered){
+        card.style.setProperty('--cover',cover.toFixed(3));
+        card.style.setProperty('--cover-origin',Math.round(V/2-top)+'px');
+      }
+    });
+  }
+  const queuePaint=()=>{if(!raf)raf=requestAnimationFrame(paint);};
+  window.addEventListener('scroll',queuePaint,{passive:true});
+  window.addEventListener('resize',queueLayout);
+  window.visualViewport?.addEventListener('resize',queueLayout);
+  reduce.addEventListener?.('change',queuePaint);
+  // Accordions, tabs and the food block change chapter heights: keep the resting
+  // areas and sticky offsets in step.
+  const observer=new ResizeObserver(queueLayout);
+  cards.forEach(card=>observer.observe(card));
+  observer.observe(document.body);
+  layout();
 })();
