@@ -5125,49 +5125,37 @@ html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
 }
 
 
-/* v30.9.154 — chapter-scene-transition-v154.
-   A temporary full-screen curtain for the five chapter boundaries. No chapter
-   heights, positions, bubbles, cards or existing section spacing are altered. */
-.chapter-scene-curtain{
-  position:fixed;inset:0;z-index:500;pointer-events:none;
-  display:grid;place-items:center;overflow:hidden;
-  background:var(--bg,#0D0D0D);color:var(--ink,#F4F4F4);
-  opacity:0;visibility:hidden;
-  transition:opacity 190ms ease,visibility 0s linear 510ms;
-  -webkit-font-smoothing:antialiased;
+/* v30.9.155 — natural chapter-paper overlap (A).
+   All original content remains in the normal document flow. The paper layer
+   is absolutely positioned BEHIND each chapter, overlapping only its boundary.
+   No scroll handlers, fixed curtain, snapping, padding or geometry changes. */
+#guide .chapter-sheet {
+  position:relative;
+  z-index:1;
+  isolation:isolate;
 }
-.chapter-scene-curtain.is-covering,
-.chapter-scene-curtain.is-arriving{
-  visibility:visible;opacity:1;transition:opacity 190ms ease,visibility 0s;
+#guide .chapter-sheet::before {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-26px;
+  right:-9px;
+  bottom:0;
+  left:-9px;
+  border-radius:17px 17px 0 0;
+  pointer-events:none;
+  background:#151515;
+  box-shadow:0 -10px 24px -18px rgba(0,0,0,.55),
+             0 -1px 0 rgba(255,255,255,.075);
 }
-.chapter-scene-curtain.is-arriving{
-  opacity:0;transition:opacity 350ms cubic-bezier(.22,1,.36,1);
+html[data-theme="light"] #guide .chapter-sheet::before {
+  background:#fff;
+  box-shadow:0 -10px 24px -18px rgba(40,53,58,.32),
+             0 -1px 0 rgba(95,107,113,.1);
 }
-.chapter-scene-curtain__content{
-  width:min(calc(100% - 56px),560px);text-align:center;
-  transform:translate3d(0,0,0) scale(1);
-  opacity:1;transition:transform 420ms cubic-bezier(.22,1,.36,1),opacity 270ms ease;
-}
-.chapter-scene-curtain.is-arriving .chapter-scene-curtain__content{
-  transform:translate3d(0,calc(-1 * min(35vh,290px)),0) scale(.83);
-  opacity:0;
-}
-.chapter-scene-curtain__rule{
-  display:block;width:38px;height:1px;margin:0 auto 23px;
-  background:var(--accent,#C4A36A);opacity:.65;
-}
-.chapter-scene-curtain__number{
-  margin:0;color:var(--muted,#999);font-size:12px;font-weight:760;
-  letter-spacing:.25em;line-height:1.5;
-}
-.chapter-scene-curtain__title{
-  margin:10px 0 0;font-size:clamp(23px,7vw,34px);
-  font-weight:800;line-height:1.4;letter-spacing:-.03em;
-}
-.chapter-scene-curtain__progress{
-  margin:21px 0 0;font-size:10px;color:var(--muted,#999);
-  font-variant-numeric:tabular-nums;letter-spacing:.12em;
-}
-@media(prefers-reduced-motion:reduce){
-  .chapter-scene-curtain,.chapter-scene-curtain__content{transition:none!important;}
-}
+#guide .chapter-sheet--02 {z-index:2;}
+#guide .chapter-sheet--03 {z-index:3;}
+#guide .chapter-sheet--04 {z-index:4;}
+#guide .chapter-sheet--05 {z-index:5;}
+/* Preserve the existing divider's spacing but use the paper lip for hierarchy. */
+#guide hr.chapter-divider {border-color:transparent!important;}
