@@ -32,7 +32,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.131';
+  const VERSION='30.9.167';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -826,9 +826,10 @@
   lineTrigger.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeStationMenus();}});
   stationTrigger.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeStationMenus();}});
   buildChoice(categoryControls,CATEGORIES,moods,'recommend-pill',value=>{
-    // Several kinds can be combined; a shop matching any of them qualifies.
-    state.categories=state.categories.includes(value)?state.categories.filter(key=>key!==value):[...state.categories,value];
-    state.page=0;syncUI();renderResults();
+    // One cuisine at a time. Tapping the same cuisine again clears the filter.
+    // Keep an array for compatibility with existing recommendation scoring.
+    state.categories=state.categories.includes(value)?[]:[value];
+    state.page=0;advanced.open=false;syncUI();renderResults();
   });
   function closeOptions(){timeOptions.hidden=true;timeButton.setAttribute('aria-expanded','false');}
   function toggleTimeOptions(){const open=timeOptions.hidden;closeOptions();advanced.open=false;if(open){timeOptions.hidden=false;timeButton.setAttribute('aria-expanded','true');}}

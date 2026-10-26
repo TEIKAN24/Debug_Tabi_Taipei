@@ -65,7 +65,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
   });
  });
 })();</script><link rel="stylesheet" href="css/guide.css?v=30.9.153"/>
-<link rel="stylesheet" href="css/recommend.css?v=30.9.166"/>
+<link rel="stylesheet" href="css/recommend.css?v=30.9.167"/>
 </head><body>
 <div class="food-drawer-backdrop" aria-hidden="true"></div>
 <header class="hero wrapper" id="top"><button type="button" id="theme-preview-toggle" class="theme-preview-toggle" aria-pressed="false" aria-label="明るいモードに切り替える" title="端末の明暗設定に追従中"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></button><h1 class="hero-masthead"><span class="hero-brandline">TAIPEI CITY GUIDE</span><span class="hero-lockup" aria-label="TABI slash TAIPEI"><span class="hero-lockup-word"><span class="ta">TA</span>BI</span><span class="hero-lockup-slash" aria-hidden="true"></span><span class="hero-lockup-word"><span class="ta">TA</span>IPEI</span></span></h1><p class="welcome">台北へようこそ！ 🇹🇼</p><p class="tagline">台北の食べ歩き、街歩き、ショッピングを楽しむためのローカルガイド。 定番スポットから、地元の人に愛されるお店まで。</p><nav aria-label="カテゴリーにジャンプ" class="quick-nav">
@@ -143,12 +143,7 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
  </div>
  <p class="recommend-location-status" id="recommend-location-status" role="status" aria-live="polite"></p>
  <div class="recommend-result-head">
- <div class="recommend-sort" role="group" aria-label="おすすめの表示順">
-  <button type="button" id="recommend-sort-recommended" class="recommend-sort-option" aria-pressed="true">おすすめ順</button>
-  <button type="button" id="recommend-sort-distance" class="recommend-sort-option" aria-pressed="false" disabled title="現在地を取得するか、駅を選択すると使えます">距離順</button>
- </div>
 <div class="recommend-controls-secondary" id="recommend-controls-secondary">
-   <div class="recommend-active-filters" id="recommend-active-filters" aria-live="polite"></div>
    <div class="recommend-control-wrap recommend-control-advanced-wrap">
     <details class="recommend-advanced" id="recommend-advanced">
      <summary class="recommend-control recommend-advanced-trigger" aria-label="さらに条件を指定"><span class="recommend-advanced-label">さらに条件を指定</span><span class="recommend-advanced-plus" aria-hidden="true"></span></summary>
@@ -158,7 +153,12 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'auto'; } 
      </div>
     </details>
    </div>
+   <div class="recommend-active-filters" id="recommend-active-filters" aria-live="polite"></div>
   </div>
+ <div class="recommend-sort" role="group" aria-label="おすすめの表示順">
+  <button type="button" id="recommend-sort-recommended" class="recommend-sort-option" aria-pressed="true">おすすめ順</button>
+  <button type="button" id="recommend-sort-distance" class="recommend-sort-option" aria-pressed="false" disabled title="現在地を取得するか、駅を選択すると使えます">距離順</button>
+ </div>
 <span class="recommend-count" id="recommend-count">3軒をピックアップ</span></div>
  <p class="recommend-relaxed" id="recommend-relaxed" role="status" aria-live="polite" hidden></p>
  <div id="recommend-results" class="recommend-results" aria-live="polite"></div>
@@ -307,5 +307,5 @@ html[data-theme="light"] #recommend-debug-location option{background:#fff;color:
 html[data-theme="light"] #recommend-debug-diagnostics{background:#f3f8f4;color:#244331;border-color:#bfd5c6;}
 @media(max-height:560px){#recommend-debug-fab{bottom:calc(14px + env(safe-area-inset-bottom,0px));}#recommend-debug-location{bottom:calc(65px + env(safe-area-inset-bottom,0px));max-height:65dvh;}}
 </style>
-<script src="js/recommend.js?v=30.9.131"></script>
+<script src="js/recommend.js?v=30.9.167"></script>
 </body></html>
