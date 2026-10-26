@@ -5126,15 +5126,7 @@ html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
 
 /* v30.9.160 — chapters as stacked sheets. Each chapter is a card (rounded, framed,
    at least one screen tall) that stays put when its end is reached while the next
-   card slides up over it. Resting points: the top of the page, each chapter
-   (anywhere inside a long one) and the footer — a single swipe cannot skip past a
-   chapter's end. The arriving chapter's number line starts large and settles. */
-html.chapter-snapping{scroll-snap-type:y mandatory;}
-/* Mouse wheels and trackpads move in small steps: no resting points there, the
-   sheets still slide over each other as the page scrolls. */
-@media (hover:hover) and (pointer:fine){html.chapter-snapping{scroll-snap-type:none;}}
-.chapter-snaps{position:absolute;left:0;top:0;width:1px;height:0;pointer-events:none;visibility:hidden;}
-.chapter-snaps>div{position:absolute;left:0;width:1px;scroll-snap-align:start;scroll-snap-stop:always;}
+   card slides up over it (v30.9.161: the page turn itself is a slow JS glide, no CSS snapping). The arriving chapter's number line starts large and settles. */
 .chapter-mark{height:0;margin:0;padding:0;}
 #guide .page-body > .chapter-card{
   position:sticky;top:var(--card-stick,var(--chapter-top,10px));z-index:0;isolation:isolate;

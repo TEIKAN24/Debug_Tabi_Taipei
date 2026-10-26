@@ -3314,6 +3314,9 @@ update();
   'use strict';
   const headings=[...document.querySelectorAll('#guide .chapter-eyebrow')];
   if(headings.length!==5 || !('requestAnimationFrame' in window))return;
+  // v30.9.161: the stacked chapter cards (JS 31) replace this curtain and its
+  // jump to the chapter heading; running both made them fight over the scroll.
+  if(document.querySelector('#guide .chapter-card'))return;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   const overlay=document.createElement('div');
   overlay.className='chapter-scene-curtain';
@@ -3436,7 +3439,7 @@ update();
 })();
 
 
-/* =================== JS 31: chapter cards v30.9.160 =================== */
+/* =================== JS 31: chapter cards v30.9.161 =================== */
 (()=>{
   'use strict';
   const cards=[...document.querySelectorAll('#guide .page-body > .chapter-card')];
@@ -3450,11 +3453,10 @@ update();
   document.body.append(probe);
   // Each chapter's in-flow position (a sticky card reports where it is stuck).
   const marks=cards.map(card=>{const mark=document.createElement('div');mark.className='chapter-mark';mark.setAttribute('aria-hidden','true');card.before(mark);return mark;});
-  // Resting areas for scroll snapping: the top of the page, every chapter, the footer.
-  const snaps=document.createElement('div');
-  snaps.className='chapter-snaps';snaps.setAttribute('aria-hidden','true');
-  document.body.append(snaps);
   let gapTop=10,gapBottom=12,raf=0,layoutRaf=0;
+  // Resting points: the top of the page, every chapter (anywhere between its
+  // start and its end) and the bottom of the page. Between them are page turns.
+  let rests=[];
   function layout(){
     layoutRaf=0;
     const cs=getComputedStyle(probe);
@@ -3463,46 +3465,36 @@ update();
     gapTop=safeTop+10;gapBottom=safeBottom+12;
     root.style.setProperty('--chapter-top',gapTop+'px');
     root.style.setProperty('--chapter-min',Math.max(320,V-gapTop-gapBottom)+'px');
-    const y=window.scrollY;
-    // The page's scroll-padding-top shifts every resting point; an area rests
-    // anywhere from "its top at the top" to "its bottom at the bottom".
-    const pad=parseFloat(getComputedStyle(root).scrollPaddingTop)||0;
-    const areas=[];
-    const firstTop=marks[0].getBoundingClientRect().top+y;
-    areas.push([pad,Math.max(1,firstTop-gapTop-pad)]);
-    let lastEnd=0;
+    const y=window.scrollY,view=window.innerHeight;
+    const max=Math.max(0,root.scrollHeight-view);
+    rests=[[0,0]];
     cards.forEach((card,i)=>{
       const H=card.offsetHeight,T=marks[i].getBoundingClientRect().top+y;
-      // A long chapter scrolls normally and stops when its bottom edge is reached.
+      // A long chapter scrolls normally and stays when its bottom edge is reached.
       card.style.setProperty('--card-stick',Math.min(gapTop,V-gapBottom-H)+'px');
-      areas.push([T-gapTop+pad,Math.max(1,H+gapTop+gapBottom-pad)]);
-      lastEnd=T+H+gapBottom;
+      const S=Math.max(0,Math.min(max,T-gapTop));
+      rests.push([S,Math.max(S,Math.min(max,T+H+gapBottom-view))]);
     });
-    areas.push([lastEnd,Math.max(1,root.scrollHeight-lastEnd)]);
-    while(snaps.children.length<areas.length)snaps.append(document.createElement('div'));
-    while(snaps.children.length>areas.length)snaps.lastChild.remove();
-    areas.forEach(([top,height],i)=>{
-      const el=snaps.children[i];
-      el.style.top=Math.round(top)+'px';el.style.height=Math.max(1,Math.round(height))+'px';
-    });
-    root.classList.add('chapter-snapping');
+    rests.push([max,max]);
     paint();
   }
   const queueLayout=()=>{if(!layoutRaf)layoutRaf=requestAnimationFrame(layout);};
   // The next sheet covers the previous one; the previous one recedes and fades,
   // and the arriving chapter's number line starts large and settles.
+  // Ease the effect in and out instead of following the scroll linearly.
+  const smooth=x=>{const v=Math.min(1,Math.max(0,x));return v*v*(3-2*v);};
   function paint(){
     raf=0;
     const V=window.innerHeight,still=reduce.matches;
     const tops=cards.map(card=>card.getBoundingClientRect().top);
     cards.forEach((card,i)=>{
       const top=tops[i];
-      const enter=Math.min(1,Math.max(0,(V-top)/Math.max(1,V-gapTop)));
+      const enter=smooth((V-top)/Math.max(1,V-gapTop));
       const entering=!still&&i>0&&enter<1&&top<V;
       card.classList.toggle('is-entering',entering);
       if(entering)card.style.setProperty('--enter',enter.toFixed(3));
       const next=tops[i+1];
-      const cover=next===undefined?0:Math.min(1,Math.max(0,(V-next)/Math.max(1,V-gapTop)));
+      const cover=next===undefined?0:smooth((V-next)/Math.max(1,V-gapTop));
       const covered=!still&&cover>0;
       card.classList.toggle('is-covered',covered);
       if(covered){
@@ -3521,5 +3513,78 @@ update();
   const observer=new ResizeObserver(queueLayout);
   cards.forEach(card=>observer.observe(card));
   observer.observe(document.body);
+  // ---- Page turn (touch). The page scrolls natively inside a chapter. When a
+  // swipe ends between two chapters, the sheet glides slowly to the next or back
+  // to the current one; momentum that reaches a chapter's end or start lands
+  // there softly. A second swipe is needed to turn to the next chapter.
+  let touching=false,moved=false,startY=0,samples=[],anim=0,guard=null,quietTimer=0;
+  const sample=()=>{const t=performance.now();samples.push([t,window.scrollY]);while(samples.length>8||(samples.length>2&&t-samples[0][0]>120))samples.shift();};
+  const velocity=()=>{if(samples.length<2)return 0;const a=samples[0],b=samples[samples.length-1];return (b[1]-a[1])/Math.max(16,b[0]-a[0]);};
+  const restIndex=y=>rests.findIndex(([s,e])=>y>=s-2&&y<=e+2);
+  // Cubic Hermite glide: starts with the current speed, ends at rest.
+  function glide(to,duration,v0=0){
+    cancelAnimationFrame(anim);
+    const from=window.scrollY,dist=to-from;
+    if(Math.abs(dist)<1)return;
+    if(Math.sign(v0)!==Math.sign(dist))v0=0;
+    const t0=performance.now(),m=Math.max(-2.2,Math.min(2.2,v0))*duration;
+    const step=now=>{
+      const s=Math.min(1,(now-t0)/duration),s2=s*s,s3=s2*s;
+      const y=from*(2*s3-3*s2+1)+m*(s3-2*s2+s)+to*(-2*s3+3*s2);
+      window.scrollTo({top:y,behavior:'instant'});
+      anim=s<1?requestAnimationFrame(step):0;
+    };
+    anim=requestAnimationFrame(step);
+  }
+  const stopGlide=()=>{if(anim){cancelAnimationFrame(anim);anim=0;}};
+  window.addEventListener('touchstart',event=>{
+    stopGlide();guard=null;
+    touching=event.touches.length===1;moved=false;startY=window.scrollY;samples=[];sample();
+    touchY=event.touches[0]?.clientY||0;
+  },{passive:true});
+  let touchY=0;
+  window.addEventListener('touchmove',event=>{
+    if(touching&&Math.abs((event.touches[0]?.clientY||0)-touchY)>8)moved=true;
+  },{passive:true});
+  const release=()=>{
+    if(!touching)return;touching=false;
+    if(!moved||reduce.matches||document.body.classList.contains('food-drawer-open'))return;
+    const y=window.scrollY,v=velocity(),view=window.innerHeight;
+    const here=restIndex(y);
+    if(here>=0){
+      // Released inside a chapter: let it coast, but land softly at its edges.
+      guard=rests[here];
+      return;
+    }
+    const after=rests.findIndex(([s])=>s>y);
+    if(after<=0)return;
+    const [,A]=rests[after-1],[B]=rests[after];
+    const progress=(y-A)/Math.max(1,B-A);
+    // A swipe that began inside a chapter stops at that chapter's end (or start) first.
+    let target;
+    if(startY<A-8)target=A;
+    else if(startY>B+8)target=B;
+    else if(v>0.05)target=progress>0.22?B:A;
+    else if(v<-0.05)target=progress<0.78?A:B;
+    else target=progress<0.5?A:B;
+    const duration=Math.min(1150,Math.max(720,640+520*Math.abs(target-y)/view));
+    glide(target,duration,v);
+  };
+  window.addEventListener('touchend',release,{passive:true});
+  window.addEventListener('touchcancel',release,{passive:true});
+  window.addEventListener('wheel',()=>{stopGlide();guard=null;},{passive:true});
+  window.addEventListener('scroll',()=>{
+    if(touching){sample();return;}
+    if(!guard||anim)return;
+    const y=window.scrollY,[s,e]=guard;
+    if(y>e+1||y<s-1){
+      const v=velocity();guard=null;
+      glide(y>e?e:s,560,v);
+      return;
+    }
+    sample();
+    clearTimeout(quietTimer);
+    quietTimer=setTimeout(()=>{guard=null;},220);
+  },{passive:true});
   layout();
 })();
