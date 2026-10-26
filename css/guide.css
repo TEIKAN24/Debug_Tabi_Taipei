@@ -5037,3 +5037,34 @@ body #guide #food-search.food-drawer.is-floating .food-tools-panel .quick button
 body #guide #food-search.food-drawer.is-floating .food-tools-panel .food-char{
   max-width:100%;box-sizing:border-box;
 }
+
+
+/* v30.9.147 — selected difficulty next to 常用字リスト; touch-safe search ×.
+   Keep the toggle's v30.9.146 dimensions/placement unchanged. */
+body #guide #food-search.food-drawer.is-floating .food-tools{
+  display:flex!important;align-items:center!important;gap:8px!important;
+}
+body #guide #food-search.food-drawer.is-floating .food-tools-toggle{
+  flex:0 0 auto;
+}
+body #guide #food-search.food-drawer.is-floating .food-active-filter{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  margin-left:auto;min-height:29px;max-width:calc(100% - 148px);
+  padding:0 9px 0 11px;border:1px solid #81704E;border-radius:999px;
+  background:rgba(176,138,70,.16);color:#F0DEB7;
+  font:inherit;font-size:11.5px;font-weight:650;line-height:1.2;
+  white-space:nowrap;cursor:pointer;touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+body #guide #food-search.food-drawer.is-floating .food-active-filter[hidden]{display:none!important;}
+body #guide #food-search.food-drawer.is-floating .food-active-filter-x{
+  font-size:16px;line-height:1;font-weight:500;opacity:.85;
+}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-active-filter{
+  background:#F9F0DA;color:#654D1F;border-color:#C9B687;
+}
+body #guide #food-search.food-drawer.is-floating .search-shell{cursor:text;}
+body #guide #food-search.food-drawer.is-floating .clear{
+  position:relative;z-index:2;touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}

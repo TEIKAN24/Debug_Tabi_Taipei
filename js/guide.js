@@ -1,6 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
+   v30.9.147 — active difficulty chip, drawer-close reset and keyboard-safe search clear.
    v30.9.146 — keep drawer steady when common-character / difficulty chips are tapped.
    v30.9.145 — common-keyword selection and tag/synonym lookup repairs; compact 2×2 difficulty filters.
    v30.9.144 — compact floating window; the page behind stays put (blur + dim); browser bars keep the page colour.
@@ -410,6 +411,8 @@ const cats = ["すべて", "🔰 初心者", "🏮 地元民", "⚔️ クセ強
 const input = foodExplorer.querySelector("#search");
 const clear = foodExplorer.querySelector("#clear");
 const filters = foodExplorer.querySelector("#filters");
+const activeFilter = foodExplorer.querySelector("#food-active-filter");
+const activeFilterLabel = foodExplorer.querySelector("#food-active-filter-label");
 const results = foodExplorer.querySelector("#results");
 const count = foodExplorer.querySelector("#result-count");
 const scrollTip = foodExplorer.querySelector("#scroll-tip");
@@ -490,8 +493,15 @@ function addHighlightedText(parent, value, terms) {
   }
   parent.append(document.createTextNode(original.slice(last)));
 }
+function syncActiveFilter() {
+  if (!activeFilter || !activeFilterLabel) return;
+  const applied = selected !== cats[0];
+  activeFilter.hidden = !applied;
+  activeFilterLabel.textContent = applied ? selected : "";
+}
 function drawFilters() {
   filters.replaceChildren();
+  syncActiveFilter();
   // v30.9.143: no すべて chip; tapping the active level again shows every level.
   for (const cat of cats.slice(1)) {
     const button = document.createElement("button");
@@ -816,10 +826,21 @@ function onSearch() {
     button.setAttribute("aria-pressed", String(input.value === button.dataset.example)));
 }
 input.addEventListener("input", onSearch);
+// Preserve tapping the search icon or empty search-shell area to focus input,
+// without nesting the clear button inside a label (iOS Safari focus loop).
+foodExplorer.querySelector(".search-shell")?.addEventListener("click", event => {
+  if (!(event.target instanceof Element) || event.target.closest("input,button")) return;
+  input.focus({preventScroll:true});
+});
 // v30.9.143: 常用字リスト — emoji, common characters and the level filter in a panel
 // that opens over the list and stays open until toggled, tapped outside or Esc.
 const toolsToggle = foodExplorer.querySelector("#food-tools-toggle");
 const toolsPanel = foodExplorer.querySelector("#food-tools-panel");
+activeFilter?.addEventListener("click", () => {
+  selected = cats[0];
+  drawFilters();
+  drawResults(); // Only the difficulty is cleared; keep any typed query.
+});
 function setToolsOpen(open) {
   if (!toolsToggle || !toolsPanel) return;
   toolsPanel.hidden = !open;
@@ -840,7 +861,16 @@ foodExplorer.addEventListener("keydown", event => {
     setToolsOpen(false);toolsToggle.focus({preventScroll:true});
   }
 });
-document.getElementById("food-search")?.addEventListener("food-search-closed", () => setToolsOpen(false));
+// A quick-list popup closing does NOT reset the active filter. Only leaving
+// the entire recipe dictionary restores a clean session.
+document.getElementById("food-search")?.addEventListener("food-search-closed", () => {
+  setToolsOpen(false);
+  if (document.activeElement === input) input.blur();
+  input.value = "";
+  selected = cats[0];
+  drawFilters();
+  onSearch();
+});
 // v30.9.142: a 名物 tile in 🏮 夜市 opens this dictionary with the dish searched,
 // all levels shown, and the dish itself opened when its name matches exactly.
 function showDishInSearch(query) {
@@ -865,7 +895,15 @@ document.addEventListener("click", event => {
   showDishInSearch(tile.dataset.foodQuery);
   document.dispatchEvent(new CustomEvent("tabi:open-food-search"));
 });
-clear.addEventListener("click", () => { input.value = ""; onSearch(); input.blur(); });
+// The clear action is outside an HTML <label>. Otherwise mobile Safari can
+// interpret a tap on × as a new focus on #search and reopen its keyboard.
+clear.addEventListener("click", event => {
+  event.preventDefault();
+  event.stopPropagation();
+  input.blur();
+  input.value = "";
+  onSearch();
+});
 foodExplorer.querySelectorAll("[data-example]").forEach(button => {
   button.addEventListener("click", () => {
     // A tapped emoji or character replaces the search; tapping it again clears it.
