@@ -54,11 +54,13 @@
     if (!summary) return;
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (!detail.open || summary.getClientRects().length === 0) return;
-      summary.scrollIntoView({
-        block: 'start',
-        inline: 'nearest',
-        behavior: reduceMotion.matches ? 'auto' : 'smooth'
-      });
+      const chapterBox=summary.closest('.chapter-scroll');
+      if (chapterBox && document.documentElement.classList.contains('chapter-deck-active')) {
+        const offset=summary.getBoundingClientRect().top-chapterBox.getBoundingClientRect().top+chapterBox.scrollTop-8;
+        chapterBox.scrollTo({top:Math.max(0,offset),behavior:reduceMotion.matches?'auto':'smooth'});
+      } else {
+        summary.scrollIntoView({block:'start',inline:'nearest',behavior:reduceMotion.matches?'auto':'smooth'});
+      }
     }));
   }
   // District, drink and night-market subcategory details open in place.
@@ -247,14 +249,26 @@
       if (id === 'day-trips') showTarget(id);
       else revealNavFirstLayer(id);
       if (location.hash && location.protocol !== 'about:') history.replaceState(null,'',location.pathname+location.search);
-      requestAnimationFrame(()=>anchor.scrollIntoView({behavior:reduceMotion.matches?'auto':'smooth',block:'start'}));
+      requestAnimationFrame(()=>{
+        const box=anchor.closest('.chapter-scroll');
+        if(box && document.documentElement.classList.contains('chapter-deck-active')){
+          const offset=anchor.getBoundingClientRect().top-box.getBoundingClientRect().top+box.scrollTop-8;
+          box.scrollTo({top:Math.max(0,offset),behavior:reduceMotion.matches?'auto':'smooth'});
+        } else anchor.scrollIntoView({behavior:reduceMotion.matches?'auto':'smooth',block:'start'});
+      });
     });
   });
   function revealHash(){
     const id=decodeURIComponent(location.hash.replace(/^#/,''));
     if(!id)return;
     const target=showTarget(id);
-    if(target)requestAnimationFrame(()=>target.scrollIntoView({behavior:'auto',block:'start'}));
+    if(target)requestAnimationFrame(()=>{
+      const box=target.closest('.chapter-scroll');
+      if(box && document.documentElement.classList.contains('chapter-deck-active')){
+        const offset=target.getBoundingClientRect().top-box.getBoundingClientRect().top+box.scrollTop-8;
+        box.scrollTo({top:Math.max(0,offset),behavior:'auto'});
+      } else target.scrollIntoView({behavior:'auto',block:'start'});
+    });
   }
   window.addEventListener('hashchange',revealHash);
   // The browser manages history restoration; don't reset scrolling on page load,
@@ -3305,193 +3319,247 @@ update();
   panels.forEach(panel=>sync(panel));
 })();
 
-
-/* =================== JS 30: stable chapter sheets v30.9.163 =================== */
-;(()=>{
+/* =================== JS 30: viewport chapter deck v30.9.164 =================== */
+;(() => {
   'use strict';
-  const cards=[...document.querySelectorAll('#guide .page-body > .chapter-card')];
+  const deck=document.querySelector('#guide > .page-body');
+  const cards=deck?[...deck.children].filter(el=>el.matches('.chapter-card')):[];
   if(cards.length!==5)return;
-  // One author of chapter navigation. The old v154 curtain / v162 scroll-linked
-  // transforms and glides are deliberately not installed alongside this controller.
-  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const html=document.documentElement;
-  let turning=false;
-  let turnTimer=0;
-  let activeTouch=null;
+  const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const scrolls=[];
-  const marks=[];
-  const wheelState=new WeakMap();
-  const INNER_EXCLUSIONS='input,textarea,select,[contenteditable="true"],.food-drawer,.food-directory-tabs,.tab-pills';
-
-  function isOverlayOpen(){
-    return document.body.classList.contains('food-drawer-open') ||
-      document.body.classList.contains('food-swipe-active') ||
-      document.body.classList.contains('food-swipe-dragging');
-  }
-  function atBottom(box){return box.scrollTop+box.clientHeight>=box.scrollHeight-3;}
-  function atTop(box){return box.scrollTop<=3;}
-  function nestedScroll(target,box){
-    let el=target instanceof Element?target:null;
-    while(el&&el!==box){
-      if(el.matches('input,textarea,select,[contenteditable="true"]'))return true;
-      const style=getComputedStyle(el);
-      if(/(auto|scroll)/.test(style.overflowY)&&el.scrollHeight>el.clientHeight+4)return true;
-      el=el.parentElement;
+  let active=0, engaged=false, turning=false, touch=null;
+  let exitGuardUntil=0, turnTimer=0, wheelStream=null;
+  let rootTouch=null;
+  const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+  const now=()=>performance.now();
+  const overlayOpen=()=>document.body.classList.contains('food-drawer-open') ||
+    document.body.classList.contains('food-swipe-active') ||
+    document.body.classList.contains('food-swipe-dragging');
+  const atTop=el=>el.scrollTop<=3;
+  const atBottom=el=>el.scrollTop+el.clientHeight>=el.scrollHeight-3;
+  const deckY=()=>window.scrollY+deck.getBoundingClientRect().top;
+  const rootLocked=()=>document.documentElement.classList.contains('chapter-deck-active');
+  const getInner=el=>{
+    for(let node=el instanceof Element?el:null;node&& !node.classList.contains('chapter-scroll');node=node.parentElement){
+      if(node.matches('input,textarea,select,[contenteditable="true"]'))return true;
+      const style=getComputedStyle(node);
+      if(/(auto|scroll)/.test(style.overflowY) && node.scrollHeight>node.clientHeight+5)return true;
     }
     return false;
-  }
+  };
 
   cards.forEach((card,index)=>{
-    card.dataset.chapterPage=String(index+1).padStart(2,'0');
-    card.style.setProperty('--sheet-level',String(index+1));
-    // Original content nodes and all their listeners / IDs stay intact.
-    const pane=document.createElement('div');
-    pane.className='chapter-scroll';
-    pane.tabIndex=0;
-    pane.setAttribute('aria-label',card.querySelector('.chapter-eyebrow')?.textContent.trim()||'Chapter');
-    while(card.firstChild)pane.appendChild(card.firstChild);
-    card.appendChild(pane);
-    scrolls.push(pane);
-    const mark=document.createElement('span');
-    mark.className='chapter-mark';mark.setAttribute('aria-hidden','true');
-    card.before(mark);
-    marks.push(mark);
+    let scroller=card.querySelector(':scope > .chapter-scroll');
+    if(!scroller){
+      scroller=document.createElement('div');
+      scroller.className='chapter-scroll';
+      scroller.tabIndex=0;
+      scroller.setAttribute('aria-label',card.querySelector('.chapter-eyebrow')?.textContent.trim()||'Chapter');
+      while(card.firstChild)scroller.appendChild(card.firstChild);
+      card.appendChild(scroller);
+    }
+    scrolls.push(scroller);
+    card.style.setProperty('--chapter-sheet-order',String(index));
   });
-  document.querySelector('#guide > .page-body')?.classList.add('chapter-pages-ready');
+  deck.classList.add('chapter-pages-ready');
+  function show(index){
+    active=clamp(index,0,4);
+    cards.forEach((card,i)=>{
+      const visible=i===active;
+      card.classList.toggle('is-current',visible);
+      card.classList.remove('is-preparing','is-entering','is-exiting','from-above','from-below');
+      card.setAttribute('aria-hidden',visible?'false':'true');
+      if('inert' in card)card.inert=!visible;
+    });
+  }
+  show(0);
 
-  function cardIndex(box){return scrolls.indexOf(box);}
-  function stageY(index){
-    return Math.max(0,window.scrollY+marks[index].getBoundingClientRect().top-10);
+  function engage(index=active){
+    if(turning)return;
+    if(!engaged){
+      const y=deckY();
+      // Position the deck BEFORE freezing the document's outer scrolling.
+      document.documentElement.style.scrollBehavior='auto';
+      window.scrollTo(0,y);
+      document.documentElement.style.scrollBehavior='';
+      document.documentElement.classList.add('chapter-deck-active');
+      document.body.classList.add('chapter-deck-active');
+      engaged=true;
+    }
+    if(index!==active)show(index);
+    wheelStream=null;
   }
-  function finishTurn(next,current){
-    clearTimeout(turnTimer);
-    next?.classList.remove('chapter-arriving');
-    current?.classList.remove('chapter-leaving');
-    document.body.classList.remove('chapter-turning');
-    turning=false;
+  function leave(direction){
+    if(turning)return;
+    engaged=false;
+    exitGuardUntil=now()+1050;
+    document.documentElement.classList.remove('chapter-deck-active');
+    document.body.classList.remove('chapter-deck-active');
+    wheelStream=null;
+    const y=deckY();
+    requestAnimationFrame(()=>{
+      // Allow leaving the first/last page without getting stuck in the deck.
+      const dest=direction<0?Math.max(0,y-window.innerHeight*.88):y+deck.offsetHeight+30;
+      window.scrollTo({top:dest,behavior:motion.matches?'instant':'smooth'});
+    });
   }
-  function go(currentIndex,direction){
-    const nextIndex=currentIndex+direction;
-    if(turning||isOverlayOpen())return;
+
+  function turn(direction){
+    if(turning||overlayOpen())return;
+    const next=active+direction;
+    if(next<0||next>=5){leave(direction);return;}
+    engaged||engage();
     turning=true;
-    const current=cards[currentIndex],next=cards[nextIndex]||null;
+    clearTimeout(turnTimer);
+    const from=cards[active],to=cards[next];
+    const previous=active;
+    active=next;
+    to.inert=false;
+    to.setAttribute('aria-hidden','false');
+    to.classList.add('is-preparing',direction>0?'from-below':'from-above');
+    from.classList.add('is-exiting');
     document.body.classList.add('chapter-turning');
-    current.classList.add('chapter-leaving');
-    next?.classList.add('chapter-arriving');
-    // The first/last sheets still allow returning to the homepage/footer.
-    const destination=nextIndex<0?0:
-      nextIndex>=cards.length?Math.max(0,html.scrollHeight-window.innerHeight):stageY(nextIndex);
-    const prev=html.style.scrollBehavior;
-    html.style.scrollBehavior='auto';
-    if(reduce.matches){
-      window.scrollTo({top:destination,behavior:'instant'});
-      html.style.scrollBehavior=prev;
-      finishTurn(next,current);
+    // Fix the starting animation frame; no layout/height/scroll position
+    // corrections while the gesture or browser momentum is still active.
+    void to.offsetWidth;
+    requestAnimationFrame(()=>{
+      to.classList.remove('is-preparing');
+      to.classList.add('is-entering');
+    });
+    const end=()=>{
+      cards.forEach((card,i)=>{
+        const isCurrent=i===next;
+        card.classList.toggle('is-current',isCurrent);
+        card.classList.remove('is-preparing','is-entering','is-exiting','from-below','from-above');
+        card.setAttribute('aria-hidden',String(!isCurrent));
+        card.inert=!isCurrent;
+      });
+      turning=false;
+      document.body.classList.remove('chapter-turning');
+      wheelStream=null;
+    };
+    turnTimer=setTimeout(end,motion.matches?40:570);
+  }
+
+  // The homepage has its own naturally scrollable hero. Crossing into the
+  // deck is caught before browser momentum can skip past chapter 01.
+  window.addEventListener('wheel',e=>{
+    if(engaged){
+      if(turning&&e.cancelable)e.preventDefault();
       return;
     }
-    // Single native scroll motion, not a second requestAnimationFrame glide.
-    window.scrollTo({top:destination,behavior:'smooth'});
-    // Emphasis begins when the incoming sheet becomes visible; no per-frame
-    // recalculation or transform updates based on the gesture position.
-    window.setTimeout(()=>next?.classList.remove('chapter-arriving'),360);
-    turnTimer=window.setTimeout(()=>{
-      // End very near its original in-flow mark, leaving the sheet neatly parked.
-      if(Math.abs(window.scrollY-destination)>5){
-        window.scrollTo({top:destination,behavior:'instant'});
-      }
-      html.style.scrollBehavior=prev;
-      finishTurn(next,current);
-    },740);
-  }
-
-  function swipeStart(event){
-    if(turning||isOverlayOpen()||event.touches.length!==1){activeTouch=null;return;}
-    const box=event.currentTarget;
-    if(nestedScroll(event.target,box)){activeTouch=null;return;}
-    const t=event.touches[0];
-    // Edge is recorded at the START of a gesture. Reaching the end during
-    // this gesture always stops there; only the following gesture turns.
-    activeTouch={box,x:t.clientX,y:t.clientY,
-      top:atTop(box),bottom:atBottom(box),vertical:false};
-  }
-  function swipeMove(event){
-    const state=activeTouch;
-    if(!state||state.box!==event.currentTarget||event.touches.length!==1)return;
-    const t=event.touches[0],dx=t.clientX-state.x,dy=t.clientY-state.y;
-    if(Math.abs(dx)>Math.abs(dy)*1.1 && Math.abs(dx)>12){
-      activeTouch=null;return; // Existing horizontal bubbles own this gesture.
+    if(now()<exitGuardUntil || overlayOpen()||Math.abs(e.deltaY)<=Math.abs(e.deltaX))return;
+    const y=window.scrollY, start=deckY(), stop=start+deck.offsetHeight;
+    if(e.deltaY>0 && y<start && y+e.deltaY>=start-30){
+      if(e.cancelable)e.preventDefault();
+      engage(0);
+    }else if(e.deltaY<0 && y>stop && y+e.deltaY<=stop+30){
+      if(e.cancelable)e.preventDefault();
+      engage(4);
     }
+  },{passive:false,capture:true});
+  window.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1){rootTouch=null;return;}
+    rootTouch={y:e.touches[0].clientY,scrollY:window.scrollY};
+  },{passive:true,capture:true});
+  window.addEventListener('touchmove',e=>{
+    if(turning){if(e.cancelable)e.preventDefault();return;}
+    if(engaged || !rootTouch || now()<exitGuardUntil||overlayOpen())return;
+    const delta=rootTouch.y-e.touches[0].clientY;
+    const start=deckY(),stop=start+deck.offsetHeight;
+    if(delta>0 && rootTouch.scrollY<start && rootTouch.scrollY+delta>=start-18){
+      if(e.cancelable)e.preventDefault();
+      engage(0);
+      rootTouch=null;
+    }else if(delta<0 && rootTouch.scrollY>stop && rootTouch.scrollY+delta<=stop+18){
+      if(e.cancelable)e.preventDefault();
+      engage(4);
+      rootTouch=null;
+    }
+  },{passive:false,capture:true});
+  window.addEventListener('touchend',()=>{rootTouch=null;},{passive:true,capture:true});
+  window.addEventListener('scroll',()=>{
+    if(engaged||now()<exitGuardUntil||overlayOpen())return;
+    const y=window.scrollY,start=deckY(),end=start+deck.offsetHeight;
+    // Safety net for Safari's post-touch inertial scroll.
+    if(y>=start-4&&y<end-12)engage(y>=start+deck.offsetHeight*.68?4:0);
+  },{passive:true});
+
+  function onTouchStart(event){
+    if(!engaged||turning||overlayOpen()||event.touches.length!==1||getInner(event.target)){touch=null;return;}
+    const p=event.touches[0],box=event.currentTarget;
+    touch={box,x:p.clientX,y:p.clientY,top:atTop(box),bottom:atBottom(box),vertical:false,cancelled:false};
+  }
+  function onTouchMove(event){
+    const s=touch;
+    if(!s||s.box!==event.currentTarget||event.touches.length!==1)return;
+    const t=event.touches[0],dx=t.clientX-s.x,dy=t.clientY-s.y;
+    if(Math.abs(dx)>Math.abs(dy)*1.12 && Math.abs(dx)>12){s.cancelled=true;return;}
     if(Math.abs(dy)<10||Math.abs(dy)<Math.abs(dx)*1.2)return;
-    state.vertical=true;
-    if((dy<0&&state.bottom)||(dy>0&&state.top)){
-      if(event.cancelable)event.preventDefault(); // Hold at the page edge.
-    }
+    s.vertical=true;
+    if(((dy<0&&s.bottom)||(dy>0&&s.top))&&event.cancelable)event.preventDefault();
   }
-  function swipeEnd(event){
-    const state=activeTouch;
-    if(!state||state.box!==event.currentTarget)return;
-    activeTouch=null;
-    if(!state.vertical||turning||isOverlayOpen())return;
-    const t=event.changedTouches?.[0];if(!t)return;
-    const dy=t.clientY-state.y,dx=t.clientX-state.x;
-    if(Math.abs(dy)<58||Math.abs(dy)<Math.abs(dx)*1.25)return;
-    const direction=dy<0?1:-1;
-    // No switching on the same swipe that reaches the boundary.
-    if(direction>0&&!state.bottom)return;
-    if(direction<0&&!state.top)return;
-    go(cardIndex(state.box),direction);
+  function onTouchEnd(event){
+    const s=touch;touch=null;
+    if(!s||s.box!==event.currentTarget||s.cancelled||!s.vertical||turning||overlayOpen())return;
+    const point=event.changedTouches?.[0];if(!point)return;
+    const dx=point.clientX-s.x,dy=point.clientY-s.y;
+    if(Math.abs(dy)<56||Math.abs(dy)<Math.abs(dx)*1.25)return;
+    // Only an entirely new gesture started at the edge may switch.
+    if(dy<0&&s.bottom&&atBottom(s.box))turn(1);
+    else if(dy>0&&s.top&&atTop(s.box))turn(-1);
   }
-
   function onWheel(event){
+    if(!engaged)return;
+    if(turning){if(event.cancelable)event.preventDefault();return;}
     const box=event.currentTarget;
-    if(turning){event.preventDefault();return;}
-    if(isOverlayOpen()||nestedScroll(event.target,box))return;
-    if(Math.abs(event.deltaY)<3||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
-    const direction=Math.sign(event.deltaY);
-    const edge=direction>0?atBottom(box):atTop(box);
-    const now=performance.now();
-    let state=wheelState.get(box);
-    // A trackpad's continuous wheel stream is ONE gesture. If it started
-    // before reaching the bottom, it must not become a page turn mid-stream.
-    if(!state||now-state.last>250||state.dir!==direction){
-      state={last:now,dir:direction,eligible:edge,sum:0};
+    if(overlayOpen()||getInner(event.target))return;
+    const dy=event.deltaY;
+    if(Math.abs(dy)<3||Math.abs(event.deltaX)>=Math.abs(dy))return;
+    const dir=dy>0?1:-1;
+    const edge=dir>0?atBottom(box):atTop(box);
+    const stamp=now();
+    if(!wheelStream||stamp-wheelStream.last>270||wheelStream.dir!==dir){
+      wheelStream={last:stamp,dir,eligible:edge,amount:0};
     }
-    state.last=now;
-    if(!edge)state.eligible=false;
+    wheelStream.last=stamp;
+    if(!edge)wheelStream.eligible=false;
     if(edge){
-      event.preventDefault();
-      if(state.eligible){
-        state.sum+=Math.abs(event.deltaY);
-        if(state.sum>95){state.eligible=false;go(cardIndex(box),direction);}
+      if(event.cancelable)event.preventDefault();
+      if(wheelStream.eligible){
+        wheelStream.amount+=Math.abs(dy);
+        if(wheelStream.amount>88){wheelStream.eligible=false;turn(dir);}
       }
     }
-    wheelState.set(box,state);
   }
-  // Lock out new gestures during the one-off animated page turn, so touch
-  // momentum cannot cancel or steer it halfway to the wrong resting position.
-  function blockWhileTurning(event){
-    if(turning&&event.cancelable)event.preventDefault();
-  }
-  window.addEventListener('touchmove',blockWhileTurning,{passive:false,capture:true});
-  window.addEventListener('wheel',blockWhileTurning,{passive:false,capture:true});
-
-  scrolls.forEach((box,index)=>{
-    box.addEventListener('touchstart',swipeStart,{passive:true});
-    box.addEventListener('touchmove',swipeMove,{passive:false});
-    box.addEventListener('touchend',swipeEnd,{passive:true});
-    box.addEventListener('touchcancel',()=>{activeTouch=null;},{passive:true});
+  scrolls.forEach(box=>{
+    box.addEventListener('touchstart',onTouchStart,{passive:true});
+    box.addEventListener('touchmove',onTouchMove,{passive:false});
+    box.addEventListener('touchend',onTouchEnd,{passive:true});
+    box.addEventListener('touchcancel',()=>touch=null,{passive:true});
     box.addEventListener('wheel',onWheel,{passive:false});
     box.addEventListener('keydown',event=>{
-      if(turning||event.target.matches('input,textarea,select,[contenteditable]'))return;
-      const direction=['PageDown','ArrowDown'].includes(event.key)?1:
+      if(turning||overlayOpen()||getInner(event.target))return;
+      const dir=['PageDown','ArrowDown'].includes(event.key)?1:
         ['PageUp','ArrowUp'].includes(event.key)?-1:0;
-      if(!direction)return;
-      const edge=direction>0?atBottom(box):atTop(box);
-      if(edge){event.preventDefault();go(index,direction);}
+      if(dir && (dir>0?atBottom(box):atTop(box))){event.preventDefault();turn(dir);}
     });
   });
 
-  // Preserve back/forward navigation and chapter shortcut positions. Browser
-  // anchors can scroll the document and the chapter's inner scroller natively.
-  // Do not override any bubble/menu handlers.
+  // Existing six homepage buttons keep their original expansion/navigation logic.
+  // Engage the correct fixed page early so their scrollIntoView target is visible.
+  document.querySelectorAll('.nav-button[data-target], .hero-title-link[data-target], .section-jump-button[data-target]').forEach(button=>{
+    button.addEventListener('click',()=>{
+      const id=button.dataset.target;
+      const target=document.getElementById(id);
+      const chapter=target?.closest('.chapter-card') ||
+        (id==='day-trips'?cards[2]:null);
+      if(chapter){engage(cards.indexOf(chapter));}
+    },{capture:true});
+  });
+  if(location.hash){
+    const node=document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const card=node?.closest('.chapter-card');
+    if(card)requestAnimationFrame(()=>engage(cards.indexOf(card)));
+  }
 })();
