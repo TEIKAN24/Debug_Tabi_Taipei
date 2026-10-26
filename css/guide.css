@@ -5124,40 +5124,93 @@ html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
   mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
 }
 
-/* v30.9.160 — chapters as stacked sheets. Each chapter is a card (rounded, framed,
-   at least one screen tall) that stays put when its end is reached while the next
-   card slides up over it (v30.9.161: the page turn itself is a slow JS glide, no CSS snapping). The arriving chapter's number line starts large and settles. */
-.chapter-mark{height:0;margin:0;padding:0;}
-#guide .page-body > .chapter-card{
-  position:sticky;top:var(--card-stick,var(--chapter-top,10px));z-index:0;isolation:isolate;
-  box-sizing:border-box;min-height:var(--chapter-min,calc(100svh - 22px));
-  margin:0 -6px 18px;padding:22px 16px 30px;
-  border:1px solid #2A2A2A;border-radius:24px;background:#141414;
-  box-shadow:0 -14px 34px rgba(0,0,0,.5);
-  transform-origin:50% var(--cover-origin,50%);
+
+/* v30.9.163 — stable, independent chapter pages.
+   Only the explicit chapter-turn action animates; reading inside a chapter
+   never scales or drags the card under the user's finger. */
+#guide .page-body.chapter-pages-ready{
+  position:relative;
+  padding:0 0 8px;
 }
-#guide .page-body > .chapter-card:last-child{margin-bottom:28px;}
-#guide .page-body > .chapter-card::after{
-  content:"";position:absolute;inset:-1px;border-radius:inherit;background:#0D0D0D;
-  opacity:0;pointer-events:none;z-index:200;
+#guide .page-body.chapter-pages-ready > .chapter-mark{
+  display:block;height:0;margin:0;padding:0;pointer-events:none;
 }
-#guide .page-body > .chapter-card.is-covered{transform:scale(calc(1 - .06 * var(--cover,0)));}
-#guide .page-body > .chapter-card.is-covered::after{opacity:calc(var(--cover,0) * .78);}
-#guide .page-body > .chapter-card.is-entering > .chapter-eyebrow{
-  transform:scale(calc(1 + 1.1 * (1 - var(--enter,1))));transform-origin:0 0;
+#guide .page-body.chapter-pages-ready > .chapter-card{
+  position:sticky;
+  top:10px;
+  z-index:var(--sheet-level,1);
+  isolation:isolate;
+  box-sizing:border-box;
+  height:calc(100svh - 22px);
+  min-height:0;
+  max-height:none;
+  margin:0 -6px 14px;
+  padding:0;
+  border:1px solid #373737;
+  border-radius:22px;
+  background:#141414;
+  box-shadow:0 -13px 32px rgba(0,0,0,.34);
+  overflow:hidden;
+  transform:none;
+  opacity:1;
 }
-#guide .page-body > .chapter-card.is-entering > :not(.chapter-eyebrow):not(.jump-anchor){
-  transform:translateY(calc(17px * (1 - var(--enter,1))));
+#guide .page-body.chapter-pages-ready > .chapter-card:last-child{margin-bottom:24px;}
+#guide .chapter-pages-ready .chapter-scroll{
+  box-sizing:border-box;
+  height:100%;width:100%;
+  overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  padding:20px 16px 28px;
+  touch-action:auto;
+  scrollbar-width:none;
 }
-#guide .page-body > .chapter-card > .chapter-eyebrow:first-child,
-#guide .page-body > .chapter-card > .jump-anchor + .chapter-eyebrow{margin-top:0!important;}
-html[data-theme="light"] #guide .page-body > .chapter-card{
-  background:#FFFFFF;border-color:#DCE1E2;box-shadow:0 -12px 30px rgba(0,0,0,.10);
+#guide .chapter-pages-ready .chapter-scroll::-webkit-scrollbar{display:none;}
+#guide .chapter-pages-ready .chapter-scroll > .chapter-eyebrow:first-of-type{
+  margin-top:0!important;
 }
-html[data-theme="light"] #guide .page-body > .chapter-card::after{background:#F7F8F7;}
-@media (min-width:600px){
-  #guide .page-body > .chapter-card{margin:0 -12px 22px;padding:28px 24px 34px;}
+#guide .chapter-pages-ready .chapter-scroll > .jump-anchor{scroll-margin-top:6px;}
+#guide .chapter-pages-ready > .chapter-card.chapter-leaving{
+  transform:scale(.984);
+  opacity:.68;
+  transition:transform .46s cubic-bezier(.19,.73,.24,1),opacity .46s ease;
 }
-@media (prefers-reduced-motion:reduce){
-  #guide .page-body > .chapter-card{transform:none!important;}
+#guide .chapter-pages-ready > .chapter-card:not(.chapter-leaving){
+  transition:transform .3s ease,opacity .3s ease;
+}
+#guide .chapter-pages-ready .chapter-arriving .chapter-scroll > .chapter-eyebrow{
+  transform:scale(1.30);
+  transform-origin:0 40%;
+}
+#guide .chapter-pages-ready .chapter-scroll > .chapter-eyebrow{
+  transform:none;
+  transform-origin:0 40%;
+  transition:transform .48s cubic-bezier(.18,.74,.23,1);
+}
+#guide .chapter-pages-ready .chapter-arriving .chapter-scroll > .chapter-eyebrow + h2{
+  transform:scale(1.07) translateY(4px);
+  transform-origin:0 20%;
+}
+#guide .chapter-pages-ready .chapter-scroll > .chapter-eyebrow + h2{
+  transform:none;
+  transform-origin:0 20%;
+  transition:transform .52s cubic-bezier(.18,.74,.23,1);
+}
+html[data-theme="light"] #guide .page-body.chapter-pages-ready > .chapter-card{
+  background:#FFFFFF;
+  border-color:#D5DBDF;
+  box-shadow:0 -13px 30px rgba(20,30,40,.12);
+}
+@media(min-width:600px){
+  #guide .page-body.chapter-pages-ready > .chapter-card{
+    margin-left:-12px;margin-right:-12px;border-radius:25px;
+  }
+  #guide .chapter-pages-ready .chapter-scroll{padding:25px 23px 34px;}
+}
+@media(prefers-reduced-motion:reduce){
+  #guide .page-body.chapter-pages-ready > .chapter-card,
+  #guide .chapter-pages-ready .chapter-scroll > .chapter-eyebrow,
+  #guide .chapter-pages-ready .chapter-scroll > .chapter-eyebrow + h2{
+    transform:none!important;transition:none!important;opacity:1!important;
+  }
 }

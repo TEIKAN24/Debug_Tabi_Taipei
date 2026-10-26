@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
+/* TAIPEI CITY GUIDE v30.9.163 — stable, self-scrolling chapter pages. */
 /* v30.9.160 — chapters are stacked cards: the next chapter slides over the previous one like a new sheet;
    a chapter's end and start are resting points (one swipe cannot skip a chapter).
    v30.9.150 — align the reverse-side directory bubbles and restore adaptive scroll hints.
@@ -3306,307 +3306,192 @@ update();
 })();
 
 
-/* v30.9.154 — chapter-scene-transition-v154.
-   Keep the existing document flow intact. Only an intentional downward page
-   scroll crossing a chapter header triggers a brief editorial transition.
-   Native page scrolling, in-chapter gestures and jump-navigation are preserved. */
-(() => {
-  'use strict';
-  const headings=[...document.querySelectorAll('#guide .chapter-eyebrow')];
-  if(headings.length!==5 || !('requestAnimationFrame' in window))return;
-  // v30.9.161: the stacked chapter cards (JS 31) replace this curtain and its
-  // jump to the chapter heading; running both made them fight over the scroll.
-  if(document.querySelector('#guide .chapter-card'))return;
-  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const overlay=document.createElement('div');
-  overlay.className='chapter-scene-curtain';
-  overlay.setAttribute('aria-hidden','true');
-  overlay.innerHTML='<div class="chapter-scene-curtain__content">'
-    +'<span class="chapter-scene-curtain__rule"></span>'
-    +'<p class="chapter-scene-curtain__number"></p>'
-    +'<p class="chapter-scene-curtain__title"></p>'
-    +'<p class="chapter-scene-curtain__progress"></p></div>';
-  document.body.appendChild(overlay);
-  const number=overlay.querySelector('.chapter-scene-curtain__number');
-  const title=overlay.querySelector('.chapter-scene-curtain__title');
-  const progress=overlay.querySelector('.chapter-scene-curtain__progress');
-  let previousY=window.scrollY;
-  let previousTops=headings.map(node=>node.getBoundingClientRect().top);
-  let scrollFrame=0,active=false,manualScrollAt=0,suspendUntil=0;
-  let touchStart=null;
-  const now=()=>performance.now();
-  const skip=()=>reduced.matches || active || now()<suspendUntil
-    || document.body.classList.contains('food-drawer-open')
-    || document.body.classList.contains('food-swipe-active')
-    || document.body.classList.contains('food-swipe-dragging')
-    || document.activeElement?.matches('input,textarea,select,[contenteditable="true"]');
-  const recalibrate=()=>{
-    previousY=window.scrollY;
-    previousTops=headings.map(node=>node.getBoundingClientRect().top);
-  };
-  // Ignore direct navigation and the smooth scrolling it initiates.
-  document.addEventListener('click', event=>{
-    if(event.target.closest('a[href^="#"],.nav-button,.section-jump-button,.hero-title-link,[data-target]')){
-      suspendUntil=now()+1600;
-    }
-  },true);
-  window.addEventListener('wheel',event=>{
-    if(event.deltaY>0 && Math.abs(event.deltaY)>Math.abs(event.deltaX))manualScrollAt=now();
-  },{passive:true});
-  window.addEventListener('touchstart',event=>{
-    if(event.touches.length===1)touchStart={x:event.touches[0].clientX,y:event.touches[0].clientY};
-    else touchStart=null;
-  },{passive:true});
-  window.addEventListener('touchmove',event=>{
-    if(!touchStart||event.touches.length!==1)return;
-    const dx=event.touches[0].clientX-touchStart.x;
-    const dy=event.touches[0].clientY-touchStart.y;
-    if(dy < -10 && Math.abs(dy)>Math.abs(dx)*1.25)manualScrollAt=now();
-  },{passive:true});
-  window.addEventListener('touchend',()=>{touchStart=null;},{passive:true});
-  window.addEventListener('touchcancel',()=>{touchStart=null;},{passive:true});
-  window.addEventListener('keydown',event=>{
-    if(['ArrowDown','PageDown',' ','End'].includes(event.key) &&
-      !event.target?.closest?.('input,textarea,select,[contenteditable="true"]'))manualScrollAt=now();
-  });
-
-  function changeChapter(index){
-    if(skip())return;
-    active=true;
-    const eyebrow=headings[index];
-    const heading=eyebrow.nextElementSibling;
-    // Only text sourced from the already existing chapter headings.
-    number.textContent=eyebrow.textContent.trim();
-    title.textContent=heading?.matches('h2') ? heading.textContent.trim() : 'グルメ';
-    progress.textContent=String(index+1).padStart(2,'0')+' / 05';
-    overlay.classList.remove('is-arriving');
-    overlay.classList.add('is-covering');
-    // Cover the previous chapter BEFORE positioning the new one.
-    window.setTimeout(()=>{
-      if(!eyebrow.isConnected){overlay.classList.remove('is-covering');active=false;return;}
-      // 'auto' bypasses the site's html{scroll-behavior:smooth} during the covered jump.
-      const html=document.documentElement;
-      const prior=html.style.scrollBehavior;
-      html.style.scrollBehavior='auto';
-      const target=Math.max(0,window.scrollY+eyebrow.getBoundingClientRect().top-24);
-      window.scrollTo({top:target,behavior:'instant'});
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        // Top-level accordions can automatically fold when they leave view.
-        // Compensate for any resulting layout shift before uncovering the scene.
-        const delta=eyebrow.getBoundingClientRect().top-24;
-        if(Math.abs(delta)>2){
-          window.scrollTo({top:Math.max(0,window.scrollY+delta),behavior:'instant'});
-        }
-        html.style.scrollBehavior=prior;
-        overlay.classList.remove('is-covering');
-        overlay.classList.add('is-arriving');
-        window.setTimeout(()=>{
-          overlay.classList.remove('is-arriving');
-          active=false;
-          // Do not re-trigger from the subsequent scroll/resize/accordion reflow.
-          suspendUntil=now()+150;
-          recalibrate();
-        },390);
-      }));
-    },200);
-  }
-
-  function scan(){
-    scrollFrame=0;
-    const y=window.scrollY;
-    const tops=headings.map(node=>node.getBoundingClientRect().top);
-    const moved=y-previousY;
-    const gate=window.innerHeight*.88;
-    const canTrigger=!skip() && now()-manualScrollAt<1050 && moved>1.5;
-    if(canTrigger){
-      // Header #1 has no preceding chapter. Switch only at the four boundaries.
-      for(let i=1;i<headings.length;i++){
-        if(previousTops[i]>gate && tops[i]<=gate && tops[i]>-window.innerHeight*.3){
-          previousY=y;previousTops=tops;
-          changeChapter(i);
-          return;
-        }
-      }
-    }
-    previousY=y;
-    previousTops=tops;
-  }
-  window.addEventListener('scroll',()=>{
-    if(!scrollFrame)scrollFrame=requestAnimationFrame(scan);
-  },{passive:true});
-  window.addEventListener('resize',recalibrate,{passive:true});
-  window.addEventListener('pageshow',recalibrate);
-})();
-
-
-/* =================== JS 31: chapter cards v30.9.162 =================== */
-(()=>{
+/* =================== JS 30: stable chapter sheets v30.9.163 =================== */
+;(()=>{
   'use strict';
   const cards=[...document.querySelectorAll('#guide .page-body > .chapter-card')];
-  if(!cards.length)return;
-  const root=document.documentElement;
+  if(cards.length!==5)return;
+  // One author of chapter navigation. The old v154 curtain / v162 scroll-linked
+  // transforms and glides are deliberately not installed alongside this controller.
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
-  // Small-viewport height and safe areas, measured once per layout pass.
-  const probe=document.createElement('div');
-  probe.setAttribute('aria-hidden','true');
-  probe.style.cssText='position:fixed;left:0;top:0;width:0;height:100svh;box-sizing:border-box;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none;';
-  document.body.append(probe);
-  // Each chapter's in-flow position (a sticky card reports where it is stuck).
-  const marks=cards.map(card=>{const mark=document.createElement('div');mark.className='chapter-mark';mark.setAttribute('aria-hidden','true');card.before(mark);return mark;});
-  let gapTop=10,gapBottom=12,raf=0,layoutRaf=0;
-  // Resting points: the top of the page, every chapter (anywhere between its
-  // start and its end) and the bottom of the page. Between them are page turns.
-  let rests=[];
-  function layout(){
-    layoutRaf=0;
-    const cs=getComputedStyle(probe);
-    const safeTop=parseFloat(cs.paddingTop)||0,safeBottom=parseFloat(cs.paddingBottom)||0;
-    const V=probe.offsetHeight||window.innerHeight;
-    gapTop=safeTop+10;gapBottom=safeBottom+12;
-    root.style.setProperty('--chapter-top',gapTop+'px');
-    root.style.setProperty('--chapter-min',Math.max(320,V-gapTop-gapBottom)+'px');
-    const y=window.scrollY,view=window.innerHeight;
-    const max=Math.max(0,root.scrollHeight-view);
-    rests=[[0,0]];
-    cards.forEach((card,i)=>{
-      const H=card.offsetHeight,T=marks[i].getBoundingClientRect().top+y;
-      // A long chapter scrolls normally and stays when its bottom edge is reached.
-      card.style.setProperty('--card-stick',Math.min(gapTop,V-gapBottom-H)+'px');
-      const S=Math.max(0,Math.min(max,T-gapTop));
-      rests.push([S,Math.max(S,Math.min(max,T+H+gapBottom-view))]);
-    });
-    rests.push([max,max]);
-    paint();
+  const html=document.documentElement;
+  let turning=false;
+  let turnTimer=0;
+  let activeTouch=null;
+  const scrolls=[];
+  const marks=[];
+  const wheelState=new WeakMap();
+  const INNER_EXCLUSIONS='input,textarea,select,[contenteditable="true"],.food-drawer,.food-directory-tabs,.tab-pills';
+
+  function isOverlayOpen(){
+    return document.body.classList.contains('food-drawer-open') ||
+      document.body.classList.contains('food-swipe-active') ||
+      document.body.classList.contains('food-swipe-dragging');
   }
-  const queueLayout=()=>{if(!layoutRaf)layoutRaf=requestAnimationFrame(layout);};
-  // The next sheet covers the previous one; the previous one recedes and fades,
-  // and the arriving chapter's number line starts large and settles.
-  // Ease the effect in and out instead of following the scroll linearly.
-  const smooth=x=>{const v=Math.min(1,Math.max(0,x));return v*v*(3-2*v);};
-  function paint(){
-    raf=0;
-    const V=window.innerHeight,still=reduce.matches;
-    const tops=cards.map(card=>card.getBoundingClientRect().top);
-    cards.forEach((card,i)=>{
-      const top=tops[i];
-      const enter=smooth((V-top)/Math.max(1,V-gapTop));
-      const entering=!still&&i>0&&enter<1&&top<V;
-      card.classList.toggle('is-entering',entering);
-      if(entering)card.style.setProperty('--enter',enter.toFixed(3));
-      const next=tops[i+1];
-      const cover=next===undefined?0:smooth((V-next)/Math.max(1,V-gapTop));
-      const covered=!still&&cover>0;
-      card.classList.toggle('is-covered',covered);
-      if(covered){
-        card.style.setProperty('--cover',cover.toFixed(3));
-        card.style.setProperty('--cover-origin',Math.round(V/2-top)+'px');
+  function atBottom(box){return box.scrollTop+box.clientHeight>=box.scrollHeight-3;}
+  function atTop(box){return box.scrollTop<=3;}
+  function nestedScroll(target,box){
+    let el=target instanceof Element?target:null;
+    while(el&&el!==box){
+      if(el.matches('input,textarea,select,[contenteditable="true"]'))return true;
+      const style=getComputedStyle(el);
+      if(/(auto|scroll)/.test(style.overflowY)&&el.scrollHeight>el.clientHeight+4)return true;
+      el=el.parentElement;
+    }
+    return false;
+  }
+
+  cards.forEach((card,index)=>{
+    card.dataset.chapterPage=String(index+1).padStart(2,'0');
+    card.style.setProperty('--sheet-level',String(index+1));
+    // Original content nodes and all their listeners / IDs stay intact.
+    const pane=document.createElement('div');
+    pane.className='chapter-scroll';
+    pane.tabIndex=0;
+    pane.setAttribute('aria-label',card.querySelector('.chapter-eyebrow')?.textContent.trim()||'Chapter');
+    while(card.firstChild)pane.appendChild(card.firstChild);
+    card.appendChild(pane);
+    scrolls.push(pane);
+    const mark=document.createElement('span');
+    mark.className='chapter-mark';mark.setAttribute('aria-hidden','true');
+    card.before(mark);
+    marks.push(mark);
+  });
+  document.querySelector('#guide > .page-body')?.classList.add('chapter-pages-ready');
+
+  function cardIndex(box){return scrolls.indexOf(box);}
+  function stageY(index){
+    return Math.max(0,window.scrollY+marks[index].getBoundingClientRect().top-10);
+  }
+  function finishTurn(next,current){
+    clearTimeout(turnTimer);
+    next?.classList.remove('chapter-arriving');
+    current?.classList.remove('chapter-leaving');
+    document.body.classList.remove('chapter-turning');
+    turning=false;
+  }
+  function go(currentIndex,direction){
+    const nextIndex=currentIndex+direction;
+    if(turning||isOverlayOpen())return;
+    turning=true;
+    const current=cards[currentIndex],next=cards[nextIndex]||null;
+    document.body.classList.add('chapter-turning');
+    current.classList.add('chapter-leaving');
+    next?.classList.add('chapter-arriving');
+    // The first/last sheets still allow returning to the homepage/footer.
+    const destination=nextIndex<0?0:
+      nextIndex>=cards.length?Math.max(0,html.scrollHeight-window.innerHeight):stageY(nextIndex);
+    const prev=html.style.scrollBehavior;
+    html.style.scrollBehavior='auto';
+    if(reduce.matches){
+      window.scrollTo({top:destination,behavior:'instant'});
+      html.style.scrollBehavior=prev;
+      finishTurn(next,current);
+      return;
+    }
+    // Single native scroll motion, not a second requestAnimationFrame glide.
+    window.scrollTo({top:destination,behavior:'smooth'});
+    // Emphasis begins when the incoming sheet becomes visible; no per-frame
+    // recalculation or transform updates based on the gesture position.
+    window.setTimeout(()=>next?.classList.remove('chapter-arriving'),360);
+    turnTimer=window.setTimeout(()=>{
+      // End very near its original in-flow mark, leaving the sheet neatly parked.
+      if(Math.abs(window.scrollY-destination)>5){
+        window.scrollTo({top:destination,behavior:'instant'});
       }
+      html.style.scrollBehavior=prev;
+      finishTurn(next,current);
+    },740);
+  }
+
+  function swipeStart(event){
+    if(turning||isOverlayOpen()||event.touches.length!==1){activeTouch=null;return;}
+    const box=event.currentTarget;
+    if(nestedScroll(event.target,box)){activeTouch=null;return;}
+    const t=event.touches[0];
+    // Edge is recorded at the START of a gesture. Reaching the end during
+    // this gesture always stops there; only the following gesture turns.
+    activeTouch={box,x:t.clientX,y:t.clientY,
+      top:atTop(box),bottom:atBottom(box),vertical:false};
+  }
+  function swipeMove(event){
+    const state=activeTouch;
+    if(!state||state.box!==event.currentTarget||event.touches.length!==1)return;
+    const t=event.touches[0],dx=t.clientX-state.x,dy=t.clientY-state.y;
+    if(Math.abs(dx)>Math.abs(dy)*1.1 && Math.abs(dx)>12){
+      activeTouch=null;return; // Existing horizontal bubbles own this gesture.
+    }
+    if(Math.abs(dy)<10||Math.abs(dy)<Math.abs(dx)*1.2)return;
+    state.vertical=true;
+    if((dy<0&&state.bottom)||(dy>0&&state.top)){
+      if(event.cancelable)event.preventDefault(); // Hold at the page edge.
+    }
+  }
+  function swipeEnd(event){
+    const state=activeTouch;
+    if(!state||state.box!==event.currentTarget)return;
+    activeTouch=null;
+    if(!state.vertical||turning||isOverlayOpen())return;
+    const t=event.changedTouches?.[0];if(!t)return;
+    const dy=t.clientY-state.y,dx=t.clientX-state.x;
+    if(Math.abs(dy)<58||Math.abs(dy)<Math.abs(dx)*1.25)return;
+    const direction=dy<0?1:-1;
+    // No switching on the same swipe that reaches the boundary.
+    if(direction>0&&!state.bottom)return;
+    if(direction<0&&!state.top)return;
+    go(cardIndex(state.box),direction);
+  }
+
+  function onWheel(event){
+    const box=event.currentTarget;
+    if(turning){event.preventDefault();return;}
+    if(isOverlayOpen()||nestedScroll(event.target,box))return;
+    if(Math.abs(event.deltaY)<3||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
+    const direction=Math.sign(event.deltaY);
+    const edge=direction>0?atBottom(box):atTop(box);
+    const now=performance.now();
+    let state=wheelState.get(box);
+    // A trackpad's continuous wheel stream is ONE gesture. If it started
+    // before reaching the bottom, it must not become a page turn mid-stream.
+    if(!state||now-state.last>250||state.dir!==direction){
+      state={last:now,dir:direction,eligible:edge,sum:0};
+    }
+    state.last=now;
+    if(!edge)state.eligible=false;
+    if(edge){
+      event.preventDefault();
+      if(state.eligible){
+        state.sum+=Math.abs(event.deltaY);
+        if(state.sum>95){state.eligible=false;go(cardIndex(box),direction);}
+      }
+    }
+    wheelState.set(box,state);
+  }
+  // Lock out new gestures during the one-off animated page turn, so touch
+  // momentum cannot cancel or steer it halfway to the wrong resting position.
+  function blockWhileTurning(event){
+    if(turning&&event.cancelable)event.preventDefault();
+  }
+  window.addEventListener('touchmove',blockWhileTurning,{passive:false,capture:true});
+  window.addEventListener('wheel',blockWhileTurning,{passive:false,capture:true});
+
+  scrolls.forEach((box,index)=>{
+    box.addEventListener('touchstart',swipeStart,{passive:true});
+    box.addEventListener('touchmove',swipeMove,{passive:false});
+    box.addEventListener('touchend',swipeEnd,{passive:true});
+    box.addEventListener('touchcancel',()=>{activeTouch=null;},{passive:true});
+    box.addEventListener('wheel',onWheel,{passive:false});
+    box.addEventListener('keydown',event=>{
+      if(turning||event.target.matches('input,textarea,select,[contenteditable]'))return;
+      const direction=['PageDown','ArrowDown'].includes(event.key)?1:
+        ['PageUp','ArrowUp'].includes(event.key)?-1:0;
+      if(!direction)return;
+      const edge=direction>0?atBottom(box):atTop(box);
+      if(edge){event.preventDefault();go(index,direction);}
     });
-  }
-  const queuePaint=()=>{if(!raf)raf=requestAnimationFrame(paint);};
-  window.addEventListener('scroll',queuePaint,{passive:true});
-  window.addEventListener('resize',queueLayout);
-  window.visualViewport?.addEventListener('resize',queueLayout);
-  reduce.addEventListener?.('change',queuePaint);
-  // Accordions, tabs and the food block change chapter heights: keep the resting
-  // areas and sticky offsets in step.
-  const observer=new ResizeObserver(queueLayout);
-  cards.forEach(card=>observer.observe(card));
-  observer.observe(document.body);
-  // ---- Page turn (touch). The page scrolls natively inside a chapter. Turning
-  // to the next chapter takes two swipes: the first one that reaches a chapter's
-  // end only stops there (a pull past it glides back); the next swipe from that
-  // resting end turns the page. Going back up works the same way at a chapter's
-  // start. Momentum that reaches an end or a start lands there softly.
-  let touching=false,moved=false,startY=0,samples=[],anim=0,guard=null,quietTimer=0;
-  let armedEnd=null,armedStart=null;   // resting points where the next swipe may turn
-  const near=(a,b)=>a!==null&&Math.abs(a-b)<=8;
-  const sample=()=>{const t=performance.now();samples.push([t,window.scrollY]);while(samples.length>8||(samples.length>2&&t-samples[0][0]>120))samples.shift();};
-  const velocity=()=>{if(samples.length<2)return 0;const a=samples[0],b=samples[samples.length-1];return (b[1]-a[1])/Math.max(16,b[0]-a[0]);};
-  const restIndex=y=>rests.findIndex(([s,e])=>y>=s-2&&y<=e+2);
-  // Cubic Hermite glide: starts with the current speed, ends at rest.
-  function glide(to,duration,v0=0){
-    cancelAnimationFrame(anim);
-    const from=window.scrollY,dist=to-from;
-    if(Math.abs(dist)<1)return;
-    if(Math.sign(v0)!==Math.sign(dist))v0=0;
-    const t0=performance.now(),m=Math.max(-2.2,Math.min(2.2,v0))*duration;
-    const step=now=>{
-      const s=Math.min(1,(now-t0)/duration),s2=s*s,s3=s2*s;
-      const y=from*(2*s3-3*s2+1)+m*(s3-2*s2+s)+to*(-2*s3+3*s2);
-      window.scrollTo({top:y,behavior:'instant'});
-      anim=s<1?requestAnimationFrame(step):0;
-    };
-    anim=requestAnimationFrame(step);
-  }
-  const stopGlide=()=>{if(anim){cancelAnimationFrame(anim);anim=0;}};
-  window.addEventListener('touchstart',event=>{
-    stopGlide();guard=null;
-    // Leaving a resting end/start (by reading on) forgets it.
-    if(!near(armedEnd,window.scrollY))armedEnd=null;
-    if(!near(armedStart,window.scrollY))armedStart=null;
-    touching=event.touches.length===1;moved=false;startY=window.scrollY;samples=[];sample();
-    touchY=event.touches[0]?.clientY||0;
-  },{passive:true});
-  let touchY=0;
-  window.addEventListener('touchmove',event=>{
-    if(touching&&Math.abs((event.touches[0]?.clientY||0)-touchY)>8)moved=true;
-  },{passive:true});
-  const release=()=>{
-    if(!touching)return;touching=false;
-    if(!moved||reduce.matches||document.body.classList.contains('food-drawer-open'))return;
-    const y=window.scrollY,v=velocity(),view=window.innerHeight;
-    const here=restIndex(y);
-    if(here>=0){
-      // Released inside a chapter: let it coast, but land softly at its edges.
-      const [s,e]=rests[here];
-      guard=rests[here];guard.from=startY;
-      // Reading down to the very end (or up to the very start) counts as the first swipe.
-      if(Math.abs(y-e)<=2&&startY<e-8)armedEnd=e;
-      if(Math.abs(y-s)<=2&&startY>s+8)armedStart=s;
-      return;
-    }
-    const after=rests.findIndex(([s])=>s>y);
-    if(after<=0)return;
-    const [,A]=rests[after-1],[B]=rests[after];
-    const progress=(y-A)/Math.max(1,B-A);
-    const down=Math.abs(v)>0.05?v>0:y>startY;
-    let target;
-    if(down){
-      // Turn only from a resting end that already stopped one swipe.
-      if(near(startY,A)&&near(armedEnd,A)&&progress>0.12)target=B;
-      else{target=A;armedEnd=A;}
-    }else{
-      if(near(startY,B)&&near(armedStart,B)&&progress<0.88)target=A;
-      else{target=B;armedStart=B;}
-    }
-    if(target===B&&down){armedEnd=null;armedStart=null;}
-    if(target===A&&!down){armedStart=null;armedEnd=null;}
-    const duration=Math.min(1150,Math.max(720,640+520*Math.abs(target-y)/view));
-    glide(target,duration,v);
-  };
-  window.addEventListener('touchend',release,{passive:true});
-  window.addEventListener('touchcancel',release,{passive:true});
-  window.addEventListener('wheel',()=>{stopGlide();guard=null;},{passive:true});
-  window.addEventListener('scroll',()=>{
-    if(touching){sample();return;}
-    if(!guard||anim)return;
-    const y=window.scrollY,[s,e]=guard,from=guard.from;
-    if(y>e+1||y<s-1){
-      // Momentum reached the end (or start): land there; that was the first swipe.
-      const v=velocity();guard=null;
-      if(y>e)armedEnd=e;else armedStart=s;
-      glide(y>e?e:s,560,v);
-      return;
-    }
-    sample();
-    clearTimeout(quietTimer);
-    quietTimer=setTimeout(()=>{
-      const end=window.scrollY;
-      if(Math.abs(end-e)<=2&&from<e-8)armedEnd=e;
-      if(Math.abs(end-s)<=2&&from>s+8)armedStart=s;
-      guard=null;
-    },220);
-  },{passive:true});
-  layout();
+  });
+
+  // Preserve back/forward navigation and chapter shortcut positions. Browser
+  // anchors can scroll the document and the chapter's inner scroller natively.
+  // Do not override any bubble/menu handlers.
 })();
