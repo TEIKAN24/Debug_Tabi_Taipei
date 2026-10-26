@@ -1,6 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
+   v30.9.148 — route horizontal gestures inside bubble panels and preserve food drawer swipe.
    v30.9.147 — active difficulty chip, drawer-close reset and keyboard-safe search clear.
    v30.9.146 — keep drawer steady when common-character / difficulty chips are tapped.
    v30.9.145 — common-keyword selection and tag/synonym lookup repairs; compact 2×2 difficulty filters.
@@ -1206,6 +1207,104 @@ loadData();
 })();
 
 
+/* =================== JS 06b: swipe-between-bubble-content-v30.9.148 =================== */
+;
+(() => {
+  'use strict';
+  const guide=document.getElementById('guide');
+  if(!guide)return;
+  // Day-trip transport / airport panels already own a dedicated animated swipe
+  // controller. Do not register another competing gesture handler there.
+  const groups=[...guide.querySelectorAll('.tab-pills')].map(strip=>{
+    if(strip.closest('.sights-day-trips, #airport-route-selector'))return null;
+    const content=strip.nextElementSibling;
+    if(!content?.classList.contains('tab-panels'))return null;
+    const tabs=[...strip.querySelectorAll(':scope > .tab-pill')];
+    const panes=[...content.querySelectorAll(':scope > .tab-panel')];
+    return tabs.length>1 && tabs.length===panes.length?{strip,content,tabs,panes}:null;
+  }).filter(Boolean);
+  if(!groups.length)return;
+  let suppressClickUntil=0;
+  for(const group of groups){
+    const {content,tabs,panes}=group;
+    content.classList.add('bubble-swipe-content');
+    let gesture=null;
+    function findTouch(list,id){
+      for(const t of list)if(t.identifier===id)return t;
+      return null;
+    }
+    function index(){return Math.max(0,tabs.findIndex(tab=>tab.getAttribute('aria-selected')==='true'));}
+    function ownScroller(target){
+      let node=target instanceof Element?target:null;
+      while(node && node!==content){
+        if(node.scrollWidth>node.clientWidth+5 && /(auto|scroll|overlay)/.test(getComputedStyle(node).overflowX))return true;
+        node=node.parentElement;
+      }
+      return false;
+    }
+    content.addEventListener('touchstart',event=>{
+      gesture=null;
+      if(event.touches.length!==1 || document.body.classList.contains('food-drawer-open') ||
+        document.body.classList.contains('food-swipe-active') ||
+        document.body.classList.contains('recommend-drawer-open') ||
+        document.body.classList.contains('recommend-swipe-active'))return;
+      const target=event.target;
+      const panel=target.closest('.tab-panel');
+      if(!panel || panel.hidden || !panes.includes(panel))return;
+      if(target.closest('input,textarea,select,[contenteditable="true"],video,audio'))return;
+      if(ownScroller(target))return;
+      const t=event.touches[0];
+      // Leave native iOS browser back/forward gestures at the screen edges.
+      if(t.clientX<18 || t.clientX>window.innerWidth-18)return;
+      gesture={id:t.identifier,startX:t.clientX,startY:t.clientY,axis:null};
+    },{passive:true});
+    content.addEventListener('touchmove',event=>{
+      if(!gesture)return;
+      const t=findTouch(event.changedTouches,gesture.id);
+      if(!t)return;
+      const dx=t.clientX-gesture.startX,dy=t.clientY-gesture.startY;
+      if(!gesture.axis && Math.hypot(dx,dy)>12){
+        if(Math.abs(dy)>Math.abs(dx)*1.12){gesture.axis='vertical';return;}
+        if(Math.abs(dx)>Math.abs(dy)*1.25)gesture.axis='horizontal';
+      }
+      if(gesture.axis==='horizontal' && event.cancelable)event.preventDefault();
+    },{passive:false});
+    content.addEventListener('touchend',event=>{
+      if(!gesture)return;
+      const t=findTouch(event.changedTouches,gesture.id);
+      if(!t)return;
+      const state=gesture;gesture=null;
+      if(state.axis!=='horizontal')return;
+      const dx=t.clientX-state.startX,dy=t.clientY-state.startY;
+      if(Math.abs(dx)<52 || Math.abs(dx)<Math.abs(dy)*1.25)return;
+      const next=index()+(dx<0?1:-1);
+      if(next<0||next>=tabs.length)return; // no unexpected wrap at either end
+      // Reuse native click logic for ARIA, hidden panels, fold-reset, focus,
+      // horizontal pill-strip alignment and section-specific click observers.
+      tabs[next].click();
+      // Day-trip-inspired, small directional entrance motion. The original
+      // bubble click handler remains the only owner of the active state.
+      const entered=panes[next];
+      if(entered && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+        entered.classList.remove('bubble-swipe-enter');
+        entered.style.setProperty('--bubble-swipe-offset',dx<0?'22px':'-22px');
+        void entered.offsetWidth;
+        entered.classList.add('bubble-swipe-enter');
+      }
+      suppressClickUntil=performance.now()+450;
+    },{passive:true});
+    content.addEventListener('touchcancel',()=>{gesture=null;},{passive:true});
+    content.addEventListener('animationend',e=>{
+      if(e.animationName==='bubble-swipe-in')e.target.classList.remove('bubble-swipe-enter');
+    });
+    content.addEventListener('click',event=>{
+      if(event.isTrusted && performance.now()<suppressClickUntil){
+        event.preventDefault();event.stopImmediatePropagation();
+      }
+    },true);
+  }
+})();
+
 /* =================== JS 07: adaptive-pill-edge-fade-script =================== */
 ;
 
@@ -1335,7 +1434,14 @@ loadData();
     // Do not interpret an imprecise horizontal tap over dictionary controls
     // as a drawer-closing swipe: that shifted the whole popup mid-selection.
     // Neutral drawer space remains swipeable, preserving the existing gesture.
-    if(target.closest('#food-search button, #food-search .food-tools, #food-search #results'))return true;
+    // Controls outside the actual dish list keep their own tap/keyboard handling.
+    // In the dish list, a deliberate RIGHT swipe closes the drawer; a TAP still
+    // expands a dish and a vertical movement keeps scrolling the results.
+    if(target.closest('#food-search .food-tools'))return true;
+    if(target.closest('#food-search button') && !target.closest('#food-search #results'))return true;
+    // The content below bubble tabs owns horizontal swipes for category changes.
+    // The document-level food drawer must never steal those gestures.
+    if(target.closest('#guide .tab-panels, #guide .tab-pills'))return true;
     // Interactive links should always receive taps; opening the food drawer must not cancel them.
     if(target.closest('a[href]'))return true;
     if(target.closest('#airsel-transport-tabs, #airport-route-selector .route-panel'))return true;

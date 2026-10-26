@@ -5068,3 +5068,20 @@ body #guide #food-search.food-drawer.is-floating .clear{
   position:relative;z-index:2;touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
 }
+
+/* v30.9.148 — content swipes navigate adjacent bubble tabs; vertical scrolling remains native. */
+#guide .tab-panels.bubble-swipe-content {touch-action:pan-y;}
+
+/* The food results own vertical scrolling and taps, but a deliberate
+   horizontal drag can close the floating dictionary from anywhere in its list. */
+#food-explorer #results { touch-action:pan-y; }
+@keyframes bubble-swipe-in {
+  from { opacity:.76; transform:translate3d(var(--bubble-swipe-offset,22px),0,0); }
+  to { opacity:1; transform:translate3d(0,0,0); }
+}
+#guide .bubble-swipe-content > .tab-panel.bubble-swipe-enter {
+  animation:bubble-swipe-in .22s ease-out both;
+}
+@media(prefers-reduced-motion:reduce) {
+  #guide .bubble-swipe-content > .tab-panel.bubble-swipe-enter {animation:none;}
+}
