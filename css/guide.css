@@ -5174,3 +5174,18 @@ html[data-theme="light"] .food-theme-dock .theme-preview-toggle{
 #guide hr.chapter-glow--citywalk{margin-top:78px!important;}
 /* 撮影スポット: its own block under 名所・博物館 */
 #guide .photo-spot-section{margin-top:12px;}
+
+/* v30.9.172 — every scrolling list under bubble tabs fades at the bottom while more
+   is below (the area lists already did); the fade goes once the end is reached. */
+#guide .venue-directory-section .tab-panel.list-can-scroll:not([data-list-end="true"]){
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 64px),transparent);
+  mask-image:linear-gradient(to bottom,#000 calc(100% - 64px),transparent);
+}
+
+/* v30.9.172 — the food dictionary's dimmed, blurred page reaches every screen edge:
+   behind the status bar / Dynamic Island and the home-indicator area too. */
+html body .food-drawer-backdrop{
+  top:calc(-1 * max(env(safe-area-inset-top,0px),64px))!important;
+  bottom:calc(-1 * max(env(safe-area-inset-bottom,0px),64px))!important;
+  left:0!important;right:0!important;height:auto!important;
+}

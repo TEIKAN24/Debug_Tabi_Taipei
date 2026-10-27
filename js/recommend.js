@@ -32,7 +32,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.170';
+  const VERSION='30.9.172';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -459,7 +459,9 @@
     });
   }
 
-  const isChainItem=item=>!!item.chain||(Array.isArray(item.guideTags)&&item.guideTags.some(tag=>tag&&tag.text?.trim()==='チェーン店'));
+  // Same rule as the 一覧 list: the chain flag, several storefronts, or a チェーン店 tag.
+  const isChainItem=item=>!!item.chain||(Array.isArray(item.branches)&&item.branches.length>1)
+    ||(Array.isArray(item.guideTags)&&item.guideTags.some(tag=>tag&&tag.text?.trim()==='チェーン店'));
   function cardTags(item){
     const omit=/^(?:グルメ|チェーン店)$/;
     const tags=item.pickLevel>=2?[{text:'おすすめ',tone:'featured'}]:[];
@@ -1257,11 +1259,12 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       const main=el('div','recommend-card-main');
       const side=el('div','recommend-card-side');
       const cuisine=cardCuisine(item);
-      if(cuisine)main.append(el('div','recommend-card-type',cuisine));
-      const a=el('a','recommend-venue',item.name);a.href=recommendationMapsUrl(item);a.target='_blank';a.rel='noopener noreferrer';
-      // Chains carry the same チェーン店 pill as the 一覧 list, beside the name.
-      if(isChainItem(item)){const row=el('div','recommend-name-row');row.append(a,el('span','recommend-chain-pill','チェーン店'));main.append(row);}
-      else main.append(a);
+      // Chains carry the same チェーン店 pill as the 一覧 list, right of the kind.
+      const typeRow=el('div','recommend-type-row');
+      if(cuisine)typeRow.append(el('div','recommend-card-type',cuisine));
+      if(isChainItem(item))typeRow.append(el('span','recommend-chain-pill','チェーン店'));
+      if(typeRow.childNodes.length)main.append(typeRow);
+      const a=el('a','recommend-venue',item.name);a.href=recommendationMapsUrl(item);a.target='_blank';a.rel='noopener noreferrer';main.append(a);
       const distanceText=Number.isFinite(item.distanceMeters)?`約${formatDistance(item.distanceMeters)}`:'';
       if(distanceText){
         const badge=el('span','recommend-distance-pill');

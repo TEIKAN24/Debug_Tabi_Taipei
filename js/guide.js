@@ -1,5 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
-/* v30.9.150 — align the reverse-side directory bubbles and restore adaptive scroll hints.
+/* v30.9.172 — scroll lists under bubble tabs fade at the bottom and an open block fits on screen;
+   撮影スポット has two bubbles; the dictionary's dimmed page reaches every screen edge.
+   v30.9.150 — align the reverse-side directory bubbles and restore adaptive scroll hints.
    v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
    v30.9.118 — back-to-top button removed.
    v30.9.148 — route horizontal gestures inside bubble panels and preserve food drawer swipe.
@@ -3107,13 +3109,17 @@ update();
     const visibleCount=Math.min(rows.length,fullRows+1);
     const h=rows.slice(0,visibleCount).map(rowHeight);
     const natural=h.reduce((total,height,i)=>total+height*(i===fullRows?.48:1),0)+4;
-    const cap=Math.max(260,Math.min(window.innerHeight*.72,560));
+    // v30.9.172: an open block (heading, bubbles, intro and this list) fits on screen.
+    const block=panel.closest('details.root-accordion');
+    const overhead=block?block.getBoundingClientRect().height-body.getBoundingClientRect().height:0;
+    const room=window.innerHeight-overhead-32;
+    const cap=Math.max(200,Math.min(window.innerHeight*.72,560,room));
     // Expanded lists contain taller shop rows (name, tags, notes). Reserve
     // a larger inner viewport for those, without affecting page scrolling.
     const expandedTarget=rows.some(row=>row.open)
       ? Math.min(480,Math.max(275,window.innerHeight*.56))
       : 0;
-    const max=Math.round(Math.min(cap,Math.max(natural,expandedTarget)));
+    const max=Math.round(Math.min(cap,Math.max(natural,Math.min(expandedTarget,cap))));
     panel.classList.add('four-row-teaser');
     body.classList.add('teaser-scroll-body');
     if(body.style.maxHeight!==max+'px')body.style.setProperty('max-height',max+'px','important');
@@ -3293,4 +3299,66 @@ update();
     });
   });
   panels.forEach(panel=>sync(panel));
+})();
+
+
+/* =================== JS 32: bubble-tab lists — fade and fit v30.9.172 =================== */
+(()=>{
+  'use strict';
+  const guide=document.getElementById('guide');
+  if(!guide)return;
+  // Plain list panels scroll themselves (the area lists are handled by JS 21).
+  const panels=()=>[...guide.querySelectorAll('details.root-accordion .tab-panel:not(.four-row-teaser)')];
+  function fade(panel){
+    const can=panel.scrollHeight>panel.clientHeight+5;
+    panel.classList.toggle('list-can-scroll',can);
+    panel.dataset.listEnd=can&&panel.scrollTop+panel.clientHeight>=panel.scrollHeight-8?'true':'false';
+  }
+  function fit(panel){
+    if(panel.hidden||!panel.getClientRects().length)return;
+    const block=panel.closest('details.root-accordion');
+    if(!block?.open)return;
+    panel.style.removeProperty('max-height');panel.style.removeProperty('overflow-y');
+    const parsed=parseFloat(getComputedStyle(panel).maxHeight);
+    const base=Number.isFinite(parsed)?parsed:Infinity;
+    const overhead=block.getBoundingClientRect().height-panel.getBoundingClientRect().height;
+    const room=window.innerHeight-overhead-32;
+    if(room<Math.min(base,panel.scrollHeight)){
+      panel.style.setProperty('max-height',Math.max(200,Math.round(room))+'px','important');
+      panel.style.setProperty('overflow-y','auto','important');
+    }
+    fade(panel);
+  }
+  const all=()=>requestAnimationFrame(()=>panels().forEach(fit));
+  panels().forEach(panel=>panel.addEventListener('scroll',()=>fade(panel),{passive:true}));
+  guide.addEventListener('toggle',all,true);
+  const observer=new MutationObserver(all);
+  guide.querySelectorAll('.venue-directory-section .tab-pills button.tab-pill').forEach(tab=>observer.observe(tab,{attributes:true,attributeFilter:['aria-selected']}));
+  window.addEventListener('resize',all,{passive:true});
+  window.addEventListener('load',all,{once:true});
+  all();
+})();
+
+
+/* =================== JS 33: dictionary full-bleed v30.9.172 =================== */
+(()=>{
+  'use strict';
+  // While the floating dictionary is open the page behind it (blurred and
+  // dimmed) should show under the status bar and the home indicator too, so
+  // the browser is not handed a theme colour to paint those bars with.
+  const body=document.body;
+  let meta=null,anchor=null;
+  const sync=()=>{
+    const open=body.classList.contains('food-drawer-open');
+    if(open&&!meta){
+      meta=document.querySelector('meta[name="theme-color"]');
+      if(meta){anchor=meta.nextSibling;meta.remove();}
+    }else if(!open&&meta){
+      // The theme may have been switched meanwhile (the switch sits above the window).
+      meta.content=document.documentElement.dataset.theme==='light'?'#F7F8F7':'#111417';
+      document.head.insertBefore(meta,anchor&&anchor.parentNode===document.head?anchor:null);
+      meta=null;anchor=null;
+    }
+  };
+  new MutationObserver(sync).observe(body,{attributes:true,attributeFilter:['class']});
 })();
