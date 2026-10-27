@@ -1,5 +1,6 @@
+/* TAIPEI CITY GUIDE — v30.9.177 CSS maintenance.
+   Original selector order, breakpoints, cascade and theme rules preserved. */
 /* v30.9.113 maintenance — removed rules for markup that no longer exists, overridden declarations and their orphaned notes; cascade order preserved. */
-/* v30.9.51 maintenance — removed guaranteed-overridden top-level declarations and empty rules; cascade order preserved. */
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source rules unchanged. */
 
 /* =================== CSS 01: base =================== */
@@ -328,7 +329,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 #food-explorer{ -webkit-text-size-adjust: 100%; }
 #food-explorer{
     font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
-    
+
   }
 #food-explorer .search-shell{
     display: flex; align-items: center; gap: 10px;
@@ -480,7 +481,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .venue-directory-section li.venue-row::marker {content:""}
 .site-content .venue-directory-section .venue-row-index {
   padding-top:3px;
-  
+
   line-height:1.7;
   font-weight:650;
   letter-spacing:.035em;
@@ -491,7 +492,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .venue-directory-section .venue-name-line {
 
   flex-wrap:wrap;
-  
+
   line-height:1.5;
 }
 .site-content .venue-directory-section .venue-name-line a.venue-main-link {
@@ -525,7 +526,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   border-radius:5px;
   background:#2B353D;
   color:#CBD6DC;
-  
+
   font-weight:550;
   line-height:1.45;
   overflow-wrap:anywhere;
@@ -539,19 +540,19 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   color:#F4A89B;
 }
 .site-content .venue-directory-section .venue-extra-note {
-  
+
   line-height:1.6;
   color:var(--text-caption);
 }
 .site-content .venue-directory-section .venue-secondary-links {
-  
+
   font-size:11px;
   line-height:1.6;
 }
 .site-content .venue-directory-section .venue-secondary-links a {
 
   border-bottom:1px solid rgba(169,216,243,.42);
-  
+
 }
 .site-content .venue-directory-section .venue-secondary-links a:hover {color:#D2ECFC;border-bottom-color:currentColor}
 
@@ -821,7 +822,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .destination-card .tab-panel ol.numbered-list:last-child {border-left-color:transparent;}
 /* Keelung and Yehliu: distinguish how to get there from places to visit. */
 .site-content .destination-info-group {
-  
+
   min-width:0;
 }
 .site-content .destination-info-title {
@@ -880,7 +881,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .travel-twac .bulleted-list em {font-size:12px;}
 /* Nearby: one surface per destination, not stacked bordered boxes. */
 .site-content .destination-card .tab-panel {
-  
+
   border-radius:0;padding:12px 2px 10px;
 }
 .site-content .destination-card .tab-panel details.nested-accordion {
@@ -1112,7 +1113,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .venue-directory-section .venue-tag--caution {
  background-image:none!important;
  border:1px solid var(--outline-white)!important;box-shadow:none!important;
- 
+
 }
 .site-content .venue-directory-section li.venue-row,
 .site-content .destination-spots > ol.numbered-list,
@@ -1293,12 +1294,12 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 .quick-nav > .nav-button:nth-child(5) {--nav-rgb:204,145,172;--nav-accent:#CC91AC;}
 .quick-nav > .nav-button:nth-child(6) {--nav-rgb:196,169,104;--nav-accent:#C4A968;}
 .quick-nav > .nav-button:nth-child(n) {
-  
+
   border-top:2px solid var(--nav-accent)!important;
-  
+
 }
 .quick-nav > .nav-button:nth-child(n):hover {
-  
+
   border-top-color:var(--nav-accent)!important;
 }
 .quick-nav > .nav-button:nth-child(n):focus-visible {
@@ -1473,7 +1474,7 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
 /* Make different routes in one bubble visibly separate without introducing nested fills. */
 #guide .sights-day-trips .daytrip-option--alternative {
   --choice-accent:#888;
-  
+
   padding:13px 12px 14px!important;
   margin:10px 0 15px!important;
 }
@@ -1494,7 +1495,7 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
   letter-spacing:-.025em;
   font-weight:790;
   color:var(--text-heading,#F7F7F7);
-  
+
   scroll-margin-top:20px;
 }
 #guide .sights-day-trips > h2 strong {font-size:inherit;font-weight:inherit;color:inherit;}
@@ -1502,7 +1503,7 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
    Route-specific blue (rail) and yellow (taxi) timeline lines remain unchanged. */
 #guide .sights-day-trips .daytrip-option--alternative {
   background-color:transparent !important;
-  
+
 }
 #guide .sights-day-trips .daytrip-option--bus-choice {
   background-image:linear-gradient(180deg,
@@ -1816,7 +1817,7 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
   font-size:12px!important;line-height:1.7!important;
   margin:0 0 14px!important;
 }
-#guide .emergency-contact-list {display:grid;grid-template-columns:1fr;gap:10px;}
+#guide .emergency-contact-list {display:grid;}
 #guide a.emergency-contact-card {
   display:flex;flex-direction:column;gap:13px;
   min-width:0;min-height:110px;box-sizing:border-box;
@@ -1837,14 +1838,14 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
   border-color:rgba(255,255,255,.32)!important;
 }
 #guide a.emergency-contact-card:focus-visible {outline:2px solid #E9E9E9;outline-offset:2px;}
-#guide .emergency-card-heading {display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;}
-#guide .emergency-card-name {color:#F3F3F3;font-size:14px;font-weight:750;line-height:1.5;}
-#guide .emergency-card-reason {color:#A9A9A9;font-size:11px;line-height:1.45;text-align:right;}
-#guide .emergency-card-call-row {display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
-#guide .emergency-phone-number {font-size:34px;font-weight:800;letter-spacing:.02em;line-height:1.08;font-variant-numeric:tabular-nums;color:#FAFAFA;}
-#guide .emergency-card-action {display:inline-flex;gap:7px;align-items:center;color:#DEDEDE;font-size:12px;font-weight:700;white-space:nowrap;padding-bottom:3px;}
+#guide .emergency-card-heading {display:flex;align-items:center;justify-content:space-between;min-width:0;}
+#guide .emergency-card-name {color:#F3F3F3;font-weight:750;}
+#guide .emergency-card-reason {color:#A9A9A9;text-align:right;}
+#guide .emergency-card-call-row {display:flex;align-items:flex-end;justify-content:space-between;}
+#guide .emergency-phone-number {font-weight:800;font-variant-numeric:tabular-nums;color:#FAFAFA;}
+#guide .emergency-card-action {display:inline-flex;gap:7px;align-items:center;color:#DEDEDE;font-weight:700;white-space:nowrap;padding-bottom:3px;}
 #guide .emergency-card-action svg {display:block;flex:none;}
-#guide .emergency-support-desc {font-size:11.5px;line-height:1.7;color:#A8A8A8;}
+#guide .emergency-support-desc {color:#A8A8A8;}
 @media(min-width:670px) {
   #guide .emergency-contact-list {grid-template-columns:repeat(2,minmax(0,1fr));}
 }
@@ -1895,7 +1896,6 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
   height:0!important;
   border:0!important;
   border-top:1px solid #333!important;
-  margin:18px 0 16px!important;
   opacity:1!important;
 }
 #guide .sights-day-trips {
@@ -1923,7 +1923,7 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
 #guide #food-explorer .food-entry-left { flex:1 1 auto;min-width:0; }
 #guide #food-explorer .food-entry-toggle .result-meta {flex:0 0 auto;}
 #guide #food-explorer .food-desc-full {
-  
+
   -webkit-mask-image:none;mask-image:none;
 }
 #guide #food-explorer .result.is-expanded .desc {line-height:1.7;}
@@ -1960,7 +1960,7 @@ body.food-drawer-open .food-drawer-backdrop {
 #guide #food-search .food-drawer-scroll {
   padding:9px 12px calc(22px + env(safe-area-inset-bottom));
   -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
-  
+
 }
 
  /* The drawer toolbar already says FOOD INDEX. */
@@ -1997,7 +1997,7 @@ body > footer {
 }
 /* Also float the back-to-top with the main page, without changing its own fade/offset rules. */
 #guide #food-search.food-drawer {
-  
+
   visibility:hidden;pointer-events:none;
   will-change:transform;
 }
@@ -2014,7 +2014,7 @@ body.food-swipe-active .food-drawer-backdrop,
 body.food-drawer-open .food-drawer-backdrop {
   visibility:visible;
   pointer-events:none;
-  
+
 }
 body.food-swipe-dragging {user-select:none;-webkit-user-select:none;}
 body.food-drawer-open .food-drawer-backdrop {pointer-events:auto;}
@@ -2143,10 +2143,10 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 }
 #guide #food-search #food-explorer .results-head h3 {font-size:14px;}
 #guide #food-search #food-explorer #results {
-  
+
   overflow-x:hidden!important;
   scrollbar-width:thin;
-  
+
 }
 #guide #food-search #food-explorer .result {
   padding:13px 1px!important;
@@ -2219,10 +2219,10 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 }
 #guide #food-search #food-explorer .quick { align-items:center!important; }
 #guide #food-search #food-explorer #results {
-  
+
   /* Allow resizeResultViewport()'s measured inline max-height to apply. */
   max-height:none;
-  
+
   -webkit-overflow-scrolling:touch;
 }
 
@@ -2402,7 +2402,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .airport-route-selector .airsel-route-fields .sel-value{
  font-family:inherit;
  outline:none;
- 
+
 }
 
 #guide .airport-route-selector .route-head{margin-bottom:12px;border-top-color:#292929;}
@@ -2418,11 +2418,11 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 /* Flat two-row selector. The actual transit timeline below retains its ring language. */
 #guide .airport-route-selector .airsel-route-fields{
  border-radius:0!important;
- 
+
 }
 #guide .airport-route-selector .airsel-route-fields::before{content:none!important;}
 #guide .airport-route-selector .airsel-route-fields .selrow{column-gap:10px;
- 
+
  align-items:center;position:relative;
 }
 #guide .airport-route-selector .airsel-route-fields .selrow--origin::after{position:absolute;bottom:0;left:3px;right:0;height:1px;background:#333;
@@ -2526,7 +2526,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 /* Lightweight single disclosure with results hidden until a valid route is selected. */
 #guide .airport-route-selector .airsel-route-disclosure{
  box-sizing:border-box;display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;color:#F3F3F3;text-align:left;cursor:pointer;
- 
+
 }
 #guide .airport-route-selector .airsel-route-disclosure[hidden],#guide .airport-route-selector .airsel-results-clip[hidden]{display:none!important}
 #guide .airport-route-selector .airsel-route-disclosure:hover{border-color:#626262}
@@ -2589,7 +2589,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 }
 #guide .airport-route-selector .airsel-route-fields .selrow:focus-within{
  border-color:#D4D4D4!important;
- 
+
 }
 
 #guide .airport-route-selector .airsel-route-fields .sel-label{letter-spacing:.015em!important;}
@@ -2597,12 +2597,12 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 
  color:#F4F4F4!important;
  letter-spacing:-.01em!important;
- 
+
 }
 
 #guide .airport-route-selector .airsel-route-fields .chev{
  border-color:#9A9A9A!important;
- 
+
 }
 #guide .airport-route-selector .airsel-route-fields .swap{
  position:absolute!important;right:auto!important;
@@ -2967,16 +2967,12 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   #guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices .airsel-ground-choice{padding-inline:9px}
   #guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices span{font-size:10.5px}
 }
-
-/* v30.4: preserve layout during swipe animations, match Airport Access motion. */
 #guide .sights-day-trips .daytrip-destination-panel .tab-panels{overflow-x:clip;}
 #guide .sights-day-trips .daytrip-transport{touch-action:pan-y;}
 #guide .sights-day-trips .daytrip-destination-panel .tab-panel{touch-action:pan-y;}
 @media (prefers-reduced-motion: reduce){
   #guide .sights-day-trips .daytrip-destination-panel .tab-panel{animation:none!important;}
 }
-
-/* v30.5 — Safari-friendly entrance animation for daytrip transport content. */
 @keyframes daytrip-slide-enter{
  from{opacity:.14;transform:translate3d(var(--daytrip-enter-from,68px),0,0)}
  to{opacity:1;transform:translate3d(0,0,0)}
@@ -2987,7 +2983,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 }
 #guide .sights-day-trips .daytrip-tra-mark{
  display:inline-flex;align-items:center;justify-content:center;flex:none;
- 
+
 }
 #guide .sights-day-trips .daytrip-tra-logo{width:21px;height:21px;object-fit:contain;display:block}
 #guide .sights-day-trips .daytrip-tra-fallback{display:none;font-size:9px;font-weight:800;letter-spacing:-.025em;color:#93B3FF}
@@ -2999,8 +2995,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 }
 #guide .sights-day-trips .daytrip-tra-mark.logo-unavailable .daytrip-tra-logo{display:none}
 #guide .sights-day-trips .daytrip-tra-mark.logo-unavailable .daytrip-tra-fallback{display:block}
-
-/* v30.6 — single, monochrome TRA mark at route-heading level. */
 #guide .sights-day-trips .daytrip-tra-mark .daytrip-tra-logo{
   filter:grayscale(1) brightness(0) invert(1);
   -webkit-filter:grayscale(1) brightness(0) invert(1);
@@ -3012,9 +3006,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .sights-day-trips .daytrip-destination-panel .tab-pills.daytrip-transport{
   overscroll-behavior-x:contain;
 }
-
-/* v30.7 — Day-trip heading cleanup + guaranteed white outline icons.
-   TRA uses a self-contained inline emblem, not the Airport's image readiness gate. */
 #guide .sights-day-trips .daytrip-company-mark:not(.daytrip-tra-mark) svg{
   color:#F7F7F7;stroke:#F7F7F7;fill:none;opacity:1;
   display:block;width:20px;height:20px;
@@ -3037,8 +3028,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 @media(prefers-reduced-motion:reduce){
  #guide .sights-day-trips .daytrip-destination-panel .tab-panels > .tab-panel.daytrip-switch-ghost{animation:none!important;will-change:auto;}
 }
-
-/* v30.7 — consistent outbound reservation / official-link pill */
 #guide a.external-action-link,
 #guide .venue-secondary-links a {
   display:inline-flex;align-items:center;justify-content:center;gap:5px;
@@ -3083,8 +3072,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark.logo-unavailable > .daytrip-tra-fallback {
   display:block!important;
 }
-
-/* v30.9 — airport bus fare can wrap inside the three compact fact columns. */
 #guide #airport-route-selector .facts .fact-value,
 #guide .airport-route-selector:not(.daytrip-airport-reuse) .facts .fact-value{
  white-space:normal!important;overflow-wrap:anywhere;word-break:normal;line-height:1.45;min-width:0;
@@ -3092,8 +3079,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 /* Same gold route hue for taxi across Airport Access / Jiufen / day trips. */
 #guide{--taipei-taxi-route:#D9B65F;}
 #guide .sights-day-trips .daytrip-bus-route[data-route="taxi"] .timeline-leg[style*="D9B65F"]::before{background:var(--taipei-taxi-route)!important;}
-
-/* v30.9.3 — start navigation to each of the four day-trip destinations. */
 #guide .sights-day-trips .daytrip-destination-panel-heading{
   display:grid;grid-template-columns:minmax(0,1fr) auto;
   align-items:center;column-gap:9px;row-gap:3px;
@@ -3134,8 +3119,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 /* Airport transport changes render one route at a time, with no old-route ghost. */
 #guide #airport-route-selector .airsel-results-inner{isolation:isolate;}
 #guide #airport-route-selector.is-transport-switching .route-panel{pointer-events:none;}
-
-/* v30.9.5 — prevent completed airport routes from flashing before drawing begins. */
 #guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-stop,
 #guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg .leg-content{opacity:0!important;}
 #guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before{
@@ -3152,10 +3135,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 #guide .sights-day-trips .daytrip-destination-panel .daytrip-transport + .tab-panels > .tab-panel {
   border-top:0!important;
 }
-
-/* v30.9.7 — area-only swipe affordance.
-   Reuse the existing adaptive data-scroll-fade state: fade only when the
-   strip still has off-screen tabs; no extra arrow or scrolling behavior. */
 #guide .area-directory-section .tab-pills[data-scroll-fade="end"] {
   -webkit-mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 30px),transparent 100%);
   mask-image:linear-gradient(to right,#000 0%,#000 calc(100% - 30px),transparent 100%);
@@ -3297,8 +3276,6 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
     padding-top:1px!important;
   }
 }
-
-/* v30.9.22 — only the three travel-pass descriptions and official links. */
 #guide details.travel-passes {
   margin:10px 0 18px;border-radius:12px;overflow:hidden;
   border:1px solid #454545!important;background:transparent!important;
@@ -3692,8 +3669,6 @@ html[data-theme="light"] .quick-nav > .nav-button:nth-child(n),
 html[data-theme="light"] .quick-nav > .nav-button:nth-child(n):hover{
  border-top:1px solid #D7DDE0!important;
 }
-
-/* v30.9.30: Light-theme route pictograms and accessible enlarged cost/time */
 html[data-theme="light"] #guide .sights-day-trips .daytrip-company-mark:not(.daytrip-tra-mark) svg{
   color:#253940!important;stroke:#253940!important;fill:none!important;opacity:1!important;
 }
@@ -3717,8 +3692,6 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback
     font-size:12.96px;letter-spacing:-.035em;
   }
 }
-
-/* v30.9.31 — compact secondary daytrip disclosures and light hero wordmark */
 #guide .sights-day-trips .daytrip-fold-section{
   padding:0!important;margin:0!important;border-top:1px solid #333!important;
 }
@@ -3876,18 +3849,11 @@ html[data-theme="light"] #guide .travel-caution .travel-topic-icon {
     background:#F7F8F7!important;
   }
 }
-
-/* v30.9.36: Light theme destinations should be solid graphite dots,
-   not graphite centers surrounded by the dark theme's white ring. */
 html[data-theme="light"] #guide .airport-route-selector .timeline-stop.end .node {
   background:#35454D!important;
   border-color:#35454D!important;
   box-shadow:none!important;
 }
-
-/* v30.9.39 — Airport recommended-label contrast in LIGHT mode only.
-   Saturated ochre with readable contrast on the pale surface.
-   The dark-mode palette remains unchanged. */
 
 /* =================== v30.9.40: airport LIGHT text colors ===================
    Color-only adjustment; preserves dark mode and route functionality. */
@@ -3930,14 +3896,12 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge 
   border-color:#D6AE65!important;
 }
 
-/* v30.9.42 — temporary appearance control aligned with the masthead. */
-
 .hero.wrapper .theme-preview-toggle{
   position:absolute!important;z-index:15!important;
 
   padding:0!important;gap:0!important;line-height:1!important;
   display:flex!important;align-items:center!important;justify-content:center!important;
-  
+
   transition:background .2s,color .2s,border-color .2s,box-shadow .2s!important;
 }
 .hero.wrapper .theme-preview-toggle svg{flex:none;display:block;}
@@ -3950,7 +3914,7 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge 
 
   border-radius:999px!important;
   border:1px solid rgba(173,181,186,.24)!important;
-  
+
   color:#88949b!important;
 }
 .hero.wrapper .theme-preview-toggle:hover{
@@ -4089,7 +4053,6 @@ html[data-theme="light"] .hero h1.hero-masthead .hero-brandline{
   -webkit-text-fill-color:#68747B!important;
   background:transparent!important;
 }
-/* v30.9.118: light mode — mint a little greener, gray letters a little deeper. */
 html[data-theme="light"] .hero h1.hero-masthead .hero-lockup,
 html[data-theme="light"] .hero h1.hero-masthead .hero-lockup-word{
   color:#9C9EA2!important;
@@ -4122,13 +4085,13 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
 .hero h1.hero-masthead .hero-lockup-word {
   font-weight:520!important;
   line-height:1!important;
-  
+
   align-items:baseline!important;
   white-space:nowrap;
 }
 .hero h1.hero-masthead .hero-lockup-word .ta {
   font-weight:inherit!important;
-  
+
 }
 .hero h1.hero-masthead .hero-lockup-slash {
   width:.22em!important;
@@ -4303,7 +4266,7 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-mark img
   -webkit-overflow-scrolling:touch;
   scrollbar-width:thin;
   scrollbar-color:#646464 transparent;
-  
+
 }
 /* Mask only the rows (never the region title) until the actual scroll-end. */
 #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body[data-teaser-end="true"]{
@@ -4537,34 +4500,22 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:
     transition:none!important;
   }
 }
-
-/* v30.9.52 — longer restaurant/area teaser: retain the pinned headings,
-   inner scroll and bottom-end fade, but show about five entries at once. */
 #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body.teaser-can-scroll:not([data-teaser-end="true"]){
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)!important;
   mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)!important;
 }
-
-/* v30.9.53 — compact TWAC official-site badge only; all other links unchanged. */
 #guide .travel-twac a.external-action-link {
   padding-inline:5px!important;
   gap:3px!important;
   width:max-content!important;
   max-width:100%!important;
 }
-
-/* v30.9.54 — emergency direct-dial support cards, consistent with existing style. */
 #guide a.emergency-contact-card--assistance{gap:8px;min-height:0;padding:15px 17px 16px;}
 #guide a.emergency-contact-card--assistance .emergency-phone-number{font-size:clamp(19px,5vw,27px);font-weight:750;letter-spacing:0;overflow-wrap:anywhere;}
 #guide a.emergency-contact-card--assistance .emergency-card-call-row{align-items:center;gap:8px;}
-#guide .emergency-official-links{grid-column:1/-1;margin:0;padding:0 3px 2px;}
+#guide .emergency-official-links{grid-column:1/-1;padding:0 3px 2px;}
 #guide .emergency-official-links a{font-size:11.5px;line-height:1.5;text-decoration:underline;text-underline-offset:3px;color:#AFCDD7;}
 html[data-theme="light"] #guide .emergency-official-links a{color:#245E82;}
-
-/* v30.9.55 — the original category summary is duplicated in a separate pinned
-   heading while expanded. Visibility:hidden kept its 46–68px layout height,
-   leaving an apparent blank row before item 01. Completely take that duplicate
-   summary out of flow while the accessible pinned button remains available. */
 #guide .venue-directory-section .tab-panel .teaser-scroll-body > details.guided-title-pinned > summary {
   display:none!important;
 }
@@ -4573,8 +4524,6 @@ html[data-theme="light"] #guide .emergency-official-links a{color:#245E82;}
 #guide .area-directory-section .tab-panel .teaser-scroll-body > details.guided-title-pinned > .indented {
   margin-top:4px!important;
 }
-
-/* v30.9.57 — smoother dictionary swipe and consistent Safari chrome. */
 #guide #food-search.food-drawer:focus,
 #guide #food-search.food-drawer:focus-visible{outline:none!important;}
 /* The full document is very tall. Translating it a whole drawer width and
@@ -4591,10 +4540,6 @@ html:has(body.food-swipe-active),
 body.food-swipe-active {background:#0d0d0d!important;}
 html[data-theme="light"]:has(body.food-swipe-active),
 html[data-theme="light"] body.food-swipe-active {background:#f7f8f7!important;}
-
-/* v30.9.58 — Food Index safe-area edge fades, matching its background.
-   Earlier versions suppress ::before/::after on the drawer, so explicitly
-   restore the two non-interactive gradient layers here. */
 #guide #food-search.food-drawer::before,
 #guide #food-search.food-drawer::after {
   content:""!important;
@@ -4619,12 +4564,6 @@ html[data-theme="light"] #guide #food-search.food-drawer::before {
 html[data-theme="light"] #guide #food-search.food-drawer::after {
   background:linear-gradient(to top,#F7F8F7 0%,transparent 100%)!important;
 }
-
-/* v30.9.59 — full-viewport Safari drawer chrome bridge.
-   Safari can sample the root canvas and the exposed/dimmed home page for its
-   translucent top/bottom chrome. During either drawer gesture use one canvas
-   color and paint non-interactive, viewport-wide fades ABOVE the scrim.
-   The layers are removed automatically when the swipe-active class clears. */
 html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active)) {
   --drawer-chrome-edge:#0D0D0D;
   background-color:#0D0D0D!important;
@@ -4677,10 +4616,6 @@ body.recommend-swipe-active .recommend-drawer,
 body.food-swipe-active #guide #food-search.food-drawer {
   box-shadow:none!important;
 }
-
-/* v30.9.65 — compact category pills in the right-hand Food Index.
-   Match the 30px mobile / 32px desktop recommendation chips. This is
-   deliberately scoped to the dictionary's category bar only. */
 #guide #food-search #food-explorer .filters .pill {
   display:inline-flex!important;
   align-items:center!important;
@@ -4715,10 +4650,6 @@ body.food-swipe-active #guide #food-search.food-drawer {
   position:sticky;top:0;z-index:3;background:#0D0D0D!important;
 }
 html[data-theme="light"] #guide .venue-directory-section .tab-panel .teaser-scroll-body > details[open] > summary{background:#F7F8F7!important;}
-
-/* v30.9.133 — five chapters share one heading set: a number line (01 · TRAVEL),
-   the title and a one-line lead, with the same divider and spacing between chapters.
-   Headings inside a chapter (空港アクセス, 少し足を延ばして) sit one level below. */
 #guide hr.chapter-divider{margin:40px 0 28px!important;}
 #guide .chapter-eyebrow{
   margin:0 0 6px!important;padding:0!important;
@@ -4739,10 +4670,6 @@ html[data-theme="light"] #guide .venue-directory-section .tab-panel .teaser-scro
 }
 html[data-theme="light"] #guide .chapter-eyebrow{color:#5E6B72!important;}
 html[data-theme="light"] #guide .chapter-lead{color:#5E6B72!important;}
-
-/* v30.9.136 — 🏮 夜市: one tab per night market (same bubbles as 注目の街歩きエリア).
-   Each tab: name, who it suits, 最寄り駅 (line-coloured number + yellow exit) /
-   営業時間 / 混雑時間帯, 特徴 chips and a full-width さっそく出発！ button (Maps route). */
 #guide #night-markets-section #night-markets-tabs .night-market-panel{padding:22px 4px 6px!important;max-height:none!important;overflow:visible!important;}
 #guide #night-markets-section #night-markets-tabs .nm-title{margin:0!important;font-size:20px!important;font-weight:800!important;line-height:1.3!important;letter-spacing:.02em;color:#F2F2F2!important;}
 #guide #night-markets-section #night-markets-tabs .nm-lead{margin:14px 0 0!important;font-size:13px!important;line-height:1.75!important;color:#8E8E8E!important;}
@@ -4769,8 +4696,6 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-f
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-info dd{color:#202020!important;}
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-features li{background:#ECECEC!important;color:#4A4A4A!important;}
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-go{background:#222222!important;color:#FFFFFF!important;}
-
-/* v30.9.140 — Night-market signature dishes, source-aligned with food/foods.csv. */
 #guide #night-markets-section #night-markets-tabs .nm-foods{margin:28px 0 0!important;}
 #guide #night-markets-section #night-markets-tabs .nm-foods-heading{
   display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
@@ -4796,21 +4721,16 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-f
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-foods-list>li{background:#F0F0F0!important;}
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-food-zh{color:#242424!important;}
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-food-ja{color:#5B6064!important;}
-
-/* v30.9.141 — 名物: three equal tiles between 特徴 and さっそく出発！ (replaces the
-   ここで食べたい list). */
 #guide #night-markets-section #night-markets-tabs .nm-specialty-label{margin:18px 0 8px!important;}
 #guide #night-markets-section #night-markets-tabs .nm-specialties{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0!important;padding:0!important;list-style:none!important;}
 #guide #night-markets-section #night-markets-tabs .nm-specialties>li{
-  display:flex;align-items:center;justify-content:center;min-height:46px;margin:0!important;padding:6px 3px!important;box-sizing:border-box;
+  display:flex;align-items:center;justify-content:center;margin:0!important;box-sizing:border-box;
   border-radius:6px;background:#3A3A3A!important;color:#EEEEEE!important;
   font-size:clamp(13.5px,4vw,15px)!important;font-weight:500;line-height:1.3!important;text-align:center;letter-spacing:.02em;overflow-wrap:anywhere;list-style:none!important;
 }
 #guide #night-markets-section #night-markets-tabs .nm-specialties>li::before,#guide #night-markets-section #night-markets-tabs .nm-specialties>li::marker{content:none!important;}
 #guide #night-markets-section #night-markets-tabs .nm-specialties + .nm-go{margin-top:14px!important;}
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialties>li{background:#E9E9E9!important;color:#2A2A2A!important;}
-
-/* v30.9.142 — 名物 tiles are buttons that open the food dictionary (same look). */
 #guide #night-markets-section #night-markets-tabs .nm-specialties>li{display:block!important;min-height:0!important;padding:0!important;background:none!important;}
 #guide #night-markets-section #night-markets-tabs .nm-specialty{
   display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;margin:0;padding:6px 3px;box-sizing:border-box;
@@ -4824,11 +4744,6 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-s
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty{background:#E9E9E9;color:#2A2A2A;}
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty:active{background:#DCDCDC;}
 @media (hover:hover){html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty:hover{background:#E0E0E0;}}
-
-/* v30.9.143 — the food dictionary is a floating window pulled in from the right
-   (same gesture), with rounded corners and margins over the dimmed page.
-   Inside: title, search (with clear), 常用字リスト panel, 料理一覧 with a gold glow
-   fixed at the top of the list and a fade at the bottom. */
 body #guide #food-search.food-drawer.is-floating{
   inset:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px)) auto!important;
   width:min(calc(100vw - 24px),440px)!important;max-width:none!important;height:auto!important;
@@ -4860,42 +4775,39 @@ body #guide #food-search.food-drawer.is-floating .clear{flex:none;display:none!i
 body #guide #food-search.food-drawer.is-floating .clear.visible{display:inline-flex!important;}
 body #guide #food-search.food-drawer.is-floating .food-tools{position:relative;margin:12px 0 0;z-index:20;}
 body #guide #food-search.food-drawer.is-floating .food-tools-toggle{
-  display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:0 12px 0 14px;border:1px solid #444;border-radius:999px;background:transparent;
-  color:#DADADA;font:inherit;font-size:13px;font-weight:600;letter-spacing:.04em;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  display:inline-flex;align-items:center;border:1px solid #444;border-radius:999px;background:transparent;
+  color:#DADADA;font:inherit;font-weight:600;letter-spacing:.04em;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 body #guide #food-search.food-drawer.is-floating .food-tools-toggle .food-tools-chevron{transition:transform .2s ease;}
 body #guide #food-search.food-drawer.is-floating .food-tools-toggle[aria-expanded="true"] .food-tools-chevron{transform:rotate(180deg);}
 body #guide #food-search.food-drawer.is-floating .food-tools-panel{
-  position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:30;box-sizing:border-box;
-  padding:16px 16px 18px;border:1px solid #3A3A3A;border-radius:18px;background:#111111;box-shadow:0 18px 40px rgba(0,0,0,.55);
+  position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:30;box-sizing:border-box;border:1px solid #3A3A3A;border-radius:18px;background:#111111;box-shadow:0 18px 40px rgba(0,0,0,.55);
 }
 body #guide #food-search.food-drawer.is-floating .food-tools-panel[hidden]{display:none!important;}
-body #guide #food-search.food-drawer.is-floating .food-tools-label{margin:0 0 12px!important;font-size:13px!important;line-height:1.4!important;color:#BDBDBD!important;letter-spacing:.04em;}
+body #guide #food-search.food-drawer.is-floating .food-tools-label{margin:0 0 12px!important;line-height:1.4!important;color:#BDBDBD!important;letter-spacing:.04em;}
 body #guide #food-search.food-drawer.is-floating .food-tools-label + .quick{margin-top:0!important;}
 body #guide #food-search.food-drawer.is-floating .quick,body #guide #food-search.food-drawer.is-floating .food-chars{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:0!important;padding:0!important;}
-body #guide #food-search.food-drawer.is-floating .food-chars{margin:12px 0 20px!important;}
+body #guide #food-search.food-drawer.is-floating .food-chars{}
 body #guide #food-search.food-drawer.is-floating .quick>span{display:none!important;}
 body #guide #food-search.food-drawer.is-floating #food-explorer .quick button{
-  justify-self:center;width:52px!important;height:52px!important;min-width:0!important;flex:none!important;padding:0!important;border:1px solid #3D3D3D!important;border-radius:50%!important;background:#161616!important;
-  font-size:25px!important;line-height:1!important;cursor:pointer;
+  justify-self:center;min-width:0!important;flex:none!important;padding:0!important;border:1px solid #3D3D3D!important;border-radius:50%!important;background:#161616!important;line-height:1!important;cursor:pointer;
 }
-body #guide #food-search.food-drawer.is-floating .food-char{
-  height:40px;padding:0;border:1px solid #3D3D3D;border-radius:20px;background:#161616;color:#EDEDED;
-  font:inherit;font-size:16px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;
+body #guide #food-search.food-drawer.is-floating .food-char{padding:0;border:1px solid #3D3D3D;border-radius:20px;background:#161616;color:#EDEDED;
+  font:inherit;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 body #guide #food-search.food-drawer.is-floating #food-explorer .quick button[aria-pressed="true"]{border-color:#F2F2F2!important;background:#2A2A2A!important;}
 body #guide #food-search.food-drawer.is-floating .food-char[aria-pressed="true"]{background:#F2F2F2;border-color:#F2F2F2;color:#111111;}
-body #guide #food-search.food-drawer.is-floating .filters{display:flex!important;flex-wrap:nowrap!important;gap:8px;margin:0!important;padding:0 0 2px!important;overflow-x:auto;scrollbar-width:none;}
+body #guide #food-search.food-drawer.is-floating .filters{display:flex!important;flex-wrap:nowrap!important;margin:0!important;overflow-x:auto;scrollbar-width:none;}
 body #guide #food-search.food-drawer.is-floating .filters::-webkit-scrollbar{display:none;}
 body #guide #food-search.food-drawer.is-floating .filters .pill{
-  flex:none;display:inline-flex!important;align-items:center;gap:4px;min-height:36px;padding:0 12px!important;
-  border:1px solid #3D3D3D!important;border-radius:999px!important;background:#161616!important;color:#E4E4E4!important;font-size:13px!important;white-space:nowrap;box-shadow:none!important;
+  flex:none;display:inline-flex!important;align-items:center;gap:4px;
+  border:1px solid #3D3D3D!important;border-radius:999px!important;background:#161616!important;color:#E4E4E4!important;white-space:nowrap;box-shadow:none!important;
 }
 body #guide #food-search.food-drawer.is-floating .filters .pill .pill-count{color:#A8A8A8!important;}
 body #guide #food-search.food-drawer.is-floating .filters .pill.active{background:#F2F2F2!important;border-color:#F2F2F2!important;color:#111111!important;}
 body #guide #food-search.food-drawer.is-floating .filters .pill.active .pill-count{color:#555555!important;}
 body #guide #food-search.food-drawer.is-floating .food-list{position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;margin:20px 0 0!important;}
-body #guide #food-search.food-drawer.is-floating .results-head{display:flex!important;align-items:baseline;justify-content:space-between;margin:0!important;padding:0 2px 10px!important;border:0!important;}
+body #guide #food-search.food-drawer.is-floating .results-head{display:flex!important;align-items:baseline;justify-content:space-between;margin:0!important;padding:0 2px 10px!important;}
 body #guide #food-search.food-drawer.is-floating .results-head h3{margin:0!important;font-size:14px!important;font-weight:700!important;color:#E8E8E8!important;}
 body #guide #food-search.food-drawer.is-floating .result-count{font-size:14px!important;color:#E8E8E8!important;letter-spacing:.06em;}
 body #guide #food-search.food-drawer.is-floating .food-list::before{
@@ -4935,11 +4847,6 @@ html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result{border-bottom-color:#DDDDDD!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result .dish{color:#1E1E1E!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result .desc,html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result-meta .tag{color:#5E6B72!important;}
-
-/* v30.9.144 — compact floating window (about four dishes visible), centred vertically,
-   95% opaque; the gold glow fades out at both sides. The page behind no longer moves:
-   it is blurred and dimmed by the backdrop's own filter (no background colour, so
-   Safari does not paint solid bars at the top and bottom of the screen). */
 body #guide #food-search.food-drawer.is-floating{
   inset:auto 12px auto auto!important;
   height:min(490px,calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
@@ -4961,10 +4868,6 @@ html body .food-drawer-backdrop{
 html[data-theme="light"] body .food-drawer-backdrop{
   -webkit-backdrop-filter:blur(7px) brightness(.84);backdrop-filter:blur(7px) brightness(.84);
 }
-
-/* v30.9.145 — compact common-character overlay; two rows of difficulty
-   choices, more vertical room for content, and no stationary grey rule
-   against the gold result-list glow. */
 body #guide #food-search.food-drawer.is-floating .search-shell{
   margin-top:9px!important; /* half of v30.9.144's 18px gap */
 }
@@ -5008,10 +4911,6 @@ html[data-theme="dark"] body #guide #food-search.food-drawer.is-floating #food-e
 }
 body #guide #food-search.food-drawer.is-floating .food-tools-panel{padding-bottom:9px!important;}
 body #guide #food-search.food-drawer.is-floating .food-chars{margin-bottom:9px!important;}
-
-/* v30.9.146 — preserve the original gold gradient from v30.9.144.
-   The overlay buttons stay 44px wide on normal phones, and their five
-   columns no longer overrun the popup on narrow phones. */
 @media(max-width:340px){
   body #guide #food-search.food-drawer.is-floating .food-tools-panel{
     padding-left:12px!important;padding-right:12px!important;
@@ -5068,8 +4967,6 @@ body #guide #food-search.food-drawer.is-floating .clear{
   position:relative;z-index:2;touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
 }
-
-/* v30.9.148 — content swipes navigate adjacent bubble tabs; vertical scrolling remains native. */
 #guide .tab-panels.bubble-swipe-content {touch-action:pan-y;}
 
 /* The food results own vertical scrolling and taps, but a deliberate
@@ -5100,10 +4997,6 @@ html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
 }
 /* The existing restaurant directory retains its own vertical momentum scrolling. */
 #food-recommend-section #food-directory-panel {touch-action:pan-y;}
-
-/* v30.9.150 — reverse-side restaurant directory: adaptive bubble alignment
-   and scroll-edge hints. Only scroll behavior and mask change; chip sizes,
-   padding, list height and spacing remain exactly as in v30.9.149. */
 #food-recommend-section .food-directory-tabs::after{
   content:"";
   display:block;
@@ -5123,11 +5016,6 @@ html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
   -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
   mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
 }
-
-/* v30.9.168 — chapter dividers are soft coloured glows instead of grey lines:
-   01 misty blue, 02 warm brown, 03 sage green, 04 grey purple, 05 soft brick red.
-   The glow is the divider's own background (not positioned), so the chapter's
-   number line and title are drawn on top of it; both sides fade out. */
 #guide hr.chapter-glow{
   display:block!important;box-sizing:border-box;height:72px!important;margin:40px -24px -46px!important;padding:0;
   border:0!important;border-radius:0;background:none;color:transparent;opacity:1;
@@ -5135,7 +5023,7 @@ html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
   -webkit-mask-image:linear-gradient(to right,transparent,#000 20%,#000 80%,transparent);
   mask-image:linear-gradient(to right,transparent,#000 20%,#000 80%,transparent);
 }
-#guide > hr.chapter-glow{margin-top:24px!important;}
+#guide > hr.chapter-glow{}
 #guide hr.chapter-glow--travel{--chapter-glow:126,149,170;}
 #guide hr.chapter-glow--gourmet{--chapter-glow:166,124,84;}
 #guide hr.chapter-glow--sights{--chapter-glow:138,158,122;}
@@ -5145,9 +5033,6 @@ html[data-theme="light"] #guide hr.chapter-glow{
   background-image:linear-gradient(to bottom,rgba(var(--chapter-glow),.30) 0,rgba(var(--chapter-glow),.10) 42%,rgba(var(--chapter-glow),0) 100%)!important;
 }
 @media (min-width:600px){#guide hr.chapter-glow{margin-left:-40px!important;margin-right:-40px!important;}}
-
-/* v30.9.170 — the light/dark switch sits above the food dictionary window (it slides
-   and fades with it); in light mode it is 85% opaque over the blurred page. */
 .food-theme-dock{
   position:fixed;z-index:260;right:12px;
   top:max(calc(env(safe-area-inset-top,0px) + 8px),calc(max(calc(12px + env(safe-area-inset-top,0px)),calc(50dvh - 245px)) - 52px));
@@ -5174,27 +5059,16 @@ html[data-theme="light"] .food-theme-dock .theme-preview-toggle{
 #guide hr.chapter-glow--citywalk{margin-top:78px!important;}
 /* 撮影スポット: its own block under 名所・博物館 */
 #guide .photo-spot-section{margin-top:12px;}
-
-/* v30.9.172 — every scrolling list under bubble tabs fades at the bottom while more
-   is below (the area lists already did); the fade goes once the end is reached. */
 #guide .venue-directory-section .tab-panel.list-can-scroll:not([data-list-end="true"]){
   -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 64px),transparent);
   mask-image:linear-gradient(to bottom,#000 calc(100% - 64px),transparent);
 }
-
-/* v30.9.172 — the food dictionary's dimmed, blurred page reaches every screen edge:
-   behind the status bar / Dynamic Island and the home-indicator area too. */
 html body .food-drawer-backdrop{
   top:calc(-1 * max(env(safe-area-inset-top,0px),64px))!important;
   bottom:calc(-1 * max(env(safe-area-inset-bottom,0px),64px))!important;
   left:0!important;right:0!important;height:auto!important;
 }
-
-/* v30.9.174 — more air between the six home bubbles and chapter 01. */
 #guide > hr.chapter-glow{margin-top:64px!important;}
-
-/* v30.9.174 — compact emergency contacts: 110 and 119 side by side, the two
-   assistance lines as slimmer cards, smaller numbers and tighter spacing. */
 #guide .emergency-contact-list{display:grid!important;grid-template-columns:1fr 1fr;gap:10px!important;}
 #guide .emergency-contact-card{margin:0!important;padding:12px 14px!important;border-radius:14px!important;gap:6px!important;min-height:0!important;}
 #guide .emergency-contact-card--assistance,
@@ -5210,10 +5084,6 @@ html body .food-drawer-backdrop{
 #guide .emergency-card-action svg{width:15px!important;height:15px!important;}
 #guide .emergency-support-desc{font-size:11.5px!important;line-height:1.5!important;margin:0!important;}
 #guide .emergency-official-links{margin:4px 0 0!important;font-size:12px!important;}
-
-/* v30.9.174 — a golden hint at the very right edge says "pull the dictionary out
-   from here": fades in (1s), stays (3.5s), fades out (0.5s), and repeats. It is gone
-   while the dictionary is being pulled or open, and starts again once it closes. */
 .food-edge-hint{
   position:fixed;z-index:150;right:0;top:14vh;bottom:14vh;width:14.4px;pointer-events:none;
   background:linear-gradient(to left,rgba(176,138,70,.62),rgba(176,138,70,.18) 45%,rgba(176,138,70,0));
@@ -5232,10 +5102,6 @@ body.food-swipe-active .food-edge-hint,
 body.food-swipe-dragging .food-edge-hint{animation:none;opacity:0;transition:opacity .18s ease-out;}
 html[data-theme="light"] .food-edge-hint{width:18px;background:linear-gradient(to left,rgba(214,150,30,.78),rgba(222,160,40,.26) 45%,rgba(222,160,40,0));}
 @media (prefers-reduced-motion:reduce){.food-edge-hint{animation:none;opacity:.55;}}
-
-/* v30.9.176 — 注目の街歩きエリア: under the district bubbles, a row of category
-   chips (雑貨, カフェ・スイーツ …) and one list that scrolls inside the block.
-   No nested accordions, so nothing jumps and every shop shows its tags. */
 #guide .area-panel:not([hidden]){display:flex!important;flex-direction:column;overflow:hidden!important;}
 #guide .area-panel[hidden]{display:none!important;}
 #guide .area-panel > .area-intro{flex:none;}
@@ -5265,8 +5131,6 @@ html[data-theme="light"] #guide .area-cat[aria-selected="true"]{background:#2222
 /* Bubble panels slide sideways: clip them while they move. */
 #guide .tab-panels.is-sliding{overflow:hidden;}
 #guide .tab-panels > .tab-panel{will-change:auto;}
-
-/* v30.9.176 — emergency contacts, shorter: two call tiles, two one-line rows. */
 #guide .emergency-compact{display:grid!important;grid-template-columns:1fr 1fr;gap:8px!important;}
 #guide .emergency-tile,#guide .emergency-line{
   display:flex;text-decoration:none!important;color:inherit!important;

@@ -1,5 +1,6 @@
+/* TAIPEI CITY GUIDE — v30.9.177 CSS maintenance.
+   Original selector order, breakpoints, cascade and theme rules preserved. */
 /* v30.9.113 maintenance — removed rules for markup that no longer exists, overridden declarations and their orphaned notes; cascade order preserved. */
-/* v30.9.88: one-page compact location and custom readable station selection. */
 .recommend-drawer-backdrop {position:fixed;inset:0;z-index:123;pointer-events:none;background:rgba(0,0,0,.62);opacity:0;transition:opacity .3s ease;}
 .recommend-drawer {position:fixed;z-index:124;top:0;bottom:0;left:0;width:min(100vw,480px);max-width:100vw;overflow:hidden;visibility:hidden;transform:translate3d(var(--recommend-offset,-480px),0,0);transition:transform .32s cubic-bezier(.2,.72,.22,1);background:#14191c;color:#f0f3f2;border-right:1px solid #343d3f;overscroll-behavior:contain;}
 body.recommend-swipe-active .recommend-drawer,body.recommend-drawer-open .recommend-drawer{visibility:visible;}
@@ -9,12 +10,10 @@ body.recommend-swipe-active > .hero,body.recommend-swipe-active #guide > .divide
 body.recommend-swipe-dragging .recommend-drawer,body.recommend-swipe-dragging .recommend-drawer-backdrop,body.recommend-swipe-dragging > .hero,body.recommend-swipe-dragging #guide > .divider,body.recommend-swipe-dragging #guide > .page-body,body.recommend-swipe-dragging > footer{transition:none!important;}
 body.recommend-drawer-open .back-top,body.recommend-swipe-active .back-top {pointer-events:none!important;opacity:0!important;}
 body.recommend-swipe-dragging{user-select:none;-webkit-user-select:none;}
-
-/* v30.9.57 — editorial picks first; filters stay compact and optional. */
-.recommend-drawer-inner{height:100%;height:100dvh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:calc(27px + env(safe-area-inset-top)) 20px calc(32px + env(safe-area-inset-bottom));scrollbar-width:thin;}
-#recommend-title{color:#f1f3f2;font-size:clamp(25px,6.3vw,30px);line-height:1.28;font-weight:760;letter-spacing:-.035em;margin:0 0 8px;}
-.recommend-intro{color:#adbbbc;font-size:12px;line-height:1.7;margin:0 0 20px;}
-.recommend-controls{flex-wrap:wrap;margin:0 0 7px;}
+.recommend-drawer-inner{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:calc(27px + env(safe-area-inset-top)) 20px calc(32px + env(safe-area-inset-bottom));scrollbar-width:thin;}
+#recommend-title{color:#f1f3f2;font-size:clamp(25px,6.3vw,30px);font-weight:760;letter-spacing:-.035em;}
+.recommend-intro{color:#adbbbc;}
+.recommend-controls{flex-wrap:wrap;}
 .recommend-control-wrap{position:relative;max-width:100%;}
 .recommend-control{display:inline-flex;gap:7px;align-items:center;min-height:42px;max-width:100%;border:1px solid #4b5858;border-radius:24px;padding:8px 11px;color:#e1e9e6;background:#20292a;font:690 12px/1.4 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;cursor:pointer;text-align:left;}
 .recommend-control[aria-expanded="true"]{border-color:#93cbb7;}
@@ -24,19 +23,19 @@ body.recommend-swipe-dragging{user-select:none;-webkit-user-select:none;}
 .recommend-options[hidden]{display:none!important;}
 .recommend-option{display:block;width:100%;border:0;border-radius:8px;padding:10px 12px;color:#e2eae7;background:transparent;font:600 12px/1.45 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;text-align:left;cursor:pointer;}
 .recommend-option[aria-pressed="true"]{background:#d9e7df;color:#253530;font-weight:750;}
-.recommend-location-status{font-size:10.5px;color:#a8beb5;line-height:1.65;margin:3px 0 0;}
+.recommend-location-status{color:#a8beb5;}
 .recommend-location-status[hidden]{display:none!important;}
-.recommend-result-head{display:flex;justify-content:space-between;margin:23px 0 13px;}
-.recommend-result-head h3{font-size:17px;letter-spacing:-.02em;color:#edf2f0;margin:0;font-weight:760;}
+.recommend-result-head{display:flex;justify-content:space-between;}
+.recommend-result-head h3{letter-spacing:-.02em;color:#edf2f0;font-weight:760;}
 .recommend-count{font-size:10.5px;color:#9daba9;white-space:nowrap;}
 .recommend-relaxed{padding:9px 11px;margin:0 0 11px;color:#e9cc95;background:#302b22;border:1px solid #55472d;border-radius:9px;font-size:11px;line-height:1.65;}
 .recommend-relaxed[hidden]{display:none!important;}
-.recommend-results{display:grid;gap:9px;min-height:190px;}
-.recommend-card{min-width:0;animation:recommend-card-reveal .22s ease both;}
+.recommend-results{display:grid;}
+.recommend-card{animation:recommend-card-reveal .22s ease both;}
 .recommend-card-top{margin:0 0 6px;}
 .recommend-venue{display:block;overflow-wrap:anywhere;}
-.recommend-place{font-size:10px;color:#9eacab;}
-.recommend-more{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:42px;padding:9px 10px;margin:12px 0 19px;border-radius:10px;border:1px solid #4c5d5c;background:transparent;font-size:12px;font-weight:680;cursor:pointer;}
+.recommend-place{color:#9eacab;}
+.recommend-more{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;border:1px solid #4c5d5c;background:transparent;font-weight:680;cursor:pointer;}
 .recommend-more[hidden]{display:none!important;}
 .recommend-choices{display:flex;flex-wrap:wrap;gap:8px;}
 .recommend-pill{min-height:40px;border:1px solid #4b5858;border-radius:24px;padding:8px 11px;color:#c6d2d0;background:transparent;font:625 12px/1.35 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;cursor:pointer;white-space:normal;text-align:center;}
@@ -47,7 +46,7 @@ body.recommend-swipe-dragging{user-select:none;-webkit-user-select:none;}
 .recommend-advanced summary::after{content:'⌄';font-size:16px;color:#aab9b7;}
 .recommend-advanced[open] summary::after{content:'⌃';}
 .recommend-help{margin:10px 0 0;color:#92a4a2;font-size:10.5px;line-height:1.65;}
-.recommend-disclaimer{color:#95a4a3;font-size:10px;line-height:1.7;margin:20px 0 0;}
+.recommend-disclaimer{color:#95a4a3;}
 .recommend-no-data{color:#d6d9d5;font-size:12px;}
 .recommend-control:focus-visible,.recommend-option:focus-visible,.recommend-pill:focus-visible,.recommend-venue:focus-visible,.recommend-more:focus-visible,.recommend-advanced summary:focus-visible{outline:2px solid #84d0b3;outline-offset:2px;}
 @keyframes recommend-card-reveal{from{opacity:.2;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
@@ -69,9 +68,6 @@ html[data-theme="light"] .recommend-advanced summary{color:#54696c;}
 html[data-theme="light"] .recommend-relaxed{background:#fff8ea;color:#7d5824;border-color:#ead5a9;}
 @media(max-width:360px){.recommend-drawer-inner{padding-left:15px;padding-right:15px;}.recommend-controls{gap:6px;}.recommend-control{padding:8px 9px;font-size:11.5px;}}
 @media(prefers-reduced-motion:reduce){.recommend-card,.recommend-drawer,.recommend-drawer-backdrop{animation:none!important;transition:none!important;}}
-
-/* v30.9.57 — mobile drawer polish: avoid expensive whole-page filters,
-   preserve the separate drawer motion, remove browser focus frame. */
 .recommend-drawer:focus,
 #guide #food-search.food-drawer:focus {outline:none!important;}
 /* A short edge shadow still communicates the sliding sheet. */
@@ -96,9 +92,6 @@ body.recommend-swipe-active > footer {
   body.recommend-swipe-active #guide > .page-body,
   body.recommend-swipe-active > footer {transition:none!important;}
 }
-
-/* v30.9.58 — neutral K95 left drawer; blend the scroll edges into the
-   underlying surface, never cover its active controls or move the document. */
 html:not([data-theme="light"]) .recommend-drawer {
   --recommend-edge-color:#0D0D0D;
   background:#0D0D0D;
@@ -137,8 +130,6 @@ html:has(body.recommend-swipe-active),
 body.recommend-swipe-active {background:#0D0D0D!important;}
 html[data-theme="light"]:has(body.recommend-swipe-active),
 html[data-theme="light"] body.recommend-swipe-active {background:#F7F8F7!important;}
-
-/* v30.9.59 — compact editorial controls: time, area and advanced conditions. */
 .recommend-controls {position:relative;isolation:isolate;}
 .recommend-advanced {margin:0;border:0;padding:0;}
 .recommend-advanced-trigger {list-style:none;}
@@ -150,25 +141,19 @@ html[data-theme="light"] body.recommend-swipe-active {background:#F7F8F7!importa
  position:absolute;left:0;top:calc(100% + 7px);width:min(100%,430px);
  z-index:180;padding:17px 15px 15px;border-radius:15px;
  background:#202020;border:1px solid #515151;box-shadow:0 16px 36px rgba(0,0,0,.38);
- max-height:min(450px,65dvh);overflow-y:auto;overscroll-behavior:contain;
+ max-height:min(450px,65dvh);
 }
 .recommend-advanced-panel h3 {margin:0 0 11px;font-size:12px;font-weight:730;color:#e7e7e7;}
 .recommend-advanced-panel .recommend-help {margin-top:12px;}
 html[data-theme="light"] .recommend-advanced-panel {background:#fff;border-color:#d0d9d7;box-shadow:0 12px 30px rgba(24,41,44,.17);}
- .recommend-controls {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;}
+ .recommend-controls {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
  .recommend-controls > .recommend-control-wrap:first-child {grid-column:1/-1;}
- .recommend-control-advanced-wrap {grid-column:2;min-width:0;}
- .recommend-advanced-trigger {width:100%;justify-content:center;gap:5px;padding-inline:7px;font-size:11.5px;}
+ .recommend-control-advanced-wrap {grid-column:2;}
+ .recommend-advanced-trigger {width:100%;padding-inline:7px;font-size:11.5px;}
  .recommend-advanced-panel {width:100%;}
-
-/* v30.9.60 — editorial cards without numbering, featured badges or redundant map CTA. */
-.recommend-card-top{margin-bottom:5px;}
-
-/* v30.9.60 — two-row filter controls with removable selected-condition chips.
-   First row: current time and area in parallel. Second: chips then add-only +.
-   Unselected state: one 「さらに条件を指定 ＋」 bubble, no leading icon. */
-.recommend-controls {display:flex!important;flex-direction:column;align-items:stretch;gap:8px;}
-.recommend-controls-secondary {display:flex;align-items:center;flex-wrap:wrap;gap:7px;min-width:0;}
+.recommend-card-top{}
+.recommend-controls {flex-direction:column;}
+.recommend-controls-secondary {display:flex;align-items:center;flex-wrap:wrap;min-width:0;}
 .recommend-active-filters {display:contents;}
 .recommend-control-advanced-wrap {flex:0 0 auto;position:static;min-width:0;}
 .recommend-advanced-trigger {display:inline-flex;justify-content:center;gap:6px;min-height:40px;padding:8px 13px;white-space:nowrap;}
@@ -183,9 +168,6 @@ html[data-theme="light"] .recommend-advanced-trigger .recommend-advanced-plus {c
 @media(max-width:360px){
  .recommend-active-chip{font-size:11.5px;padding-left:10px;}
 }
-
-/* v30.9.61 — use the same compact pill geometry as ⭐ おすすめリスト.
-   Time/area retain dropdown indicators; extra conditions use only + / ×. */
 .recommend-controls-secondary .recommend-advanced-trigger,
 .recommend-controls-secondary .recommend-active-chip,
 .recommend-advanced-panel .recommend-pill {
@@ -324,9 +306,9 @@ html[data-theme="light"] .recommend-advanced-panel h3{color:#433354;}
  .recommend-advanced-panel{max-height:min(440px,62dvh);overflow-y:auto;overscroll-behavior:contain;}
  .recommend-result-head{margin:11px 0 7px;}
  .recommend-results{gap:7px;}
- .recommend-card{display:flex;flex-direction:column;justify-content:center;gap:0;overflow:hidden;}
+ .recommend-card{display:flex;flex-direction:column;justify-content:center;gap:0;}
  .recommend-card-top{margin-bottom:1px;flex:0 0 auto;}
- .recommend-venue{flex:0 0 auto;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;}
+ .recommend-venue{flex:0 0 auto;}
  .recommend-place{font-size:9px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
  .recommend-more{font-size:11px;border-radius:9px;}
  .recommend-disclaimer{font-size:9px;}
@@ -344,9 +326,6 @@ html[data-theme="light"] .recommend-advanced-panel h3{color:#433354;}
  .recommend-disclaimer{font-size:8px;line-height:1.2;}
 }
 @media(prefers-reduced-motion:reduce){.recommend-card{animation:none;}}
-
-/* v30.9.65 — make good use of the available mobile height without making
-   cards enormous; the three recommendations remain in a single viewport. */
 @media(min-height:760px){
   .recommend-drawer-inner{display:flex;flex-direction:column;}
   .recommend-results{
@@ -379,10 +358,8 @@ html[data-theme="light"] .recommend-advanced-panel h3{color:#433354;}
   min-width:0;
 }
 .recommend-card-top .recommend-place {
-  display:inline-flex;
   align-items:center;
   justify-content:flex-end;
-  gap:4px;
   flex:0 1 auto;
   max-width:62%;
   min-width:0;
@@ -390,13 +367,9 @@ html[data-theme="light"] .recommend-advanced-panel h3{color:#433354;}
   text-align:right;
   white-space:nowrap;
   color:#BEB4CB;
-  font-size:10px;
-  line-height:1.3;
 }
 .recommend-card-top .recommend-place-pin {
   display:inline-flex;
-  width:12px;
-  height:12px;
   align-items:center;
   justify-content:center;
   flex:0 0 12px;
@@ -441,8 +414,6 @@ html[data-theme="light"] .recommend-card-top .recommend-place-pin {color:#8764BC
   }
   .recommend-card{min-height:0;height:100%;}
 }
-
-/* v30.9.86 — area first, compact time second; searchable two-stage MRT station picker. */
 .recommend-station-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px;width:100%;min-width:0;}
 .recommend-station-controls[hidden]{display:none!important;}
 .recommend-station-controls .recommend-control-wrap{min-width:0;}
@@ -461,23 +432,21 @@ html[data-theme="light"] .recommend-station-controls .recommend-control-arrow{co
  .recommend-station-controls .recommend-control{padding-inline:7px;font-size:11px;gap:4px;}
 }
 @media(prefers-reduced-motion:reduce){.recommend-station-controls .recommend-control-arrow::before{transition:none;}}
-
-/* v30.9.88 — compact same-page modes matching the supplied mockup, with custom menus. */
 #recommend-title button{display:inline;color:inherit;font:inherit;letter-spacing:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left;max-width:100%;}
 #recommend-title button:focus-visible{outline:2px solid var(--reco-accent,#bda5f3);outline-offset:3px;border-radius:4px;}
-.recommend-source-captions{display:grid;grid-template-columns:clamp(75px,27%,105px) minmax(0,1fr);align-items:center;gap:8px;min-width:0;}
-.recommend-source-caption{display:inline-flex;align-items:center;gap:5px;min-width:0;color:#c7bad8;font-size:10.5px;font-weight:690;white-space:nowrap;}
+.recommend-source-captions{display:grid;grid-template-columns:clamp(75px,27%,105px) minmax(0,1fr);min-width:0;}
+.recommend-source-caption{display:inline-flex;align-items:center;min-width:0;color:#c7bad8;font-weight:690;white-space:nowrap;}
 .recommend-caption-icon{display:inline-flex;justify-content:center;align-items:center;width:14px;height:14px;flex:none;color:var(--reco-accent,#d2bdff);}
 .recommend-caption-icon svg{width:14px;height:14px;}
-.recommend-main-picker{display:grid;grid-template-columns:clamp(75px,27%,105px) minmax(0,1fr) 44px;gap:5px;align-items:stretch;min-width:0;height:57px;}
+.recommend-main-picker{display:grid;grid-template-columns:clamp(75px,27%,105px) minmax(0,1fr) 44px;gap:5px;}
 .recommend-main-picker .recommend-control-wrap{min-width:0;position:relative;}
-.recommend-main-picker .recommend-control-time-wrap>.recommend-control{height:100%;max-width:100%;width:100%;justify-content:space-between;align-items:center;padding:7px 9px;border-radius:12px;font-size:clamp(13px,3.75vw,19px);font-weight:730;}
-.recommend-main-picker .recommend-control-time-wrap .recommend-control-arrow{flex:0 0 13px;width:13px;margin-left:1px;}
+.recommend-main-picker .recommend-control-time-wrap>.recommend-control{height:100%;max-width:100%;width:100%;align-items:center;padding:7px 9px;border-radius:12px;font-size:clamp(13px,3.75vw,19px);font-weight:730;}
+.recommend-main-picker .recommend-control-time-wrap .recommend-control-arrow{flex:0 0 13px;margin-left:1px;}
 .recommend-main-picker .recommend-control-time-wrap .recommend-options{min-width:155px;}
 .recommend-picker-location,.recommend-picker-station{box-sizing:border-box;min-width:0;min-height:0;width:100%;height:57px;border:1px solid #48424d;background:#212121;}
 .recommend-picker-location[hidden],.recommend-picker-station[hidden]{display:none!important;}
 .recommend-location-pin{display:flex;align-items:center;justify-content:center;color:#c7b6ed;}
-.recommend-location-copy strong{line-height:1.1;font-weight:740;}
+.recommend-location-copy strong{font-weight:740;}
 .recommend-mode-button{display:flex;align-items:center;justify-content:center;min-width:0;width:44px;height:57px;border:1px solid #514b58;border-radius:12px;color:#f0e7ff;background:#262629;padding:2px;cursor:pointer;font:700 10px/1.25 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;}
 .recommend-mode-button:focus-visible,.recommend-native-field select:focus-visible{outline:2px solid var(--reco-accent,#C4A6FF);outline-offset:2px;}
 .recommend-mode-button .recommend-mode-pin{display:none;}
@@ -495,14 +464,12 @@ html[data-theme="light"] .recommend-picker-location,html[data-theme="light"] .re
 @media(prefers-reduced-motion:reduce){.recommend-native-field{transition:none;}}
 .recommend-picker-location{display:flex;align-items:center;min-width:0;min-height:50px;padding:8px 10px;border:1px solid #45414b;border-radius:9px;background:#242429;overflow:hidden;}
 .recommend-picker-station{display:flex;flex:1 1 auto;flex-direction:column;min-width:0;min-height:50px;border:1px solid #45414b;border-radius:9px;background:#242429;overflow:visible;}
-
-/* v30.9.88 — replace hard-to-read mobile native pickers with custom menus. */
 .recommend-mode-button:focus-visible,.recommend-native-trigger:focus-visible{outline:2px solid var(--reco-accent,#C4A6FF);outline-offset:2px;}
 .recommend-native-field{display:flex;flex:1 1 0;min-height:0;min-width:0;position:relative;transition:flex-grow .18s ease,background-color .18s ease,box-shadow .18s ease;}
 .recommend-native-trigger{display:flex;align-items:stretch;width:100%;min-width:0;border:0;border-radius:inherit;background:transparent;color:inherit;text-align:left;cursor:pointer;font:inherit;}
 .recommend-native-trigger:disabled{cursor:not-allowed;opacity:.7;}
 .recommend-native-field.is-open{box-shadow:0 0 0 1px rgba(196,166,255,.5) inset;}
-.recommend-native-field .recommend-native-display{display:flex;align-items:center;min-width:0;min-height:0;width:100%;pointer-events:none;}
+.recommend-native-field .recommend-native-display{display:flex;align-items:center;min-height:0;width:100%;pointer-events:none;}
 .recommend-native-code{flex:0 0 auto;display:inline-flex;justify-content:center;align-items:center;min-height:15px;background:#4288c9;color:white;}
 .recommend-location-copy,.recommend-native-copy{display:flex;flex-direction:column;min-width:0;justify-content:center;gap:2px;}
 .recommend-native-chevron{position:relative;}
@@ -516,7 +483,7 @@ html[data-theme="light"] .recommend-picker-location,html[data-theme="light"] .re
 .recommend-picker-station[data-active="station"] .recommend-native-line .recommend-native-display{padding-block:0;}
 .recommend-picker-station[data-active="line"] .recommend-native-station .recommend-native-code,
 .recommend-picker-station[data-active="station"] .recommend-native-line .recommend-native-code{min-height:11px;}
-.recommend-native-menu{position:absolute;z-index:260;display:grid;background:#232127;border:1px solid #5b5367;box-shadow:0 16px 32px rgba(0,0,0,.42);max-height:min(278px,46dvh);overflow:auto;overscroll-behavior:contain;}
+.recommend-native-menu{position:absolute;display:grid;background:#232127;border:1px solid #5b5367;box-shadow:0 16px 32px rgba(0,0,0,.42);max-height:min(278px,46dvh);overflow:auto;overscroll-behavior:contain;}
 .recommend-native-menu[hidden]{display:none!important;}
 .recommend-native-option{display:flex;align-items:center;border:1px solid transparent;background:#17161a;color:#f3eff8;text-align:left;cursor:pointer;font:inherit;}
 .recommend-native-option:hover{background:#211f26;}
@@ -537,8 +504,6 @@ html[data-theme="light"] .recommend-native-empty small{color:#7a6a8d;}
  .recommend-native-display{gap:3px!important;padding-inline:2px!important;}
 }
 @media(prefers-reduced-motion:reduce){.recommend-native-field,.recommend-native-chevron::after{transition:none;}}
-
-/* v30.9.88b — visual tuning to match supplied route/station layout. */
 .recommend-picker-station{padding:0 0 0 0;}
 .recommend-native-field{padding:0;}
 .recommend-native-field + .recommend-native-field{border-top:1px solid rgba(255,255,255,.18);}
@@ -547,9 +512,9 @@ html[data-theme="light"] .recommend-native-empty small{color:#7a6a8d;}
 .recommend-native-line .recommend-native-code{background:#4288c9;color:#fff;}
 .recommend-native-station .recommend-native-code{background:#fff;color:#202227;border:2px solid var(--station-code-border,#4288c9);}
 .recommend-native-code.is-empty{background:#424049;border-color:#424049;color:#c6bbd6;}
-.recommend-native-copy{display:flex;flex-direction:row;align-items:baseline;min-width:0;flex:1 1 auto;}
-.recommend-native-copy strong{font-weight:760;line-height:1.15;letter-spacing:-.03em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.recommend-native-copy small{display:block;line-height:1.18;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.recommend-native-copy{display:flex;flex-direction:row;flex:1 1 auto;}
+.recommend-native-copy strong{font-weight:760;letter-spacing:-.03em;color:#fff;overflow:hidden;text-overflow:ellipsis;}
+.recommend-native-copy small{display:block;overflow:hidden;text-overflow:ellipsis;}
 .recommend-native-chevron{margin:auto 0 auto auto;color:#d0b8ff;}
 .recommend-picker-station[data-active="line"] .recommend-native-station .recommend-native-copy small,
 .recommend-picker-station[data-active="station"] .recommend-native-line .recommend-native-copy small{display:block;opacity:.88;}
@@ -588,20 +553,18 @@ html[data-theme="light"] .recommend-native-chevron{color:#9e85c8;}
  .recommend-native-option-copy strong{font-size:15px;}
  .recommend-native-option-copy small{font-size:11px;}
 }
-
-/* v30.9.88 final — preserve time setting; align Japanese/English in one line. */
 .recommend-picker-location{gap:8px;}
 .recommend-location-pin{flex:0 0 19px;}
-.recommend-location-copy{flex:1 1 auto;display:flex;flex-direction:row;align-items:baseline;justify-content:flex-start;gap:7px;min-width:0;}
-.recommend-location-copy strong{flex:0 1 auto;font-size:clamp(12px,3.9vw,17px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.recommend-location-copy small{flex:1 1 auto;font-size:clamp(9px,2.8vw,11px);font-weight:650;line-height:1.2;color:#fff;opacity:.94;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.recommend-native-copy{gap:7px;}
+.recommend-location-copy{flex:1 1 auto;display:flex;flex-direction:row;}
+.recommend-location-copy strong{flex:0 1 auto;font-size:clamp(12px,3.9vw,17px);}
+.recommend-location-copy small{flex:1 1 auto;font-size:clamp(9px,2.8vw,11px);font-weight:650;color:#fff;opacity:.94;}
+.recommend-native-copy{}
 .recommend-native-copy strong{font-size:clamp(10px,3.5vw,14px);flex:0 1 auto;}
 .recommend-native-copy small{font-size:clamp(8px,2.5vw,10px);font-weight:650;flex:1 1 auto;color:#fff;opacity:.96;}
-.recommend-native-field .recommend-native-display{padding:2px 5px;gap:6px;}
-.recommend-native-code{min-width:18px;width:20px;max-width:24px;height:19px;border-radius:4px;font-size:10px;}
+.recommend-native-field .recommend-native-display{}
+.recommend-native-code{}
 .recommend-native-station .recommend-native-code{font-size:10px;border-width:1px;}
-.recommend-native-chevron{flex:0 0 12px;width:12px;height:12px;}
+.recommend-native-chevron{flex:0 0 12px;}
 .recommend-native-chevron::after{width:7px;height:7px;border-width:0 1.7px 1.7px 0;}
 .recommend-native-trigger{min-height:0;height:100%;}
 /* The two rows always share the original fixed 57px station selector. */
@@ -616,7 +579,7 @@ html[data-theme="light"] .recommend-native-chevron{color:#9e85c8;}
 .recommend-picker-station[data-active="line"] .recommend-native-station .recommend-native-code,
 .recommend-picker-station[data-active="station"] .recommend-native-line .recommend-native-code{width:16px;min-width:16px;height:15px;font-size:7px;border-radius:3px;}
 /* Open lists span most of the drawer instead of the narrow row; tap targets >= 48px. */
-.recommend-native-menu{box-sizing:border-box;max-height:min(340px,48dvh);}
+.recommend-native-menu{max-height:min(340px,48dvh);}
 /* Dark controls in either theme keep Japanese and English white as requested. */
 html[data-theme="light"] .recommend-picker-location,
 html[data-theme="light"] .recommend-picker-station{background:#212121;border-color:#514b58;color:#fff;}
@@ -635,23 +598,18 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
  .recommend-native-chevron{flex-basis:9px;width:9px;}
  .recommend-location-copy{gap:4px;}
 }
-
-/* v30.9.89 — station menu readability, slimmer corners, editorial spacing. */
-/* v30.9.91 — match the current-location district frame corners to the station selector. */
 .recommend-controls{z-index:45;}
 .recommend-picker-location,.recommend-picker-station{border-radius:9px;}
 .recommend-native-field{border-radius:6px;}
 .recommend-native-line{border-radius:7px 7px 2px 2px;}
 .recommend-native-field + .recommend-native-field{border-radius:0 0 7px 7px;}
 /* Compact native-like list, with no sideways panning even for long English names. */
-.recommend-native-menu{
-  right:-49px;left:auto;width:min(292px,calc(100vw - 46px));
-  min-width:0;max-width:calc(100vw - 46px);max-height:min(315px,46dvh);
-  padding:6px;gap:3px;border-radius:11px;overflow-x:hidden;overflow-y:auto;
-  overscroll-behavior-x:none;box-sizing:border-box;
+.recommend-native-menu{width:min(292px,calc(100vw - 46px));max-width:calc(100vw - 46px);max-height:min(315px,46dvh);
+  padding:6px;gap:3px;border-radius:11px;overflow-x:hidden;
+  overscroll-behavior-x:none;
 }
 .recommend-native-option{
-  box-sizing:border-box;width:100%;min-width:0;min-height:43px;
+  box-sizing:border-box;width:100%;min-width:0;
   padding:6px 8px;gap:7px;border-radius:7px;overflow:hidden;
 }
 .recommend-native-option-code{
@@ -660,7 +618,7 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
 }
 .recommend-native-option-station .recommend-native-option-code{font-size:10px;border-width:1px;}
 .recommend-native-option-copy{
-  display:flex;flex-direction:row;align-items:baseline;
+  display:flex;flex-direction:row;
   flex:1 1 auto;min-width:0;max-width:100%;gap:6px;overflow:hidden;
 }
 .recommend-native-option-copy strong{
@@ -676,9 +634,9 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
 /* The active station header remains fixed: only internal choice proportions change. */
 .recommend-native-field.is-open{border-radius:6px;}
 /* Bring advanced filters back beside the recommendations heading. */
-.recommend-result-head{position:relative;z-index:31;align-items:center;flex-wrap:nowrap;gap:9px;}
+.recommend-result-head{position:relative;z-index:31;flex-wrap:nowrap;gap:9px;}
 .recommend-result-head h3{min-width:0;flex:0 0 auto;white-space:nowrap;}
-.recommend-result-head .recommend-controls-secondary{min-width:0;max-width:100%;flex:0 1 auto;margin-left:auto;justify-content:flex-end;gap:4px;}
+.recommend-result-head .recommend-controls-secondary{min-width:0;flex:0 1 auto;margin-left:auto;gap:4px;}
 .recommend-result-head .recommend-control-advanced-wrap{position:static;flex:0 0 auto;}
 .recommend-result-head .recommend-advanced-panel{
   position:absolute;top:calc(100% + 8px);left:0;right:0;
@@ -696,7 +654,6 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
   }
   .recommend-card{
     height:auto;
-    padding:8px 11px;
   }
   .recommend-more{margin: auto 0 0;}
   .recommend-disclaimer{margin-top:7px;}
@@ -716,16 +673,12 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
   .recommend-result-head h3{font-size:14px;}
   .recommend-result-head .recommend-advanced-trigger{font-size:9px;padding-inline:6px;}
 }
-
-/* v30.9.94 — compact, accessible result-order tabs. */
 .recommend-sort{
-  display:flex;align-items:center;gap:13px;
-  margin:-3px 0 10px;min-width:0;
+  display:flex;align-items:center;min-width:0;
 }
 .recommend-sort-option{
   appearance:none;-webkit-appearance:none;
-  position:relative;display:inline-flex;align-items:center;justify-content:center;
-  min-height:30px;max-width:100%;padding:4px 2px 7px;
+  position:relative;display:inline-flex;align-items:center;justify-content:center;max-width:100%;
   border:0;border-bottom:2px solid transparent;border-radius:0;
   background:transparent;color:#A6A0B0;
   font:650 11px/1.25 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
@@ -741,46 +694,40 @@ html[data-theme="light"] .recommend-sort-option[aria-pressed="true"]{color:#5A3D
   .recommend-sort{margin:-2px 0 6px;}
   .recommend-sort-option{min-height:24px;}
 }
-
-/* v30.9.95 — restore breathing space between intro, picker and recommendation heading. */
   .recommend-intro{margin-bottom:clamp(35px,4.8dvh,45px);}
   .recommend-result-head{margin-top:clamp(31px,4.65dvh,43px);}
 @media(max-height:720px){
   .recommend-intro{margin-bottom:18px;}
   .recommend-result-head{margin-top:20px;}
 }
-
-/* v30.9.96 — original 食べる・飲む labels, instead of generated restaurant prose. */
-.recommend-guide-tags{align-items:center;
+.recommend-guide-tags{
 }
 .recommend-guide-tag{
-  display:inline-flex;align-items:center;max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;
+  display:inline-flex;align-items:center;min-width:0;overflow:hidden;text-overflow:ellipsis;
 }
-  .recommend-guide-tags{margin-top:6px;max-height:43px;overflow:hidden;}
+  .recommend-guide-tags{overflow:hidden;}
   .recommend-guide-tag{max-width:100%;}
   .recommend-card{min-width:0;}
 @media(max-height:720px){
   .recommend-guide-tags{margin-top:4px;max-height:38px;}
   .recommend-guide-tag{font-size:9px;padding:2px 6px;}
 }
-
-/* v30.9.97 — redesigned recommendation card to match the provided comp. */
-.recommend-card{padding:0!important;border-radius:20px!important;border:1px solid #57525d!important;background:linear-gradient(90deg,#2B2B2E 0%,#2E2D31 100%)!important;overflow:hidden;box-shadow:none!important;min-height:142px!important;}
-.recommend-card-shell{display:grid;grid-template-columns:minmax(0,1fr) 156px;gap:14px;align-items:stretch;min-height:142px;padding:18px 22px 16px;box-sizing:border-box;}
-.recommend-card-main{min-width:0;display:flex;flex-direction:column;justify-content:flex-start;}
+.recommend-card{padding:0!important;border:1px solid #57525d!important;background:linear-gradient(90deg,#2B2B2E 0%,#2E2D31 100%)!important;overflow:hidden;box-shadow:none!important;}
+.recommend-card-shell{display:grid;grid-template-columns:minmax(0,1fr) 156px;box-sizing:border-box;}
+.recommend-card-main{display:flex;flex-direction:column;}
 .recommend-card-type{font:760 14px/1.2 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;color:#F1EEF6;letter-spacing:.01em;}
-.recommend-venue{margin-top:8px;color:#FBF8FF!important;text-decoration:none;font-size:clamp(17px,5.6vw,24px)!important;font-weight:790;line-height:1.12!important;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-wrap:balance;}
+.recommend-venue{color:#FBF8FF!important;text-decoration:none;font-size:clamp(17px,5.6vw,24px)!important;font-weight:790;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-wrap:balance;}
 .recommend-card-main{justify-content:flex-start;gap:0;}
-.recommend-card-side{min-width:0;display:grid;justify-items:end;align-items:start;gap:10px;}
-.recommend-distance-pill,.recommend-distance-pill-empty{display:inline-flex;align-items:center;gap:7px;max-width:100%;padding:8px 13px;border-radius:999px;border:1px solid #66616B;background:rgba(34,34,36,.45);color:#FBF8FF;font:650 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;white-space:nowrap;}
+.recommend-card-side{display:grid;justify-items:end;align-items:start;}
+.recommend-distance-pill,.recommend-distance-pill-empty{display:inline-flex;align-items:center;max-width:100%;border-radius:999px;border:1px solid #66616B;background:rgba(34,34,36,.45);color:#FBF8FF;font:650 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;white-space:nowrap;}
 .recommend-distance-pill-empty{visibility:hidden;}
-.recommend-distance-pill-icon{display:inline-flex;width:16px;height:16px;align-items:center;justify-content:center;flex:0 0 16px;color:#FBF8FF;}
+.recommend-distance-pill-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 16px;color:#FBF8FF;}
 .recommend-distance-pill-icon svg{display:block;width:100%;height:100%;}
 .recommend-distance-pill-label{overflow:hidden;text-overflow:ellipsis;}
-.recommend-card-stars{min-height:28px;display:flex;align-items:center;justify-content:flex-end;gap:6px;align-self:center;color:#7A674C;}
-.recommend-card-star{display:inline-flex;align-items:center;justify-content:center;width:17px;height:18px;line-height:0;flex:0 0 17px;}.recommend-card-star svg{display:block;width:100%;height:100%;}
-.recommend-guide-tags{justify-content:flex-end;align-items:flex-end;align-content:flex-end;flex-wrap:wrap;gap:7px 8px;margin-top:0!important;}
-.recommend-guide-tag{padding:8px 13px!important;border-radius:14px!important;border:1px solid #66616B!important;background:#2E2D31!important;color:#F4F0F9!important;font:700 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif!important;white-space:nowrap;}
+.recommend-card-stars{display:flex;align-items:center;justify-content:flex-end;color:#7A674C;}
+.recommend-card-star{display:inline-flex;align-items:center;justify-content:center;line-height:0;flex:0 0 17px;}.recommend-card-star svg{display:block;width:100%;height:100%;}
+.recommend-guide-tags{align-content:flex-end;flex-wrap:wrap;margin-top:0!important;}
+.recommend-guide-tag{border:1px solid #66616B!important;background:#2E2D31!important;color:#F4F0F9!important;font:700 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif!important;white-space:nowrap;}
 .recommend-guide-tag-featured{color:#E4C38D!important;background:#89704A55!important;border-color:#B58B49!important;}
 .recommend-guide-tag-caution{color:#F4B2A7!important;background:#6E403F55!important;border-color:#8E5D58!important;}
 html[data-theme="light"] .recommend-card{background:linear-gradient(90deg,#FFFFFF 0%,#FBF8FD 100%)!important;border-color:#D8D0DF!important;}
@@ -802,9 +749,6 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
  .recommend-card-type{font-size:10px;}
  .recommend-distance-pill{padding:6px 9px;font-size:9.5px;}
 }
-
-/* v30.9.100: measured mobile composition. The station picker stays FLEX
-   so the original data-active flex-grow animation and native-like menus work. */
   .recommend-intro{margin-bottom:clamp(30px,4.1dvh,40px)!important;}
   .recommend-controls{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:0!important;flex:0 0 auto!important;margin:0!important;}
   .recommend-source-captions{
@@ -956,8 +900,6 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
 @media(prefers-reduced-motion:reduce){
   .recommend-picker-station .recommend-native-field{transition:none!important;}
 }
-
-/* v30.9.102 — targeted mobile refinements, preserving the v30.9.100 layout. */
 .recommend-distance-pill-outer{
   border-color:#D76668!important;
   box-shadow:inset 0 0 0 .35px #D76668;
@@ -969,13 +911,13 @@ html[data-theme="light"] .recommend-distance-pill-outer{
 .recommend-mode-return{display:none;}
 .recommend-main-picker.is-station .recommend-mode-button .recommend-mode-pin{display:none!important;}
 .recommend-main-picker.is-station .recommend-mode-button .recommend-mode-return{
-  display:inline-block!important;color:inherit;font-weight:740;font-size:11px;
+  display:inline-block!important;color:inherit;font-weight:740;
   white-space:nowrap;
 }
 /* A one-line scrollable strip. The inner track fits the right edge when short,
    and grows naturally to enable touch/trackpad horizontal scrolling. */
 .recommend-guide-tags{
-  display:block!important;max-width:100%;width:100%;min-width:0;
+  display:block!important;width:100%;min-width:0;
   overflow-x:auto!important;overflow-y:hidden!important;
   max-height:none!important;white-space:nowrap!important;
   scrollbar-width:none!important;-webkit-overflow-scrolling:touch;
@@ -1037,9 +979,6 @@ html[data-theme="light"] .recommend-distance-pill-outer{
   .recommend-result-head{margin-top:2px!important;}
   .recommend-drawer-inner{overflow-y:auto!important;overscroll-behavior:contain;}
 }
-
-/* v30.9.103 — color definitions (desaturated in v30.9.104), light-mode and tag strip.
-   Kept deliberately scoped to the recommendation drawer; do not recolor the guide. */
 .recommend-drawer .recommend-source-caption{color:#C2C2C2;}
 .recommend-drawer .recommend-control,
 .recommend-drawer .recommend-pill,
@@ -1143,10 +1082,10 @@ html[data-theme="light"] .recommend-drawer .recommend-distance-pill{
 .recommend-card-shell > .recommend-card-main{grid-column:1;grid-row:1;min-height:0;}
 .recommend-card-shell > .recommend-card-side{grid-column:2;grid-row:1;min-height:0;}
 .recommend-card-shell > .recommend-guide-tags{
-  grid-column:1 / -1;grid-row:2;justify-self:stretch;align-self:end;
-  min-width:0;width:100%;box-sizing:border-box;margin:0!important;
+  grid-column:1 / -1;grid-row:2;justify-self:stretch;
+  min-width:0;width:100%;box-sizing:border-box;
 }
-.recommend-card-side{grid-template-rows:auto 1fr!important;}
+.recommend-card-side{}
   .recommend-result-head .recommend-advanced-trigger{top:5px;position:relative;}
   .recommend-mode-button .recommend-mode-text{font-size:10.8px!important;}
   .recommend-main-picker.is-station .recommend-mode-button .recommend-mode-return{font-size:11.8px!important;}
@@ -1242,14 +1181,9 @@ html[data-theme="light"] .recommend-drawer .recommend-relaxed{background:#F2F2F2
 .recommend-drawer .recommend-active-chip-remove{font-size:15px!important;line-height:1!important;}
 .recommend-drawer .recommend-advanced-panel .recommend-pill:disabled{opacity:.38;cursor:not-allowed;}
 .recommend-drawer .recommend-choice-limit{font-size:10px;color:var(--reco-muted);font-weight:500;margin-left:4px;}
-
-/* v30.9.109 — requested 5px vertical offsets, without changing bubble height. */
 .recommend-drawer .recommend-controls-secondary {position:relative!important;top:5px!important;}
 .recommend-drawer .recommend-result-head > h3 {position:relative!important;top:5px!important;}
 .recommend-drawer .recommend-more {position:relative!important;top:-5px!important;}
-
-/* v30.9.110 — match ⭐ おすすめリスト's exact feature/caution colors.
-   Selector specificity and placement intentionally override the grayscale era. */
 .recommend-drawer .recommend-guide-tag-featured{
   color:#EBC489!important;background:#423A2D!important;border-color:#66533B!important;
 }
@@ -1274,10 +1208,6 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
 @media(max-width:360px){
   .recommend-drawer .recommend-card-main .recommend-venue{font-size:calc(13px + 1.333px)!important;}
 }
-
-/* v30.9.110 final — 10% larger recommendation tags, preserving the
-   distance chip's right-hand alignment. Scroll only the tag strip when
-   multiple labels exceed the available width. */
 .recommend-drawer .recommend-card-shell > .recommend-guide-tags{
   box-sizing:border-box!important;
   justify-self:stretch!important;
@@ -1298,9 +1228,6 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
    strip's right edge aligned to the distance chip.
    v30.9.115 — slightly tighter frame and smaller corner radius; text size unchanged. */
 .recommend-drawer .recommend-tag-track .recommend-guide-tag{
-  font-size:12.36px!important;
-  padding:6.5px 10.5px!important;
-  border-radius:6px!important;
 }
   .recommend-drawer .recommend-tag-track .recommend-guide-tag{
     font-size:10.3px!important;
@@ -1314,9 +1241,7 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
     border-radius:4.5px!important;
   }
 }
-/* v30.9.116: cuisine descriptor another +0.5pt (+0.667px); preserve 2.5px downshift. */
 .recommend-drawer .recommend-card-main .recommend-card-type{
-  font-size:15.3337px!important;
   position:relative!important;top:2.5px!important;
 }
   .recommend-drawer .recommend-card-main .recommend-card-type{font-size:10.8337px!important;}
@@ -1331,8 +1256,7 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
   align-content:start!important;
 }
 .recommend-drawer .recommend-opening-status{
-  display:inline-flex;align-items:center;justify-content:flex-end;
-  gap:4px;max-width:100%;min-width:0;
+  display:inline-flex;align-items:center;justify-content:flex-end;max-width:100%;min-width:0;
   justify-self:end;align-self:start;
   position:relative;top:5px;
   color:#A7D9B7;
@@ -1340,7 +1264,7 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
   letter-spacing:0;white-space:nowrap;text-align:right;
 }
 .recommend-drawer .recommend-opening-status::before{
-  content:'';flex:0 0 auto;width:5px;height:5px;border-radius:50%;
+  content:'';flex:0 0 auto;border-radius:50%;
   background:currentColor;
 }
 .recommend-drawer .recommend-opening-soon{color:#FFB967;}
@@ -1352,15 +1276,13 @@ html[data-theme="light"] .recommend-drawer .recommend-opening-soon{color:#B7650C
 html[data-theme="light"] .recommend-drawer .recommend-opening-closed{color:#B23E39;}
 html[data-theme="light"] .recommend-drawer .recommend-opening-irregular,
 html[data-theme="light"] .recommend-drawer .recommend-opening-unknown{color:#747474;}
-.recommend-drawer .recommend-card-stars{min-height:0!important;align-self:end!important;}
+.recommend-drawer .recommend-card-stars{align-self:end!important;}
   .recommend-drawer .recommend-opening-status{font-size:10.333px!important;line-height:1.1!important;gap:3px;}
   .recommend-drawer .recommend-opening-status::before{width:4px;height:4px;}
   .recommend-drawer .recommend-card-stars{min-height:0!important;}
 @media(max-width:360px){
   .recommend-drawer .recommend-opening-status{font-size:9.833px!important;}
 }
-
-/* v30.9.114 — unavailable choices reuse the existing disabled pill style. ベジ badge is green. */
 .recommend-drawer .recommend-guide-tag-veg{
   color:#A8DDB1!important;background:#263629!important;border-color:#4A7552!important;
 }
@@ -1368,8 +1290,6 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-veg{
   color:#2D6A3A!important;background:#ECF7EE!important;border-color:#A9D3B1!important;
 }
 .recommend-drawer .recommend-result-head.is-advanced-open{z-index:32;}
-
-/* v30.9.115 — cuisine panel heading: smaller on phones, with air above the choices. */
   .recommend-drawer #recommend-mood-title{font-size:14px!important;line-height:1.3!important;margin:0 0 12px!important;}
 /* Station numbers with a letter (G03A, R22A): two digits on top, the letter below. */
 .recommend-drawer .recommend-native-code.has-suffix,
@@ -1394,11 +1314,6 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-veg{
 .recommend-drawer .recommend-native-list{display:grid;gap:3px;}
 html[data-theme="light"] .recommend-drawer .recommend-station-search-input{color:#2E2E2E;}
 html[data-theme="light"] .recommend-drawer .recommend-station-search-input::placeholder{color:#8A8A8A;}
-
-/* v30.9.120 — see the block at the end: the recommender now sits in the page.
-   v30.9.119 — "next" = next opening, e.g. （月）10:00から.
-   v30.9.118 — the phone layout is used at every width (desktop follows the phone);
-   new timing labels; 11px captions and sort tabs; the whole card opens Maps. */
 .recommend-drawer .recommend-opening-opening{color:#FFB967;}
 .recommend-drawer .recommend-opening-next{color:#D9D9D9;}
 html[data-theme="light"] .recommend-drawer .recommend-opening-opening{color:#B7650C;}
@@ -1410,9 +1325,6 @@ html[data-theme="light"] .recommend-drawer .recommend-opening-next{color:#4A4A4A
 .recommend-drawer .recommend-card .recommend-venue{position:static!important;}
 .recommend-drawer .recommend-card .recommend-venue::after{content:"";position:absolute;inset:0;z-index:1;}
 .recommend-drawer .recommend-card .recommend-tag-track{position:relative;z-index:2;}
-
-/* v30.9.120 — no drawer: the recommender is the front of 🥢 食べる・飲む and the
-   block turns over to the full list. 3D is applied only while turning. */
 .recommend-drawer.is-inline{
   position:relative!important;inset:auto!important;z-index:auto!important;
   width:auto!important;max-width:none!important;overflow:visible!important;visibility:inherit!important;
@@ -1524,8 +1436,6 @@ html[data-theme="light"] #food-recommend-section .food-directory-message{color:#
   #food-recommend-section .food-directory-row{grid-template-columns:21px minmax(0,1fr);}
   #food-recommend-section .food-directory-link{font-size:13px;}
 }
-
-/* v30.9.123 — inline front: remove the drawer-era vertical edge gradients. */
 #food-recommend-section .recommend-drawer.is-inline::before,
 #food-recommend-section .recommend-drawer.is-inline::after{
   content:none!important;display:none!important;
@@ -1548,8 +1458,6 @@ html[data-theme="light"] #food-recommend-section .food-directory-message{color:#
     grid-template-rows:repeat(3,100px)!important;grid-auto-rows:100px!important;
   }
 }
-
-/* v30.9.125 — avoid iOS Safari flip ghosting and content-height jumps. */
 #food-recommend-section .food-flip-front,
 #food-recommend-section .food-flip-back{
   -webkit-transform-origin:center center;
@@ -1560,7 +1468,6 @@ html[data-theme="light"] #food-recommend-section .food-directory-message{color:#
 /* Safari's dynamic URL bar changes dvh. Keep inline layout spacing independent
    of the live visual viewport and reserve the same result/footer slots. */
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head{
-  margin-top:40px!important;
 }
 /* The older short-screen drawer rule hides the introduction below 610px.
    The embedded page must not flicker when Safari reveals its browser bars. */
@@ -1595,8 +1502,6 @@ html[data-theme="light"] #food-recommend-section .food-directory-message{color:#
 /* Text changes by result count, location and live time; reserve a stable
    disclaimer slot as well, especially on narrow Safari screens. */
 #food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{
-  box-sizing:border-box!important;
-  min-height:88px!important;
 }
 @media(max-width:360px){
   #food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{
@@ -1622,20 +1527,13 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
 @media(prefers-reduced-motion:reduce){
   #food-recommend-section .food-directory::after{transition:none;}
 }
-
-
-/* v30.9.126 — independent reverse-side viewport and real three-card geometry.
-   The reverse list previously inherited the 830px *front* height, so its fade
-   lived below the Safari address toolbar instead of at the visible scroll edge. */
 #food-recommend-section .food-flip[data-face="back"] .food-flip-inner{
   height:var(--food-back-height,min(680px,calc(100svh - 160px)));
-  min-height:0;
 }
 #food-recommend-section .food-flip[data-face="back"] .food-flip-front{
   position:absolute;inset:0;pointer-events:none;
 }
-#food-recommend-section .food-flip[data-face="back"] .food-flip-back{
-  height:100%;min-height:0;
+#food-recommend-section .food-flip[data-face="back"] .food-flip-back{min-height:0;
 }
 /* The conditional advisory placeholder belongs *after* the three cards, not
    between the section heading and the first recommendation. Keep its stable
@@ -1656,11 +1554,9 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
 #food-recommend-section .recommend-drawer.is-inline .recommend-relaxed:not([hidden]){order:2!important;}
 #food-recommend-section .recommend-drawer.is-inline .recommend-more:not([hidden]){
   order:3!important;
-  margin:9px 0 0!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{
   order:4!important;
-  margin:6px 0 0!important;
 }
 /* An unavailable 'more' button and its reserved 32px slot are visually placed
    after the note, rather than interrupting the result-to-note reading flow. */
@@ -1673,18 +1569,13 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
 #food-recommend-section .recommend-drawer.is-inline .recommend-relaxed[hidden]{order:6!important;}
 /* Gain a little viewport room above the results instead of relying on negative
    margins at the bottom, which can break Safari's touch hit targets. */
-#food-recommend-section .recommend-drawer.is-inline .recommend-result-head{margin-top:28px!important;}
+#food-recommend-section .recommend-drawer.is-inline .recommend-result-head{}
 
 
 /* v30.9.128 — headline and sort tabs share the first row;
    selected conditions and the + menu take the second row. Keep the advanced
    popup anchored to the whole header so it never inherits the chips' width. */
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) max-content!important;
-  column-gap:10px!important;
-  row-gap:12px!important;
-  align-items:center!important;
   margin-top:28px!important;
   margin-bottom:9px!important;
 }
@@ -1698,30 +1589,18 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
   line-height:1.3!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head > .recommend-sort{
-  grid-column:2!important;grid-row:1!important;
-  position:relative!important;top:auto!important;
-  justify-self:end!important;align-self:center!important;
-  display:flex!important;gap:12px!important;
-  margin:0!important;padding:0!important;
-  min-width:0!important;
+  justify-self:end!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head > .recommend-controls-secondary{
-  grid-column:1 / -1!important;grid-row:2!important;
-  position:relative!important;top:0!important;
-  justify-self:stretch!important;justify-content:flex-start!important;
-  width:100%!important;max-width:100%!important;
-  margin:0!important;min-width:0!important;
+  position:relative!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head > .recommend-count{display:none!important;}
 @media(max-width:360px){
-  #food-recommend-section .recommend-drawer.is-inline .recommend-result-head{
-    column-gap:7px!important;row-gap:11px!important;
+  #food-recommend-section .recommend-drawer.is-inline .recommend-result-head{row-gap:11px!important;
   }
   #food-recommend-section .recommend-drawer.is-inline .recommend-result-head > .recommend-sort{
-    gap:9px!important;
   }
   #food-recommend-section .recommend-drawer.is-inline .recommend-result-head .recommend-sort-option{
-    font-size:9.5px!important;
   }
 }
 
@@ -1732,7 +1611,7 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
   top:0!important;margin:12px 0 0!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-relaxed[hidden]{display:none!important;}
-#food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{min-height:0!important;margin:8px 0 0!important;}
+#food-recommend-section .recommend-drawer.is-inline .recommend-disclaimer{}
 
 /* v30.9.130 — the note is short and keeps a fixed two-line slot, so a line break never
    moves the block's edge; no fade on the list; the list side takes exactly the
@@ -1756,39 +1635,20 @@ html[data-theme="light"] #food-recommend-section .food-directory::after{
   font-size:11px;line-height:16px;color:#9A9A9A;
 }
 html[data-theme="light"] #food-recommend-section .food-directory-note{color:#5E6B72;}
-
-/* v30.9.132 — the list's scroll fade is a pseudo-element with visibility:visible, which
-   showed through the hidden list side onto the front. It only exists on the list side. */
 #food-recommend-section .food-flip[data-face="front"] .food-directory::after{visibility:hidden!important;opacity:0!important;}
-
-
-/* v30.9.166 — compact recommender heading, one-row sorting and conditions.
-   Works with v30.9.153 (no chapter transition scripts).
-   The existing selected-category chips get their own optional second line;
-   the popup remains anchored to the complete sort/filter header. */
 #food-recommend-section .recommend-drawer.is-inline #recommend-title{
   margin:0 0 20px!important;
   line-height:1.3!important;
   font-size:clamp(21px,5.9vw,27px)!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) max-content!important;
   column-gap:8px!important;
-  row-gap:7px!important;
-  align-items:center!important;
   margin:17px 0 10px!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head > .recommend-sort{
-  grid-column:1!important;
-  grid-row:1!important;
   justify-self:start!important;
-  align-self:center!important;
-  min-width:0!important;
-  display:flex!important;
   align-items:center!important;
   gap:15px!important;
-  margin:0!important;
   padding:0!important;
   position:relative!important;
   top:auto!important;
@@ -1801,30 +1661,19 @@ html[data-theme="light"] #food-recommend-section .food-directory-note{color:#5E6
   grid-row:1!important;
   justify-self:end!important;
   align-self:center!important;
-  position:static!important;
-  margin:0!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head .recommend-active-filters{
   grid-column:1 / -1!important;
   grid-row:2!important;
-  display:flex!important;
   flex-wrap:wrap!important;
-  align-items:center!important;
-  gap:5px!important;
-  min-width:0!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head .recommend-active-filters:empty{
-  display:none!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head .recommend-advanced-panel{
-  position:absolute!important;
-  top:calc(100% + 5px)!important;
   left:0;
   right:0;
-  z-index:45!important;
 }
 #food-recommend-section .recommend-drawer.is-inline .recommend-result-head .recommend-advanced-trigger{
-  margin:0!important;
 }
 /* Preserve the original 3-card size; removing redundant headings means the
    card, reload button and advisory naturally move upward together. */
@@ -1847,7 +1696,6 @@ html[data-theme="light"] #food-recommend-section .food-directory-note{color:#5E6
     column-gap:6px!important;
   }
   #food-recommend-section .recommend-drawer.is-inline .recommend-result-head > .recommend-sort{
-    gap:10px!important;
   }
 }
 
@@ -1939,15 +1787,9 @@ html[data-theme="light"] #food-recommend-section .food-directory-note{color:#5E6
   #food-recommend-section .recommend-drawer.is-inline .recommend-result-head .recommend-sort-option{font-size:10px!important;}
   #food-recommend-section .recommend-drawer.is-inline .recommend-result-head .recommend-active-chip{padding:3px 6px!important;}
 }
-
-/* v30.9.168 — 時間帯指定 breathes while a band is chosen: one bright/dim cycle per second. */
 @keyframes recommend-caption-breathe{0%,100%{opacity:1}50%{opacity:.3}}
 .recommend-drawer #recommend-time-caption.is-breathing{animation:recommend-caption-breathe 1s ease-in-out infinite;}
 @media (prefers-reduced-motion:reduce){.recommend-drawer #recommend-time-caption.is-breathing{animation:none;}}
-
-/* v30.9.170 — crisper front side (mock 2026-10-27): outlined controls and cards on
-   the page background, thin bright borders, smaller corner radius, compact tags.
-   The station picker uses the same look. Chains show a チェーン店 pill by the name. */
 #food-recommend-section .recommend-drawer.is-inline #recommend-current-location,
 #food-recommend-section .recommend-drawer.is-inline .recommend-picker-station,
 #food-recommend-section .recommend-drawer.is-inline #recommend-time-trigger,
@@ -1977,17 +1819,11 @@ html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #re
 html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-guide-tag-featured{background:#F3E4C4!important;border-color:#D9BF8C!important;color:#6F4D16!important;}
 html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-more{border-color:rgba(0,0,0,.24)!important;}
 html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline .recommend-chain-pill{color:#555;border-color:#C6C6C6;}
-
-/* v30.9.172 — softer outlines (above); チェーン店 sits right of the kind label; the
-   kind, the name and the opening status sit 5px lower. */
 #food-recommend-section .recommend-drawer.is-inline .recommend-type-row{display:flex;flex-wrap:wrap;align-items:center;gap:3px 7px;min-width:0;}
 #food-recommend-section .recommend-drawer.is-inline .recommend-type-row .recommend-card-type{margin:0!important;}
 #food-recommend-section .recommend-drawer.is-inline .recommend-type-row .recommend-chain-pill{font-size:9.5px;padding:1px 6px;}
 #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card-main{margin-top:5px!important;}
 #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-opening-status{margin-top:5px!important;}
-
-/* v30.9.174 — lighter shop names (1px smaller, one weight lighter); in light mode the
-   現在地 / 時間帯 captions are black instead of purple. */
 #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-venue{font-size:17.3px!important;font-weight:690!important;}
 html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline .recommend-source-caption,
 html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-time-caption,
