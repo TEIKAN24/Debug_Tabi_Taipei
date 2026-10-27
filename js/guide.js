@@ -3500,7 +3500,7 @@ update();
   });
 })();
 
-/* v30.9.180 — City Walk: 8-area index + one expandable inline detail.
+/* v30.9.181 — City Walk: 8-area index swaps with one inline browser.
  * Uses existing hidden area DOM for labels, tabs, venue entries and map links.
  * Other chapters, night markets and navigation are left unchanged. */
 ;(()=>{
@@ -3526,8 +3526,8 @@ update();
   detail.setAttribute('aria-label','街歩きエリア詳細');
   detail.innerHTML=`<div class="walk-inline-inner">
     <div class="walk-inline-top">
+      <button class="walk-inline-back" type="button" aria-label="街歩きエリア一覧に戻る">エリア一覧に戻る</button>
       <div class="walk-inline-copy"><h4 class="walk-inline-heading"></h4><p class="walk-inline-description"></p></div>
-      <button class="walk-inline-close" type="button" aria-label="エリア詳細を閉じる">−</button>
     </div><div class="walk-inline-host"></div>
   </div>`;
   const host=detail.querySelector('.walk-inline-host');
@@ -3536,17 +3536,22 @@ update();
   const buttons=[];
   let active=-1,focusOrigin=null;
   const remembered=new Map();
-  const close=({restoreFocus=false}={})=>{
+  const back=({restoreFocus=false,scrollToList=false}={})=>{
     if(active<0)return;
     const focus=focusOrigin;
     active=-1;
     detail.hidden=true;host.replaceChildren();
+    grid.hidden=false;
+    root.classList.remove('walk-viewing-detail');
     buttons.forEach(button=>button.setAttribute('aria-expanded','false'));
     if(restoreFocus&&focus?.isConnected)focus.focus({preventScroll:true});
     focusOrigin=null;
+    if(scrollToList){
+      requestAnimationFrame(()=>grid.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
+    }
   };
   const show=(index,trigger)=>{
-    if(index===active){close();return;}
+    if(index===active){back({restoreFocus:true,scrollToList:true});return;}
     if(active===-1)focusOrigin=trigger;
     active=index;
     title.textContent=tabs[index].textContent.trim();
@@ -3586,13 +3591,12 @@ update();
     });
     host.replaceChildren(clone);
     detail.hidden=false;
+    grid.hidden=true;
+    root.classList.add('walk-viewing-detail');
     buttons.forEach((button,i)=>button.setAttribute('aria-expanded',String(index===i)));
     choose(Math.min(remembered.get(index)||0,chips.length-1));
-    // When needed, bring the opened heading into view rather than moving the page on each category switch.
-    const bounds=detail.getBoundingClientRect();
-    if(bounds.top>window.innerHeight-140){
-      detail.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
-    }
+    // Swap within this accordion: bring the reader top into view after removing the index.
+    requestAnimationFrame(()=>detail.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
   };
   tabs.forEach((tab,i)=>{
     const button=document.createElement('button');button.type='button';button.className='walk-area-card';
@@ -3605,6 +3609,6 @@ update();
   });
   original.before(grid,detail);
   root.classList.add('walk-grid-ready');
-  detail.querySelector('.walk-inline-close').addEventListener('click',()=>close({restoreFocus:true}));
-  root.addEventListener('toggle',()=>{if(!root.open)close();});
+  detail.querySelector('.walk-inline-back').addEventListener('click',()=>back({restoreFocus:true,scrollToList:true}));
+  root.addEventListener('toggle',()=>{if(!root.open)back();});
 })();

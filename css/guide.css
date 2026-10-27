@@ -5157,9 +5157,11 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 #guide hr.chapter-glow--experiences{--chapter-glow:188,112,98;}
 #guide hr.chapter-glow--daytrips{--chapter-glow:126,149,170;}
 
-/* v30.9.180 — CITY WALK ONLY: 8-area editorial index + inline expandable details.
+/* v30.9.181 — CITY WALK ONLY: 8-area editorial index swaps with inline browser.
    Inherit existing monochrome palette and category chips; night markets untouched. */
 #guide .walk-grid-ready > .indented > .tab{display:none!important}
+#guide .walk-viewing-detail .walk-area-grid{display:none!important}
+#guide .walk-area-grid[hidden]{display:none!important}
 #guide .walk-area-grid{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
   margin:7px 0 0;padding:0;min-width:0;
@@ -5175,7 +5177,7 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 #guide .walk-area-card-name{font-size:12.5px;font-weight:760;line-height:1.45;letter-spacing:-.02em}
 #guide .walk-area-card-sub{font-size:10.5px;line-height:1.45;font-weight:500;color:var(--muted)}
 #guide .walk-area-card[aria-expanded="true"]{border-color:#B9B9B9;background:#191919}
-#guide .walk-area-card:focus-visible,#guide .walk-inline-close:focus-visible{
+#guide .walk-area-card:focus-visible{
   outline:2px solid var(--accent);outline-offset:2px;
 }
 @media(max-width:360px){
@@ -5186,24 +5188,28 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 }
 #guide .walk-inline-detail[hidden]{display:none!important}
 #guide .walk-inline-detail{
-  margin:12px 0 1px;border:1px solid var(--line);border-radius:12px;
-  background:var(--paper);color:var(--ink);overflow:hidden;
+  margin:7px 0 1px;border:0;border-radius:0;
+  background:transparent;color:var(--ink);overflow:hidden;
+  scroll-margin-top:74px;
   animation:walk-detail-reveal .22s ease-out both;
 }
 #guide .walk-inline-inner{
   height:clamp(402px,60svh,522px);
-  display:flex;flex-direction:column;min-height:0;padding:15px 12px 10px;
+  display:flex;flex-direction:column;min-height:0;padding:3px 2px 9px;
 }
-#guide .walk-inline-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex:none}
+#guide .walk-inline-top{display:flex;flex-direction:column;align-items:stretch;gap:8px;flex:none}
+#guide .walk-inline-back{
+  align-self:flex-start;min-height:36px;border:1px solid var(--line);border-radius:999px;
+  padding:7px 12px;background:var(--paper);color:var(--muted);
+  font:inherit;font-size:11.5px;font-weight:650;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#guide .walk-inline-back:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#guide .walk-inline-back:hover{color:var(--ink);border-color:var(--muted)}
 #guide .walk-inline-heading{font-size:15px;font-weight:760;line-height:1.45;margin:0!important;color:var(--ink)}
 #guide .walk-inline-description{
   color:var(--muted);font-size:11px;line-height:1.55;
   margin:3px 0 11px!important;min-height:17px;
-}
-#guide .walk-inline-close{
-  flex:none;display:grid;place-items:center;width:36px;height:36px;padding:0;
-  margin:-7px -6px 0 0;border:0;border-radius:100%;background:transparent;
-  color:var(--muted);font:inherit;font-size:21px;line-height:1;cursor:pointer;
 }
 #guide .walk-inline-host{min-height:0;flex:1;display:flex;flex-direction:column;overflow:hidden}
 #guide .walk-inline-detail .area-panel{
@@ -5235,7 +5241,9 @@ html[data-theme="light"] #guide .walk-area-card-sub{color:#66737A}
 html[data-theme="light"] #guide .walk-area-card[aria-expanded="true"]{
   background:#F2F3F3;border-color:#9FA8AA;
 }
-html[data-theme="light"] #guide .walk-inline-detail{background:#FFFFFF;border-color:#DDE2E3;color:#213038}
+html[data-theme="light"] #guide .walk-inline-detail{background:transparent;color:#213038}
+html[data-theme="light"] #guide .walk-inline-back{background:#FFFFFF;border-color:#DDE2E3;color:#66737A}
+html[data-theme="light"] #guide .walk-inline-back:hover{border-color:#9FA8AA;color:#213038}
 html[data-theme="light"] #guide .walk-inline-heading{color:#213038}
 html[data-theme="light"] #guide .walk-inline-description{color:#66737A}
 html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane a{color:#213038}
