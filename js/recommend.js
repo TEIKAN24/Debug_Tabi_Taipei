@@ -32,7 +32,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.172';
+  const VERSION='30.9.174';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -643,6 +643,16 @@
       }
       if(!pick)break; // Exhausted unique venues; no repeated cards or null item.
       take(pick);
+    }
+    // v30.9.174: never three of the same kind on one page of three. When the band
+    // preference would do that, the third card trades places with the next
+    // differently-kinded shop further down the order.
+    const kindKey=item=>item.displayType||item.category||'';
+    for(let start=0;start+2<ordered.length;start+=3){
+      const k=kindKey(ordered[start]);
+      if(!k||kindKey(ordered[start+1])!==k||kindKey(ordered[start+2])!==k)continue;
+      const swap=ordered.findIndex((item,i)=>i>start+2&&kindKey(item)!==k);
+      if(swap>0)[ordered[start+2],ordered[swap]]=[ordered[swap],ordered[start+2]];
     }
     // Distance order is strictly ascending straight-line metres. Reuse the
     // same time, radius and user filters, but not recommendation score.

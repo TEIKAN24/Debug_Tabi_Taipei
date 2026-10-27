@@ -1,5 +1,6 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
-/* v30.9.172 — scroll lists under bubble tabs fade at the bottom and an open block fits on screen;
+/* v30.9.174 — even bubble-panel heights per block, softer bubble swipe, edge hint for the dictionary.
+   v30.9.172 — scroll lists under bubble tabs fade at the bottom and an open block fits on screen;
    撮影スポット has two bubbles; the dictionary's dimmed page reaches every screen edge.
    v30.9.150 — align the reverse-side directory bubbles and restore adaptive scroll hints.
    v30.9.113 — data files revalidate (cache:'no-cache') instead of re-downloading.
@@ -1412,9 +1413,9 @@ loadData();
     if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && list.animate){
       entryAnimation?.cancel();
       entryAnimation=list.animate([
-        {opacity:.76,transform:`translate3d(${dx<0?22:-22}px,0,0)`},
+        {opacity:.12,transform:`translate3d(${dx<0?22:-22}px,0,0)`},
         {opacity:1,transform:'translate3d(0,0,0)'}
-      ],{duration:220,easing:'ease-out'});
+      ],{duration:460,easing:'cubic-bezier(.22,.8,.3,1)'});
     }
     suppressClickUntil=performance.now()+450;
   },{passive:true});
@@ -3318,7 +3319,7 @@ update();
     if(panel.hidden||!panel.getClientRects().length)return;
     const block=panel.closest('details.root-accordion');
     if(!block?.open)return;
-    panel.style.removeProperty('max-height');panel.style.removeProperty('overflow-y');
+    panel.style.removeProperty('max-height');panel.style.removeProperty('overflow-y');panel.style.removeProperty('min-height');
     const parsed=parseFloat(getComputedStyle(panel).maxHeight);
     const base=Number.isFinite(parsed)?parsed:Infinity;
     const overhead=block.getBoundingClientRect().height-panel.getBoundingClientRect().height;
@@ -3329,7 +3330,44 @@ update();
     }
     fade(panel);
   }
-  const all=()=>requestAnimationFrame(()=>panels().forEach(fit));
+  // v30.9.174: all bubbles of one block keep the size of its tallest list (within
+  // the screen), so switching bubbles never makes the page jump; short lists
+  // simply leave room below.
+  function evenOut(block){
+    const group=[...block.querySelectorAll('.tab-panels > .tab-panel')];
+    const shown=group.find(panel=>!panel.hidden);
+    if(group.length<2||!block.open||!shown)return;
+    const reset=panel=>['min-height','max-height','overflow-y'].forEach(prop=>panel.style.removeProperty(prop));
+    // Natural height of every bubble's panel (hidden ones measured off-screen).
+    const heights=group.map(panel=>{
+      reset(panel);
+      if(!panel.hidden)return panel.getBoundingClientRect().height;
+      const style=panel.getAttribute('style')||'';
+      panel.hidden=false;
+      panel.style.cssText+=';visibility:hidden;position:absolute;width:'+(panel.parentElement?.clientWidth||0)+'px';
+      const h=panel.getBoundingClientRect().height;
+      panel.setAttribute('style',style);reset(panel);panel.hidden=true;
+      return h;
+    });
+    // One height for all of them: the tallest, but the open block stays on screen.
+    const overhead=block.getBoundingClientRect().height-shown.getBoundingClientRect().height;
+    const room=Math.max(200,window.innerHeight-overhead-32);
+    const target=Math.round(Math.min(Math.max(...heights),room));
+    group.forEach((panel,i)=>{
+      panel.style.setProperty('min-height',target+'px');
+      if(heights[i]>target+1&&!panel.classList.contains('four-row-teaser')){
+        panel.style.setProperty('max-height',target+'px','important');
+        panel.style.setProperty('overflow-y','auto','important');
+      }
+    });
+    if(!shown.classList.contains('four-row-teaser'))fade(shown);
+  }
+  const all=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    guide.querySelectorAll('details.root-accordion[open]').forEach(block=>{
+      if(block.querySelectorAll('.tab-panels > .tab-panel').length>1)evenOut(block);
+      else block.querySelectorAll('.tab-panel').forEach(fit);
+    });
+  }));
   panels().forEach(panel=>panel.addEventListener('scroll',()=>fade(panel),{passive:true}));
   guide.addEventListener('toggle',all,true);
   const observer=new MutationObserver(all);

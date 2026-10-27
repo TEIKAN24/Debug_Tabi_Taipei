@@ -1985,3 +1985,10 @@ html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline .re
 #food-recommend-section .recommend-drawer.is-inline .recommend-type-row .recommend-chain-pill{font-size:9.5px;padding:1px 6px;}
 #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card-main{margin-top:5px!important;}
 #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-opening-status{margin-top:5px!important;}
+
+/* v30.9.174 — lighter shop names (1px smaller, one weight lighter); in light mode the
+   現在地 / 時間帯 captions are black instead of purple. */
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-venue{font-size:17.3px!important;font-weight:690!important;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline .recommend-source-caption,
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-time-caption,
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-area-label{color:#1E1E1E!important;}
