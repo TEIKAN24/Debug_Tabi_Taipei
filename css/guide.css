@@ -5157,113 +5157,91 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 #guide hr.chapter-glow--experiences{--chapter-glow:188,112,98;}
 #guide hr.chapter-glow--daytrips{--chapter-glow:126,149,170;}
 
-
-/* v30.9.179 — CITY WALK ONLY: editorial area index + full-screen district reader.
-   The outer Night Market / City Walk accordion and other chapters are unchanged. */
+/* v30.9.180 — CITY WALK ONLY: 8-area editorial index + inline expandable details.
+   Inherit existing monochrome palette and category chips; night markets untouched. */
+#guide .walk-grid-ready > .indented > .tab{display:none!important}
 #guide .walk-area-grid{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
   margin:7px 0 0;padding:0;min-width:0;
 }
 #guide .walk-area-card{
-  position:relative;display:flex;flex-direction:column;justify-content:flex-end;
-  min-width:0;min-height:98px;padding:12px 11px 13px;gap:5px;
-  border:1px solid var(--line);border-radius:12px;
-  background:var(--paper);color:var(--ink);text-align:left;
-  font:inherit;cursor:pointer;appearance:none;-webkit-tap-highlight-color:transparent;
-  transition:border-color .18s ease,background-color .18s ease,transform .18s ease;
+  appearance:none;min-width:0;min-height:81px;display:flex;flex-direction:column;
+  justify-content:center;align-items:flex-start;gap:4px;
+  padding:12px 12px;text-align:left;font:inherit;cursor:pointer;
+  background:var(--paper);color:var(--ink);border:1px solid var(--line);
+  border-radius:12px;-webkit-tap-highlight-color:transparent;
+  transition:background-color .18s ease,border-color .18s ease;
 }
-#guide .walk-area-card:active{transform:scale(.98)}
-#guide .walk-area-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-#guide .walk-area-card-name{display:block;font-size:12.5px;font-weight:760;line-height:1.45;letter-spacing:-.02em}
-#guide .walk-area-card-sub{display:block;font-size:10.5px;line-height:1.5;color:var(--muted);font-weight:500}
-#guide .walk-area-card-arrow{position:absolute;top:10px;right:11px;font-size:15px;line-height:1;color:var(--muted);opacity:.85}
-/* The original district lists remain in the DOM as the single source of truth. */
-#guide .walk-grid-ready > .indented > .tab{display:none!important}
+#guide .walk-area-card-name{font-size:12.5px;font-weight:760;line-height:1.45;letter-spacing:-.02em}
+#guide .walk-area-card-sub{font-size:10.5px;line-height:1.45;font-weight:500;color:var(--muted)}
+#guide .walk-area-card[aria-expanded="true"]{border-color:#B9B9B9;background:#191919}
+#guide .walk-area-card:focus-visible,#guide .walk-inline-close:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;
+}
 @media(max-width:360px){
   #guide .walk-area-grid{gap:7px}
-  #guide .walk-area-card{min-height:87px;padding:10px 9px}
+  #guide .walk-area-card{min-height:78px;padding:11px 9px}
   #guide .walk-area-card-name{font-size:12px}
   #guide .walk-area-card-sub{font-size:10px}
 }
-
-/* Reader is a viewport overlay inside #guide, not a new browser tab. */
-#guide .walk-reader[hidden]{display:none!important}
-#guide .walk-reader{
-  position:fixed;inset:0;inset:0 0 0 0;z-index:10060;
-  width:100%;height:100dvh;
-  background:var(--bg);color:var(--ink);
-  display:flex;flex-direction:column;overflow:hidden;
-  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);
-  isolation:isolate;overscroll-behavior:contain;
+#guide .walk-inline-detail[hidden]{display:none!important}
+#guide .walk-inline-detail{
+  margin:12px 0 1px;border:1px solid var(--line);border-radius:12px;
+  background:var(--paper);color:var(--ink);overflow:hidden;
+  animation:walk-detail-reveal .22s ease-out both;
 }
-#guide .walk-reader-shell{
-  display:flex;flex-direction:column;flex:1;min-height:0;width:min(100%,760px);
-  margin:0 auto;padding:0 16px;
+#guide .walk-inline-inner{
+  height:clamp(402px,60svh,522px);
+  display:flex;flex-direction:column;min-height:0;padding:15px 12px 10px;
 }
-#guide .walk-reader-header{
-  display:flex;align-items:center;justify-content:space-between;min-height:54px;flex:none;
-  border-bottom:1px solid var(--line);
+#guide .walk-inline-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex:none}
+#guide .walk-inline-heading{font-size:15px;font-weight:760;line-height:1.45;margin:0!important;color:var(--ink)}
+#guide .walk-inline-description{
+  color:var(--muted);font-size:11px;line-height:1.55;
+  margin:3px 0 11px!important;min-height:17px;
 }
-#guide .walk-reader-back,#guide .walk-reader-close,#guide .walk-reader-area-switch{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  appearance:none;border:0;background:transparent;color:var(--ink);font:inherit;
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
+#guide .walk-inline-close{
+  flex:none;display:grid;place-items:center;width:36px;height:36px;padding:0;
+  margin:-7px -6px 0 0;border:0;border-radius:100%;background:transparent;
+  color:var(--muted);font:inherit;font-size:21px;line-height:1;cursor:pointer;
 }
-#guide .walk-reader-back{min-height:44px;font-size:12px;font-weight:700;padding:0 8px 0 0}
-#guide .walk-reader-close{min-height:44px;min-width:44px;font-size:25px;font-weight:400}
-#guide .walk-reader-body{display:flex;flex-direction:column;flex:1;min-height:0;padding-top:18px}
-#guide .walk-reader-area-switch{
-  justify-content:flex-start;text-align:left;max-width:100%;min-height:43px;
-  padding:0 0 4px;font-size:21px;font-weight:800;line-height:1.3;
-  letter-spacing:-.03em;
-}
-#guide .walk-reader-area-switch .walk-switch-chevron{font-size:15px;color:var(--muted);margin-left:5px}
-#guide .walk-reader-description{color:var(--muted);font-size:12px;line-height:1.65;margin:3px 0 13px!important}
-#guide .walk-reader-current{color:var(--muted);font-size:10px;font-weight:750;letter-spacing:.11em;margin:0 0 5px!important}
-#guide .walk-reader .walk-detail-host{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
-#guide .walk-reader .area-panel{
+#guide .walk-inline-host{min-height:0;flex:1;display:flex;flex-direction:column;overflow:hidden}
+#guide .walk-inline-detail .area-panel{
   display:flex!important;flex:1;flex-direction:column;min-height:0!important;
   height:auto!important;max-height:none!important;overflow:hidden!important;
-  padding:0!important;margin:0!important;border:0!important;background:transparent!important;
+  margin:0!important;padding:0!important;border:0!important;background:transparent!important;
 }
-#guide .walk-reader .area-cats{
-  margin:0 -1px 9px!important;padding:3px 1px 10px!important;flex:none;display:flex;
-  flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:7px;
-  scrollbar-width:none;overscroll-behavior-x:contain;
-  -webkit-overflow-scrolling:touch;
+#guide .walk-inline-detail .area-cats{
+  display:flex;flex:none;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
+  scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+  margin:0 -1px 9px!important;padding:2px 1px 9px!important;gap:7px;
 }
-#guide .walk-reader .area-cats::-webkit-scrollbar{display:none}
-#guide .walk-reader .area-cat{min-height:39px;flex:0 0 auto}
-#guide .walk-reader .area-cat-panes{
-  flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch;padding:8px 1px 28px;
-  border-top:1px solid var(--line);
+#guide .walk-inline-detail .area-cats::-webkit-scrollbar{display:none}
+#guide .walk-inline-detail .area-cat{flex:0 0 auto;min-height:35px}
+#guide .walk-inline-detail .area-cat-panes{
+  flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  border-top:1px solid var(--line);padding:10px 1px 18px;
   mask-image:none!important;-webkit-mask-image:none!important;
 }
-#guide .walk-reader .area-cat-pane[hidden]{display:none!important}
-#guide .walk-reader .area-cat-pane .numbered-list{max-width:100%}
-#guide .walk-reader .area-cat-pane a{color:var(--ink)}
-#guide .walk-reader .area-cat-pane a[href^="https://maps.app.goo.gl"]{color:var(--accent)}
-/* The district chooser inside the reader uses the same 8 unnumbered cards. */
-#guide .walk-reader-picker[hidden]{display:none!important}
-#guide .walk-reader-picker{
-  position:absolute;inset:0;z-index:2;background:var(--bg);
-  display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 16px env(safe-area-inset-bottom,0px);
+#guide .walk-inline-detail .area-cat-pane[hidden]{display:none!important}
+#guide .walk-inline-detail .area-cat-pane .numbered-list{max-width:100%}
+#guide .walk-inline-detail .area-cat-pane a{color:var(--ink)}
+#guide .walk-inline-detail .area-cat-pane a[href^="https://maps.app.goo.gl"]{color:var(--accent)}
+html[data-theme="light"] #guide .walk-area-card{
+  background:#FFFFFF;border-color:#DDE2E3;color:#213038;
 }
-#guide .walk-reader-picker-inner{width:min(100%,728px);margin:0 auto;min-height:0;display:flex;flex-direction:column;flex:1}
-#guide .walk-reader-picker-grid{overflow:auto;padding:18px 0 28px;overscroll-behavior:contain}
-#guide .walk-reader-picker .walk-area-card[aria-current="true"]{border-color:var(--accent)}
-html[data-theme="light"] #guide .walk-area-card{background:#fff;color:#213038;border-color:#DDE2E3}
-html[data-theme="light"] #guide .walk-area-card-sub,
-html[data-theme="light"] #guide .walk-area-card-arrow{color:#66737A}
-html[data-theme="light"] #guide .walk-reader{background:#F7F8F7;color:#213038}
-html[data-theme="light"] #guide .walk-reader-picker{background:#F7F8F7}
-html[data-theme="light"] #guide :is(.walk-reader-back,.walk-reader-close,.walk-reader-area-switch){color:#213038}
-html[data-theme="light"] #guide .walk-reader .area-cat-pane a{color:#213038}
-html[data-theme="light"] #guide .walk-reader .area-cat-pane a[href^="https://maps.app.goo.gl"]{color:#12639B}
-@media(min-width:650px){
-  #guide .walk-reader-shell{padding:0 26px}
-  #guide .walk-reader-picker-inner{width:min(100%,708px)}
-  #guide .walk-reader-area-switch{font-size:25px}
+html[data-theme="light"] #guide .walk-area-card-sub{color:#66737A}
+html[data-theme="light"] #guide .walk-area-card[aria-expanded="true"]{
+  background:#F2F3F3;border-color:#9FA8AA;
 }
-@media(prefers-reduced-motion:reduce){#guide .walk-area-card{transition:none}}
+html[data-theme="light"] #guide .walk-inline-detail{background:#FFFFFF;border-color:#DDE2E3;color:#213038}
+html[data-theme="light"] #guide .walk-inline-heading{color:#213038}
+html[data-theme="light"] #guide .walk-inline-description{color:#66737A}
+html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane a{color:#213038}
+html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane a[href^="https://maps.app.goo.gl"]{color:#12639B}
+@keyframes walk-detail-reveal{from{opacity:.55;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){
+  #guide .walk-area-card{transition:none}
+  #guide .walk-inline-detail{animation:none}
+}
