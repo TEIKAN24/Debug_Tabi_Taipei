@@ -1,5 +1,7 @@
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
-/* v30.9.174 — even bubble-panel heights per block, softer bubble swipe, edge hint for the dictionary.
+/* v30.9.176 — 注目の街歩きエリア: district bubbles + category chips + one scrolling list (no nested rows);
+   bubble panels follow the finger and slide.
+   v30.9.174 — even bubble-panel heights per block, softer bubble swipe, edge hint for the dictionary.
    v30.9.172 — scroll lists under bubble tabs fade at the bottom and an open block fits on screen;
    撮影スポット has two bubbles; the dictionary's dimmed page reaches every screen edge.
    v30.9.150 — align the reverse-side directory bubbles and restore adaptive scroll hints.
@@ -1262,6 +1264,17 @@ loadData();
       if(t.clientX<18 || t.clientX>window.innerWidth-18)return;
       gesture={id:t.identifier,startX:t.clientX,startY:t.clientY,axis:null};
     },{passive:true});
+    // v30.9.176: the shown panel follows the finger; on release it slides out and
+    // the next one slides in from the same side (or it springs back).
+    const reduce=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const current=()=>panes[index()];
+    const ease='cubic-bezier(.22,.8,.3,1)';
+    function setDrag(panel,dx,edge){
+      const x=edge?dx*.28:dx*.9;
+      panel.style.transform=`translate3d(${x}px,0,0)`;
+      panel.style.opacity=String(1-Math.min(.45,Math.abs(x)/Math.max(1,content.clientWidth)*.9));
+    }
+    function clearDrag(panel){panel.style.transform='';panel.style.opacity='';panel.style.transition='';}
     content.addEventListener('touchmove',event=>{
       if(!gesture)return;
       const t=findTouch(event.changedTouches,gesture.id);
@@ -1269,9 +1282,15 @@ loadData();
       const dx=t.clientX-gesture.startX,dy=t.clientY-gesture.startY;
       if(!gesture.axis && Math.hypot(dx,dy)>12){
         if(Math.abs(dy)>Math.abs(dx)*1.12){gesture.axis='vertical';return;}
-        if(Math.abs(dx)>Math.abs(dy)*1.25)gesture.axis='horizontal';
+        if(Math.abs(dx)>Math.abs(dy)*1.25){gesture.axis='horizontal';gesture.panel=current();content.classList.add('is-sliding');}
       }
-      if(gesture.axis==='horizontal' && event.cancelable)event.preventDefault();
+      if(gesture.axis==='horizontal'){
+        if(event.cancelable)event.preventDefault();
+        if(!reduce()&&gesture.panel){
+          const next=index()+(dx<0?1:-1);
+          setDrag(gesture.panel,dx,next<0||next>=tabs.length);
+        }
+      }
     },{passive:false});
     content.addEventListener('touchend',event=>{
       if(!gesture)return;
@@ -1279,25 +1298,50 @@ loadData();
       if(!t)return;
       const state=gesture;gesture=null;
       if(state.axis!=='horizontal')return;
-      const dx=t.clientX-state.startX,dy=t.clientY-state.startY;
-      if(Math.abs(dx)<52 || Math.abs(dx)<Math.abs(dy)*1.25)return;
+      const dx=t.clientX-state.startX;
+      const panel=state.panel;
       const next=index()+(dx<0?1:-1);
-      if(next<0||next>=tabs.length)return; // no unexpected wrap at either end
-      // Reuse native click logic for ARIA, hidden panels, fold-reset, focus,
-      // horizontal pill-strip alignment and section-specific click observers.
-      tabs[next].click();
-      // Day-trip-inspired, small directional entrance motion. The original
-      // bubble click handler remains the only owner of the active state.
-      const entered=panes[next];
-      if(entered && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-        entered.classList.remove('bubble-swipe-enter');
-        entered.style.setProperty('--bubble-swipe-offset',dx<0?'22px':'-22px');
-        void entered.offsetWidth;
-        entered.classList.add('bubble-swipe-enter');
-      }
+      const turn=Math.abs(dx)>=52&&next>=0&&next<tabs.length;
       suppressClickUntil=performance.now()+450;
+      if(reduce()||!panel){content.classList.remove('is-sliding');if(turn)tabs[next].click();return;}
+      if(!turn){
+        panel.style.transition=`transform .28s ${ease},opacity .28s ${ease}`;
+        panel.style.transform='translate3d(0,0,0)';panel.style.opacity='1';
+        setTimeout(()=>{clearDrag(panel);content.classList.remove('is-sliding');},300);
+        return;
+      }
+      const width=Math.max(1,content.clientWidth),dir=dx<0?-1:1;
+      panel.style.transition=`transform .18s ease-in,opacity .18s ease-in`;
+      panel.style.transform=`translate3d(${dir*width*.55}px,0,0)`;panel.style.opacity='0';
+      setTimeout(()=>{
+        clearDrag(panel);
+        // Reuse native click logic for ARIA, hidden panels, focus and strip alignment.
+        tabs[next].click();
+        const entered=panes[next];
+        entered.style.transition='none';
+        entered.style.transform=`translate3d(${-dir*width*.4}px,0,0)`;entered.style.opacity='0';
+        void entered.offsetWidth;
+        entered.style.transition=`transform .42s ${ease},opacity .42s ${ease}`;
+        entered.style.transform='translate3d(0,0,0)';entered.style.opacity='1';
+        setTimeout(()=>{clearDrag(entered);content.classList.remove('is-sliding');},460);
+      },180);
     },{passive:true});
-    content.addEventListener('touchcancel',()=>{gesture=null;},{passive:true});
+    content.addEventListener('touchcancel',()=>{if(gesture?.panel){clearDrag(gesture.panel);}content.classList.remove('is-sliding');gesture=null;},{passive:true});
+    // A tapped bubble slides its panel in from the side it lies on.
+    let before=0;
+    tabs.forEach((tab,i)=>{
+      tab.addEventListener('click',()=>{before=index();},true);
+      tab.addEventListener('click',event=>{
+        if(!event.isTrusted||reduce()||i===before)return;
+        const entered=panes[i];if(!entered)return;
+        const dir=i>before?1:-1;
+        entered.style.transition='none';entered.style.transform=`translate3d(${dir*44}px,0,0)`;entered.style.opacity='0';
+        void entered.offsetWidth;
+        entered.style.transition=`transform .42s ${ease},opacity .42s ${ease}`;
+        entered.style.transform='translate3d(0,0,0)';entered.style.opacity='1';
+        setTimeout(()=>clearDrag(entered),460);
+      });
+    });
     content.addEventListener('animationend',e=>{
       if(e.animationName==='bubble-swipe-in')e.target.classList.remove('bubble-swipe-enter');
     });
@@ -3310,6 +3354,14 @@ update();
   if(!guide)return;
   // Plain list panels scroll themselves (the area lists are handled by JS 21).
   const panels=()=>[...guide.querySelectorAll('details.root-accordion .tab-panel:not(.four-row-teaser)')];
+  function paneFade(box){
+    if(!box)return;
+    const can=box.scrollHeight>box.clientHeight+5;
+    box.classList.toggle('list-can-scroll',can);
+    box.dataset.listEnd=can&&box.scrollTop+box.clientHeight>=box.scrollHeight-8?'true':'false';
+  }
+  guide.querySelectorAll('.area-cat-panes').forEach(box=>box.addEventListener('scroll',()=>paneFade(box),{passive:true}));
+  document.addEventListener('tabi:area-category',()=>all());
   function fade(panel){
     const can=panel.scrollHeight>panel.clientHeight+5;
     panel.classList.toggle('list-can-scroll',can);
@@ -3337,30 +3389,36 @@ update();
     const group=[...block.querySelectorAll('.tab-panels > .tab-panel')];
     const shown=group.find(panel=>!panel.hidden);
     if(group.length<2||!block.open||!shown)return;
-    const reset=panel=>['min-height','max-height','overflow-y'].forEach(prop=>panel.style.removeProperty(prop));
-    // Natural height of every bubble's panel (hidden ones measured off-screen).
-    const heights=group.map(panel=>{
-      reset(panel);
-      if(!panel.hidden)return panel.getBoundingClientRect().height;
-      const style=panel.getAttribute('style')||'';
+    // Content heights without touching the shown panel's current size (resetting it
+    // would move everything below for a moment and make the page jump).
+    const natural=panel=>{
+      if(!panel.hidden)return panel.scrollHeight;
+      const style=panel.getAttribute('style');
       panel.hidden=false;
-      panel.style.cssText+=';visibility:hidden;position:absolute;width:'+(panel.parentElement?.clientWidth||0)+'px';
-      const h=panel.getBoundingClientRect().height;
-      panel.setAttribute('style',style);reset(panel);panel.hidden=true;
+      panel.style.cssText='visibility:hidden;position:absolute;left:0;top:0;width:'+(panel.parentElement?.clientWidth||0)+'px';
+      const h=panel.scrollHeight;
+      if(style===null)panel.removeAttribute('style');else panel.setAttribute('style',style);
+      panel.hidden=true;
       return h;
-    });
-    // One height for all of them: the tallest, but the open block stays on screen.
+    };
+    const keepY=window.scrollY;
+    const heights=group.map(natural);
     const overhead=block.getBoundingClientRect().height-shown.getBoundingClientRect().height;
     const room=Math.max(200,window.innerHeight-overhead-32);
-    const target=Math.round(Math.min(Math.max(...heights),room));
+    const area=!!shown.classList.contains('area-panel'),cards=!!shown.classList.contains('night-market-panel');
+    const cap=Math.min(room,window.innerHeight*(area?.66:cards?1:.54));
+    // One height for all bubbles of the block: the tallest, within the cap.
+    const target=Math.round(Math.max(200,Math.min(Math.max(...heights),cap)));
+    const set=(panel,prop,value)=>{if(panel.style.getPropertyValue(prop)!==value)panel.style.setProperty(prop,value,'important');};
     group.forEach((panel,i)=>{
-      panel.style.setProperty('min-height',target+'px');
-      if(heights[i]>target+1&&!panel.classList.contains('four-row-teaser')){
-        panel.style.setProperty('max-height',target+'px','important');
-        panel.style.setProperty('overflow-y','auto','important');
-      }
+      set(panel,'min-height',target+'px');
+      if(panel.classList.contains('area-panel')){set(panel,'height',target+'px');paneFade(panel.querySelector('.area-cat-panes'));return;}
+      if(heights[i]>target+1){set(panel,'max-height',target+'px');set(panel,'overflow-y','auto');}
+      else{panel.style.removeProperty('max-height');panel.style.removeProperty('overflow-y');}
     });
-    if(!shown.classList.contains('four-row-teaser'))fade(shown);
+    if(!shown.classList.contains('area-panel'))fade(shown);
+    // Measuring must never move the page.
+    if(Math.abs(window.scrollY-keepY)>1)window.scrollTo({top:keepY,behavior:'instant'});
   }
   const all=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
     guide.querySelectorAll('details.root-accordion[open]').forEach(block=>{
@@ -3399,4 +3457,42 @@ update();
     }
   };
   new MutationObserver(sync).observe(body,{attributes:true,attributeFilter:['class']});
+})();
+
+
+/* =================== JS 34: district category chips v30.9.176 =================== */
+(()=>{
+  'use strict';
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+  document.querySelectorAll('#guide .area-panel').forEach(panel=>{
+    const strip=panel.querySelector('.area-cats');
+    const box=panel.querySelector('.area-cat-panes');
+    if(!strip||!box)return;
+    const chips=[...strip.querySelectorAll('.area-cat')];
+    const panes=chips.map(chip=>document.getElementById(chip.getAttribute('aria-controls')));
+    const select=(i,focus=false)=>{
+      const before=chips.findIndex(c=>c.getAttribute('aria-selected')==='true');
+      if(i===before||!panes[i])return;
+      chips.forEach((chip,k)=>{chip.setAttribute('aria-selected',String(k===i));chip.tabIndex=k===i?0:-1;});
+      panes.forEach((pane,k)=>{if(pane)pane.hidden=k!==i;});
+      box.scrollTop=0;
+      if(focus)chips[i].focus({preventScroll:true});
+      // Keep the chosen chip in view inside its own strip (never scroll the page).
+      const c=chips[i].getBoundingClientRect(),s=strip.getBoundingClientRect();
+      if(c.left<s.left+8||c.right>s.right-8)strip.scrollTo({left:strip.scrollLeft+c.left-s.left-24,behavior:reduce.matches?'auto':'smooth'});
+      if(!reduce.matches){
+        const pane=panes[i],dir=i>before?1:-1;
+        pane.animate([{opacity:0,transform:`translate3d(${dir*36}px,0,0)`},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:400,easing:'cubic-bezier(.22,.8,.3,1)'});
+      }
+      document.dispatchEvent(new CustomEvent('tabi:area-category'));
+    };
+    chips.forEach((chip,i)=>chip.addEventListener('click',()=>select(i)));
+    strip.addEventListener('keydown',event=>{
+      const i=chips.indexOf(document.activeElement);if(i<0)return;
+      if(event.key==='ArrowRight'||event.key==='ArrowLeft'){
+        event.preventDefault();
+        const n=(i+(event.key==='ArrowRight'?1:-1)+chips.length)%chips.length;select(n,true);
+      }
+    });
+  });
 })();
