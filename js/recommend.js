@@ -32,7 +32,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.168';
+  const VERSION='30.9.170';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -346,7 +346,7 @@
   // All calculations use actual Taipei local weekday/time, including overnight
   // intervals, split shifts and contiguous 24-hour schedules.
   const WEEKDAY_KEYS=['sun','mon','tue','wed','thu','fri','sat'];
-  const CLOSE_SOON_MINUTES=60;
+  const CLOSE_SOON_MINUTES=35; // v30.9.170: もうすぐ閉店 within 35 minutes
   function taipeiClock(at=new Date()){
     const parts=new Intl.DateTimeFormat('en-US',{
       timeZone:'Asia/Taipei',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'
@@ -448,7 +448,7 @@
     node.className='recommend-opening-status recommend-opening-'+t.code;
     node.textContent=timingLabel(t);
     node.title=t.code==='unknown'?'店舗別の営業時間を確認できません':t.code==='irregular'?'不定期営業のため、訪問前に最新情報をご確認ください':
-      t.code==='opening'?'30分以内に営業開始予定です（通常営業時間による目安）':t.code==='soon'?'1時間以内に閉店予定です（通常営業時間による目安）':
+      t.code==='opening'?'30分以内に営業開始予定です（通常営業時間による目安）':t.code==='soon'?'35分以内に閉店予定です（通常営業時間による目安）':
       t.code==='next'?'次の営業開始（通常営業時間による目安）':'登録された通常営業時間による目安です';
   }
   let visibleRecommendations=[];
@@ -459,8 +459,9 @@
     });
   }
 
+  const isChainItem=item=>!!item.chain||(Array.isArray(item.guideTags)&&item.guideTags.some(tag=>tag&&tag.text?.trim()==='チェーン店'));
   function cardTags(item){
-    const omit=/^グルメ$/;
+    const omit=/^(?:グルメ|チェーン店)$/;
     const tags=item.pickLevel>=2?[{text:'おすすめ',tone:'featured'}]:[];
     // Import the labels from ⭐ おすすめリスト, not a redundant badge bearing
     // the section title itself.
@@ -506,7 +507,13 @@
       // Without registered hours, fall back to the shop's time-band tags.
       const tagged=(t.code==='unknown'||t.code==='irregular')&&eligibleTime(item,state.time)&&
         (!branch?.timeBands?.length||branch.timeBands.includes(state.time));
-      const rank=t.code==='open'?4:t.code==='soon'?3:t.code==='opening'||t.code==='hours'?2:tagged?1:0;
+      let rank=t.code==='open'?4:t.code==='soon'?3:t.code==='opening'||t.code==='hours'?2:tagged?1:0;
+      // v30.9.170: inside a chosen band that is already under way, shops open
+      // right now come first (closing soon next), as in 現在時刻.
+      if(win&&!win.tomorrow&&rank===2&&clock.minute>=win.start-1){
+        const live=liveStatus(branch,item,clock);
+        if(live.code==='open')rank=4;else if(live.code==='soon')rank=3;
+      }
       return {...t,rank};
     };
     const timed=[];
@@ -555,9 +562,33 @@
       state.time==='night'&&item.category==='nightmarket'?5:
       state.time==='afternoon'&&['sweet','drink','cafe'].includes(item.category)?5:
       state.time==='lunch'&&['rice','noodle','dumpling'].includes(item.category)?4:0;
+    // v30.9.170: what suits the time band comes first within each opening tier —
+    // breakfast in the morning, light bites and cafés in the afternoon,
+    // late-night food (宵夜) late at night.
+    const kindsOf=item=>{
+      const k=new Set([item.category]);
+      const ind=item.industries||[];
+      if(ind.includes('鍋')||item.displayType==='火鍋')k.add('hotpot');
+      if(ind.includes('熱炒')||/居酒屋|熱炒/.test(item.displayType||''))k.add('izakaya');
+      if(ind.includes('小吃'))k.add('snack');
+      return k;
+    };
+    const BAND_PREF={
+      morning:[['breakfast'],['drink','cafe']],
+      lunch:[['rice','noodle','dumpling'],['meal','snack']],
+      afternoon:[['snack','cafe','sweet','drink'],['dumpling']],
+      night:[['meal','hotpot','izakaya'],['rice','noodle','dumpling','snack']],
+      late:[['snack','noodle','izakaya','hotpot'],['bar','rice']]
+    };
+    const bandPref=item=>{
+      const pref=BAND_PREF[state.time];if(!pref)return 0;
+      const kinds=kindsOf(item);
+      return pref[0].some(k=>kinds.has(k))?2:pref[1].some(k=>kinds.has(k))?1:0;
+    };
     const scored=pool.map(item=>{
       const matched=criteria.filter(c=>c.fn(item));
-      const matchedGenreCount=item.timing?.rank||0;
+      // Tier: opening status first (open > closing soon > later), then band fit.
+      const matchedGenreCount=(item.timing?.rank||0)*3+bandPref(item);
       const score=matched.reduce((sum,c)=>sum+c.weight,0)
         +(item.guidePick?(item.chain?12:26):0)+(item.pickLevel>=2?(item.chain?8:16):0) // original food picks rank ahead; everyday chains get a smaller boost
         +(item.featured?1:0) // visibility comes from the rotating slot-1 rule below
@@ -1227,7 +1258,10 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       const side=el('div','recommend-card-side');
       const cuisine=cardCuisine(item);
       if(cuisine)main.append(el('div','recommend-card-type',cuisine));
-      const a=el('a','recommend-venue',item.name);a.href=recommendationMapsUrl(item);a.target='_blank';a.rel='noopener noreferrer';main.append(a);
+      const a=el('a','recommend-venue',item.name);a.href=recommendationMapsUrl(item);a.target='_blank';a.rel='noopener noreferrer';
+      // Chains carry the same チェーン店 pill as the 一覧 list, beside the name.
+      if(isChainItem(item)){const row=el('div','recommend-name-row');row.append(a,el('span','recommend-chain-pill','チェーン店'));main.append(row);}
+      else main.append(a);
       const distanceText=Number.isFinite(item.distanceMeters)?`約${formatDistance(item.distanceMeters)}`:'';
       if(distanceText){
         const badge=el('span','recommend-distance-pill');

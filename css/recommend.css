@@ -1944,3 +1944,36 @@ html[data-theme="light"] #food-recommend-section .food-directory-note{color:#5E6
 @keyframes recommend-caption-breathe{0%,100%{opacity:1}50%{opacity:.3}}
 .recommend-drawer #recommend-time-caption.is-breathing{animation:recommend-caption-breathe 1s ease-in-out infinite;}
 @media (prefers-reduced-motion:reduce){.recommend-drawer #recommend-time-caption.is-breathing{animation:none;}}
+
+/* v30.9.170 — crisper front side (mock 2026-10-27): outlined controls and cards on
+   the page background, thin bright borders, smaller corner radius, compact tags.
+   The station picker uses the same look. Chains show a チェーン店 pill by the name. */
+#food-recommend-section .recommend-drawer.is-inline #recommend-current-location,
+#food-recommend-section .recommend-drawer.is-inline .recommend-picker-station,
+#food-recommend-section .recommend-drawer.is-inline #recommend-time-trigger,
+#food-recommend-section .recommend-drawer.is-inline #recommend-area-trigger{
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+  border:1.5px solid rgba(255,255,255,.78)!important;border-radius:7px!important;
+}
+#food-recommend-section .recommend-drawer.is-inline #recommend-time-trigger,#food-recommend-section .recommend-drawer.is-inline #recommend-area-trigger{color:#F4F4F4!important;font-weight:800!important;}
+#food-recommend-section .recommend-drawer.is-inline #recommend-advanced > summary{background:transparent!important;border:1.5px solid rgba(255,255,255,.42)!important;box-shadow:none!important;}
+#food-recommend-section .food-flip-front .food-flip-toggle{border:1.5px solid rgba(255,255,255,.6)!important;}
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card{
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+  border:1.5px solid rgba(255,255,255,.62)!important;border-radius:9px!important;
+}
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card::before{display:none!important;}
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card-shell{padding:9px 12px 10px!important;background:transparent!important;}
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-guide-tag{padding:3px 6px!important;border-radius:3px!important;font-size:9.8px!important;line-height:1.15!important;}
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-guide-tag-featured{background:#6C5A3C!important;border-color:#8A7350!important;color:#F4DFB6!important;}
+#food-recommend-section .recommend-drawer.is-inline #recommend-more{border:1.5px solid rgba(255,255,255,.62)!important;border-radius:7px!important;background:transparent!important;}
+#food-recommend-section .recommend-drawer.is-inline .recommend-name-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 7px;min-width:0;}
+#food-recommend-section .recommend-drawer.is-inline .recommend-chain-pill{flex:none;font-size:10px;line-height:1.4;border:1px solid #555;border-radius:999px;padding:2px 7px;color:#D3D3D3;white-space:nowrap;position:relative;z-index:2;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-current-location,html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline .recommend-picker-station,html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-time-trigger,html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-area-trigger{border-color:rgba(0,0,0,.72)!important;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-time-trigger,html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-area-trigger{color:#1E1E1E!important;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-advanced > summary{border-color:rgba(0,0,0,.35)!important;}
+html[data-theme="light"] #food-recommend-section .food-flip-front .food-flip-toggle{border-color:rgba(0,0,0,.5)!important;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card{border-color:rgba(0,0,0,.55)!important;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-guide-tag-featured{background:#F3E4C4!important;border-color:#D9BF8C!important;color:#6F4D16!important;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-more{border-color:rgba(0,0,0,.55)!important;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline .recommend-chain-pill{color:#555;border-color:#C6C6C6;}
