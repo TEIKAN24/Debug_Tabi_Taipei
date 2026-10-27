@@ -1,3 +1,4 @@
+/* v30.9.178 — homepage six-category navigation and seven chapter groupings; section UI and features preserved. */
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.176 — 注目の街歩きエリア: district bubbles + category chips + one scrolling list (no nested rows);
    bubble panels follow the finger and slide.
@@ -3205,6 +3206,8 @@ update();
       const id=nav.dataset.target;
       if(id==='travel')return 'travel';
       if(id==='sights')return roots.find(root=>root.id==='3f56bda0-4caa-8046-a491-c25321b680c1')||null;
+      if(id==='city-walk' || id==='experience-souvenirs')return id;
+      if(id==='day-trips')return daytrip;
       return ({food:null,
                areas:roots.find(root=>root.classList.contains('area-directory-section')),
                experiences:roots.find(root=>root.id==='3f76bda0-4caa-80d2-8841-c76e1f8f749a'),

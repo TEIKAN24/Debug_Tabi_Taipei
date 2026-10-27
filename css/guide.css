@@ -5152,3 +5152,7 @@ html[data-theme="light"] #guide .emergency-tile-name,html[data-theme="light"] #g
 html[data-theme="light"] #guide .emergency-tile-number,html[data-theme="light"] #guide .emergency-line-number{color:#1E1E1E;}
 html[data-theme="light"] #guide .emergency-tile-note,html[data-theme="light"] #guide .emergency-line-note{color:#5E6B72;}
 html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="light"] #guide .emergency-line-number svg{color:#555;}
+
+/* v30.9.178: two new chapter separators, using existing chapter-glow styling and colors. */
+#guide hr.chapter-glow--experiences{--chapter-glow:188,112,98;}
+#guide hr.chapter-glow--daytrips{--chapter-glow:126,149,170;}
