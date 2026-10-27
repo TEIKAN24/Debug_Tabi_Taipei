@@ -1939,3 +1939,8 @@ html[data-theme="light"] #food-recommend-section .food-directory-note{color:#5E6
   #food-recommend-section .recommend-drawer.is-inline .recommend-result-head .recommend-sort-option{font-size:10px!important;}
   #food-recommend-section .recommend-drawer.is-inline .recommend-result-head .recommend-active-chip{padding:3px 6px!important;}
 }
+
+/* v30.9.168 — 時間帯指定 breathes while a band is chosen: one bright/dim cycle per second. */
+@keyframes recommend-caption-breathe{0%,100%{opacity:1}50%{opacity:.3}}
+.recommend-drawer #recommend-time-caption.is-breathing{animation:recommend-caption-breathe 1s ease-in-out infinite;}
+@media (prefers-reduced-motion:reduce){.recommend-drawer #recommend-time-caption.is-breathing{animation:none;}}

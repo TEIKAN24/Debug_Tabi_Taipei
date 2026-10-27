@@ -4899,8 +4899,8 @@ body #guide #food-search.food-drawer.is-floating .results-head{display:flex!impo
 body #guide #food-search.food-drawer.is-floating .results-head h3{margin:0!important;font-size:14px!important;font-weight:700!important;color:#E8E8E8!important;}
 body #guide #food-search.food-drawer.is-floating .result-count{font-size:14px!important;color:#E8E8E8!important;letter-spacing:.06em;}
 body #guide #food-search.food-drawer.is-floating .food-list::before{
-  content:"";position:absolute;left:-20px;right:-20px;top:30px;height:120px;pointer-events:none;z-index:0;
-  background:linear-gradient(to bottom,rgba(176,138,70,.42),rgba(176,138,70,.16) 45%,rgba(176,138,70,0));
+  content:"";position:absolute;left:-20px;right:-20px;top:30px;height:60px;pointer-events:none;z-index:0;
+  background:linear-gradient(to bottom,rgba(176,138,70,.42),rgba(176,138,70,.14) 50%,rgba(176,138,70,0) 92%);
 }
 body #guide #food-search.food-drawer.is-floating #results{
   position:relative;z-index:1;flex:1 1 auto;min-height:0;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain;
@@ -4931,7 +4931,7 @@ html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .filte
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .filters .pill.active{background:#222!important;border-color:#222!important;color:#FFF!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .filters .pill.active .pill-count{color:#CCC!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .results-head h3,html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result-count{color:#222!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-list::before{background:linear-gradient(to bottom,rgba(201,160,80,.30),rgba(201,160,80,.10) 45%,rgba(201,160,80,0));}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-list::before{background:linear-gradient(to bottom,rgba(201,160,80,.30),rgba(201,160,80,.10) 50%,rgba(201,160,80,0) 92%);}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result{border-bottom-color:#DDDDDD!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result .dish{color:#1E1E1E!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result .desc,html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result-meta .tag{color:#5E6B72!important;}
@@ -5123,3 +5123,25 @@ html[data-theme="light"] #guide .travel-passes .pass-recommend-badge {
   -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
   mask-image:linear-gradient(to right,transparent 0%,#000 25px,#000 calc(100% - 16px),transparent 100%);
 }
+
+/* v30.9.168 — chapter dividers are soft coloured glows instead of grey lines:
+   01 misty blue, 02 warm brown, 03 sage green, 04 grey purple, 05 soft brick red.
+   The glow is the divider's own background (not positioned), so the chapter's
+   number line and title are drawn on top of it; both sides fade out. */
+#guide hr.chapter-glow{
+  display:block!important;box-sizing:border-box;height:72px!important;margin:40px -24px -46px!important;padding:0;
+  border:0!important;border-radius:0;background:none;color:transparent;opacity:1;
+  background-image:linear-gradient(to bottom,rgba(var(--chapter-glow),.40) 0,rgba(var(--chapter-glow),.15) 42%,rgba(var(--chapter-glow),0) 100%)!important;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 20%,#000 80%,transparent);
+  mask-image:linear-gradient(to right,transparent,#000 20%,#000 80%,transparent);
+}
+#guide > hr.chapter-glow{margin-top:24px!important;}
+#guide hr.chapter-glow--travel{--chapter-glow:126,149,170;}
+#guide hr.chapter-glow--gourmet{--chapter-glow:166,124,84;}
+#guide hr.chapter-glow--sights{--chapter-glow:138,158,122;}
+#guide hr.chapter-glow--citywalk{--chapter-glow:142,131,162;}
+#guide hr.chapter-glow--emergency{--chapter-glow:188,112,98;}
+html[data-theme="light"] #guide hr.chapter-glow{
+  background-image:linear-gradient(to bottom,rgba(var(--chapter-glow),.30) 0,rgba(var(--chapter-glow),.10) 42%,rgba(var(--chapter-glow),0) 100%)!important;
+}
+@media (min-width:600px){#guide hr.chapter-glow{margin-left:-40px!important;margin-right:-40px!important;}}

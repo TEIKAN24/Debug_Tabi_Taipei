@@ -32,7 +32,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.167';
+  const VERSION='30.9.168';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -903,6 +903,8 @@
     const timeName=TIME.find(([value])=>value===state.time)?.[1]||'昼';
     timeLabel.textContent=timeName;
     timeCaption.textContent=state.timeMode==='current'?'現在時刻':'時間帯指定';
+    // A chosen band is not "now": the caption breathes (one bright/dim cycle a second).
+    timeCaption.classList.toggle('is-breathing',state.timeMode!=='current');
     const isStation=state.areaMode==='station';
     areaLabel.textContent=isStation?'駅から検索':'現在地';
     mainPicker.classList.toggle('is-station',isStation);
