@@ -3499,3 +3499,165 @@ update();
     });
   });
 })();
+
+
+/* v30.9.179 — City Walk: editorial eight-area grid and full-screen detail reader.
+ * Night markets and the future outer Night Market/City Walk navigation are untouched.
+ * Source for areas/categories/shops: existing hidden original DOM (no copied database). */
+;(()=>{
+  'use strict';
+  const guide=document.getElementById('guide');
+  const root=guide?.querySelector('details.area-directory-section:not(.night-market-section)');
+  const original=root?.querySelector(':scope > .indented > .tab');
+  const strip=original?.querySelector(':scope > .tab-pills');
+  const source=original?.querySelector(':scope > .tab-panels');
+  if(!root||!original||!strip||!source)return;
+  const tabs=[...strip.querySelectorAll(':scope > button.tab-pill')];
+  const panels=[...source.querySelectorAll(':scope > .area-panel')];
+  if(tabs.length!==8||panels.length!==tabs.length)return;
+  const descriptions=['古着・雑貨・カフェ','レトロ・台湾雑貨','グルメ・雑貨',
+    'ショッピング・夜景','地下街・おみやげ','ストリート・若者文化',
+    '学生街・ローカル','ファッション・カフェ'];
+  const grid=document.createElement('div');
+  grid.className='walk-area-grid';grid.setAttribute('aria-label','街歩きエリアを選択');
+  const pickerGrid=document.createElement('div');pickerGrid.className='walk-area-grid';
+  let current=-1,category=0,lastFocus=null,scrollPos=0,historyOpen=false;
+  const remembered=new Map();
+  const reader=document.createElement('div');reader.className='walk-reader';reader.hidden=true;
+  reader.setAttribute('role','dialog');reader.setAttribute('aria-modal','true');reader.setAttribute('aria-label','街歩きエリア');
+  reader.innerHTML=`<div class="walk-reader-shell">
+    <div class="walk-reader-header">
+      <button class="walk-reader-back" type="button" aria-label="8エリアの一覧へ戻る">← <span>8エリア一覧</span></button>
+      <button class="walk-reader-close" type="button" aria-label="閉じる">×</button>
+    </div>
+    <div class="walk-reader-body">
+      <p class="walk-reader-current">CITY WALK · AREA</p>
+      <button class="walk-reader-area-switch" type="button" aria-label="エリアを変更"><span class="walk-reader-title"></span><span class="walk-switch-chevron" aria-hidden="true">⌄</span></button>
+      <p class="walk-reader-description"></p>
+      <div class="walk-detail-host"></div>
+    </div>
+  </div><div class="walk-reader-picker" hidden>
+    <div class="walk-reader-picker-inner"><div class="walk-reader-header">
+      <button type="button" class="walk-reader-picker-back walk-reader-back">← <span>エリアに戻る</span></button>
+      <button type="button" class="walk-reader-picker-close walk-reader-close" aria-label="閉じる">×</button>
+    </div><div class="walk-reader-picker-grid"></div></div>
+  </div>`;
+  const host=reader.querySelector('.walk-detail-host');
+  const chooser=reader.querySelector('.walk-reader-picker');
+  const body=reader.querySelector('.walk-reader-body');
+  const nameNode=reader.querySelector('.walk-reader-title');
+  const descNode=reader.querySelector('.walk-reader-description');
+  reader.querySelector('.walk-reader-picker-grid').append(pickerGrid);
+  guide.append(reader);
+
+  const openPicker=()=>{chooser.hidden=false;reader.querySelector('.walk-reader-picker-back').focus({preventScroll:true});};
+  const hidePicker=()=>{chooser.hidden=true;reader.querySelector('.walk-reader-area-switch').focus({preventScroll:true});};
+  const unlockPage=()=>{
+    document.body.classList.remove('walk-reader-open');
+    document.body.style.removeProperty('position');document.body.style.removeProperty('top');
+    document.body.style.removeProperty('left');document.body.style.removeProperty('right');
+    document.body.style.removeProperty('width');
+    window.scrollTo({top:scrollPos,behavior:'instant'});
+  };
+  const renderArea=(index)=>{
+    current=index;category=Math.min(remembered.get(index)||0,panels[index].querySelectorAll('.area-cat').length-1);
+    nameNode.textContent=tabs[index].textContent.trim();
+    descNode.textContent=panels[index].querySelector('.area-intro-description')?.textContent.trim()||'';
+    chooser.hidden=true;host.replaceChildren();
+    // Clone only this area's categories and venue lists. Original source remains
+    // untouched, which preserves all links, labels, notes and category counts.
+    const clone=panels[index].cloneNode(true);
+    clone.hidden=false;clone.removeAttribute('id');clone.removeAttribute('aria-labelledby');clone.removeAttribute('style');
+    clone.querySelector('.area-intro')?.remove();
+    clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+    clone.querySelectorAll('[style]').forEach(el=>el.removeAttribute('style'));
+    const chips=[...clone.querySelectorAll('.area-cats > .area-cat')];
+    const panes=[...clone.querySelectorAll('.area-cat-panes > .area-cat-pane')];
+    const scroller=clone.querySelector('.area-cat-panes');
+    const row=clone.querySelector('.area-cats');
+    row.setAttribute('aria-label','カテゴリーを選択');
+    const chooseCat=(i,focus=false)=>{
+      category=i;remembered.set(index,i);
+      chips.forEach((chip,j)=>{
+        chip.setAttribute('aria-selected',String(i===j));chip.tabIndex=i===j?0:-1;
+      });
+      panes.forEach((pane,j)=>pane.hidden=j!==i);
+      scroller.scrollTop=0;
+      if(focus)chips[i]?.focus({preventScroll:true});
+      if(chips[i])chips[i].scrollIntoView({inline:'nearest',block:'nearest',behavior:'instant'});
+    };
+    chips.forEach((chip,i)=>{
+      chip.id='walk-cat-'+i;chip.setAttribute('aria-controls','walk-pane-'+i);
+      chip.addEventListener('click',()=>chooseCat(i));
+    });
+    panes.forEach((pane,i)=>{pane.id='walk-pane-'+i;pane.setAttribute('aria-labelledby','walk-cat-'+i);});
+    row.addEventListener('keydown',e=>{
+      if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+      const i=chips.indexOf(document.activeElement);if(i<0)return;
+      e.preventDefault();chooseCat(e.key==='Home'?0:e.key==='End'?chips.length-1:(i+(e.key==='ArrowRight'?1:-1)+chips.length)%chips.length,true);
+    });
+    host.append(clone);chooseCat(category);
+    chooser.hidden=true;reader.querySelector('.walk-reader-area-switch').focus({preventScroll:true});
+    pickerGrid.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-current',String(i===index)));
+  };
+  function openArea(index,trigger){
+    if(reader.hidden){
+      lastFocus=trigger;scrollPos=window.scrollY;
+      document.body.classList.add('walk-reader-open');
+      document.body.style.position='fixed';document.body.style.top=-scrollPos+'px';
+      document.body.style.left='0';document.body.style.right='0';document.body.style.width='100%';
+      reader.hidden=false;
+      if(!historyOpen){history.pushState({tabiWalkReader:true},'',location.href);historyOpen=true;}
+    }
+    renderArea(index);
+  }
+  function closeArea(fromHistory=false){
+    if(reader.hidden)return;
+    reader.hidden=true;chooser.hidden=true;host.replaceChildren();unlockPage();
+    const prior=lastFocus;lastFocus=null;current=-1;
+    if(prior?.isConnected)prior.focus({preventScroll:true});
+    if(!fromHistory && historyOpen && history.state?.tabiWalkReader){history.back();}
+    historyOpen=false;
+  }
+  const mkCard=(index)=>{
+    const button=document.createElement('button');
+    button.type='button';button.className='walk-area-card';
+    const title=tabs[index].textContent.trim();
+    button.setAttribute('aria-label',title+' を見る');
+    button.innerHTML='<span class="walk-area-card-arrow" aria-hidden="true">↗</span>';
+    const name=document.createElement('span');name.className='walk-area-card-name';name.textContent=title;
+    const sub=document.createElement('span');sub.className='walk-area-card-sub';sub.textContent=descriptions[index];
+    button.append(name,sub);
+    button.addEventListener('click',()=>openArea(index,button));
+    return button;
+  };
+  tabs.forEach((_,i)=>{
+    grid.append(mkCard(i));
+    const card=mkCard(i);
+    // The same card behavior also switches districts from the modal chooser.
+    pickerGrid.append(card);
+  });
+  original.before(grid);
+  root.classList.add('walk-grid-ready');
+  reader.querySelector('.walk-reader-back').addEventListener('click',openPicker);
+  reader.querySelector('.walk-reader-area-switch').addEventListener('click',openPicker);
+  reader.querySelector('.walk-reader-picker-back').addEventListener('click',hidePicker);
+  reader.querySelector('.walk-reader-close').addEventListener('click',()=>closeArea());
+  reader.querySelector('.walk-reader-picker-close').addEventListener('click',()=>closeArea());
+  document.addEventListener('keydown',e=>{
+    if(reader.hidden)return;
+    if(e.key==='Escape'){e.preventDefault();if(!chooser.hidden)hidePicker();else closeArea();}
+    // Keep keyboard focus in the full-screen modal while it is open.
+    if(e.key==='Tab'){
+      const visible=chooser.hidden?reader.querySelector('.walk-reader-shell'):chooser;
+      const focusable=[...visible.querySelectorAll('button:not([disabled]),a[href]')].filter(n=>n.getClientRects().length);
+      if(!focusable.length)return;
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    }
+  });
+  window.addEventListener('popstate',()=>{
+    if(!reader.hidden && !history.state?.tabiWalkReader)closeArea(true);
+  });
+})();
