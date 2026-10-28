@@ -306,7 +306,7 @@
                   "tone": "neutral"
                 },
                 {
-                  "text": "1738年築",
+                  "text": "1738年創建",
                   "tone": "neutral"
                 },
                 {
@@ -374,7 +374,7 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "清代の城門",
+                  "text": "清代から残る城門",
                   "tone": "auto"
                 }
               ],
@@ -423,11 +423,7 @@
               "mapUrl": "https://maps.app.goo.gl/txhqmq8VSafx5cPk9",
               "tags": [
                 {
-                  "text": "切手博物館",
-                  "tone": "neutral"
-                },
-                {
-                  "text": "郵政文化",
+                  "text": "郵政博物館",
                   "tone": "neutral"
                 }
               ],
@@ -529,8 +525,8 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "人気",
-                  "tone": "auto"
+                  "text": "赤い提灯の街並み",
+                  "tone": "neutral"
                 }
               ],
               "links": [],
@@ -797,12 +793,12 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "建物",
-                  "tone": "auto"
+                  "text": "レトロ",
+                  "tone": "neutral"
                 },
                 {
-                  "text": "人気",
-                  "tone": "auto"
+                  "text": "独特な建築構造",
+                  "tone": "neutral"
                 }
               ],
               "links": [],
@@ -814,11 +810,7 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "夕焼け",
-                  "tone": "auto"
-                },
-                {
-                  "text": "建物",
+                  "text": "夕陽と橋のシルエット",
                   "tone": "auto"
                 }
               ],
@@ -840,11 +832,11 @@
             },
             {
               "id": "3f76bda0-4caa-8090-baf3-f505577138fa",
-              "name": "萬年商業ビル",
+              "name": "萬年商業大樓",
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "建物",
+                  "text": "レトロな商業ビル",
                   "tone": "auto"
                 }
               ],
@@ -883,7 +875,7 @@
               "mapUrl": "https://www.google.com/maps/place/%E5%AF%B6%E8%97%8F%E5%B7%96%E8%81%9A%E8%90%BD/@25.0107236,121.5298783,18z/data=!4m6!3m5!1s0x3442a9f5d05d7223:0xbf58aec1fde8e6d0!8m2!3d25.0104899!4d121.5323905!16s%2Fg%2F11g0dsxtkm?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
               "tags": [
                 {
-                  "text": "アート集落",
+                  "text": "坂道のアート集落",
                   "tone": "auto"
                 }
               ],

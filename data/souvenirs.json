@@ -137,11 +137,17 @@
                 },
                 {
                   "text": "スーパーで買える",
-                  "tone": "red"
+                  "tone": "neutral"
                 }
               ],
-              "links": [],
-              "mapUrl": "https://note.com/moon_diary/n/n0091a9870375#9488ea8b-5976-454c-9a0b-f0dab1bd9997"
+              "links": [
+                {
+                  "type": "other",
+                  "label": "紹介",
+                  "url": "https://note.com/moon_diary/n/n0091a9870375#9488ea8b-5976-454c-9a0b-f0dab1bd9997"
+                }
+              ],
+              "mapUrl": ""
             },
             {
               "id": "souvenirs-3f66bda0-05",
@@ -150,15 +156,21 @@
               "tags": [
                 {
                   "text": "国民的おやつ",
-                  "tone": "auto"
+                  "tone": "neutral"
                 },
                 {
                   "text": "スーパーで買える",
-                  "tone": "red"
+                  "tone": "neutral"
                 }
               ],
-              "links": [],
-              "mapUrl": "https://note.com/meilytaiwan/n/n0e658e52cb6f"
+              "links": [
+                {
+                  "type": "other",
+                  "label": "紹介",
+                  "url": "https://note.com/meilytaiwan/n/n0e658e52cb6f"
+                }
+              ],
+              "mapUrl": "　"
             }
           ]
         },
@@ -193,7 +205,7 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "人気",
+                  "text": "台湾らしい雑貨",
                   "tone": "auto"
                 }
               ],
@@ -345,7 +357,7 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "スーパー",
+                  "text": "台湾のお菓子探し",
                   "tone": "auto"
                 }
               ],

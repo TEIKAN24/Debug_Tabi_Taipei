@@ -104,6 +104,10 @@
                 {
                   "text": "無料",
                   "tone": "auto"
+                },
+                {
+                  "text": "現金デポジット必要",
+                  "tone": "red"
                 }
               ],
               "links": [
@@ -214,7 +218,7 @@
           "items": [
             {
               "id": "3f76bda0-4caa-8012-8edd-f1c4e006ebc5",
-              "name": "錢櫃 Partyworld",
+              "name": "錢櫃 Partyworld（チェーン店）",
               "className": "venue-list-item",
               "tags": [],
               "links": [],
@@ -222,7 +226,7 @@
             },
             {
               "id": "experiences-mvrryx40-qasqj",
-              "name": "好樂迪KTV",
+              "name": "好樂迪KTV（チェーン店）",
               "mapUrl": "https://maps.app.goo.gl/haFpYF5TkcZh8yrv8",
               "tags": [],
               "links": [],
