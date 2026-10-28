@@ -58,9 +58,11 @@
     if (!summary) return;
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (!detail.open || summary.getClientRects().length === 0) return;
-      summary.scrollIntoView({
-        block: 'start',
-        inline: 'nearest',
+      // v30.9.184: rest the opened title within thumb reach, not at the very top.
+      const restTop = Math.round(Math.min(140, Math.max(96, window.innerHeight * .15)));
+      if (window.tabiGlideTo) { window.tabiGlideTo(summary, restTop); return; }
+      window.scrollTo({
+        top: Math.max(0, window.scrollY + summary.getBoundingClientRect().top - restTop),
         behavior: reduceMotion.matches ? 'auto' : 'smooth'
       });
     }));
@@ -2976,15 +2978,16 @@ update();
     const er=emergency?.getBoundingClientRect();
     if(er && er.top<innerHeight*.7 && er.bottom>=0)return;
     if(document.documentElement.scrollHeight-scrollY-innerHeight<130)return;
-    const targetY=22;
+    // v30.9.184: chapter headings rest at 52px; page top and emergency stay at 22px.
+    const targetY=el=>(el.id==='top'||/^07\b/.test(el.textContent.trim()))?22:52;
     const candidates=getHeadings().map(el=>({el,rect:el.getBoundingClientRect()}))
       .filter(x=>x.rect.height>0 && x.rect.bottom>=-8 && x.rect.top<=innerHeight*.58);
     if(!candidates.length)return;
-    const nearest=candidates.reduce((a,b)=>Math.abs(a.rect.top-targetY)<=Math.abs(b.rect.top-targetY)?a:b);
+    const nearest=candidates.reduce((a,b)=>Math.abs(a.rect.top-targetY(a.el))<=Math.abs(b.rect.top-targetY(b.el))?a:b);
     // A long route or open directory is not a slide: don't jump several screens
     // back to a heading that the visitor has already finished reading.
-    if(Math.abs(nearest.rect.top-targetY)>Math.min(290,Math.max(130,innerHeight*.43)))return;
-    const destination=Math.max(0,scrollY+nearest.rect.top-targetY);
+    if(Math.abs(nearest.rect.top-targetY(nearest.el))>Math.min(290,Math.max(130,innerHeight*.43)))return;
+    const destination=Math.max(0,scrollY+nearest.rect.top-targetY(nearest.el));
     if(Math.abs(destination-scrollY)<6)return;
     // Animate the short snap rather than jumping to the heading. Block
     // scroll-driven retriggers throughout the native smooth-scroll period.
@@ -3550,8 +3553,10 @@ update();
   // Only move the page when the reader would otherwise lose their place.
   const keepInView=()=>{
     const head=root.querySelector(':scope > summary');
-    if(head&&head.getBoundingClientRect().top<0)
-      requestAnimationFrame(()=>head.scrollIntoView({block:'start',behavior:reduce.matches?'instant':'smooth'}));
+    if(!head||head.getBoundingClientRect().top>=0)return;
+    const restTop=Math.round(Math.min(140,Math.max(96,innerHeight*.15)));
+    requestAnimationFrame(()=>window.tabiGlideTo?window.tabiGlideTo(head,restTop):
+      head.scrollIntoView({block:'start',behavior:reduce.matches?'instant':'smooth'}));
   };
   const back=({restoreFocus=false,quiet=false}={})=>{
     if(active<0)return;
@@ -3658,7 +3663,7 @@ update();
   if(!guide)return;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
   const html=document.documentElement;
-  const HEADING_TOP=22; // same resting line as the chapter near-snap
+  const HEADING_TOP=52; // v30.9.184: same resting line as chapter jumps and near-snap
   const eyebrows=[...guide.querySelectorAll('.chapter-eyebrow')];
   const chapterOf=node=>{
     let found=null;
@@ -3673,11 +3678,11 @@ update();
   /* Glide the window to a chapter heading. Driven per frame so it stays on
      target while the menu below it is still shrinking. */
   let glideFrame=0,glideStop=null;
-  function glideTo(eyebrow){
+  function glideTo(eyebrow,offset=HEADING_TOP){
     glideStop?.();
     if(!eyebrow?.getClientRects().length)return;
     const goal=()=>Math.max(0,Math.min(
-      scrollY+eyebrow.getBoundingClientRect().top-HEADING_TOP,
+      scrollY+eyebrow.getBoundingClientRect().top-offset,
       html.scrollHeight-innerHeight));
     const start=scrollY;
     const distance=Math.abs(goal()-start);
@@ -3697,13 +3702,25 @@ update();
     addEventListener('wheel',interrupt,{passive:true,capture:true});
     addEventListener('touchstart',interrupt,{passive:true,capture:true});
     addEventListener('keydown',interrupt,{capture:true});
+    // After arriving, hold the target briefly: a menu folding elsewhere
+    // (e.g. the airport results) may still be changing the page height.
+    const HOLD=700;
     const step=now=>{
       const t=Math.min(1,(now-began)/duration);
-      scrollTo({top:start+(goal()-start)*easeInOut(t),behavior:'instant'});
-      if(t<1)glideFrame=requestAnimationFrame(step);else glideStop?.();
+      if(t<1){
+        scrollTo({top:start+(goal()-start)*easeInOut(t),behavior:'instant'});
+        glideFrame=requestAnimationFrame(step);return;
+      }
+      const g=goal();
+      if(Math.abs(scrollY-g)>1)scrollTo({top:g,behavior:'instant'});
+      if(now-began<duration+HOLD)glideFrame=requestAnimationFrame(step);else glideStop?.();
     };
     glideFrame=requestAnimationFrame(step);
   }
+
+  // Shared with older modules (menu opening, City Walk) so every guided scroll
+  // follows its target even while other scripts adjust the page height.
+  window.tabiGlideTo=(target,offset)=>glideTo(target,offset);
 
   /* Height glide for one element. `to` may be a function so the final height
      can follow content that settles while it opens. */
@@ -3769,6 +3786,7 @@ update();
         });
       return;
     }
+    glideStop?.();
     openedFrom.set(detail,detail.getBoundingClientRect().height);
   },true);
   // After the site's own handler has opened it (sibling folding, scroll to title).
@@ -3823,8 +3841,9 @@ update();
 
   /* ---- Airport results (chapter 01): its own CSS already folds smoothly ---- */
   const disclosure=guide.querySelector('#airsel-route-disclosure');
-  disclosure?.addEventListener('click',()=>{
-    if(disclosure.getAttribute('aria-expanded')!=='false')return;
+  disclosure?.addEventListener('click',event=>{
+    // Only the visitor's own tap; cross-section folding also clicks this button.
+    if(!event.isTrusted||disclosure.getAttribute('aria-expanded')!=='false')return;
     glideTo(chapterOf(disclosure));
   });
 })();

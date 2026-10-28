@@ -5334,3 +5334,6 @@ html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane .venue-row-in
   #guide .walk-inline-detail,
   #guide .walk-inline-detail .area-cat-panes::before{animation:none}
 }
+
+/* v30.9.184 — chapter jumps rest 30px lower (01–06); page top and emergency unchanged. */
+#guide :is(#travel,#food,#sights,#city-walk,#experience-souvenirs,#day-trips).jump-anchor{scroll-margin-top:30px}
