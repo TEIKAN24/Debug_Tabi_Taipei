@@ -32,7 +32,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.194';
+  const VERSION='30.9.196';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -552,6 +552,24 @@
     const byTime=useDistance?withinRange:timed;
     return {useDistance,withinRange,byTime};
   }
+  // v30.9.196: one kind per shop, from the editor's card label and category
+  // (not guessed from loose tags such as 小吃, which 魯肉飯 shops also carry).
+  function kindOf(item){
+    const type=item.displayType||'',cat=item.category||'',ind=item.industries||[];
+    if(cat==='bar'||type==='バー')return 'bar';
+    if(cat==='cafe'||/カフェ|喫茶/.test(type))return 'cafe';
+    if(cat==='sweet'||/スイーツ|アイス/.test(type))return 'sweet';
+    if(cat==='drink'||/ドリンク|ジュース/.test(type))return 'drink';
+    if(cat==='breakfast'||/朝食|モーニング/.test(type))return 'breakfast';
+    if(type==='火鍋'||ind.includes('鍋'))return 'hotpot';
+    if(/居酒屋|熱炒/.test(type)||ind.includes('熱炒'))return 'izakaya';
+    if(type==='清粥小菜')return 'porridge';
+    if(cat==='noodle')return 'noodle';
+    if(cat==='rice')return 'rice';
+    if(cat==='dumpling')return 'dumpling';
+    if(cat==='snack'||type==='屋台料理・軽食')return 'snack';
+    return 'meal'; // restaurants: 台湾料理, 広東料理, ガチョウ肉料理…
+  }
   function recommendedPool(){
     const {useDistance,withinRange,byTime}=contextCandidates();
     const nearbyFallback=false;
@@ -559,7 +577,9 @@
     if(state.area)criteria.push({label:'エリア',weight:35,fn:item=>item.area===state.area});
     // The 料理種類 is a filter; the timing rank is the first ranking tier.
     const lifted=[];
-    const pool=byTime.filter(item=>(!state.categories.length||state.categories.some(key=>categoryMatch(item,key)))&&criteria.every(c=>c.fn(item)));
+    const pool=byTime.filter(item=>(!state.categories.length||state.categories.some(key=>categoryMatch(item,key)))&&criteria.every(c=>c.fn(item))
+      // v30.9.196: no 火鍋 at 深夜.
+      &&!(state.time==='late'&&kindOf(item)==='hotpot'));
     const seed=recommendationSeed();
     const newestAwardBonus=item=>{
       // Awards remain ranking signals, but 500碗 badges are intentionally hidden;
@@ -570,54 +590,53 @@
       if(/2024\s*[:：]\s*\d+\s*[盤碗]/.test(years))return 3;
       return 0;
     };
-    const mealBonus=item=>state.time==='morning'&&item.category==='breakfast'?6:
-      state.time==='night'&&item.category==='nightmarket'?5:
-      state.time==='afternoon'&&['sweet','drink','cafe'].includes(item.category)?5:
-      state.time==='lunch'&&['rice','noodle','dumpling'].includes(item.category)?4:0;
-    // v30.9.170: what suits the time band comes first within each opening tier —
-    // breakfast in the morning, light bites and cafés in the afternoon,
-    // late-night food (宵夜) late at night.
-    const kindsOf=item=>{
-      const k=new Set([item.category]);
-      const ind=item.industries||[];
-      if(ind.includes('鍋')||item.displayType==='火鍋')k.add('hotpot');
-      if(ind.includes('熱炒')||/居酒屋|熱炒/.test(item.displayType||''))k.add('izakaya');
-      if(ind.includes('小吃'))k.add('snack');
-      if(item.displayType==='清粥小菜'||/清粥/.test(item.name||''))k.add('porridge');
-      // かき氷 shops: fine late, but a warm 豆花・甜湯 suits 宵夜 better.
-      if(item.displayType==='アイス'){k.delete('sweet');k.add('ice');}
-      return k;
+    // v30.9.196 — one table: how well each kind of shop suits the time.
+    // Points: 30 = first choice, 12 = also good, 0 = neutral, -30 = avoid.
+    const clockNow=taipeiClock();
+    // The evening shift (20:00–23:00) is read from the time being recommended
+    // for: now in 現在時刻, otherwise the start of the chosen 夜 band.
+    const refMinute=state.timeMode==='current'?clockNow.minute:((bandWindow(clockNow).start%1440)+1440)%1440;
+    // 0 at 20:00 → 1 at 23:00: full meals fade out as the evening goes on.
+    const evening=Math.max(0,Math.min(1,(refMinute-1200)/180));
+    const MEALS=['meal','hotpot','noodle','rice','dumpling'];
+    const FIT={
+      // 朝: breakfast and 豆漿 shops first.
+      morning:{breakfast:30,cafe:12,drink:12},
+      // 昼: noodles, 火鍋, 小籠包・餃子, rice, meat dishes and restaurants; not breakfast.
+      lunch:{meal:30,hotpot:30,noodle:30,rice:30,dumpling:30,snack:12,porridge:12,breakfast:-30,bar:-30},
+      // 午後: sweets, cafés, tea and drinks, ice.
+      afternoon:{sweet:30,cafe:30,drink:30,snack:12,dumpling:12},
+      // 夜 is built below (dinner, then the evening shift after 20:00).
+      night:null,
+      // 深夜 (23:00–): 豆漿, bars, sweets, night cafés and 熱炒 first;
+      // 屋台・清粥 and drinks next; rice and noodle shops neutral; 火鍋 not shown.
+      late:{breakfast:30,bar:30,sweet:30,cafe:30,izakaya:30,snack:12,porridge:12,drink:12}
+    };
+    const nightFit=kind=>{
+      if(MEALS.includes(kind))return Math.round(30*(1-evening));
+      if(kind==='izakaya'||kind==='snack')return 30;
+      if(kind==='bar')return evening>0?30:0;
+      if(kind==='cafe')return evening>0?30:-30; // no cafés at dinner
+      if(kind==='sweet'||kind==='drink')return evening>0?12:0;
+      if(kind==='porridge')return 12;
+      return 0;
+    };
+    const fitPoints=item=>{
+      const kind=kindOf(item);
+      if(state.time==='night')return nightFit(kind);
+      return FIT[state.time]?.[kind]||0;
     };
     // v30.9.191: the editor's 量 (volume) — light / hearty / both / unknown.
     const volumeOf=item=>{
       const v=item.volume||[],light=v.includes('light'),hearty=v.includes('hearty');
       return light&&hearty?'both':light?'light':hearty?'hearty':'';
     };
-    const BAND_PREF={
-      morning:[['breakfast'],['drink','cafe']],
-      lunch:[['rice','noodle','dumpling'],['meal','snack']],
-      afternoon:[['snack','cafe','sweet','ice','drink'],['dumpling']],
-      night:[['meal','hotpot','izakaya'],['rice','noodle','dumpling','snack']],
-      // v30.9.193: 深夜 is 宵夜 — バー, 熱炒, 屋台の軽食 (incl. 清粥小菜) and
-      // 24時間の豆漿 come first; sweets, drinks, dumplings and cafés next;
-      // rice plates (魯肉飯) and noodles (牛肉麵) after them; 火鍋 last.
-      late:[['bar','izakaya','snack','porridge','breakfast'],['sweet','drink','dumpling','cafe','ice']]
-    };
-    const bandPref=item=>{
-      const pref=BAND_PREF[state.time];if(!pref)return 0;
-      const kinds=kindsOf(item);
-      // Rice plates and noodle shops go back at 深夜 even when also tagged 小吃.
-      if(state.time==='late'&&(kinds.has('hotpot')||kinds.has('rice')||kinds.has('noodle')))return 0;
-      return pref[0].some(k=>kinds.has(k))?2:pref[1].some(k=>kinds.has(k))?1:0;
-    };
-    // Within the same tier at 深夜: light dishes rise, hearty-only ones sink
-    // (熱炒 is shared small plates, so its hearty mark costs nothing). Rice
-    // plates and noodles share the last tier with 火鍋 but stay ahead of it.
+    // Within 深夜: light dishes rise a little, hearty-only ones sink a little
+    // (熱炒 is shared small plates, so its hearty mark costs nothing).
     const lateWeight=item=>{
-      if(state.time!=='late')return 0;
-      const kinds=kindsOf(item),vol=volumeOf(item);
-      if(kinds.has('hotpot'))return -14;
-      return kinds.has('izakaya')?0:vol==='light'?4:vol==='hearty'?-4:0;
+      if(state.time!=='late'||kindOf(item)==='izakaya')return 0;
+      const vol=volumeOf(item);
+      return vol==='light'?4:vol==='hearty'?-4:0;
     };
     // v30.9.194: a chain has a branch nearly everywhere, so being close is no
     // achievement — it earns half the distance bonus (penalties stay whole).
@@ -628,10 +647,10 @@
       // fit is weighed in points so distance and picks can balance it — a
       // must-eat 150 m away is no longer beaten by any band match 1.2 km off.
       const matchedGenreCount=item.timing?.rank||0;
-      const fit=bandPref(item);
+
       const score=matched.reduce((sum,c)=>sum+c.weight,0)
         +(item.guidePick?(item.chain?12:item.bowlsOnly?16:26):0)+(item.pickLevel>=2?(item.chain?8:16):0) // original food picks rank ahead; 500碗-only listings and everyday chains get a smaller boost
-        +(fit===2?30:fit===1?12:0)
+        +fitPoints(item)
         +(item.featured?1:0) // visibility comes from the rotating slot-1 rule below
         +(item.nearbySource?(item.locationConfidence==='high'?0:item.locationConfidence==='medium'?-3:-10):0)
         +(state.area&&state.areaMode==='all'&&item.chain?6:0) // not a proxy for branch proximity
@@ -639,7 +658,7 @@
         // Places beyond 800m stay available, but fall behind closer candidates.
         +(Number.isFinite(item.distanceMeters)?chainDistance(item,40-12*Math.min(4,Math.floor(item.distanceMeters/270))
           -(item.distanceMeters>GEO_PRIORITY_METERS?26:0)):0)
-        +mealBonus(item)+lateWeight(item)+newestAwardBonus(item);
+        +lateWeight(item)+newestAwardBonus(item);
       return {...item,matchScore:matchedGenreCount,matchedGenreCount,score,
         fullMatch:matched.length===criteria.length,
         matched:matched.map(c=>c.label),
@@ -1526,9 +1545,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       body.append(top);
       const badges=directoryNode('div','food-directory-badges');
       // Purple cuisine badges are useful only in the dessert and dim-sum tabs.
-      if(directoryChoice==='sweet'||directoryChoice==='dumpling'){
-        badges.append(directoryNode('span','food-directory-kind',v.displayType||'レストラン'));
-      }
+      // v30.9.196: no purple kind badges in the directory; the tab names the kind.
       const tagKeys=new Set();
       if(pickLevelOf(v)>=2){tagKeys.add('おすすめ');badges.append(directoryNode('span','food-directory-tag food-directory-tag--featured','おすすめ'));}
       for(const tag of (Array.isArray(v.guideTags)?v.guideTags:[])){
