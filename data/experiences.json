@@ -74,7 +74,12 @@
               "id": "3f76bda0-4caa-8090-a8bf-c0fbc3ff4928",
               "name": "PHOTOBOOM",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "巨大4コマ写真",
+                  "tone": "auto"
+                }
+              ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/PMcrzRq8f5tAS6EG6"
             },
@@ -82,7 +87,12 @@
               "id": "3f76bda0-4caa-80f1-bd1d-df658fa4a40f",
               "name": "FOTOLAB",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "アメリカンレトロ",
+                  "tone": "auto"
+                }
+              ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/nya1GEDX6nsjZ2AaA"
             },

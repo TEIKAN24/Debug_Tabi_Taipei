@@ -16,11 +16,11 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "人気",
-                  "tone": "auto"
+                  "text": "国宝",
+                  "tone": "gold"
                 },
                 {
-                  "text": "おすすめ",
+                  "text": "世界四大博物館と称される",
                   "tone": "auto"
                 }
               ],
@@ -32,10 +32,6 @@
               "name": "國家鐵道博物館",
               "className": "venue-list-item",
               "tags": [
-                {
-                  "text": "人気",
-                  "tone": "auto"
-                },
                 {
                   "text": "鉄道好き必見",
                   "tone": "auto"
@@ -74,7 +70,16 @@
               "id": "3f66bda0-4caa-8097-bd36-ece08db0506e",
               "name": "國立臺灣博物館",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "歴史ある洋館",
+                  "tone": "auto"
+                },
+                {
+                  "text": "台湾の自然と歴史",
+                  "tone": "auto"
+                }
+              ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/cAYTpZrnENXXZVdc8"
             },
@@ -82,7 +87,16 @@
               "id": "3f66bda0-4caa-804f-8df3-d70600a632f4",
               "name": "自來水博物館",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "旧ポンプ場",
+                  "tone": "auto"
+                },
+                {
+                  "text": "新古典主義建築",
+                  "tone": "auto"
+                }
+              ],
               "links": [],
               "mapUrl": "https://www.google.com/maps/search/?api=1&query=%E8%87%AA%E4%BE%86%E6%B0%B4%E5%8D%9A%E7%89%A9%E9%A4%A8%20%E5%8F%B0%E5%8C%97%E5%B8%82%E4%B8%AD%E6%AD%A3%E5%8D%80%E6%80%9D%E6%BA%90%E8%A1%971%E8%99%9F"
             }
@@ -98,8 +112,16 @@
               "className": "venue-list-item",
               "tags": [
                 {
+                  "text": "おすすめ",
+                  "tone": "gold"
+                },
+                {
                   "text": "のんびり散策",
-                  "tone": "auto"
+                  "tone": "neutral"
+                },
+                {
+                  "text": "旧たばこ工場",
+                  "tone": "neutral"
                 }
               ],
               "links": [
@@ -112,10 +134,38 @@
               "mapUrl": "https://maps.app.goo.gl/tg8nj36rP3vRPzqi8"
             },
             {
+              "id": "3f66bda0-4caa-8057-bb3c-c7ce40379e8b",
+              "name": "華山1914",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "旧酒造工場",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "展覧会・雑貨",
+                  "tone": "neutral"
+                }
+              ],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.huashan1914.com/ja-JP"
+                }
+              ],
+              "mapUrl": "https://maps.app.goo.gl/uPENw9z3sTWaSLZdA"
+            },
+            {
               "id": "3f56bda0-4caa-8017-b27b-dbe6466c0eb3",
               "name": "臺北市立美術館",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "現代美術",
+                  "tone": "neutral"
+                }
+              ],
               "links": [
                 {
                   "type": "official",
@@ -129,7 +179,16 @@
               "id": "3f86bda0-4caa-80df-b750-e4a3b4973a27",
               "name": "台北當代藝術館",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "現代アート",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "旧校舎を再利用",
+                  "tone": "neutral"
+                }
+              ],
               "links": [
                 {
                   "type": "official",
@@ -140,24 +199,15 @@
               "mapUrl": "https://maps.app.goo.gl/sKeQz7DWBMeasemTA"
             },
             {
-              "id": "3f66bda0-4caa-8057-bb3c-c7ce40379e8b",
-              "name": "華山1914",
-              "className": "venue-list-item",
-              "tags": [],
-              "links": [
-                {
-                  "type": "official",
-                  "label": "公式",
-                  "url": "https://www.huashan1914.com/ja-JP"
-                }
-              ],
-              "mapUrl": "https://maps.app.goo.gl/uPENw9z3sTWaSLZdA"
-            },
-            {
               "id": "3f76bda0-4caa-805a-815b-cfedd70433bf",
               "name": "臺北表演藝術中心",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "球体の劇場",
+                  "tone": "auto"
+                }
+              ],
               "links": [
                 {
                   "type": "other",
@@ -171,7 +221,16 @@
               "id": "3f66bda0-4caa-80d5-9eaa-f3d7fa39e184",
               "name": "富邦美術館",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "レンゾ・ピアノ設計",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "建築好き必見",
+                  "tone": "neutral"
+                }
+              ],
               "links": [
                 {
                   "type": "official",
@@ -185,7 +244,16 @@
               "id": "3f66bda0-4caa-80f7-b0a8-f58170314fba",
               "name": "新北市美術館",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "葦を模した外観",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "河畔の美術館",
+                  "tone": "neutral"
+                }
+              ],
               "links": [
                 {
                   "type": "official",
@@ -207,8 +275,16 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "定番人気",
-                  "tone": "auto"
+                  "text": "衛兵交代式",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "広大な広場",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "おすすめ",
+                  "tone": "gold"
                 }
               ],
               "links": [
@@ -226,8 +302,16 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "定番人気",
-                  "tone": "auto"
+                  "text": "台北の名刹",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "1738年築",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "おすすめ",
+                  "tone": "gold"
                 }
               ],
               "links": [],
@@ -256,18 +340,16 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "人気",
-                  "tone": "auto"
-                }
-              ],
-              "links": [
+                  "text": "歴史ある街並み",
+                  "tone": "neutral"
+                },
                 {
-                  "type": "map",
-                  "label": "迪化街",
-                  "url": "https://maps.app.goo.gl/W1upJpa2gjzz199Z7"
+                  "text": "赤レンガ建築",
+                  "tone": "neutral"
                 }
               ],
-              "mapUrl": "https://maps.app.goo.gl/1uBBPyB3yMXB6yUB8"
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/QGyiKkUs1xD18ZRH6"
             },
             {
               "id": "3f66bda0-4caa-80fc-a597-c70ee7b498e9",
@@ -277,10 +359,63 @@
                 {
                   "text": "文字好き必見",
                   "tone": "auto"
+                },
+                {
+                  "text": "活版印刷体験",
+                  "tone": "auto"
                 }
               ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/5bL8SDQN9vS52QsJ6"
+            },
+            {
+              "id": "3f66bda0-4caa-808f-8612-ce5d317820b0",
+              "name": "北門",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "清代の城門",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/RK72xTLxgZEuWxgYA"
+            },
+            {
+              "id": "sights-mvrrsvv3-d2erl",
+              "name": "臺灣新文化運動紀念館",
+              "mapUrl": "https://www.google.com/maps/place/%E8%87%BA%E7%81%A3%E6%96%B0%E6%96%87%E5%8C%96%E9%81%8B%E5%8B%95%E7%B4%80%E5%BF%B5%E9%A4%A8/@25.0592851,121.5148456,18z/data=!4m6!3m5!1s0x3442a96aa6e215b3:0x24e1f99a963a01aa!8m2!3d25.0593375!4d121.5150413!16s%2Fm%2F0nbdym3?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "旧警察署",
+                  "tone": "auto"
+                },
+                {
+                  "text": "扇形拘置所",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-807c-85e0-d38dcbd21839",
+              "name": "總統府",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "週末は指定日のみ",
+                  "tone": "red"
+                }
+              ],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "参観可能日時",
+                  "url": "https://english.president.gov.tw/Page/124"
+                }
+              ],
+              "mapUrl": "https://maps.app.goo.gl/iV4Bb4tyeNCV3WC96"
             },
             {
               "id": "sights-mvrrvsca-255u1",
@@ -289,37 +424,13 @@
               "tags": [
                 {
                   "text": "切手博物館",
-                  "tone": "auto"
+                  "tone": "neutral"
                 },
                 {
-                  "text": "",
-                  "tone": "auto"
+                  "text": "郵政文化",
+                  "tone": "neutral"
                 }
               ],
-              "links": [],
-              "className": "venue-list-item"
-            },
-            {
-              "id": "3f66bda0-4caa-808f-8612-ce5d317820b0",
-              "name": "北門",
-              "className": "venue-list-item",
-              "tags": [],
-              "links": [],
-              "mapUrl": "https://maps.app.goo.gl/RK72xTLxgZEuWxgYA"
-            },
-            {
-              "id": "3f66bda0-4caa-807c-85e0-d38dcbd21839",
-              "name": "總統府",
-              "className": "venue-list-item",
-              "tags": [],
-              "links": [],
-              "mapUrl": "https://maps.app.goo.gl/iV4Bb4tyeNCV3WC96"
-            },
-            {
-              "id": "sights-mvrrsvv3-d2erl",
-              "name": "臺灣新文化運動紀念館",
-              "mapUrl": "https://www.google.com/maps/place/%E8%87%BA%E7%81%A3%E6%96%B0%E6%96%87%E5%8C%96%E9%81%8B%E5%8B%95%E7%B4%80%E5%BF%B5%E9%A4%A8/@25.0592851,121.5148456,18z/data=!4m6!3m5!1s0x3442a96aa6e215b3:0x24e1f99a963a01aa!8m2!3d25.0593375!4d121.5150413!16s%2Fm%2F0nbdym3?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
-              "tags": [],
               "links": [],
               "className": "venue-list-item"
             },
@@ -327,7 +438,12 @@
               "id": "3f66bda0-4caa-8032-9fc2-dc8b586f958b",
               "name": "大龍峒保安宮",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "精巧な廟建築",
+                  "tone": "auto"
+                }
+              ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/5Kj6HTcbH7sSEuc97"
             },
@@ -335,7 +451,16 @@
               "id": "3f66bda0-4caa-8059-beb8-e85d3799d29a",
               "name": "國史館",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "平日中心の開館",
+                  "tone": "auto"
+                },
+                {
+                  "text": "台湾近現代史",
+                  "tone": "auto"
+                }
+              ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/8RtUyZdUnJV52J7j6"
             },
@@ -343,25 +468,54 @@
               "id": "3f66bda0-4caa-80da-b540-dedf789db6ed",
               "name": "二二八國家紀念館",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "人権と歴史",
+                  "tone": "auto"
+                }
+              ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/o7vcK5MKBtHa5Sz86"
-            },
-            {
-              "id": "3f66bda0-4caa-8025-928f-cc287e3d4973",
-              "name": "台北孔子廟",
-              "className": "venue-list-item",
-              "tags": [],
-              "links": [],
-              "mapUrl": "https://maps.app.goo.gl/MGTNPeFiNy2JWMUX8"
             },
             {
               "id": "3f76bda0-4caa-8036-8dd1-dd1f7aedc119",
               "name": "台北賓館",
               "className": "venue-list-item",
-              "tags": [],
-              "links": [],
+              "tags": [
+                {
+                  "text": "公開日限定",
+                  "tone": "red"
+                },
+                {
+                  "text": "旧総督官邸",
+                  "tone": "auto"
+                }
+              ],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "参観可能日時",
+                  "url": "https://subsite.mofa.gov.tw/entgh/cp.aspx?n=6411"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/jsJ8d1wMcYLidTqz9"
+            },
+            {
+              "id": "3f66bda0-4caa-8025-928f-cc287e3d4973",
+              "name": "台北孔子廟",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "儒教文化",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "伝統建築",
+                  "tone": "neutral"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/MGTNPeFiNy2JWMUX8"
             }
           ]
         },
@@ -429,7 +583,16 @@
               "id": "3f66bda0-4caa-8033-b147-ed124aa1925f",
               "name": "北投温泉エリア",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "温泉街めぐり",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "地熱谷",
+                  "tone": "neutral"
+                }
+              ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/ucMvHc8PVc7vcEBfA"
             },
@@ -437,7 +600,16 @@
               "id": "3f66bda0-4caa-80a7-b07a-c18a6a9d3f14",
               "name": "猴硐猫村",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "猫たちが暮らす街",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "鉄道でアクセス",
+                  "tone": "neutral"
+                }
+              ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/dFswUdCFEGG3riVK6"
             },
@@ -473,10 +645,6 @@
               "tags": [
                 {
                   "text": "複数のアーティスト",
-                  "tone": "auto"
-                },
-                {
-                  "text": "一番人気",
                   "tone": "auto"
                 }
               ],
@@ -641,19 +809,6 @@
               "mapUrl": "https://maps.app.goo.gl/m3tPaF8kBfksAekPA"
             },
             {
-              "id": "3f76bda0-4caa-803e-9e1d-d6af25bac8e6",
-              "name": "台北橋",
-              "className": "venue-list-item",
-              "tags": [
-                {
-                  "text": "バイクの滝",
-                  "tone": "auto"
-                }
-              ],
-              "links": [],
-              "mapUrl": "https://maps.app.goo.gl/wbH772HV1D5UBRBb7"
-            },
-            {
               "id": "3f66bda0-4caa-80ff-94d0-f526ba88e426",
               "name": "淡江大橋",
               "className": "venue-list-item",
@@ -671,6 +826,19 @@
               "mapUrl": "https://maps.app.goo.gl/RujM1Mrpo8ozib1c6"
             },
             {
+              "id": "3f66bda0-4caa-80a6-a089-e58570c6863d",
+              "name": "馬偕街の教会",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "穴場",
+                  "tone": "neutral"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/xg1x1mtgwsMXFss79"
+            },
+            {
               "id": "3f76bda0-4caa-8090-baf3-f505577138fa",
               "name": "萬年商業ビル",
               "className": "venue-list-item",
@@ -684,12 +852,25 @@
               "mapUrl": "https://maps.app.goo.gl/p1VwWGzrwern8GyB6"
             },
             {
+              "id": "3f76bda0-4caa-803e-9e1d-d6af25bac8e6",
+              "name": "台北橋",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "バイクの滝",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/wbH772HV1D5UBRBb7"
+            },
+            {
               "id": "3f66bda0-4caa-80db-86d1-d64511e9d204",
               "name": "飛機巷",
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "飛行機を間近で見られるスポット",
+                  "text": "飛行機を間近で見られる",
                   "tone": "auto"
                 }
               ],
@@ -697,21 +878,17 @@
               "mapUrl": "https://maps.app.goo.gl/VXvMfU2g5hoitz9x6"
             },
             {
-              "id": "3f66bda0-4caa-80a6-a089-e58570c6863d",
-              "name": "川端橋",
-              "className": "venue-list-item",
+              "id": "sights-mvs0ok5w-4mav7",
+              "name": "寶藏巖",
+              "mapUrl": "https://www.google.com/maps/place/%E5%AF%B6%E8%97%8F%E5%B7%96%E8%81%9A%E8%90%BD/@25.0107236,121.5298783,18z/data=!4m6!3m5!1s0x3442a9f5d05d7223:0xbf58aec1fde8e6d0!8m2!3d25.0104899!4d121.5323905!16s%2Fg%2F11g0dsxtkm?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
               "tags": [
                 {
-                  "text": "穴場夜景",
-                  "tone": "auto"
-                },
-                {
-                  "text": "2026年NEW",
+                  "text": "アート集落",
                   "tone": "auto"
                 }
               ],
               "links": [],
-              "mapUrl": "https://maps.app.goo.gl/mt7uyg5cekKCf5dm6"
+              "className": "venue-list-item"
             }
           ]
         }
