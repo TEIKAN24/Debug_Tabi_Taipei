@@ -1,4 +1,4 @@
-/* v30.9.185 — chapters 03/05 directory JSON loader (preserves venue styling). */
+/* v30.9.186 — chapters 03/05 directory JSON loader (preserves venue styling). */
 /* v30.9.178 — homepage six-category navigation and seven chapter groupings; section UI and features preserved. */
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.176 — 注目の街歩きエリア: district bubbles + category chips + one scrolling list (no nested rows);
@@ -373,8 +373,19 @@
       // Only fill up to three visible labels; avoid repeating the existing category or a same-name tag.
       const curated = (li.dataset.curatedTags || '').split('、').map(s=>s.trim()).filter(Boolean);
       for (const value of curated) {
-        if (tags.length >= 3) break;
+        if (tags.length >= 3 && !li.dataset.directoryTagsFull) break;
         if (!tags.includes(value)) tags.push(value);
+      }
+
+      // Per-tag colors come from JSON for chapters 03/05. Other chapters keep
+      // their pre-existing behavior and do not use these overrides.
+      const isJsonDirectory = Boolean(li.closest('[data-directory-type]'));
+      let tagColors = {};
+      if (isJsonDirectory && li.dataset.tagColors) {
+        try {
+          const parsed = JSON.parse(li.dataset.tagColors);
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) tagColors = parsed;
+        } catch (_) { /* invalid overrides fall back to automatic colors */ }
       }
 
       if (tags.length) {
@@ -383,8 +394,16 @@
         for (const value of tags) {
           const tag = document.createElement('span');
           tag.className = 'venue-tag';
-          if (CAUTION.test(value)) tag.classList.add('venue-tag--caution');
-          else if (HIGHLIGHT.test(value) || (firstLink.textContent.trim()==='甜満' && value==='人気急上昇中')) tag.classList.add('venue-tag--featured');
+          const caution = CAUTION.test(value);
+          const featured = HIGHLIGHT.test(value) || (firstLink.textContent.trim()==='甜満' && value==='人気急上昇中');
+          if (caution) tag.classList.add('venue-tag--caution');
+          else if (featured) tag.classList.add('venue-tag--featured');
+          if (isJsonDirectory) {
+            const override = Object.prototype.hasOwnProperty.call(tagColors, value) ? tagColors[value] : 'auto';
+            const tone = ['neutral', 'gold', 'red'].includes(override) ? override :
+              (caution ? 'red' : (featured ? 'gold' : 'neutral'));
+            tag.classList.add('venue-tag--tone-' + tone);
+          }
           tag.textContent = value;
           tagList.append(tag);
         }

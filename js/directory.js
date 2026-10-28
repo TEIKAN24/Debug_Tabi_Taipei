@@ -1,4 +1,4 @@
-/* v30.9.185 — 03 Sights / 05 Experiences & Souvenirs data source.
+/* v30.9.187 — 03 Sights / 05 Experiences & Souvenirs data source.
    Data schema: data/{sights,experiences,souvenirs}.json.
    The original bubble groups and their panel IDs remain in index.html. */
 (() => {
@@ -59,22 +59,28 @@
       if (!item || typeof item.name !== 'string' || !item.name.trim()) return;
       const li = document.createElement('li');
       if (item.className === 'venue-list-item' || !('className' in item)) li.className = 'venue-list-item';
-      if (typeof item.curatedTags === 'string' && item.curatedTags.trim())
-        li.dataset.curatedTags = item.curatedTags.trim();
-      const url = safeUrl(item.url);
-      if (url) {
-        const a = document.createElement('a');
-        a.href = url;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.textContent = item.name;
-        li.append(a);
-      } else {
-        const span = document.createElement('span');
-        span.textContent = item.name;
-        li.append(span);
+      // Explicit editable tags, one color per tag, are carried via JSON.
+      if(Array.isArray(item.tags)){
+        const labels=item.tags.filter(t=>t&&typeof t.text==='string'&&t.text.trim());
+        if(labels.length){
+          li.dataset.directoryTagsFull='1';
+          li.dataset.curatedTags=labels.map(t=>t.text.trim()).join('、');
+          const colors={};labels.forEach(t=>{if(['neutral','gold','red'].includes(t.tone))colors[t.text.trim()]=t.tone;});
+          if(Object.keys(colors).length)li.dataset.tagColors=JSON.stringify(colors);
+        }
       }
-      li.append(safeDetail(item.detailHtml));
+      const url = safeUrl(item.mapUrl || item.url);
+      if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=item.name;li.append(a);}
+      else {const span=document.createElement('span');span.textContent=item.name;li.append(span);}
+      // Source tags are rendered by guide.js; links remain separate from map.
+      if(Array.isArray(item.links)){
+        for(const link of item.links){
+          const href=safeUrl(link.url);if(!href||!link.label)continue;
+          const a=document.createElement('a');a.href=href;a.textContent=link.label;a.target='_blank';a.rel='noopener noreferrer';
+          if(link.type!=='map')a.className='external-action-link';
+          li.append(a);
+        }
+      }else li.append(safeDetail(item.detailHtml));
       fragment.append(li);
     });
     list.replaceChildren(fragment);
