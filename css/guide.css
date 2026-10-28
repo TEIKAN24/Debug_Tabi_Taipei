@@ -5381,3 +5381,18 @@ html[data-theme="light"] #food-explorer .empty .food-suggest-word{color:#213038;
   transition:none!important;
 }
 #guide #food-explorer .food-instant-collapse .desc {transition:none!important;}
+
+/* v30.9.204 — iPhone Safari keyboard-safe floating dictionary.
+   Anchor to the VISUAL viewport, not 50dvh (which changes during keyboard
+   animations). The interior result list absorbs the available-height change. */
+body #guide #food-search.food-drawer.is-floating {
+  height:min(490px,calc(var(--food-vv-height,100dvh) - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
+  top:calc(var(--food-vv-offset,0px) + max(calc(12px + env(safe-area-inset-top,0px)),calc((var(--food-vv-height,100dvh) - min(490px,calc(var(--food-vv-height,100dvh) - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))) / 2)))!important;
+  bottom:auto!important;
+}
+@media (min-width:600px) {
+  body #guide #food-search.food-drawer.is-floating {
+    height:min(600px,calc(var(--food-vv-height,100dvh) - 32px))!important;
+    top:calc(var(--food-vv-offset,0px) + max(16px,calc((var(--food-vv-height,100dvh) - min(600px,calc(var(--food-vv-height,100dvh) - 32px))) / 2)))!important;
+  }
+}

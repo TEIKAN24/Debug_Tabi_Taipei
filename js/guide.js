@@ -441,7 +441,7 @@
 })();
 
 
-/* =================== JS 03: food-search-script v30.9.203 =================== */
+/* =================== JS 03: food-search-script v30.9.204 =================== */
 ;
 
 (function () {
@@ -690,39 +690,78 @@ function switchFoodEntry(row) {
   }
 }
 
-// iPhone Safari may dismiss its keyboard between touchstart and click. Keep
-// the item touched at pointerdown, rather than using a shifted click target.
-let foodTap = null;
-let foodTouchHandledAt = 0;
-let foodTouchClickPending = false;
-results.addEventListener('pointerdown', event => {
-  if (event.pointerType !== 'touch' || !event.isPrimary) return;
+// v30.9.204: iOS keyboard-safe food result taps.
+// Touch end is handled on the ORIGINAL element, before Safari's synthetic click
+// can hit a row shifted by the keyboard or visual viewport. Do not cancel a
+// real scroll gesture, and do not alter mouse/keyboard activation.
+let foodTouch = null;
+let foodLastTouchHandled = -1000;
+let pendingFoodSelection = 0;
+function selectFoodAfterKeyboard(row) {
+  const selection = ++pendingFoodSelection;
+  const apply = () => {
+    if (selection === pendingFoodSelection && row.isConnected &&
+        foodDrawer?.getAttribute('aria-hidden') !== 'true') {
+      switchFoodEntry(row);
+      // The result list is independently scrollable; keep the chosen row in
+      // view after the keyboard has finished changing its viewport size.
+      const view = results.getBoundingClientRect();
+      const item = row.getBoundingClientRect();
+      if (item.top < view.top + 3) results.scrollTop += item.top - view.top - 3;
+      else if (item.top > view.bottom - 44) results.scrollTop += item.top - view.bottom + 44;
+    }
+  };
+  if (document.activeElement !== input) { apply(); return; }
+  const vv = window.visualViewport;
+  // Prevent default touch focus changes first; dismiss the keyboard ourselves.
+  // Wait for iOS viewport resize/scroll to finish before opening the detail.
+  let quietTimer = 0;
+  let maximumTimer = 0;
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    clearTimeout(quietTimer); clearTimeout(maximumTimer);
+    vv?.removeEventListener('resize', changed);
+    vv?.removeEventListener('scroll', changed);
+    requestAnimationFrame(() => requestAnimationFrame(apply));
+  };
+  const changed = () => { clearTimeout(quietTimer); quietTimer = setTimeout(finish, 125); };
+  vv?.addEventListener('resize', changed, {passive:true});
+  vv?.addEventListener('scroll', changed, {passive:true});
+  input.blur();
+  // No keyboard animation on desktop or some embedded browsers.
+  const probablyKeyboard = Boolean(vv && (window.innerHeight - vv.height > 120));
+  if (!probablyKeyboard) { finish(); return; }
+  quietTimer = setTimeout(finish, 350);
+  maximumTimer = setTimeout(finish, 750);
+}
+results.addEventListener('touchstart', event => {
+  if (event.touches.length !== 1) { foodTouch = null; return; }
+  const t = event.changedTouches[0];
   const row = event.target instanceof Element
     ? event.target.closest('.food-entry-expandable') : null;
-  foodTap = row && results.contains(row)
-    ? {id:event.pointerId,row,x:event.clientX,y:event.clientY,scroll:results.scrollTop} : null;
+  foodTouch = row && results.contains(row)
+    ? {id:t.identifier,row,x:t.clientX,y:t.clientY,scroll:results.scrollTop} : null;
 }, {capture:true,passive:true});
-document.addEventListener('pointerup', event => {
-  const tap = foodTap;
-  foodTap = null;
-  if (!tap || tap.id !== event.pointerId || !tap.row.isConnected) return;
-  if (Math.hypot(event.clientX-tap.x,event.clientY-tap.y)>13 ||
+results.addEventListener('touchend', event => {
+  const tap = foodTouch;
+  foodTouch = null;
+  if (!tap || !tap.row.isConnected) return;
+  const t = Array.from(event.changedTouches).find(t => t.identifier === tap.id);
+  if (!t || Math.hypot(t.clientX-tap.x,t.clientY-tap.y)>13 ||
       Math.abs(results.scrollTop-tap.scroll)>7) return;
-  foodTouchHandledAt = performance.now();
-  foodTouchClickPending = true;
-  switchFoodEntry(tap.row);
-  if (document.activeElement === input) input.blur();
-}, {capture:true,passive:true});
-document.addEventListener('pointercancel', () => { foodTap = null; }, {capture:true,passive:true});
-// Ignore the one synthesized click after a handled touch. The tap may have
-// changed layout or closed the iOS keyboard before Safari dispatches that click.
-document.addEventListener('click', event => {
-  if (!foodTouchClickPending || performance.now() - foodTouchHandledAt > 450) {
-    foodTouchClickPending = false;
-    return;
-  }
-  if (event.target instanceof Element && event.target.closest('#food-search')) {
-    foodTouchClickPending = false;
+  // Suppress Safari's delayed synthesized click. It can otherwise land on a
+  // different row after the page moves to hide the keyboard.
+  foodLastTouchHandled = performance.now();
+  if (event.cancelable) event.preventDefault();
+  selectFoodAfterKeyboard(tap.row);
+}, {capture:true,passive:false});
+results.addEventListener('touchcancel', () => { foodTouch=null; }, {capture:true,passive:true});
+// Defensive fallback: some WebKit releases still issue a delayed click after
+// touchend.preventDefault(); never let that second event toggle another row.
+results.addEventListener('click', event => {
+  if (event.detail > 0 && performance.now() - foodLastTouchHandled < 650) {
     event.preventDefault();
     event.stopImmediatePropagation();
   }
@@ -1760,6 +1799,27 @@ loadData();
   const backdrop=document.querySelector('.food-drawer-backdrop');
   const body=document.body;
   const html=document.documentElement;
+  // iOS Safari's visual viewport is smaller and may be offset while its
+  // software keyboard is shown. Keep the floating drawer in that viewport,
+  // rather than re-centering it using 50dvh during focus/blur transitions.
+  let foodViewportRAF = 0;
+  function syncFoodVisualViewport() {
+    foodViewportRAF = 0;
+    const vv = window.visualViewport;
+    const height = vv?.height || window.innerHeight;
+    const top = vv?.offsetTop || 0;
+    drawer.style.setProperty('--food-vv-height', `${Math.round(height * 10) / 10}px`);
+    drawer.style.setProperty('--food-vv-offset', `${Math.round(top * 10) / 10}px`);
+  }
+  function scheduleFoodVisualViewport() {
+    if (!foodViewportRAF) foodViewportRAF=requestAnimationFrame(syncFoodVisualViewport);
+  }
+  window.visualViewport?.addEventListener('resize',scheduleFoodVisualViewport,{passive:true});
+  window.visualViewport?.addEventListener('scroll',scheduleFoodVisualViewport,{passive:true});
+  window.addEventListener('resize',scheduleFoodVisualViewport,{passive:true});
+  drawer.addEventListener('focusin',scheduleFoodVisualViewport);
+  drawer.addEventListener('focusout',scheduleFoodVisualViewport);
+  syncFoodVisualViewport();
   let opened=false;
   let savedY=0, savedStyle=null, previousFocus=null;
   let drag=null, clickSuppressUntil=0;
@@ -1806,6 +1866,7 @@ loadData();
   }
   function settle(shouldOpen){
     if(shouldOpen){
+      syncFoodVisualViewport();
       lockPage();
       drawer.setAttribute('aria-hidden','false');
       body.classList.add('food-drawer-open');
