@@ -3553,7 +3553,7 @@ update();
     if(head&&head.getBoundingClientRect().top<0)
       requestAnimationFrame(()=>head.scrollIntoView({block:'start',behavior:reduce.matches?'instant':'smooth'}));
   };
-  const back=({restoreFocus=false}={})=>{
+  const back=({restoreFocus=false,quiet=false}={})=>{
     if(active<0)return;
     const focus=focusOrigin;
     active=-1;
@@ -3564,7 +3564,7 @@ update();
     buttons.forEach(button=>button.setAttribute('aria-expanded','false'));
     if(restoreFocus&&focus?.isConnected)focus.focus({preventScroll:true});
     focusOrigin=null;
-    keepInView();
+    if(!quiet)keepInView();
   };
   const show=(index,trigger,fromKeyboard=false)=>{
     if(index===active){back({restoreFocus:true});return;}
@@ -3642,5 +3642,189 @@ update();
   original.before(grid,detail);
   root.classList.add('walk-grid-ready');
   detail.querySelector('.walk-inline-back').addEventListener('click',()=>back({restoreFocus:true}));
-  root.addEventListener('toggle',()=>{if(!root.open)back();});
+  root.addEventListener('toggle',()=>{if(!root.open)back({quiet:true});});
+})();
+
+
+/* v30.9.183 — Chapters 01 and 03–06: smoother top-level menus.
+ * Root accordions open and close with a height glide; day-trip destinations
+ * fold the same way. When the visitor closes one of these menus (including
+ * the airport results), the page glides back to that chapter's heading.
+ * Programmatic folding (auto-fold, cross-section folding) never scrolls.
+ * Nested rows inside a menu keep their existing behavior. */
+;(()=>{
+  'use strict';
+  const guide=document.getElementById('guide');
+  if(!guide)return;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const html=document.documentElement;
+  const HEADING_TOP=22; // same resting line as the chapter near-snap
+  const eyebrows=[...guide.querySelectorAll('.chapter-eyebrow')];
+  const chapterOf=node=>{
+    let found=null;
+    for(const eyebrow of eyebrows){
+      if(eyebrow.compareDocumentPosition(node)&Node.DOCUMENT_POSITION_FOLLOWING)found=eyebrow;else break;
+    }
+    return found&&/^0[13456]\b/.test(found.textContent.trim())?found:null;
+  };
+  const easeInOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  const easeOut=t=>1-Math.pow(1-t,3);
+
+  /* Glide the window to a chapter heading. Driven per frame so it stays on
+     target while the menu below it is still shrinking. */
+  let glideFrame=0,glideStop=null;
+  function glideTo(eyebrow){
+    glideStop?.();
+    if(!eyebrow?.getClientRects().length)return;
+    const goal=()=>Math.max(0,Math.min(
+      scrollY+eyebrow.getBoundingClientRect().top-HEADING_TOP,
+      html.scrollHeight-innerHeight));
+    const start=scrollY;
+    const distance=Math.abs(goal()-start);
+    if(distance<2)return;
+    if(reduce.matches){scrollTo({top:goal(),behavior:'instant'});return;}
+    const duration=Math.min(820,Math.max(440,distance*.42));
+    const began=performance.now();
+    html.style.overflowAnchor='none';
+    const interrupt=()=>glideStop?.();
+    glideStop=()=>{
+      cancelAnimationFrame(glideFrame);glideStop=null;
+      html.style.removeProperty('overflow-anchor');
+      removeEventListener('wheel',interrupt,true);
+      removeEventListener('touchstart',interrupt,true);
+      removeEventListener('keydown',interrupt,true);
+    };
+    addEventListener('wheel',interrupt,{passive:true,capture:true});
+    addEventListener('touchstart',interrupt,{passive:true,capture:true});
+    addEventListener('keydown',interrupt,{capture:true});
+    const step=now=>{
+      const t=Math.min(1,(now-began)/duration);
+      scrollTo({top:start+(goal()-start)*easeInOut(t),behavior:'instant'});
+      if(t<1)glideFrame=requestAnimationFrame(step);else glideStop?.();
+    };
+    glideFrame=requestAnimationFrame(step);
+  }
+
+  /* Height glide for one element. `to` may be a function so the final height
+     can follow content that settles while it opens. */
+  const running=new WeakMap();
+  function heightGlide(el,from,to,{duration=380,ease=easeInOut,done}={}){
+    running.get(el)?.cancel();
+    const target=typeof to==='function'?to:()=>to;
+    if(reduce.matches||Math.abs(from-target())<2){done?.();return;}
+    let frame=0,live=true;
+    const began=performance.now();
+    el.style.overflow='hidden';
+    el.style.height=from+'px';
+    const clear=()=>{el.style.removeProperty('height');el.style.removeProperty('overflow');};
+    const job={cancel(){if(!live)return;live=false;cancelAnimationFrame(frame);running.delete(el);clear();}};
+    running.set(el,job);
+    const step=now=>{
+      if(!live)return;
+      const t=Math.min(1,(now-began)/duration);
+      el.style.height=(from+(target()-from)*ease(t))+'px';
+      if(t<1){frame=requestAnimationFrame(step);return;}
+      live=false;running.delete(el);
+      done?.();clear();
+    };
+    frame=requestAnimationFrame(step);
+  }
+  const borders=el=>el.offsetHeight-el.clientHeight;
+  const fadeIn=el=>{
+    if(reduce.matches||!el)return;
+    el.animate([{opacity:0,transform:'translate3d(0,-6px,0)'},{opacity:1,transform:'none'}],
+      {duration:360,easing:'cubic-bezier(.22,1,.36,1)'});
+  };
+
+  /* ---- Root accordions (chapters 01, 03, 04, 05) ---- */
+  const roots=[...guide.querySelectorAll('details.root-accordion')]
+    .filter(detail=>detail.id!=='recommend-advanced'&&!detail.parentElement.closest('details')&&chapterOf(detail));
+  const rootSet=new Set(roots);
+  const rootOf=event=>{
+    const summary=event.target.closest?.('summary');
+    const detail=summary?.parentElement;
+    if(!detail||!rootSet.has(detail)||event.target.closest('a,button'))return null;
+    return detail;
+  };
+  const closing=new WeakSet();
+  const openedFrom=new WeakMap();
+  document.addEventListener('click',event=>{
+    const detail=rootOf(event);
+    if(!detail)return;
+    if(closing.has(detail)){event.preventDefault();event.stopPropagation();return;}
+    const summary=detail.querySelector(':scope > summary');
+    if(detail.open){
+      // Visitor closes this menu: fold smoothly and return to the chapter heading.
+      event.preventDefault();event.stopPropagation();
+      closing.add(detail);
+      glideTo(chapterOf(detail));
+      heightGlide(detail,detail.getBoundingClientRect().height,
+        summary.getBoundingClientRect().height+borders(detail),{
+          duration:380,
+          done(){
+            detail.querySelectorAll('details[open]').forEach(child=>{child.open=false;});
+            detail.open=false;
+            closing.delete(detail);
+          }
+        });
+      return;
+    }
+    openedFrom.set(detail,detail.getBoundingClientRect().height);
+  },true);
+  // After the site's own handler has opened it (sibling folding, scroll to title).
+  document.addEventListener('click',event=>{
+    const detail=rootOf(event);
+    if(!detail||!openedFrom.has(detail))return;
+    const from=openedFrom.get(detail);openedFrom.delete(detail);
+    if(!detail.open)return;
+    heightGlide(detail,from,()=>detail.scrollHeight+borders(detail),{duration:440,ease:easeOut});
+    fadeIn(detail.querySelector(':scope > .indented'));
+  });
+
+  /* ---- Day-trip destinations (chapter 06) ---- */
+  const trip=guide.querySelector('.sights-day-trips');
+  const destinationSelector='.daytrip-destination-buttons > .daytrip-destination-button';
+  let replaying=false,tripBusy=false,tripOpening=false;
+  if(trip){
+    document.addEventListener('click',event=>{
+      if(replaying)return;
+      const button=event.target.closest?.(destinationSelector);
+      if(!button||!trip.contains(button))return;
+      if(tripBusy){event.preventDefault();event.stopPropagation();return;}
+      const panel=document.getElementById(button.getAttribute('aria-controls'));
+      if(button.getAttribute('aria-expanded')==='true'&&panel&&!panel.hidden){
+        // Fold the open destination first, then let the existing controllers close it.
+        event.preventDefault();event.stopPropagation();
+        tripBusy=true;
+        glideTo(chapterOf(trip));
+        const finish=()=>{
+          replaying=true;
+          try{button.click();}finally{replaying=false;tripBusy=false;}
+          panel.style.removeProperty('opacity');panel.style.removeProperty('transition');
+        };
+        if(!reduce.matches)panel.style.opacity='0';
+        panel.style.transition=reduce.matches?'':'opacity .26s ease';
+        heightGlide(panel,panel.getBoundingClientRect().height,0,{duration:380,done:finish});
+        return;
+      }
+      tripOpening=!trip.querySelector(destinationSelector+'[aria-expanded="true"]');
+    },true);
+    document.addEventListener('click',event=>{
+      if(replaying||!tripOpening)return;
+      const button=event.target.closest?.(destinationSelector);
+      if(!button||!trip.contains(button))return;
+      tripOpening=false;
+      const panel=document.getElementById(button.getAttribute('aria-controls'));
+      if(!panel||panel.hidden)return;
+      panel.style.removeProperty('transition');
+      heightGlide(panel,0,()=>panel.scrollHeight,{duration:440,ease:easeOut});
+    });
+  }
+
+  /* ---- Airport results (chapter 01): its own CSS already folds smoothly ---- */
+  const disclosure=guide.querySelector('#airsel-route-disclosure');
+  disclosure?.addEventListener('click',()=>{
+    if(disclosure.getAttribute('aria-expanded')!=='false')return;
+    glideTo(chapterOf(disclosure));
+  });
 })();
