@@ -3625,35 +3625,117 @@ update();
       scroller.classList.toggle('walk-list-more',can&&scroller.scrollTop+scroller.clientHeight<scroller.scrollHeight-8);
     };
     scroller.addEventListener('scroll',fade,{passive:true});
-    const choose=(i,focus=false)=>{
+    // v30.9.188: bubbles place themselves like the other bubble strips — a chip
+    // nearing the right edge moves to the left fifth, revealing the next ones.
+    const placeChip=(i,smooth=true)=>{
+      const max=Math.max(0,row.scrollWidth-row.clientWidth);
+      if(max<=2)return;
+      const s=row.getBoundingClientRect(),c=chips[i].getBoundingClientRect();
+      const rightThreshold=Math.min(104,Math.max(56,row.clientWidth*.24));
+      let next=null;
+      if(c.right>s.right-rightThreshold&&max-row.scrollLeft>2){
+        const preferredLeft=Math.min(70,Math.max(30,row.clientWidth*.19));
+        next=row.scrollLeft+c.left-s.left-preferredLeft;
+        if(c.width>row.clientWidth-preferredLeft-8)next=row.scrollLeft+c.right-s.right+8;
+      }else if(c.left<s.left+12&&row.scrollLeft>2){
+        next=row.scrollLeft+c.left-s.left-12;
+      }
+      if(next===null)return;
+      const left=Math.max(0,Math.min(max,next));
+      if(Math.abs(left-row.scrollLeft)>2)
+        row.scrollTo({left,behavior:smooth&&!reduce.matches?'smooth':'instant'});
+    };
+    const ease='cubic-bezier(.22,.8,.3,1)';
+    let current=-1;
+    // `enter` is the offset (px) the new list slides in from; 0 = no motion.
+    const choose=(i,focus=false,enter=0,smooth=true)=>{
+      current=i;
       remembered.set(index,i);
       chips.forEach((chip,j)=>{chip.setAttribute('aria-selected',String(i===j));chip.tabIndex=i===j?0:-1;});
       panes.forEach((pane,j)=>pane.hidden=j!==i);
       scroller.scrollTop=0;
       if(focus)chips[i].focus({preventScroll:true});
-      const c=chips[i].getBoundingClientRect(),s=row.getBoundingClientRect();
-      if(c.left<s.left+8||c.right>s.right-8)row.scrollTo({left:row.scrollLeft+c.left-s.left-16,behavior:'instant'});
+      placeChip(i,smooth);
+      if(enter&&!reduce.matches)
+        panes[i].animate([{opacity:0,transform:`translate3d(${enter}px,0,0)`},{opacity:1,transform:'translate3d(0,0,0)'}],
+          {duration:420,easing:ease});
       requestAnimationFrame(()=>{fade();chipFade();});
     };
     chips.forEach((chip,i)=>{
       chip.id=`walk-inline-tab-${index}-${i}`;
       chip.setAttribute('aria-controls',`walk-inline-pane-${index}-${i}`);
-      chip.addEventListener('click',()=>choose(i));
+      chip.addEventListener('click',()=>{if(i!==current)choose(i,false,i>current?44:-44);});
     });
+    // v30.9.188: swipe the list left/right to move between categories.
+    // The list follows the finger, then slides out while the next one slides in.
+    let gesture=null,suppressClickUntil=0;
+    const touchOf=(list,id)=>{for(const t of list)if(t.identifier===id)return t;return null;};
+    const clearDrag=pane=>{pane.style.transform='';pane.style.opacity='';pane.style.transition='';};
+    scroller.addEventListener('touchstart',event=>{
+      gesture=null;
+      if(event.touches.length!==1)return;
+      const t=event.touches[0];
+      // Leave the browser's own back/forward edge gestures alone.
+      if(t.clientX<18||t.clientX>innerWidth-18)return;
+      gesture={id:t.identifier,x:t.clientX,y:t.clientY,axis:null,pane:null};
+    },{passive:true});
+    scroller.addEventListener('touchmove',event=>{
+      if(!gesture)return;
+      const t=touchOf(event.changedTouches,gesture.id);if(!t)return;
+      const dx=t.clientX-gesture.x,dy=t.clientY-gesture.y;
+      if(!gesture.axis&&Math.hypot(dx,dy)>12){
+        if(Math.abs(dy)>Math.abs(dx)*1.12){gesture.axis='vertical';return;}
+        if(Math.abs(dx)>Math.abs(dy)*1.25){gesture.axis='horizontal';gesture.pane=panes[current];}
+      }
+      if(gesture.axis!=='horizontal')return;
+      if(event.cancelable)event.preventDefault();
+      if(reduce.matches||!gesture.pane)return;
+      const next=current+(dx<0?1:-1);
+      const x=(next<0||next>=chips.length)?dx*.28:dx*.9; // resist past the ends
+      gesture.pane.style.transform=`translate3d(${x}px,0,0)`;
+      gesture.pane.style.opacity=String(1-Math.min(.45,Math.abs(x)/Math.max(1,scroller.clientWidth)*.9));
+    },{passive:false});
+    scroller.addEventListener('touchend',event=>{
+      if(!gesture)return;
+      const t=touchOf(event.changedTouches,gesture.id);if(!t)return;
+      const state=gesture;gesture=null;
+      if(state.axis!=='horizontal')return;
+      const dx=t.clientX-state.x,pane=state.pane;
+      const next=current+(dx<0?1:-1);
+      const turn=Math.abs(dx)>=52&&next>=0&&next<chips.length;
+      suppressClickUntil=performance.now()+450;
+      if(reduce.matches||!pane){if(turn)choose(next);return;}
+      if(!turn){
+        pane.style.transition=`transform .28s ${ease},opacity .28s ${ease}`;
+        pane.style.transform='translate3d(0,0,0)';pane.style.opacity='1';
+        setTimeout(()=>clearDrag(pane),300);
+        return;
+      }
+      const width=Math.max(1,scroller.clientWidth),dir=dx<0?-1:1;
+      pane.style.transition='transform .18s ease-in,opacity .18s ease-in';
+      pane.style.transform=`translate3d(${dir*width*.55}px,0,0)`;pane.style.opacity='0';
+      setTimeout(()=>{clearDrag(pane);choose(next,false,-dir*width*.4);},180);
+    },{passive:true});
+    scroller.addEventListener('touchcancel',()=>{if(gesture?.pane)clearDrag(gesture.pane);gesture=null;},{passive:true});
+    // A swipe that ends over a link must not open it.
+    scroller.addEventListener('click',event=>{
+      if(performance.now()<suppressClickUntil){event.preventDefault();event.stopImmediatePropagation();}
+    },true);
     panes.forEach((pane,i)=>{pane.id=`walk-inline-pane-${index}-${i}`;pane.setAttribute('aria-labelledby',`walk-inline-tab-${index}-${i}`);});
     row.addEventListener('keydown',event=>{
       if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
       const i=chips.indexOf(document.activeElement);if(i<0)return;
       event.preventDefault();
-      choose(event.key==='Home'?0:event.key==='End'?chips.length-1:
-        (i+(event.key==='ArrowRight'?1:-1)+chips.length)%chips.length,true);
+      const n=event.key==='Home'?0:event.key==='End'?chips.length-1:
+        (i+(event.key==='ArrowRight'?1:-1)+chips.length)%chips.length;
+      if(n!==i)choose(n,true,n>i?44:-44);
     });
     host.replaceChildren(clone);
     detail.hidden=false;
     grid.hidden=true;
     root.classList.add('walk-viewing-detail');
     buttons.forEach((button,i)=>button.setAttribute('aria-expanded',String(index===i)));
-    choose(Math.min(remembered.get(index)||0,chips.length-1));
+    choose(Math.min(remembered.get(index)||0,chips.length-1),false,0,false);
     // The pressed card disappears; keyboard users continue from the back button.
     if(fromKeyboard)detail.querySelector('.walk-inline-back').focus({preventScroll:true});
     keepInView();
