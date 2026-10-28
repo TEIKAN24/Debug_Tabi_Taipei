@@ -1,4 +1,5 @@
-/* v30.9.204 — food dictionary: difficulty levels and their filter removed (spice shown in their place); keyboard-safe taps on iPhone. */
+/* v30.9.205 — food dictionary keyboard: the floating window keeps its size and place; iOS no longer pans the page (no jitter, no tap offset).
+   v30.9.204 — food dictionary: difficulty levels and their filter removed (spice shown in their place). */
 /* v30.9.186 — chapters 03/05 directory JSON loader (preserves venue styling). */
 /* v30.9.178 — homepage six-category navigation and seven chapter groupings; section UI and features preserved. */
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
@@ -442,7 +443,7 @@
 })();
 
 
-/* =================== JS 03: food-search-script v30.9.204 =================== */
+/* =================== JS 03: food-search-script v30.9.205 =================== */
 ;
 
 (function () {
@@ -1034,12 +1035,8 @@ function scheduleSearch(delay) {
 }
 input.addEventListener("input", event => scheduleSearch(event.isComposing ? 160 : 0));
 input.addEventListener("compositionend", () => scheduleSearch(0));
-// Preserve tapping the search icon or empty search-shell area to focus input,
-// without nesting the clear button inside a label (iOS Safari focus loop).
-foodExplorer.querySelector(".search-shell")?.addEventListener("click", event => {
-  if (!(event.target instanceof Element) || event.target.closest("input,button")) return;
-  input.focus({preventScroll:true});
-});
+// Tapping the search icon or the empty search-shell area focuses the input:
+// see "food-search keyboard" at the end of this file (it must not pan iOS).
 // v30.9.143: 常用字リスト — emoji and common characters in a panel that opens
 // over the list and stays open until toggled, tapped outside or Esc.
 const toolsToggle = foodExplorer.querySelector("#food-tools-toggle");
@@ -4127,82 +4124,192 @@ update();
   });
 })();
 
-/* =================== JS: food-search keyboard steadiness v30.9.204 =================== */
-/* iPhone Safari pans the whole page up when the search keyboard opens, even
-   though the page behind the dictionary is locked (body is position:fixed).
-   While it is panned, and again right after the keyboard closes, WebKit can
-   hit-test the fixed dictionary at a different height from where it is drawn,
-   so a tap lands on the dish above or below the one touched.
-   While the dictionary is open the locked page must never be scrolled, so:
-   - any document scroll caused by the keyboard is undone at once;
-   - a remaining visual-viewport pan is offset, so the window stays put;
-   - the window's bottom edge is lifted above the keyboard (its top, search box
-     and rows do not move), so every visible row is reachable;
-   - after the keyboard closes the scroll is reset again, re-syncing taps. */
+/* =================== JS: food-search keyboard v30.9.205 =================== */
+/* Why the dictionary jumped and taps landed on the wrong dish on iPhone:
+   when the search box gets focus, Safari scrolls the page to "reveal" it,
+   even though the page behind the dictionary is locked (body position:fixed).
+   The whole floating window is pushed up, and while (or right after) it is
+   pushed, WebKit hit-tests fixed elements at a different height from where it
+   draws them. Correcting that afterwards (scrolling back, moving or resizing
+   the window on every viewport event) fights Safari and makes it jitter.
+   So the pan is prevented instead of corrected:
+   1. The window's place and size are fixed in pixels while it is open. The
+      keyboard never moves or shrinks it.
+   2. Focus is given by script with the field lifted far above the screen for
+      a single frame (the same technique React Aria uses for iOS dialogs).
+      Safari then finds nothing to reveal and does not scroll the page.
+   3. While the keyboard is up, dragging outside the dish list cannot pan the
+      page; the dish list itself still scrolls normally.
+   4. The list gets extra bottom room for the part hidden by the keyboard, so
+      the last dishes can still be scrolled into view. Nothing visible moves.
+   5. If Safari panned anyway, the page is put back once, instantly, only
+      after the keyboard has closed (never while it is moving). */
 ;(() => {
   "use strict";
   const drawer = document.getElementById('food-search');
   const input = drawer?.querySelector('#search');
-  const vv = window.visualViewport;
-  if (!drawer || !input || !vv) return;
+  const results = drawer?.querySelector('#results');
+  if (!drawer || !input || !results) return;
+  const shell = drawer.querySelector('.search-shell');
+  const backdrop = document.querySelector('.food-drawer-backdrop');
+  const vv = window.visualViewport || null;
   const body = document.body;
-  // Resting geometry of the floating window, measured before the keyboard opens.
-  let rest = null;
-  let fitted = false, frame = 0, timers = [];
+  const root = document.documentElement;
+  const coarse = window.matchMedia('(pointer: coarse)');
   const isOpen = () => body.classList.contains('food-drawer-open');
-  const locked = () => body.style.position === 'fixed';
+  const typing = () => document.activeElement === input;
+  // The keyboard (or another on-screen panel) covers part of the window.
+  const keyboardUp = () => Boolean(vv) && typing() && root.clientHeight - vv.height > 80;
 
-  function measure() {
-    if (!isOpen() || fitted || vv.offsetTop > 0.5 || window.scrollY) return;
-    const box = drawer.getBoundingClientRect();
-    const field = input.getBoundingClientRect();
-    if (box.height < 50) return;
-    rest = {top: box.top, height: box.height, fieldBottom: field.bottom};
-  }
-  function release() {
-    if (!fitted) return;
+  /* 1. Fixed place and size while open ---------------------------------- */
+  let frozen = false;
+  function unfreeze() {
+    if (!frozen) return;
     drawer.style.removeProperty('top');
     drawer.style.removeProperty('height');
-    fitted = false;
+    frozen = false;
   }
-  function resetScroll() {
-    if (isOpen() && locked() && (window.scrollY || window.scrollX)) window.scrollTo(0, 0);
+  function freeze() {
+    unfreeze(); // measure the stylesheet's own resting geometry
+    const box = drawer.getBoundingClientRect();
+    if (box.height < 50) return;
+    drawer.style.setProperty('top', `${box.top.toFixed(2)}px`, 'important');
+    drawer.style.setProperty('height', `${box.height.toFixed(2)}px`, 'important');
+    frozen = true;
   }
-  function sync() {
+  // A real window change (rotation, split view) re-measures, but never while
+  // the search field is active: those resizes come from the keyboard.
+  let refreezeFrame = 0;
+  function refreezeSoon() {
+    if (!isOpen() || typing()) return;
+    cancelAnimationFrame(refreezeFrame);
+    refreezeFrame = requestAnimationFrame(() => { if (isOpen() && !typing()) freeze(); });
+  }
+  window.addEventListener('resize', refreezeSoon, {passive: true});
+  window.addEventListener('orientationchange', () => {
+    if (typing()) input.blur();
+    setTimeout(refreezeSoon, 120);
+  });
+
+  /* 2. Focus without letting Safari scroll the page --------------------- */
+  let liftFrame = 0;
+  function lift() {
+    input.style.transform = 'translateY(-2000px)';
+    cancelAnimationFrame(liftFrame);
+    liftFrame = requestAnimationFrame(() => { input.style.transform = ''; });
+  }
+  function focusWithoutPan() {
+    if (input.disabled || typing()) return;
+    if (coarse.matches) lift();
+    input.focus({preventScroll: true});
+  }
+  // Any other focus path on a touch device (e.g. an external keyboard's Tab)
+  // gets the same lift before Safari reacts to the focus.
+  input.addEventListener('focus', () => {
+    if (coarse.matches && !input.style.transform) lift();
+  });
+  // A finger tap on the field or the empty part of its frame: focus by script
+  // in touchend (still a user gesture, so the keyboard opens) and cancel the
+  // native focus that would scroll the page. A drag is left alone.
+  let press = null;
+  shell?.addEventListener('touchstart', event => {
+    const touch = event.touches[0];
+    press = event.touches.length === 1 && !typing() ? {x: touch.clientX, y: touch.clientY} : null;
+  }, {passive: true});
+  shell?.addEventListener('touchend', event => {
+    const start = press;
+    press = null;
+    if (!start || typing() || input.disabled || !isOpen()) return;
+    if (!(event.target instanceof Element) || event.target.closest('button')) return;
+    const touch = event.changedTouches[0];
+    if (!touch || Math.hypot(touch.clientX - start.x, touch.clientY - start.y) > 10) return;
+    if (event.cancelable) event.preventDefault();
+    focusWithoutPan();
+  }, {passive: false});
+  shell?.addEventListener('touchcancel', () => { press = null; }, {passive: true});
+  // Mouse: the icon or empty frame area focuses the field (× keeps its own job).
+  shell?.addEventListener('click', event => {
+    if (!(event.target instanceof Element) || event.target.closest('input,button')) return;
+    focusWithoutPan();
+  });
+
+  /* 3. No page panning by drag while the keyboard is up ----------------- */
+  function listScrolls() { return results.scrollHeight > results.clientHeight + 1; }
+  function guardMove(event) {
+    if (!isOpen() || !keyboardUp() || !event.cancelable) return;
+    const target = event.target instanceof Element ? event.target : null;
+    if (target?.closest('input')) return; // caret / selection handling
+    if (target?.closest('#results') && listScrolls()) return;
+    if (target?.closest('.food-tools-panel')) return;
+    event.preventDefault();
+  }
+  drawer.addEventListener('touchmove', guardMove, {passive: false});
+  backdrop?.addEventListener('touchmove', guardMove, {passive: false});
+
+  /* 4. Bottom room for the part of the list behind the keyboard ---------- */
+  let room = 0, basePad = null;
+  function setRoom(px) {
+    room = px;
+    if (!px) { results.style.removeProperty('padding-bottom'); return; }
+    results.style.setProperty('padding-bottom', `${basePad + px}px`, 'important');
+  }
+  function syncRoom() {
+    let need = 0;
+    if (isOpen() && keyboardUp()) {
+      if (basePad === null || !room) basePad = parseFloat(getComputedStyle(results).paddingBottom) || 0;
+      const visibleBottom = vv.offsetTop + vv.height;
+      need = Math.max(0, Math.round(results.getBoundingClientRect().bottom - visibleBottom));
+    }
+    if (need === room) return;
+    if (need < room) {
+      // Removing room the visitor is looking at would make the list jump;
+      // keep it until they scroll away from it (or the list is redrawn).
+      const maxAfter = results.scrollHeight - results.clientHeight - (room - need);
+      if (results.scrollTop > maxAfter + 1) return;
+    }
+    setRoom(need);
+  }
+  results.addEventListener('scroll', () => { if (room && !keyboardUp()) schedule(); }, {passive: true});
+
+  /* 5. After the keyboard has closed: undo a leftover pan, once ---------- */
+  function restorePan() {
+    if (!isOpen() || typing() || body.style.position !== 'fixed') return;
+    if (window.scrollY || window.scrollX) window.scrollTo({top: 0, left: 0, behavior: 'instant'});
+  }
+
+  let frame = 0;
+  function update() {
     frame = 0;
-    if (!isOpen()) { release(); return; }
-    const typing = document.activeElement === input;
-    // If the search box itself would be hidden by the keyboard (e.g. a phone
-    // in landscape), let Safari scroll it into view as before.
-    const roomy = rest && rest.fieldBottom + 8 <= vv.height;
-    if (roomy || !typing) resetScroll();
-    const pan = vv.offsetTop;
-    if (!rest || !roomy || (!typing && pan < 0.5)) { release(); return; }
-    const height = Math.max(160, Math.min(rest.height, vv.height - 10 - rest.top));
-    drawer.style.setProperty('top', `${(rest.top + pan).toFixed(1)}px`, 'important');
-    drawer.style.setProperty('height', `${height.toFixed(1)}px`, 'important');
-    fitted = true;
+    syncRoom();
+    if (!typing() && (!vv || root.clientHeight - vv.height <= 80)) restorePan();
   }
-  const schedule = () => { if (!frame) frame = requestAnimationFrame(sync); };
-  // The keyboard animates for about 250–300 ms and iOS does not always report
-  // its final size, so re-check a few times after it opens or closes.
-  function settleSoon() {
-    timers.forEach(clearTimeout);
-    timers = [60, 160, 320, 520].map(ms => setTimeout(sync, ms));
-    schedule();
+  function schedule() { if (!frame) frame = requestAnimationFrame(update); }
+  vv?.addEventListener('resize', schedule);
+  input.addEventListener('focus', schedule);
+  let blurTimer = 0;
+  input.addEventListener('blur', () => {
+    clearTimeout(blurTimer);
+    // Safari's keyboard takes about 300 ms to slide away.
+    blurTimer = setTimeout(schedule, 380);
+  });
+
+  /* Open / close ---------------------------------------------------------- */
+  let wasOpen = false;
+  function syncOpen() {
+    const open = isOpen();
+    if (open === wasOpen) return;
+    wasOpen = open;
+    if (open) {
+      freeze();
+    } else {
+      clearTimeout(blurTimer);
+      cancelAnimationFrame(frame); frame = 0;
+      setRoom(0); basePad = null;
+      input.style.transform = '';
+      // The window slides out from its current place; release it afterwards.
+      setTimeout(() => { if (!isOpen()) unfreeze(); }, 400);
+    }
   }
-  input.addEventListener('focus', () => { measure(); settleSoon(); });
-  input.addEventListener('blur', settleSoon);
-  vv.addEventListener('resize', schedule);
-  vv.addEventListener('scroll', schedule);
-  window.addEventListener('scroll', () => { if (isOpen()) schedule(); }, {passive: true});
-  // A rotation or window resize changes the resting place; measure it again.
-  window.addEventListener('orientationchange', () => { release(); rest = null; });
-  window.addEventListener('resize', () => {
-    if (document.activeElement !== input) { release(); rest = null; }
-  });
-  drawer.addEventListener('food-search-closed', () => {
-    timers.forEach(clearTimeout); timers = [];
-    release(); rest = null;
-  });
+  new MutationObserver(syncOpen).observe(body, {attributes: true, attributeFilter: ['class']});
+  syncOpen();
 })();

@@ -1593,6 +1593,9 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     const faces={front:flip.querySelector('.food-flip-front'),back:flip.querySelector('.food-flip-back')};
     let face='front',turning=false;
     const updateBackHeight=()=>{
+      // v30.9.205: while the food dictionary is open this face is hidden behind
+      // it; its keyboard must not resize (and reflow) the page underneath.
+      if(document.body.classList.contains('food-drawer-open'))return;
       // Safari's VisualViewport reflects the actual unobscured window when
       // the bottom bar expands; the reverse-side fade stays above that bar.
       const vv=window.visualViewport;
