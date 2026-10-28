@@ -61,6 +61,21 @@
       if (!detail.open || summary.getClientRects().length === 0) return;
       // v30.9.184: rest the opened title within thumb reach, not at the very top.
       const restTop = Math.round(Math.min(140, Math.max(96, window.innerHeight * .15)));
+      // v30.9.190: the night-market box should end above the browser's bottom
+      // bar (address bar + safe area). Rise above the usual resting line only
+      // as much as needed for that, never above 16px.
+      if (detail.id === 'night-markets-section' && window.tabiGlideTo) {
+        const probe = document.createElement('div');
+        probe.style.cssText = 'position:fixed;left:0;bottom:0;width:0;height:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none';
+        document.body.append(probe);
+        const inset = probe.getBoundingClientRect().height; probe.remove();
+        const reserve = Math.max(90, inset + 56);
+        const fit = () => {
+          const height = detail.scrollHeight + (detail.offsetHeight - detail.clientHeight);
+          return Math.max(16, Math.min(restTop, window.innerHeight - reserve - height));
+        };
+        window.tabiGlideTo(summary, fit); return;
+      }
       if (window.tabiGlideTo) { window.tabiGlideTo(summary, restTop); return; }
       window.scrollTo({
         top: Math.max(0, window.scrollY + summary.getBoundingClientRect().top - restTop),
@@ -3789,8 +3804,10 @@ update();
   function glideTo(eyebrow,offset=HEADING_TOP){
     glideStop?.();
     if(!eyebrow?.getClientRects().length)return;
+    // `offset` may be a function when the resting line depends on settling layout.
+    const at=typeof offset==='function'?offset:()=>offset;
     const goal=()=>Math.max(0,Math.min(
-      scrollY+eyebrow.getBoundingClientRect().top-offset,
+      scrollY+eyebrow.getBoundingClientRect().top-at(),
       html.scrollHeight-innerHeight));
     const start=scrollY;
     const distance=Math.abs(goal()-start);

@@ -5167,12 +5167,18 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 #guide .walk-area-grid[hidden]{display:none!important}
 
 /* Header: full size while closed, compact once open. */
-#guide details.walk-grid-ready > summary{transition:padding .22s ease}
-#guide details.walk-grid-ready > summary > .accordion-category-heading{transition:font-size .22s ease}
-#guide details.walk-grid-ready > summary::after{transition:font-size .22s ease}
-#guide details.walk-grid-ready[open] > summary{padding:8px 14px!important}
-#guide details.walk-grid-ready[open] > summary > .accordion-category-heading{font-size:12px!important;line-height:1.5!important;letter-spacing:.01em}
-#guide details.walk-grid-ready[open] > summary::after{font-size:15px;right:14px}
+#guide details.walk-grid-ready > summary,
+#guide details.night-market-section > summary{transition:padding .22s ease}
+#guide details.walk-grid-ready > summary > .accordion-category-heading,
+#guide details.night-market-section > summary > .accordion-category-heading{transition:font-size .22s ease}
+#guide details.walk-grid-ready > summary::after,
+#guide details.night-market-section > summary::after{transition:font-size .22s ease}
+#guide details.walk-grid-ready[open] > summary,
+#guide details.night-market-section[open] > summary{padding:8px 14px!important}
+#guide details.walk-grid-ready[open] > summary > .accordion-category-heading,
+#guide details.night-market-section[open] > summary > .accordion-category-heading{font-size:12px!important;line-height:1.5!important;letter-spacing:.01em}
+#guide details.walk-grid-ready[open] > summary::after,
+#guide details.night-market-section[open] > summary::after{font-size:15px;right:14px}
 #guide details.walk-grid-ready > .indented{margin:10px!important;padding:0!important}
 
 /* Area index */
@@ -5339,3 +5345,13 @@ html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane .venue-row-in
 
 /* v30.9.184 — chapter jumps rest 30px lower (01–06); page top and emergency unchanged. */
 #guide :is(#travel,#food,#sights,#city-walk,#experience-souvenirs,#day-trips).jump-anchor{scroll-margin-top:30px}
+
+/* v30.9.190 — NIGHT MARKETS: compact open header (shared with City Walk above),
+   10% tighter specialty tags and departure button, and the departure button
+   at the same height for every market: spare room goes between the info
+   list (…混雑時間帯) and 特徴. */
+#guide #night-markets-section #night-markets-tabs .night-market-panel:not([hidden]){display:flex!important;flex-direction:column}
+#guide #night-markets-section #night-markets-tabs .night-market-panel > .nm-info{margin-bottom:30px!important}
+#guide #night-markets-section #night-markets-tabs .night-market-panel > .nm-info + .nm-feature-label{margin-top:auto!important}
+#guide #night-markets-section #night-markets-tabs .nm-specialty{min-height:41.4px;padding:5.4px 2.7px}
+#guide #night-markets-section #night-markets-tabs .nm-go{min-height:50.4px}
