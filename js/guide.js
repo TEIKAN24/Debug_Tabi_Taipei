@@ -1,3 +1,4 @@
+/* v30.9.185 — chapters 03/05 directory JSON loader (preserves venue styling). */
 /* v30.9.178 — homepage six-category navigation and seven chapter groupings; section UI and features preserved. */
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
 /* v30.9.176 — 注目の街歩きエリア: district bubbles + category chips + one scrolling list (no nested rows);
@@ -277,6 +278,7 @@
 (function () {
   'use strict';
 
+  function enhanceVenueRows() {
   const containers = document.querySelectorAll('.site-content .venue-directory-section');
   for (const pane of document.querySelectorAll('.site-content .venue-directory-section .tab-panel')) { pane.tabIndex = 0; }
   const HIGHLIGHT = /おすすめ|孤独のグルメ|ミシュラン|超行列|一番人気|高人気|ビブグルマン|人気老舗|人気店|行列店|エビ水餃|抹茶焼き氷|芝麻湯圓|鴨舌|水出し珈琲|目玉焼き魯肉飯/;
@@ -399,6 +401,9 @@
       ol.classList.add('venue-directory-list');
     }
   }
+  }
+  window.tabiEnhanceVenueRows = enhanceVenueRows;
+  enhanceVenueRows();
 })();
 
 

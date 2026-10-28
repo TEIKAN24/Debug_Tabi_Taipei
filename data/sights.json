@@ -1,0 +1,454 @@
+{
+  "schemaVersion": 1,
+  "type": "sights",
+  "groups": [
+    {
+      "id": "3f56bda0-4caa-8046-a491-c25321b680c1",
+      "title": "🏛  名所・博物館",
+      "categories": [
+        {
+          "id": "3f56bda0-4caa-8079-bc60-d531f3db8f89",
+          "title": "博物館",
+          "items": [
+            {
+              "id": "3f56bda0-4caa-80b5-a18c-de166bec7043",
+              "name": "國立故宮博物院",
+              "url": "https://maps.app.goo.gl/oK5BjjCsrEh26hfKA",
+              "detailHtml": "（人気、おすすめ）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-803e-bbbe-ec988184dfa6",
+              "name": "國家鐵道博物館",
+              "url": "https://maps.app.goo.gl/p3YFGjE2TEiHSVUt7",
+              "detailHtml": "（人気）",
+              "curatedTags": "鉄道好き必見",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8097-bd36-ece08db0506e",
+              "name": "國立臺灣博物館",
+              "url": "https://maps.app.goo.gl/cAYTpZrnENXXZVdc8",
+              "detailHtml": "",
+              "curatedTags": "1915年築",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80ea-980c-f1358a6d619f",
+              "name": "北投溫泉博物館",
+              "url": "https://maps.app.goo.gl/jS5zVsSKsfBcoJBd6",
+              "detailHtml": "",
+              "curatedTags": "旧公共浴場",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-804f-8df3-d70600a632f4",
+              "name": "自來水博物館",
+              "url": "https://www.google.com/maps/search/?api=1&query=%E8%87%AA%E4%BE%86%E6%B0%B4%E5%8D%9A%E7%89%A9%E9%A4%A8%20%E5%8F%B0%E5%8C%97%E5%B8%82%E4%B8%AD%E6%AD%A3%E5%8D%80%E6%80%9D%E6%BA%90%E8%A1%971%E8%99%9F",
+              "detailHtml": "",
+              "curatedTags": "旧ポンプ室",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8076-aa46-f2aee38e22d1",
+              "name": "袖珍博物館",
+              "url": "https://maps.app.goo.gl/S5uzWSWPHqEg6pmi7",
+              "detailHtml": "",
+              "curatedTags": "小さな世界へ",
+              "className": "venue-list-item"
+            }
+          ]
+        },
+        {
+          "id": "3f56bda0-4caa-808e-9bda-e62f8014d993",
+          "title": "アート・デザイン",
+          "items": [
+            {
+              "id": "3f66bda0-4caa-804d-932c-caca9cc6ce07",
+              "name": "松山文創園區",
+              "url": "https://maps.app.goo.gl/tg8nj36rP3vRPzqi8",
+              "detailHtml": "（<a class=\"external-action-link\" href=\"https://www.songshanculturalpark.org/exhibition\" rel=\"noopener noreferrer\" target=\"_blank\">公式</a>）",
+              "curatedTags": "のんびり散策",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f56bda0-4caa-8017-b27b-dbe6466c0eb3",
+              "name": "臺北市立美術館",
+              "url": "https://maps.app.goo.gl/Fhv9uvvCVueGSJJy8",
+              "detailHtml": "（<a class=\"external-action-link\" href=\"https://www.tfam.museum/Exhibition/Exhibition.aspx?ddlLang=zh-tw\" rel=\"noopener noreferrer\" target=\"_blank\">公式</a>）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f86bda0-4caa-80df-b750-e4a3b4973a27",
+              "name": "台北當代藝術館",
+              "url": "https://maps.app.goo.gl/sKeQz7DWBMeasemTA",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8057-bb3c-c7ce40379e8b",
+              "name": "華山1914",
+              "url": "https://maps.app.goo.gl/uPENw9z3sTWaSLZdA",
+              "detailHtml": "（<a class=\"external-action-link\" href=\"https://www.huashan1914.com/ja-JP\" rel=\"noopener noreferrer\" target=\"_blank\">公式</a>）",
+              "curatedTags": "寄り道が楽しい",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80d5-9eaa-f3d7fa39e184",
+              "name": "富邦美術館",
+              "url": "https://maps.app.goo.gl/41htQ1n6bYQLVE8d9",
+              "detailHtml": "（<a class=\"external-action-link\" href=\"https://www.fubonartmuseum.org/Exhibitions\" rel=\"noopener noreferrer\" target=\"_blank\">公式</a>）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80f7-b0a8-f58170314fba",
+              "name": "新北市美術館",
+              "url": "https://maps.app.goo.gl/xs9YznpXXUdAM7ScA",
+              "detailHtml": "（<a class=\"external-action-link\" href=\"https://ntcart.museum/exhibition.aspx?kind=today\" rel=\"noopener noreferrer\" target=\"_blank\">公式</a>）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-805a-815b-cfedd70433bf",
+              "name": "臺北表演藝術中心",
+              "url": "https://maps.app.goo.gl/BfBsm97KAteD5k3M6",
+              "detailHtml": "（<a href=\"https://tpac.org.taipei/tour-publicloop\" rel=\"noopener noreferrer\" target=\"_blank\">無料内部見学可能🔗</a>）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            }
+          ]
+        },
+        {
+          "id": "3f56bda0-4caa-8006-bdba-ec2ab6c6fe0f",
+          "title": "歴史文化",
+          "items": [
+            {
+              "id": "3f66bda0-4caa-8076-8f0f-caee50cdaa7b",
+              "name": "國立中正紀念堂",
+              "url": "https://maps.app.goo.gl/peei1gnNM6RePYHa8",
+              "detailHtml": "（定番人気、<a href=\"https://www.cksmh.gov.tw/en/cp.aspx?n=6404\" rel=\"noopener noreferrer\" target=\"_blank\">交代式</a>🔗、）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8015-b68a-dbb2e69a33ff",
+              "name": "龍山寺",
+              "url": "https://maps.app.goo.gl/RpREU4SBFQzqm1NP8",
+              "detailHtml": "（定番人気、夜の治安⚠️）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80a2-924d-f8f014fe6868",
+              "name": "霞海城隍廟",
+              "url": "https://maps.app.goo.gl/tKTV19Rrw1rYRxuMA",
+              "detailHtml": "（縁結び、チケット運・推し活にも人気）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8019-b554-c834815e9f91",
+              "name": "剥皮寮",
+              "url": "https://maps.app.goo.gl/1uBBPyB3yMXB6yUB8",
+              "detailHtml": "、<a href=\"https://maps.app.goo.gl/W1upJpa2gjzz199Z7\" rel=\"noopener noreferrer\" target=\"_blank\">迪化街</a>（人気）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8036-8dd1-dd1f7aedc119",
+              "name": "台北賓館",
+              "url": "https://maps.app.goo.gl/jsJ8d1wMcYLidTqz9",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-808f-8612-ce5d317820b0",
+              "name": "北門",
+              "url": "https://maps.app.goo.gl/RK72xTLxgZEuWxgYA",
+              "detailHtml": "、<a href=\"https://maps.app.goo.gl/txhqmq8VSafx5cPk9\" rel=\"noopener noreferrer\" target=\"_blank\">臺北北門郵局</a>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80fc-a597-c70ee7b498e9",
+              "name": "日星鑄字行",
+              "url": "https://maps.app.goo.gl/5bL8SDQN9vS52QsJ6",
+              "detailHtml": "",
+              "curatedTags": "文字好き必見",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-807c-85e0-d38dcbd21839",
+              "name": "總統府",
+              "url": "https://maps.app.goo.gl/iV4Bb4tyeNCV3WC96",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8032-9fc2-dc8b586f958b",
+              "name": "大龍峒保安宮",
+              "url": "https://maps.app.goo.gl/5Kj6HTcbH7sSEuc97",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8025-928f-cc287e3d4973",
+              "name": "台北孔子廟",
+              "url": "https://maps.app.goo.gl/MGTNPeFiNy2JWMUX8",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8059-beb8-e85d3799d29a",
+              "name": "國史館",
+              "url": "https://maps.app.goo.gl/8RtUyZdUnJV52J7j6",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80da-b540-dedf789db6ed",
+              "name": "二二八國家紀念館",
+              "url": "https://maps.app.goo.gl/o7vcK5MKBtHa5Sz86",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80f5-ab58-db7c662fa049",
+              "name": "三井物産株式会社旧倉庫",
+              "url": "https://maps.app.goo.gl/jRmRSEgrJd1kbY198",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            }
+          ]
+        },
+        {
+          "id": "3f56bda0-4caa-8073-bd85-f3041c2a7bc9",
+          "title": "人気観光地",
+          "items": [
+            {
+              "id": "3f66bda0-4caa-803b-a204-faea8095e2ec",
+              "name": "九份",
+              "url": "https://maps.app.goo.gl/SFfyAkZZEXnvVTHz6",
+              "detailHtml": "（人気）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-801e-955e-c46dbd530d5e",
+              "name": "十分",
+              "url": "https://maps.app.goo.gl/g8Br214v6ceNJJLo8",
+              "detailHtml": "（人気、ランタン上げ体験）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f56bda0-4caa-80f6-a41c-d9f7c3d8cc45",
+              "name": "台北市立動物園",
+              "url": "https://maps.app.goo.gl/esMANNEu8aWBDrae9",
+              "detailHtml": "（パンダ人気）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-804d-b132-f7176aec72d0",
+              "name": "猫空ロープウェイ",
+              "url": "https://maps.app.goo.gl/6tmfEQD5Hq9X51qF6",
+              "detailHtml": "",
+              "curatedTags": "水晶ゴンドラ",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8033-b147-ed124aa1925f",
+              "name": "北投温泉エリア",
+              "url": "https://maps.app.goo.gl/ucMvHc8PVc7vcEBfA",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80a7-b07a-c18a6a9d3f14",
+              "name": "猴硐猫村",
+              "url": "https://maps.app.goo.gl/dFswUdCFEGG3riVK6",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-806a-bf2d-ceef35162d0b",
+              "name": "野柳地質公園",
+              "url": "https://maps.app.goo.gl/SezQNPeF6oapcS349",
+              "detailHtml": "",
+              "curatedTags": "女王頭",
+              "className": "venue-list-item"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "photo-spots-section",
+      "title": "📷  撮影スポット",
+      "categories": [
+        {
+          "id": "photo-spots-artist",
+          "title": "アーティスト・MVロケ地",
+          "items": [
+            {
+              "id": "3f76bda0-4caa-8007-bbfe-f3a910f4cc59",
+              "name": "華江整宅社區",
+              "url": "https://maps.app.goo.gl/m3tPaF8kBfksAekPA",
+              "detailHtml": "<br><em><mark class=\"highlight-gray\">複数のアーティスト、一番人気</mark></em></br>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-80ff-bbe4-ee78a6fec57f",
+              "name": "富錦街429巷周辺",
+              "url": "https://maps.app.goo.gl/45bj3Tvemyb5HzF56",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">NewJeans</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8079-989f-f4266a41728d",
+              "name": "慶豐商店",
+              "url": "https://maps.app.goo.gl/hyguT37uWvFVFc477",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">NewJeans</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8013-8015-e511181841ef",
+              "name": "四平陽光商圏",
+              "url": "https://maps.app.goo.gl/5AcesyNv2W97EGKq5",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">back number</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-80dd-a8ce-f9a36f1ee116",
+              "name": "華西街夜市",
+              "url": "https://maps.app.goo.gl/NAoRcvAF8bPjtQXRA",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">NiziU</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-80ec-9300-d1083484cf91",
+              "name": "大稻埕慈聖宮",
+              "url": "https://maps.app.goo.gl/RgV38v3BFCJei9q19",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">LUCKY TAPES</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8078-93ee-ca68222a3240",
+              "name": "十分老街",
+              "url": "https://maps.app.goo.gl/ARU4F2Qn7DccN7uQA",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">Perfume</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8053-afef-fbe9d4686e5a",
+              "name": "饒河街觀光夜市",
+              "url": "https://maps.app.goo.gl/8RDtzZ92YAt7j1Bd7",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">LiSA</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            }
+          ]
+        },
+        {
+          "id": "photo-spots-popular",
+          "title": "人気・穴場撮影スポット",
+          "items": [
+            {
+              "id": "3f66bda0-4caa-80fd-8a51-de8b5b2a9f1e",
+              "name": "象山",
+              "url": "https://maps.app.goo.gl/5gYBHHkDV73cKXPH9",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">台北101が一番美しく見える</mark></em>",
+              "curatedTags": "台北101の眺望",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8064-aa7c-d2817cf4d5a3",
+              "name": "四四南村",
+              "url": "https://maps.app.goo.gl/535aqrgdV8Bs9QHV7",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">台北101撮影スポット</mark></em>",
+              "curatedTags": "台北101撮影",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-8076-a7bb-fbd45f6281a1",
+              "name": "竹村居酒屋",
+              "url": "https://maps.app.goo.gl/3m8jdN7D5YEfbtF86",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">台北101撮影スポット</mark></em>",
+              "curatedTags": "台北101撮影",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8073-a548-e82537b0d437",
+              "name": "華江整宅社區",
+              "url": "https://maps.app.goo.gl/m3tPaF8kBfksAekPA",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">建物、話題のスポット</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-803e-9e1d-d6af25bac8e6",
+              "name": "台北橋",
+              "url": "https://maps.app.goo.gl/wbH772HV1D5UBRBb7",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">バイクの滝</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80ff-94d0-f526ba88e426",
+              "name": "淡江大橋",
+              "url": "https://maps.app.goo.gl/RujM1Mrpo8ozib1c6",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">夕焼け、建物、2026年NEW</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8090-baf3-f505577138fa",
+              "name": "萬年商業ビル",
+              "url": "https://maps.app.goo.gl/p1VwWGzrwern8GyB6",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">建物</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80db-86d1-d64511e9d204",
+              "name": "飛機巷",
+              "url": "https://maps.app.goo.gl/VXvMfU2g5hoitz9x6",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">飛行機を間近で見られるスポット</mark></em>",
+              "curatedTags": "飛行機を間近に",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f66bda0-4caa-80a6-a089-e58570c6863d",
+              "name": "川端橋",
+              "url": "https://maps.app.goo.gl/mt7uyg5cekKCf5dm6",
+              "detailHtml": "<br/><em><mark class=\"highlight-gray\">穴場夜景、2026年NEW</mark></em>",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

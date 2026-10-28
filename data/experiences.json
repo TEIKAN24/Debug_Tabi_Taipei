@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "type": "experiences",
+  "groups": [
+    {
+      "id": "3f76bda0-4caa-80d2-8841-c76e1f8f749a",
+      "title": "✨  台湾ならではの体験",
+      "categories": [
+        {
+          "id": "3f76bda0-4caa-8069-9f71-c1e593688b35",
+          "title": "プリクラ・変身体験",
+          "items": [
+            {
+              "id": "3f76bda0-4caa-805a-939f-d41f28015491",
+              "name": "pick my ccd",
+              "url": "https://maps.app.goo.gl/yshrwhM4mcLm2WLA6",
+              "detailHtml": "",
+              "curatedTags": "友達と盛れる",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-80fd-aa08-f9fcb9292c43",
+              "name": "Disco8b",
+              "url": "https://maps.app.goo.gl/c1nCRQfEVgUttv877",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-80cb-84d5-f4de15b300e5",
+              "name": "More and more",
+              "url": "https://maps.app.goo.gl/nopRqv7dmqnxAD6x9",
+              "detailHtml": "",
+              "curatedTags": "手作りチャーム",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-80f1-bd1d-df658fa4a40f",
+              "name": "FOTOLAB",
+              "url": "https://maps.app.goo.gl/nya1GEDX6nsjZ2AaA",
+              "detailHtml": "",
+              "curatedTags": "旅の思い出に",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-807d-a8fe-dc0fe26b912f",
+              "name": "SNAPPP小福星拍貼機",
+              "url": "https://maps.app.goo.gl/7bGnScy6V7JdkpAK9",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8090-a8bf-c0fbc3ff4928",
+              "name": "PHOTOBOOM",
+              "url": "https://maps.app.goo.gl/PMcrzRq8f5tAS6EG6",
+              "detailHtml": "",
+              "curatedTags": "遊び心たっぷり",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8005-9784-e37b1ee1ffc5",
+              "name": "レトロ衣装（旗袍）変身体験",
+              "url": "https://maps.app.goo.gl/Yv4XJixDeCso51c69",
+              "detailHtml": "（無料、<a class=\"external-action-link\" href=\"https://travel.taipei/vintage-clothing/ja\" rel=\"noopener noreferrer\" target=\"_blank\">予約</a>）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            }
+          ]
+        },
+        {
+          "id": "3f76bda0-4caa-808d-b875-c2c237f456c2",
+          "title": "台湾シャンプー",
+          "items": [
+            {
+              "id": "3f76bda0-4caa-8031-aca3-cab46d0128ff",
+              "name": "ansleep",
+              "url": "https://maps.app.goo.gl/2mKXS5FS4ipWSPup7",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8010-a56c-de3633f15797",
+              "name": "H GALLERY AVEDA",
+              "url": "https://maps.app.goo.gl/XmtCa9G1XbNw8WDC8",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-80e4-a4db-c90852c28db2",
+              "name": "青絲舫髮藝",
+              "url": "https://maps.app.goo.gl/bSLAXd9TyQK27Aqd9",
+              "detailHtml": "",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            }
+          ]
+        },
+        {
+          "id": "3f76bda0-4caa-8008-9723-f4bee698fe2b",
+          "title": "手作り",
+          "items": [
+            {
+              "id": "3f76bda0-4caa-80d2-99ed-c77e14db88d6",
+              "name": "PICK&COLLECT",
+              "url": "https://maps.app.goo.gl/SsTHG8JKpGs1s2kL8",
+              "detailHtml": "（アクセサリー、<a class=\"external-action-link\" href=\"https://jp.pinkoi.com/product/kPk3A623\" rel=\"noopener noreferrer\" target=\"_blank\">予約</a>）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-8094-bf03-d96ecfb3791e",
+              "name": "Boringearrings",
+              "url": "https://maps.app.goo.gl/jCKMecTrRnDkQQXt5",
+              "detailHtml": "（ビーズ細工、<a class=\"external-action-link\" href=\"https://boringearrings.rezio.shop/ja-JP#products\" rel=\"noopener noreferrer\" target=\"_blank\">予約</a>）",
+              "curatedTags": "自分だけの一点",
+              "className": "venue-list-item"
+            },
+            {
+              "id": "3f76bda0-4caa-800a-80ca-c2d7081fc267",
+              "name": "日星鑄字行",
+              "url": "https://maps.app.goo.gl/5bL8SDQN9vS52QsJ6",
+              "detailHtml": "（活字印刷）",
+              "curatedTags": "文字好き必見",
+              "className": "venue-list-item"
+            }
+          ]
+        },
+        {
+          "id": "3f76bda0-4caa-8076-9a54-c190947938c3",
+          "title": "カラオケ",
+          "items": [
+            {
+              "id": "3f76bda0-4caa-8012-8edd-f1c4e006ebc5",
+              "name": "錢櫃 Partyworld",
+              "url": "https://maps.app.goo.gl/1DixBTZNmbf2BeoT8",
+              "detailHtml": "（カラオケ）",
+              "curatedTags": "",
+              "className": "venue-list-item"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
