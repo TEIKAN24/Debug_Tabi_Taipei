@@ -3500,8 +3500,9 @@ update();
   });
 })();
 
-/* v30.9.181 — City Walk: 8-area index swaps with one inline browser.
+/* v30.9.182 — City Walk: color-coded 8-area index swaps with one inline browser.
  * Uses existing hidden area DOM for labels, tabs, venue entries and map links.
+ * Each area carries a tone: the card's color bar and the detail list's glow.
  * Other chapters, night markets and navigation are left unchanged. */
 ;(()=>{
   'use strict';
@@ -3514,48 +3515,64 @@ update();
   const tabs=[...strip.querySelectorAll(':scope > button.tab-pill')];
   const panels=[...source.querySelectorAll(':scope > .area-panel')];
   if(tabs.length!==8||panels.length!==tabs.length)return;
-  const descriptions=[
-    '古着・雑貨・カフェ','レトロ・台湾雑貨','グルメ・雑貨',
-    'ショッピング・夜景','地下街・おみやげ','ストリート・若者文化',
-    '学生街・ローカル','ファッション・カフェ'
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+  // Index = source tab order. name:null keeps the source tab label.
+  const areas=[
+    {name:null,sub:'古着・雑貨・カフェ',tone:'206,122,122'},        // 赤峰街・中山駅
+    {name:null,sub:'レトロ・台湾雑貨',tone:'240,161,116'},          // 迪化街・大稻埕
+    {name:null,sub:'グルメ・雑貨',tone:'246,207,70'},               // 永康街・東門駅
+    {name:'信義区・台北101',sub:'デパート・夜景',tone:'164,200,221'}, // 信義区
+    {name:null,sub:'地下街・おみやげ',tone:'32,84,211'},            // 台北駅
+    {name:null,sub:'ストリート・若者文化',tone:'214,220,208'},       // 西門町
+    {name:null,sub:'学生街・ローカル',tone:'98,137,54'},            // 公館
+    {name:null,sub:'ファッション・カフェ',tone:'222,110,75'}         // 東区
   ];
+  // Display order (two columns, row by row).
+  const order=[0,2,5,3,1,4,6,7];
+  const label=i=>areas[i].name||tabs[i].textContent.trim();
   const grid=document.createElement('div');grid.className='walk-area-grid';
-  grid.setAttribute('aria-label','街歩きエリアを選択');
+  grid.setAttribute('role','group');grid.setAttribute('aria-label','街歩きエリアを選択');
   const detail=document.createElement('section');
   detail.className='walk-inline-detail';detail.id='walk-inline-detail';detail.hidden=true;
   detail.setAttribute('aria-label','街歩きエリア詳細');
   detail.innerHTML=`<div class="walk-inline-inner">
     <div class="walk-inline-top">
-      <button class="walk-inline-back" type="button" aria-label="街歩きエリア一覧に戻る">エリア一覧に戻る</button>
+      <button class="walk-inline-back" type="button" aria-label="エリア一覧に戻る"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <div class="walk-inline-copy"><h4 class="walk-inline-heading"></h4><p class="walk-inline-description"></p></div>
     </div><div class="walk-inline-host"></div>
   </div>`;
   const host=detail.querySelector('.walk-inline-host');
   const title=detail.querySelector('.walk-inline-heading');
   const desc=detail.querySelector('.walk-inline-description');
-  const buttons=[];
+  const buttons=new Array(tabs.length);
   let active=-1,focusOrigin=null;
   const remembered=new Map();
-  const back=({restoreFocus=false,scrollToList=false}={})=>{
+  // Only move the page when the reader would otherwise lose their place.
+  const keepInView=()=>{
+    const head=root.querySelector(':scope > summary');
+    if(head&&head.getBoundingClientRect().top<0)
+      requestAnimationFrame(()=>head.scrollIntoView({block:'start',behavior:reduce.matches?'instant':'smooth'}));
+  };
+  const back=({restoreFocus=false}={})=>{
     if(active<0)return;
     const focus=focusOrigin;
     active=-1;
     detail.hidden=true;host.replaceChildren();
     grid.hidden=false;
     root.classList.remove('walk-viewing-detail');
+    root.style.removeProperty('--walk-tone');
     buttons.forEach(button=>button.setAttribute('aria-expanded','false'));
     if(restoreFocus&&focus?.isConnected)focus.focus({preventScroll:true});
     focusOrigin=null;
-    if(scrollToList){
-      requestAnimationFrame(()=>grid.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
-    }
+    keepInView();
   };
-  const show=(index,trigger)=>{
-    if(index===active){back({restoreFocus:true,scrollToList:true});return;}
+  const show=(index,trigger,fromKeyboard=false)=>{
+    if(index===active){back({restoreFocus:true});return;}
     if(active===-1)focusOrigin=trigger;
     active=index;
-    title.textContent=tabs[index].textContent.trim();
+    title.textContent=label(index);
     desc.textContent=panels[index].querySelector('.area-intro-description')?.textContent.trim()||'';
+    root.style.setProperty('--walk-tone',areas[index].tone);
     const clone=panels[index].cloneNode(true);
     clone.hidden=false;clone.removeAttribute('id');clone.removeAttribute('aria-labelledby');
     clone.removeAttribute('style');
@@ -3568,13 +3585,26 @@ update();
     const row=clone.querySelector('.area-cats');
     if(!chips.length||chips.length!==panes.length)return;
     row.setAttribute('aria-label','カテゴリーを選択');
+    // Number rows within each category (the source lists start at 1 per category).
+    panes.forEach(pane=>pane.querySelectorAll('.venue-row-index').forEach((n,k)=>n.textContent=String(k+1).padStart(2,'0')));
+    // Right-edge fade on the chip row only while more chips are hidden.
+    const chipFade=()=>row.classList.toggle('walk-chips-end',row.scrollLeft+row.clientWidth>=row.scrollWidth-4);
+    row.addEventListener('scroll',chipFade,{passive:true});
+    // Bottom fade only while more rows remain below.
+    const fade=()=>{
+      const can=scroller.scrollHeight>scroller.clientHeight+5;
+      scroller.classList.toggle('walk-list-more',can&&scroller.scrollTop+scroller.clientHeight<scroller.scrollHeight-8);
+    };
+    scroller.addEventListener('scroll',fade,{passive:true});
     const choose=(i,focus=false)=>{
       remembered.set(index,i);
       chips.forEach((chip,j)=>{chip.setAttribute('aria-selected',String(i===j));chip.tabIndex=i===j?0:-1;});
       panes.forEach((pane,j)=>pane.hidden=j!==i);
       scroller.scrollTop=0;
       if(focus)chips[i].focus({preventScroll:true});
-      chips[i].scrollIntoView({inline:'nearest',block:'nearest',behavior:'instant'});
+      const c=chips[i].getBoundingClientRect(),s=row.getBoundingClientRect();
+      if(c.left<s.left+8||c.right>s.right-8)row.scrollTo({left:row.scrollLeft+c.left-s.left-16,behavior:'instant'});
+      requestAnimationFrame(()=>{fade();chipFade();});
     };
     chips.forEach((chip,i)=>{
       chip.id=`walk-inline-tab-${index}-${i}`;
@@ -3595,20 +3625,22 @@ update();
     root.classList.add('walk-viewing-detail');
     buttons.forEach((button,i)=>button.setAttribute('aria-expanded',String(index===i)));
     choose(Math.min(remembered.get(index)||0,chips.length-1));
-    // Swap within this accordion: bring the reader top into view after removing the index.
-    requestAnimationFrame(()=>detail.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
+    // The pressed card disappears; keyboard users continue from the back button.
+    if(fromKeyboard)detail.querySelector('.walk-inline-back').focus({preventScroll:true});
+    keepInView();
   };
-  tabs.forEach((tab,i)=>{
+  order.forEach(i=>{
     const button=document.createElement('button');button.type='button';button.className='walk-area-card';
+    button.style.setProperty('--walk-tone',areas[i].tone);
     button.setAttribute('aria-controls',detail.id);button.setAttribute('aria-expanded','false');
-    button.setAttribute('aria-label',tab.textContent.trim()+' の詳細を表示');
-    const name=document.createElement('span');name.className='walk-area-card-name';name.textContent=tab.textContent.trim();
-    const sub=document.createElement('span');sub.className='walk-area-card-sub';sub.textContent=descriptions[i];
-    button.append(name,sub);button.addEventListener('click',()=>show(i,button));
-    buttons.push(button);grid.append(button);
+    button.setAttribute('aria-label',label(i)+' の詳細を表示');
+    const name=document.createElement('span');name.className='walk-area-card-name';name.textContent=label(i);
+    const sub=document.createElement('span');sub.className='walk-area-card-sub';sub.textContent=areas[i].sub;
+    button.append(name,sub);button.addEventListener('click',event=>show(i,button,event.detail===0));
+    buttons[i]=button;grid.append(button);
   });
   original.before(grid,detail);
   root.classList.add('walk-grid-ready');
-  detail.querySelector('.walk-inline-back').addEventListener('click',()=>back({restoreFocus:true,scrollToList:true}));
+  detail.querySelector('.walk-inline-back').addEventListener('click',()=>back({restoreFocus:true}));
   root.addEventListener('toggle',()=>{if(!root.open)back();});
 })();
