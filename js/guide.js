@@ -1,3 +1,4 @@
+/* v30.9.204 — food dictionary: difficulty levels and their filter removed (spice shown in their place); keyboard-safe taps on iPhone. */
 /* v30.9.186 — chapters 03/05 directory JSON loader (preserves venue styling). */
 /* v30.9.178 — homepage six-category navigation and seven chapter groupings; section UI and features preserved. */
 /* TAIPEI CITY GUIDE v30 — safe consolidation; source scripts unchanged. */
@@ -441,7 +442,7 @@
 })();
 
 
-/* =================== JS 03: food-search-script v30.9.203 =================== */
+/* =================== JS 03: food-search-script v30.9.204 =================== */
 ;
 
 (function () {
@@ -451,24 +452,21 @@ if(!foodExplorer) return;
 "use strict";
 // The content is managed separately in foods.csv and synonyms.json.
 // Keep both files in the same folder as this index.html on GitHub Pages.
-// CSV row order is preserved within each category; categories remain in the fixed order below.
+// v30.9.204: the difficulty levels (初心者・地元民・クセ強・限界突破) are no
+// longer shown or filtered. foods.csv may still carry them in its category
+// column; they are ignored and the CSV row order is kept as is.
 let foods = [];
 let synonymGroups = [];
 let normalizedGroups = [];
 
-const cats = ["すべて", "🔰 初心者", "🏮 地元民", "⚔️ クセ強", "💀 限界突破"];
 const marketCategories = ["🧂 調味料", "🍍 フルーツ", "🍪 お菓子", "🧋 飲み物"];
 const input = foodExplorer.querySelector("#search");
 const clear = foodExplorer.querySelector("#clear");
-const filters = foodExplorer.querySelector("#filters");
-const activeFilter = foodExplorer.querySelector("#food-active-filter");
-const activeFilterLabel = foodExplorer.querySelector("#food-active-filter-label");
 const results = foodExplorer.querySelector("#results");
 const count = foodExplorer.querySelector("#result-count");
 const scrollTip = foodExplorer.querySelector("#scroll-tip");
 const scrollText = foodExplorer.querySelector("#scroll-text");
 const footerCount = foodExplorer.querySelector("#total-food-count");
-let selected = cats[0];
 
 const normalized = s => String(s).normalize("NFKC").toLocaleLowerCase();
 
@@ -487,10 +485,8 @@ function currentMatches() {
   const terms = searchTerms();
 
   return foods.filter(food => {
-    // The difficulty filter still applies to all searches.
-    if (selected !== cats[0] && food.category !== selected) return false;
-
     // Include hidden tags so partial Japanese words and emoji can be searched.
+    // food.category is only set for market items (調味料・フルーツ…).
     const text = normalized(
       `${food.name} ${food.description} ${food.detail || ""} ${food.category} ${(food.tags || []).join(" ")}`
     );
@@ -542,37 +538,6 @@ function addHighlightedText(parent, value, terms) {
     last = end;
   }
   parent.append(document.createTextNode(original.slice(last)));
-}
-function syncActiveFilter() {
-  if (!activeFilter || !activeFilterLabel) return;
-  const applied = selected !== cats[0];
-  activeFilter.hidden = !applied;
-  activeFilterLabel.textContent = applied ? selected : "";
-}
-function drawFilters() {
-  filters.replaceChildren();
-  syncActiveFilter();
-  // v30.9.143: no すべて chip; tapping the active level again shows every level.
-  for (const cat of cats.slice(1)) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `pill${selected === cat ? " active" : ""}`;
-    button.setAttribute("aria-pressed", String(selected === cat));
-    const label = document.createElement("span");
-    label.textContent = cat;
-    const n = document.createElement("span");
-    n.className = "pill-count";
-    n.textContent = ` ${cat === cats[0] ? foods.length : foods.filter(f => f.category === cat).length}`;
-    button.append(label, n);
-    button.addEventListener("click", () => {
-      selected = selected === cat ? cats[0] : cat;
-      drawFilters();
-      drawResults();
-      // Selecting a difficulty closes the quick-search panel.
-      setToolsOpen(false);
-    });
-    filters.append(button);
-  }
 }
 function resizeResultViewport() {
   const rows = [...results.querySelectorAll(".result")];
@@ -636,7 +601,7 @@ function wrapFoodDescription(value, limit = 16) {
 }
 
 // Persist the chosen dish while the food-search page is active, including
-// when typing a query or changing category filters.
+// when typing a query.
 let expandedDishName = null;
 // Measure the real Japanese description height even while max-height is zero.
 // This avoids hidden full text occupying extra space in iOS Safari.
@@ -764,7 +729,7 @@ function suggestionFor(raw) {
   const query = foldChars(raw);
   // Short or emoji-only queries are not guessed at.
   if (query.length < 2 || !/[\p{Script=Han}\p{Script=Katakana}\p{Script=Hiragana}]/u.test(query.join(""))) return "";
-  const pool = foods.filter(food => selected === cats[0] || food.category === selected);
+  const pool = foods;
   let best = null;
   const consider = (word, bonus) => {
     const chars = foldChars(word);
@@ -820,7 +785,7 @@ function menuMatches(raw) {
   const letters = text.replace(/\|/g, "");
   // A menu reading needs a few characters of text to work on.
   if (letters.length < 2) return {foods: [], words: []};
-  const keys = menuIndex().filter(entry => selected === cats[0] || entry.food.category === selected);
+  const keys = menuIndex();
   const taken = new Array(text.length).fill(false);
   const hits = [];
   const free = (start, end) => { for (let i = start; i < end; i++) if (taken[i]) return false; return true; };
@@ -966,12 +931,7 @@ function drawResults() {
 const meta = document.createElement("div");
 meta.className = "result-meta";
 
-// 原本的等級分類
-const tag = document.createElement("span");
-tag.className = "tag";
-tag.textContent = food.category;
-if (cats.includes(food.category)) meta.append(tag);
-
+// v30.9.204: the spice level sits where the difficulty label used to be.
 // 辣度：沒有設定就不顯示
 if (food.spice) {
   const spice = document.createElement("span");
@@ -1011,7 +971,8 @@ if (expandable) {
   button.className = "food-entry-toggle";
   button.setAttribute("aria-expanded", "false");
   button.setAttribute("aria-label", `${food.name}：説明の続きを見る`);
-  button.append(left, meta);
+  button.append(left);
+  if (meta.childElementCount) button.append(meta);
   button.addEventListener("click", () => {
     // Keyboard activation and mouse clicks use the normal click path.
     switchFoodEntry(row);
@@ -1019,7 +980,8 @@ if (expandable) {
   });
   row.append(button);
 } else {
-  row.append(left, meta);
+  row.append(left);
+  if (meta.childElementCount) row.append(meta);
 }
 
       return [row, expandable];
@@ -1078,15 +1040,10 @@ foodExplorer.querySelector(".search-shell")?.addEventListener("click", event => 
   if (!(event.target instanceof Element) || event.target.closest("input,button")) return;
   input.focus({preventScroll:true});
 });
-// v30.9.143: 常用字リスト — emoji, common characters and the level filter in a panel
-// that opens over the list and stays open until toggled, tapped outside or Esc.
+// v30.9.143: 常用字リスト — emoji and common characters in a panel that opens
+// over the list and stays open until toggled, tapped outside or Esc.
 const toolsToggle = foodExplorer.querySelector("#food-tools-toggle");
 const toolsPanel = foodExplorer.querySelector("#food-tools-panel");
-activeFilter?.addEventListener("click", () => {
-  selected = cats[0];
-  drawFilters();
-  drawResults(); // Only the difficulty is cleared; keep any typed query.
-});
 function setToolsOpen(open) {
   if (!toolsToggle || !toolsPanel) return;
   toolsPanel.hidden = !open;
@@ -1107,21 +1064,16 @@ foodExplorer.addEventListener("keydown", event => {
     setToolsOpen(false);toolsToggle.focus({preventScroll:true});
   }
 });
-// A quick-list popup closing does NOT reset the active filter. Only leaving
-// the entire recipe dictionary restores a clean session.
+// Leaving the entire recipe dictionary restores a clean session.
 document.getElementById("food-search")?.addEventListener("food-search-closed", () => {
   setToolsOpen(false);
   if (document.activeElement === input) input.blur();
   input.value = "";
-  selected = cats[0];
-  drawFilters();
   onSearch();
 });
 // v30.9.142: a 名物 tile in 🏮 夜市 opens this dictionary with the dish searched,
-// all levels shown, and the dish itself opened when its name matches exactly.
+// and the dish itself opened when its name matches exactly.
 function showDishInSearch(query) {
-  selected = cats[0];
-  drawFilters();
   input.value = query;
   onSearch();
   flushResults();
@@ -1191,16 +1143,17 @@ function parseCsv(text, isMarket = false) {
   if (row.some(v => v.trim() !== "")) rows.push(row);
   if (!rows.length) throw new Error("foods.csv が空です。");
   const headers = rows.shift().map(h => h.trim().toLowerCase());
-  for (const required of ["category", "name", "description"]) {
+  for (const required of [...(isMarket ? ["category"] : []), "name", "description"]) {
     if (!headers.includes(required)) throw new Error("foods.csv に列がありません: " + required);
   }
   return rows.map((values, position) => {
     const item = Object.fromEntries(headers.map((key, i) => [key, (values[i] || "").trim()]));
-    if (!item.name || !(isMarket ? marketCategories : cats.slice(1)).includes(item.category)) {
+    if (!item.name || (isMarket && !marketCategories.includes(item.category))) {
       throw new Error(`foods.csv の ${position + 2} 行目を確認してください。`);
     }
     return {
-  category: item.category,
+  // Difficulty levels in foods.csv are ignored; only market groups are kept.
+  category: isMarket ? item.category : "",
   name: item.name,
   description: item.description,
   detail: item.detail || '',
@@ -1215,7 +1168,7 @@ spice: ["1", "2", "3", "maybe"].includes(item.spice)
   : ""
 
 };
-  }).sort((a, b) => isMarket ? marketCategories.indexOf(a.category) - marketCategories.indexOf(b.category) : cats.indexOf(a.category) - cats.indexOf(b.category));
+  }).sort((a, b) => isMarket ? marketCategories.indexOf(a.category) - marketCategories.indexOf(b.category) : 0);
 }
 
 async function loadData() {
@@ -1245,11 +1198,9 @@ async function loadData() {
     normalizedGroups = synonymGroups.map(group => [...new Set(group.map(normalized))]);
     footerCount.textContent = String(foods.length);
     input.disabled = false;
-    drawFilters();
     onSearch();
   } catch (error) {
     console.error("TAIPEI CITY GUIDE: data load error", error);
-    filters.replaceChildren();
     results.replaceChildren();
     results.classList.remove("scrolling");
     results.style.maxHeight = "none";
@@ -4173,5 +4124,85 @@ update();
     // Only the visitor's own tap; cross-section folding also clicks this button.
     if(!event.isTrusted||disclosure.getAttribute('aria-expanded')!=='false')return;
     glideTo(chapterOf(disclosure));
+  });
+})();
+
+/* =================== JS: food-search keyboard steadiness v30.9.204 =================== */
+/* iPhone Safari pans the whole page up when the search keyboard opens, even
+   though the page behind the dictionary is locked (body is position:fixed).
+   While it is panned, and again right after the keyboard closes, WebKit can
+   hit-test the fixed dictionary at a different height from where it is drawn,
+   so a tap lands on the dish above or below the one touched.
+   While the dictionary is open the locked page must never be scrolled, so:
+   - any document scroll caused by the keyboard is undone at once;
+   - a remaining visual-viewport pan is offset, so the window stays put;
+   - the window's bottom edge is lifted above the keyboard (its top, search box
+     and rows do not move), so every visible row is reachable;
+   - after the keyboard closes the scroll is reset again, re-syncing taps. */
+;(() => {
+  "use strict";
+  const drawer = document.getElementById('food-search');
+  const input = drawer?.querySelector('#search');
+  const vv = window.visualViewport;
+  if (!drawer || !input || !vv) return;
+  const body = document.body;
+  // Resting geometry of the floating window, measured before the keyboard opens.
+  let rest = null;
+  let fitted = false, frame = 0, timers = [];
+  const isOpen = () => body.classList.contains('food-drawer-open');
+  const locked = () => body.style.position === 'fixed';
+
+  function measure() {
+    if (!isOpen() || fitted || vv.offsetTop > 0.5 || window.scrollY) return;
+    const box = drawer.getBoundingClientRect();
+    const field = input.getBoundingClientRect();
+    if (box.height < 50) return;
+    rest = {top: box.top, height: box.height, fieldBottom: field.bottom};
+  }
+  function release() {
+    if (!fitted) return;
+    drawer.style.removeProperty('top');
+    drawer.style.removeProperty('height');
+    fitted = false;
+  }
+  function resetScroll() {
+    if (isOpen() && locked() && (window.scrollY || window.scrollX)) window.scrollTo(0, 0);
+  }
+  function sync() {
+    frame = 0;
+    if (!isOpen()) { release(); return; }
+    const typing = document.activeElement === input;
+    // If the search box itself would be hidden by the keyboard (e.g. a phone
+    // in landscape), let Safari scroll it into view as before.
+    const roomy = rest && rest.fieldBottom + 8 <= vv.height;
+    if (roomy || !typing) resetScroll();
+    const pan = vv.offsetTop;
+    if (!rest || !roomy || (!typing && pan < 0.5)) { release(); return; }
+    const height = Math.max(160, Math.min(rest.height, vv.height - 10 - rest.top));
+    drawer.style.setProperty('top', `${(rest.top + pan).toFixed(1)}px`, 'important');
+    drawer.style.setProperty('height', `${height.toFixed(1)}px`, 'important');
+    fitted = true;
+  }
+  const schedule = () => { if (!frame) frame = requestAnimationFrame(sync); };
+  // The keyboard animates for about 250–300 ms and iOS does not always report
+  // its final size, so re-check a few times after it opens or closes.
+  function settleSoon() {
+    timers.forEach(clearTimeout);
+    timers = [60, 160, 320, 520].map(ms => setTimeout(sync, ms));
+    schedule();
+  }
+  input.addEventListener('focus', () => { measure(); settleSoon(); });
+  input.addEventListener('blur', settleSoon);
+  vv.addEventListener('resize', schedule);
+  vv.addEventListener('scroll', schedule);
+  window.addEventListener('scroll', () => { if (isOpen()) schedule(); }, {passive: true});
+  // A rotation or window resize changes the resting place; measure it again.
+  window.addEventListener('orientationchange', () => { release(); rest = null; });
+  window.addEventListener('resize', () => {
+    if (document.activeElement !== input) { release(); rest = null; }
+  });
+  drawer.addEventListener('food-search-closed', () => {
+    timers.forEach(clearTimeout); timers = [];
+    release(); rest = null;
   });
 })();

@@ -5381,3 +5381,15 @@ html[data-theme="light"] #food-explorer .empty .food-suggest-word{color:#213038;
   transition:none!important;
 }
 #guide #food-explorer .food-instant-collapse .desc {transition:none!important;}
+
+/* v30.9.204 — difficulty levels removed from the dictionary: the spice level
+   takes the label's former place (same top offset and line box), and the
+   常用字リスト panel ends with the common-character row. */
+body #guide #food-search.food-drawer.is-floating .result-meta .spice{
+  margin-top:3px;min-height:17px;
+}
+@media (max-width:600px){
+  body #guide #food-search.food-drawer.is-floating .result-meta .spice{margin-top:1px;}
+}
+body #guide #food-search.food-drawer.is-floating .food-tools-panel{padding-bottom:13px!important;}
+body #guide #food-search.food-drawer.is-floating .food-tools-panel .food-chars{margin-bottom:0!important;}
