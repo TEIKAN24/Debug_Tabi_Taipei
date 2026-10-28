@@ -441,7 +441,7 @@
 })();
 
 
-/* =================== JS 03: food-search-script =================== */
+/* =================== JS 03: food-search-script v30.9.203 =================== */
 ;
 
 (function () {
@@ -579,7 +579,9 @@ function resizeResultViewport() {
   const mobile = window.matchMedia("(max-width: 600px)").matches;
   // Keep the dictionary compact: about four full rows with part of a fifth
   // visible as a scroll affordance. Fit shorter and taller phone viewports.
-  const screenHeight = window.visualViewport?.height || window.innerHeight;
+  // The visual viewport shrinks while the iOS keyboard is visible; do not
+  // recalculate visible row counts from that transient height.
+  const screenHeight = window.innerHeight;
   const visibleRows = mobile ? (screenHeight < 740 ? 4.2 : screenHeight > 900 ? 4.75 : 4.5) : 4.75;
   const fullRows = Math.floor(visibleRows);
   const needsScroll = rows.length > fullRows;
@@ -662,74 +664,69 @@ function setFoodEntryExpanded(row, expanded) {
   full.setAttribute('aria-hidden',String(!expanded));
 }
 
-// Keep the next tapped dish at the same visible position while an earlier
-// expanded dish above it shrinks. The browser's normal scroll anchoring is
-// disabled for this scrollport, so compensate during the height transition.
-let foodAnchorSequence = 0;
-function stabilizeDishWhileSwitching(row) {
-  const seq = ++foodAnchorSequence;
-  const initialTop = row.getBoundingClientRect().top;
-  const began = performance.now();
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // User scrolling takes precedence over automated anchoring.
-  const stop = () => { if(seq === foodAnchorSequence) ++foodAnchorSequence; };
-  results.addEventListener('wheel', stop, {once:true, passive:true});
-  results.addEventListener('touchstart', stop, {once:true, passive:true});
-  const correct = () => {
-    if(seq !== foodAnchorSequence || !row.isConnected || !results.isConnected) return;
-    const difference = row.getBoundingClientRect().top - initialTop;
-    if(Math.abs(difference) > 0.45) {
-      const maxScroll = Math.max(0, results.scrollHeight - results.clientHeight);
-      results.scrollTop = Math.min(maxScroll, Math.max(0, results.scrollTop + difference));
+// A single, deterministic change of geometry prevents tap drift on mobile.
+// An earlier expanded card is closed without an overlapping height animation.
+ // Restore the chosen card's visible position once after the DOM update.
+function switchFoodEntry(row) {
+  if (!row?.isConnected) return;
+  const opening = !row.classList.contains('is-expanded');
+  const beforeTop = row.getBoundingClientRect().top;
+  const oldRows = [...results.querySelectorAll('.result.is-expanded')]
+    .filter(other => other !== row);
+  oldRows.forEach(old => {
+    old.classList.add('food-instant-collapse');
+    setFoodEntryExpanded(old, false);
+    // Force layout with transitions disabled before reading the new geometry.
+    old.getBoundingClientRect();
+    requestAnimationFrame(() => old.classList.remove('food-instant-collapse'));
+  });
+  setFoodEntryExpanded(row, opening);
+  if (oldRows.length) {
+    const delta = row.getBoundingClientRect().top - beforeTop;
+    if (Math.abs(delta) > .5) {
+      const max = Math.max(0, results.scrollHeight - results.clientHeight);
+      results.scrollTop = Math.max(0, Math.min(max, results.scrollTop + delta));
     }
-    if(performance.now() - began < (reducedMotion ? 120 : 470)) requestAnimationFrame(correct);
-  };
-  requestAnimationFrame(correct);
+  }
 }
 
-// For a change of selection, animate the collapsing row's *measured height*.
-// The two-grid-row description alone can hold its full height and then snap
-// closed at the end of the transition. A measured outer-row height prevents
-// that jump (including when the result list is already at scrollTop=0,
-// where scroll-position compensation cannot move above the first row).
-function collapsePreviousDishSmoothly(row) {
-  if (!row?.isConnected || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    setFoodEntryExpanded(row, false);
+// iPhone Safari may dismiss its keyboard between touchstart and click. Keep
+// the item touched at pointerdown, rather than using a shifted click target.
+let foodTap = null;
+let foodTouchHandledAt = 0;
+let foodTouchClickPending = false;
+results.addEventListener('pointerdown', event => {
+  if (event.pointerType !== 'touch' || !event.isPrimary) return;
+  const row = event.target instanceof Element
+    ? event.target.closest('.food-entry-expandable') : null;
+  foodTap = row && results.contains(row)
+    ? {id:event.pointerId,row,x:event.clientX,y:event.clientY,scroll:results.scrollTop} : null;
+}, {capture:true,passive:true});
+document.addEventListener('pointerup', event => {
+  const tap = foodTap;
+  foodTap = null;
+  if (!tap || tap.id !== event.pointerId || !tap.row.isConnected) return;
+  if (Math.hypot(event.clientX-tap.x,event.clientY-tap.y)>13 ||
+      Math.abs(results.scrollTop-tap.scroll)>7) return;
+  foodTouchHandledAt = performance.now();
+  foodTouchClickPending = true;
+  switchFoodEntry(tap.row);
+  if (document.activeElement === input) input.blur();
+}, {capture:true,passive:true});
+document.addEventListener('pointercancel', () => { foodTap = null; }, {capture:true,passive:true});
+// Ignore the one synthesized click after a handled touch. The tap may have
+// changed layout or closed the iOS keyboard before Safari dispatches that click.
+document.addEventListener('click', event => {
+  if (!foodTouchClickPending || performance.now() - foodTouchHandledAt > 450) {
+    foodTouchClickPending = false;
     return;
   }
-  const desc = row.querySelector('.food-entry-toggle .desc');
-  const before = row.getBoundingClientRect().height;
-  if (desc) desc.style.transition = 'none';
-  setFoodEntryExpanded(row, false);
-  const after = row.getBoundingClientRect().height;
-  if (Math.abs(before - after) < 1) {
-    if (desc) desc.style.removeProperty('transition');
-    return;
+  if (event.target instanceof Element && event.target.closest('#food-search')) {
+    foodTouchClickPending = false;
+    event.preventDefault();
+    event.stopImmediatePropagation();
   }
-  row.style.height = `${before}px`;
-  row.style.overflow = 'hidden';
-  row.style.transition = 'none';
-  row.getBoundingClientRect(); // Commit initial height before animating.
-  let finished = false;
-  const cleanup = () => {
-    if (finished) return;
-    finished = true;
-    row.style.removeProperty('height');
-    row.style.removeProperty('overflow');
-    row.style.removeProperty('transition');
-    if (desc) desc.style.removeProperty('transition');
-    row.removeEventListener('transitionend', onEnd);
-  };
-  function onEnd(event) {
-    if (event.target === row && event.propertyName === 'height') cleanup();
-  }
-  row.addEventListener('transitionend', onEnd);
-  requestAnimationFrame(() => {
-    if (!row.isConnected) {cleanup();return;}
-    row.style.transition = 'height .34s ease-in-out';
-    row.style.height = `${after}px`;
-  });
-}
+}, true);
 
 // A description no longer closes on scroll or when it leaves the viewport.
 // It remains open until another dish is selected, the same dish is manually
@@ -953,18 +950,13 @@ function drawResults() {
       if (expandable) {
         const preview = document.createElement("span");
         preview.className = "food-desc-preview";
-        // Display up to ~15 characters, with the last few fading out.
+        // The CSV summary is already a complete Japanese term (<=15 glyphs).
         addHighlightedText(preview, graphemes.slice(0, 15).join(""), highlightTerms);
         const full = document.createElement("span");
         full.className = "food-desc-full";
         full.setAttribute('aria-hidden','true');
-        addHighlightedText(full, wrapFoodDescription(food.description, 16), highlightTerms);
-        if (food.detail) {
-          const addition = document.createElement('span');
-          addition.className = 'food-desc-addition';
-          addHighlightedText(addition, food.detail, highlightTerms);
-          full.append(addition);
-        }
+        // Expanded text is the concise ingredients / taste / texture description.
+        addHighlightedText(full, wrapFoodDescription(food.detail || food.description, 16), highlightTerms);
         desc.append(preview, full);
       } else {
         addHighlightedText(desc, food.description, highlightTerms);
@@ -1021,17 +1013,9 @@ if (expandable) {
   button.setAttribute("aria-label", `${food.name}：説明の続きを見る`);
   button.append(left, meta);
   button.addEventListener("click", () => {
-    const open = !row.classList.contains("is-expanded");
-    const existing = [...results.querySelectorAll(".result.is-expanded")]
-      .filter(other => other !== row);
-    // If the currently open explanation is above the one we just tapped,
-    // collapsing it must not drag the new heading away under the user's finger.
-    const collapsingAbove = open && existing.some(other =>
-      Boolean(other.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_FOLLOWING));
-    if (collapsingAbove) stabilizeDishWhileSwitching(row);
-    else ++foodAnchorSequence;
-    for (const other of existing) collapsePreviousDishSmoothly(other);
-    setFoodEntryExpanded(row, open);
+    // Keyboard activation and mouse clicks use the normal click path.
+    switchFoodEntry(row);
+    if (document.activeElement === input) input.blur();
   });
   row.append(button);
 } else {

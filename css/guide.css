@@ -5369,3 +5369,15 @@ html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane .venue-row-in
 #food-explorer .empty .food-suggest-word:focus-visible{outline:2px solid var(--accent,#C9A86A);outline-offset:2px}
 html[data-theme="light"] #food-explorer .empty .food-suggest-word{color:#213038;background:#fff;border-color:#D5DBDD}
 
+
+/* v30.9.203 — concise Japanese label and stable mobile card switching. */
+#guide #food-explorer .food-desc-preview {
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+  max-width:100%!important;
+}
+#guide #food-explorer .food-instant-collapse .food-desc-preview,
+#guide #food-explorer .food-instant-collapse .food-desc-full {
+  transition:none!important;
+}
+#guide #food-explorer .food-instant-collapse .desc {transition:none!important;}
