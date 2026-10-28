@@ -1642,6 +1642,8 @@ loadData();
     if(target.closest('a[href]'))return true;
     if(target.closest('#airsel-transport-tabs, #airport-route-selector .route-panel'))return true;
     if(target.closest('#guide .sights-day-trips .daytrip-destination-panel'))return true; // Daytrip owns this gesture.
+    // v30.9.189: the City Walk box owns its horizontal swipes (category switching).
+    if(target.closest('#guide details.walk-grid-ready'))return true;
     /* Horizontal scrollers own their own gestures; never swipe the whole page instead. */
     let current=target;
     while(current && current!==document.body){

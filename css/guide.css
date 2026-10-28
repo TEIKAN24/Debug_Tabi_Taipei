@@ -5100,7 +5100,9 @@ html body .food-drawer-backdrop{
 body.food-drawer-open .food-edge-hint,
 body.food-swipe-active .food-edge-hint,
 body.food-swipe-dragging .food-edge-hint{animation:none;opacity:0;transition:opacity .18s ease-out;}
-/* v30.9.188: light mode uses the same edge light as dark mode. */
+/* v30.9.188: light mode uses the same edge light as dark mode.
+   v30.9.189: in light mode its gold is 5 points more saturated (HSL S 43% → 48%). */
+html[data-theme="light"] .food-edge-hint{background:linear-gradient(to left,rgba(182,140,64,.558),rgba(182,140,64,.162) 45%,rgba(182,140,64,0));}
 @media (prefers-reduced-motion:reduce){.food-edge-hint{animation:none;opacity:.55;}}
 #guide .area-panel:not([hidden]){display:flex!important;flex-direction:column;overflow:hidden!important;}
 #guide .area-panel[hidden]{display:none!important;}
