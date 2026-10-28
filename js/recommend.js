@@ -32,7 +32,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.193';
+  const VERSION='30.9.194';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -284,6 +284,8 @@
       guidePick:pickLevelOf(r)>0||(!hasPickLevels()&&!!r.guideTagSource)||editorialNotes.has(normalizeNoteName(r.name))||r.awards?.bibGourmand2026||!!r.awards?.highestBowls,
       guideTags:(r.guideTags?.length?r.guideTags:(editorialNotes.get(normalizeNoteName(r.name))?.tags||[]).map(text=>({text,tone:'editorial'}))),
       editorialPick:editorialNotes.has(normalizeNoteName(r.name)),
+      // v30.9.194: listed only through a 500碗 award, not chosen by the editor.
+      bowlsOnly:!(pickLevelOf(r)>0||(!hasPickLevels()&&!!r.guideTagSource)||editorialNotes.has(normalizeNoteName(r.name))||r.awards?.bibGourmand2026)&&!!r.awards?.highestBowls,
       category:r.category||'meal',details:'',
       industries:withKindTags(r),
       timeBands:r.timeBands||[],
@@ -347,6 +349,13 @@
   // intervals, split shifts and contiguous 24-hour schedules.
   const WEEKDAY_KEYS=['sun','mon','tue','wed','thu','fri','sat'];
   const CLOSE_SOON_MINUTES=35; // v30.9.170: もうすぐ閉店 within 35 minutes
+  // v30.9.194: 35 minutes suits quick bites (drinks, 屋台・小吃, sweets, 豆漿);
+  // a sit-down meal or a bar needs an hour. Counted from the estimated arrival
+  // (straight-line distance at 80 m per minute) when a location is in use.
+  const CLOSE_SOON_SITDOWN=60,WALK_METERS_PER_MINUTE=80;
+  const isQuickBite=item=>['drink','snack','sweet','breakfast'].includes(item?.category)||item?.displayType==='アイス';
+  const closeSoonMinutes=item=>isQuickBite(item)?CLOSE_SOON_MINUTES:CLOSE_SOON_SITDOWN;
+  const walkMinutes=meters=>Number.isFinite(meters)?Math.ceil(meters/WALK_METERS_PER_MINUTE):0;
   function taipeiClock(at=new Date()){
     const parts=new Intl.DateTimeFormat('en-US',{
       timeZone:'Asia/Taipei',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'
@@ -388,13 +397,13 @@
   const OPEN_SOON_MINUTES=30,BAND_MIN_OVERLAP=30;
   const BAND_WINDOWS={morning:[300,660],lunch:[660,840],afternoon:[840,1020],night:[1020,1380],late:[1380,1740]};
   // 現在時刻: live status of one storefront.
-  function liveStatus(branch,item,clock){
+  function liveStatus(branch,item,clock,walk=0){
     if(branch?.irregularHours||(!branch&&item.irregularHours))return {code:'irregular'};
     const intervals=branchIntervals(branch,clock);
     if(!intervals)return {code:'unknown'};
     const now=clock.minute;
     const current=intervals.find(x=>x.start<=now&&now<x.end);
-    if(current)return {code:current.end-now<=CLOSE_SOON_MINUTES?'soon':'open'};
+    if(current)return {code:current.end-now-walk<=closeSoonMinutes(item)?'soon':'open'};
     const next=intervals.find(x=>x.start>now);
     if(next&&next.start-now<=OPEN_SOON_MINUTES)return {code:'opening',at:next.start};
     return {code:'closed'};
@@ -432,10 +441,11 @@
   // open now shows when it opens next (tomorrow's band: its opening tomorrow).
   function cardTiming(item){
     const branch=item.nearestBranch||item.branches?.[0]||null,clock=taipeiClock();
-    if(state.timeMode==='current')return liveStatus(branch,item,clock);
+    const walk=walkMinutes(item.distanceMeters);
+    if(state.timeMode==='current')return liveStatus(branch,item,clock,walk);
     const win=bandWindow(clock);
     if(win.tomorrow)return nextOpening(branch,item,clock,win);
-    const live=liveStatus(branch,item,clock);
+    const live=liveStatus(branch,item,clock,walk);
     return live.code==='closed'?nextOpening(branch,item,clock,null):live;
   }
   const OPENING_LABEL={open:'営業中',soon:'もうすぐ閉店',opening:'もうすぐ営業',closed:'営業時間外',irregular:'不定期営業',unknown:'営業時間未確認'};
@@ -448,7 +458,7 @@
     node.className='recommend-opening-status recommend-opening-'+t.code;
     node.textContent=timingLabel(t);
     node.title=t.code==='unknown'?'店舗別の営業時間を確認できません':t.code==='irregular'?'不定期営業のため、訪問前に最新情報をご確認ください':
-      t.code==='opening'?'30分以内に営業開始予定です（通常営業時間による目安）':t.code==='soon'?'35分以内に閉店予定です（通常営業時間による目安）':
+      t.code==='opening'?'30分以内に営業開始予定です（通常営業時間による目安）':t.code==='soon'?`${closeSoonMinutes(item)===60?'1時間':'35分'}以内に閉店予定です（${Number.isFinite(item.distanceMeters)?'徒歩での到着を含む、':''}通常営業時間による目安）`:
       t.code==='next'?'次の営業開始（通常営業時間による目安）':'登録された通常営業時間による目安です';
   }
   let visibleRecommendations=[];
@@ -504,8 +514,8 @@
     const sourceItems=readNearbyCatalog();
     const clock=taipeiClock();
     const win=state.timeMode==='current'?null:bandWindow(clock);
-    const judge=(branch,item)=>{
-      const t=win?bandHours(branch,item,clock,win):liveStatus(branch,item,clock);
+    const judge=(branch,item,walk=0)=>{
+      const t=win?bandHours(branch,item,clock,win):liveStatus(branch,item,clock,walk);
       // Without registered hours, fall back to the shop's time-band tags.
       const tagged=(t.code==='unknown'||t.code==='irregular')&&eligibleTime(item,state.time)&&
         (!branch?.timeBands?.length||branch.timeBands.includes(state.time));
@@ -513,7 +523,7 @@
       // v30.9.170: inside a chosen band that is already under way, shops open
       // right now come first (closing soon next), as in 現在時刻.
       if(win&&!win.tomorrow&&rank===2&&clock.minute>=win.start-1){
-        const live=liveStatus(branch,item,clock);
+        const live=liveStatus(branch,item,clock,walk);
         if(live.code==='open')rank=4;else if(live.code==='soon')rank=3;
       }
       return {...t,rank};
@@ -529,7 +539,7 @@
           distance=distanceMeters(origin.lat,origin.lng,branch.lat,branch.lng);
           if(distance>GEO_MAX_METERS)continue;
         }
-        const timing=judge(branch,item);
+        const timing=judge(branch,item,walkMinutes(distance));
         if(!timing.rank)continue;
         if(!best||timing.rank>best.timing.rank||(timing.rank===best.timing.rank&&useDistance&&distance<best.distance))best={branch,timing,distance};
       }
@@ -609,19 +619,26 @@
       if(kinds.has('hotpot'))return -14;
       return kinds.has('izakaya')?0:vol==='light'?4:vol==='hearty'?-4:0;
     };
+    // v30.9.194: a chain has a branch nearly everywhere, so being close is no
+    // achievement — it earns half the distance bonus (penalties stay whole).
+    const chainDistance=(item,points)=>isChainItem(item)&&points>0?points/2:points;
     const scored=pool.map(item=>{
       const matched=criteria.filter(c=>c.fn(item));
-      // Tier: opening status first (open > closing soon > later), then band fit.
-      const matchedGenreCount=(item.timing?.rank||0)*3+bandPref(item);
+      // Tier: opening status only (open > closing soon > later). v30.9.194: band
+      // fit is weighed in points so distance and picks can balance it — a
+      // must-eat 150 m away is no longer beaten by any band match 1.2 km off.
+      const matchedGenreCount=item.timing?.rank||0;
+      const fit=bandPref(item);
       const score=matched.reduce((sum,c)=>sum+c.weight,0)
-        +(item.guidePick?(item.chain?12:26):0)+(item.pickLevel>=2?(item.chain?8:16):0) // original food picks rank ahead; everyday chains get a smaller boost
+        +(item.guidePick?(item.chain?12:item.bowlsOnly?16:26):0)+(item.pickLevel>=2?(item.chain?8:16):0) // original food picks rank ahead; 500碗-only listings and everyday chains get a smaller boost
+        +(fit===2?30:fit===1?12:0)
         +(item.featured?1:0) // visibility comes from the rotating slot-1 rule below
         +(item.nearbySource?(item.locationConfidence==='high'?0:item.locationConfidence==='medium'?-3:-10):0)
         +(state.area&&state.areaMode==='all'&&item.chain?6:0) // not a proxy for branch proximity
         // Preserve distance-aware recommendations within the expanded 1,200m radius.
         // Places beyond 800m stay available, but fall behind closer candidates.
-        +(Number.isFinite(item.distanceMeters)?40-12*Math.min(4,Math.floor(item.distanceMeters/270))
-          -(item.distanceMeters>GEO_PRIORITY_METERS?26:0):0)
+        +(Number.isFinite(item.distanceMeters)?chainDistance(item,40-12*Math.min(4,Math.floor(item.distanceMeters/270))
+          -(item.distanceMeters>GEO_PRIORITY_METERS?26:0)):0)
         +mealBonus(item)+lateWeight(item)+newestAwardBonus(item);
       return {...item,matchScore:matchedGenreCount,matchedGenreCount,score,
         fullMatch:matched.length===criteria.length,
@@ -670,10 +687,13 @@
     // preference would do that, the third card trades places with the next
     // differently-kinded shop further down the order.
     const kindKey=item=>item.displayType||item.category||'';
+    // v30.9.194: a variety swap may only bring up a shop from the same opening
+    // tier whose score is close, never a weak one from far down the list.
+    const swappable=(slot,item)=>item.matchedGenreCount===slot.matchedGenreCount&&item.score>=slot.score-20;
     for(let start=0;start+2<ordered.length;start+=3){
       const k=kindKey(ordered[start]);
       if(!k||kindKey(ordered[start+1])!==k||kindKey(ordered[start+2])!==k)continue;
-      const swap=ordered.findIndex((item,i)=>i>start+2&&kindKey(item)!==k);
+      const swap=ordered.findIndex((item,i)=>i>start+2&&kindKey(item)!==k&&swappable(ordered[start+2],item));
       if(swap>0)[ordered[start+2],ordered[swap]]=[ordered[swap],ordered[start+2]];
     }
     // v30.9.192: 深夜 shows a spread of 宵夜 — one card per kind on each page of
@@ -683,7 +703,7 @@
         for(let i=start+1;i<start+3;i++){
           const onPage=new Set(ordered.slice(start,i).map(kindKey));
           if(!onPage.has(kindKey(ordered[i])))continue;
-          const swap=ordered.findIndex((item,j)=>j>=start+3&&!onPage.has(kindKey(item)));
+          const swap=ordered.findIndex((item,j)=>j>=start+3&&!onPage.has(kindKey(item))&&swappable(ordered[i],item));
           if(swap>0)[ordered[i],ordered[swap]]=[ordered[swap],ordered[i]];
         }
       }
