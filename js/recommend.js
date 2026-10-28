@@ -32,7 +32,7 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.174';
+  const VERSION='30.9.193';
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -573,19 +573,41 @@
       if(ind.includes('鍋')||item.displayType==='火鍋')k.add('hotpot');
       if(ind.includes('熱炒')||/居酒屋|熱炒/.test(item.displayType||''))k.add('izakaya');
       if(ind.includes('小吃'))k.add('snack');
+      if(item.displayType==='清粥小菜'||/清粥/.test(item.name||''))k.add('porridge');
+      // かき氷 shops: fine late, but a warm 豆花・甜湯 suits 宵夜 better.
+      if(item.displayType==='アイス'){k.delete('sweet');k.add('ice');}
       return k;
+    };
+    // v30.9.191: the editor's 量 (volume) — light / hearty / both / unknown.
+    const volumeOf=item=>{
+      const v=item.volume||[],light=v.includes('light'),hearty=v.includes('hearty');
+      return light&&hearty?'both':light?'light':hearty?'hearty':'';
     };
     const BAND_PREF={
       morning:[['breakfast'],['drink','cafe']],
       lunch:[['rice','noodle','dumpling'],['meal','snack']],
-      afternoon:[['snack','cafe','sweet','drink'],['dumpling']],
+      afternoon:[['snack','cafe','sweet','ice','drink'],['dumpling']],
       night:[['meal','hotpot','izakaya'],['rice','noodle','dumpling','snack']],
-      late:[['snack','noodle','izakaya','hotpot'],['bar','rice']]
+      // v30.9.193: 深夜 is 宵夜 — バー, 熱炒, 屋台の軽食 (incl. 清粥小菜) and
+      // 24時間の豆漿 come first; sweets, drinks, dumplings and cafés next;
+      // rice plates (魯肉飯) and noodles (牛肉麵) after them; 火鍋 last.
+      late:[['bar','izakaya','snack','porridge','breakfast'],['sweet','drink','dumpling','cafe','ice']]
     };
     const bandPref=item=>{
       const pref=BAND_PREF[state.time];if(!pref)return 0;
       const kinds=kindsOf(item);
+      // Rice plates and noodle shops go back at 深夜 even when also tagged 小吃.
+      if(state.time==='late'&&(kinds.has('hotpot')||kinds.has('rice')||kinds.has('noodle')))return 0;
       return pref[0].some(k=>kinds.has(k))?2:pref[1].some(k=>kinds.has(k))?1:0;
+    };
+    // Within the same tier at 深夜: light dishes rise, hearty-only ones sink
+    // (熱炒 is shared small plates, so its hearty mark costs nothing). Rice
+    // plates and noodles share the last tier with 火鍋 but stay ahead of it.
+    const lateWeight=item=>{
+      if(state.time!=='late')return 0;
+      const kinds=kindsOf(item),vol=volumeOf(item);
+      if(kinds.has('hotpot'))return -14;
+      return kinds.has('izakaya')?0:vol==='light'?4:vol==='hearty'?-4:0;
     };
     const scored=pool.map(item=>{
       const matched=criteria.filter(c=>c.fn(item));
@@ -600,7 +622,7 @@
         // Places beyond 800m stay available, but fall behind closer candidates.
         +(Number.isFinite(item.distanceMeters)?40-12*Math.min(4,Math.floor(item.distanceMeters/270))
           -(item.distanceMeters>GEO_PRIORITY_METERS?26:0):0)
-        +mealBonus(item)+newestAwardBonus(item);
+        +mealBonus(item)+lateWeight(item)+newestAwardBonus(item);
       return {...item,matchScore:matchedGenreCount,matchedGenreCount,score,
         fullMatch:matched.length===criteria.length,
         matched:matched.map(c=>c.label),
@@ -653,6 +675,18 @@
       if(!k||kindKey(ordered[start+1])!==k||kindKey(ordered[start+2])!==k)continue;
       const swap=ordered.findIndex((item,i)=>i>start+2&&kindKey(item)!==k);
       if(swap>0)[ordered[start+2],ordered[swap]]=[ordered[swap],ordered[start+2]];
+    }
+    // v30.9.192: 深夜 shows a spread of 宵夜 — one card per kind on each page of
+    // three (e.g. one 熱炒, not two), while enough different kinds remain later.
+    if(state.time==='late'){
+      for(let start=0;start+2<ordered.length;start+=3){
+        for(let i=start+1;i<start+3;i++){
+          const onPage=new Set(ordered.slice(start,i).map(kindKey));
+          if(!onPage.has(kindKey(ordered[i])))continue;
+          const swap=ordered.findIndex((item,j)=>j>=start+3&&!onPage.has(kindKey(item)));
+          if(swap>0)[ordered[i],ordered[swap]]=[ordered[swap],ordered[i]];
+        }
+      }
     }
     // Distance order is strictly ascending straight-line metres. Reuse the
     // same time, radius and user filters, but not recommendation score.
