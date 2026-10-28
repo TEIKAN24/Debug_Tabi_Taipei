@@ -11,100 +11,154 @@
           "title": "お菓子・食品",
           "items": [
             {
-              "id": "souvenirs-3f66bda0-01",
-              "name": "甜満",
-              "url": "https://maps.app.goo.gl/u52UWarj7kVGk9Ym7",
-              "detailHtml": "",
-              "curatedTags": "ヌガー、人気急上昇中",
-              "className": "venue-list-item"
-            },
-            {
               "id": "souvenirs-3f66bda0-02",
               "name": "COOKIE886",
-              "url": "https://maps.app.goo.gl/y87uvmiY7XaYuyZPA",
-              "detailHtml": "（ほろほろクッキー、おすすめ）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "ほろほろクッキー",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "おすすめ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/y87uvmiY7XaYuyZPA"
             },
             {
-              "id": "souvenirs-3f66bda0-03",
-              "name": "蛋捲",
-              "url": "https://www.serenafoods.com.tw/rwd1851/Store/prodPic/prod_Pics3%E7%B2%BE%E7%B7%BB%E5%B0%8F%E8%9B%8B%E6%8D%B2%E6%83%85%E5%A2%831.jpg",
-              "detailHtml": "（エッグロール、おすすめ）",
-              "curatedTags": "",
-              "className": ""
-            },
-            {
-              "id": "souvenirs-3f66bda0-04",
-              "name": "新貴派",
-              "url": "https://shop.r10s.jp/twdirect/cabinet/hetong/hetong_04_2.jpg",
-              "detailHtml": "（国民的おやつ、おすすめ）",
-              "curatedTags": "",
-              "className": ""
-            },
-            {
-              "id": "souvenirs-3f66bda0-05",
-              "name": "義美小泡芙",
-              "url": "https://taiwanlove.jp/cdn/shop/products/1595141012_1d18a98dd39be86a9fec_112b3491-e01e-498b-9fca-e07c5e1d052b.jpg?v=1677050650&width=600",
-              "detailHtml": "（国民的おやつ、おすすめ）",
-              "curatedTags": "",
-              "className": ""
+              "id": "souvenirs-3f66bda0-01",
+              "name": "甜満",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "ヌガー",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "人気急上昇中",
+                  "tone": "gold"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/u52UWarj7kVGk9Ym7"
             },
             {
               "id": "souvenirs-3f66bda0-06",
               "name": "Sunny Hills",
-              "url": "https://maps.app.goo.gl/ARRZWNkQioW59uFp8",
-              "detailHtml": "（パイナップルケーキ、かわいい）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "パイナップルケーキ",
+                  "tone": "auto"
+                },
+                {
+                  "text": "かわいい",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/ARRZWNkQioW59uFp8"
             },
             {
               "id": "souvenirs-3f66bda0-07",
               "name": "福田一方鳳梨酥",
-              "url": "https://maps.app.goo.gl/2HZiapGasqv4qW6aA",
-              "detailHtml": "（パイナップルケーキ、伝統）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "パイナップルケーキ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/2HZiapGasqv4qW6aA"
             },
             {
               "id": "souvenirs-3f66bda0-08",
               "name": "佳德鳳梨酥",
-              "url": "https://maps.app.goo.gl/qc4TAbwD4dy454Aq8",
-              "detailHtml": "（パイナップルケーキ、伝統）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "パイナップルケーキ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/qc4TAbwD4dy454Aq8"
             },
             {
               "id": "souvenirs-3f66bda0-09",
               "name": "大倉久和",
-              "url": "https://maps.app.goo.gl/YX29YXSLG9a4sEiR8",
-              "detailHtml": "（パイナップルケーキ、華やか）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "パイナップルケーキ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/YX29YXSLG9a4sEiR8"
             },
             {
               "id": "souvenirs-3f66bda0-10",
               "name": "海邊走走",
-              "url": "https://maps.app.goo.gl/KeaisHs1dhjcPpRAA",
-              "detailHtml": "（エッグロール）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "エッグロール",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/KeaisHs1dhjcPpRAA"
             },
             {
               "id": "souvenirs-3f66bda0-11",
               "name": "無印良品",
-              "url": "https://maps.app.goo.gl/xCcQhGhaSYdHTdWr7",
-              "detailHtml": "（台湾限定商品）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "台湾限定商品",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/xCcQhGhaSYdHTdWr7"
             },
             {
-              "id": "souvenirs-3f66bda0-12",
-              "name": "迪化街の伝統食品",
-              "url": "https://maps.app.goo.gl/W1upJpa2gjzz199Z7",
-              "detailHtml": "（お茶、からすみ、ドライフルーツ、漢方素材、乾物など）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "id": "souvenirs-3f66bda0-04",
+              "name": "新貴派",
+              "className": "",
+              "tags": [
+                {
+                  "text": "国民的おやつ",
+                  "tone": "auto"
+                },
+                {
+                  "text": "おすすめ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://shop.r10s.jp/twdirect/cabinet/hetong/hetong_04_2.jpg"
+            },
+            {
+              "id": "souvenirs-3f66bda0-05",
+              "name": "義美小泡芙",
+              "className": "",
+              "tags": [
+                {
+                  "text": "国民的おやつ",
+                  "tone": "auto"
+                },
+                {
+                  "text": "おすすめ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://taiwanlove.jp/cdn/shop/products/1595141012_1d18a98dd39be86a9fec_112b3491-e01e-498b-9fca-e07c5e1d052b.jpg?v=1677050650&width=600"
             }
           ]
         },
@@ -115,34 +169,54 @@
             {
               "id": "3f66bda0-4caa-8062-b262-eb9b4f49e839",
               "name": "來好",
-              "url": "https://maps.app.goo.gl/BLYtnx9iAwqxgjVC7",
-              "detailHtml": "（人気）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "人気",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/BLYtnx9iAwqxgjVC7"
             },
             {
               "id": "3f66bda0-4caa-80c3-b7c2-c15669ce92ae",
               "name": "高建桶店",
-              "url": "https://maps.app.goo.gl/dYjQ2GjQzPeniR9Z8",
-              "detailHtml": "（安い、人気）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "人気",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/dYjQ2GjQzPeniR9Z8"
             },
             {
               "id": "3f66bda0-4caa-804f-abb7-e750a77fd922",
               "name": "台湾日和",
-              "url": "https://maps.app.goo.gl/LHUzShr7rmb1yfpL7",
-              "detailHtml": "（人気）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "人気",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/LHUzShr7rmb1yfpL7"
             },
             {
               "id": "3f66bda0-4caa-80c9-99af-c0f873c10fa7",
               "name": "スターバックス",
-              "url": "https://maps.app.goo.gl/t5jqeQAB4LNNVgPC9",
-              "detailHtml": "（限定商品）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "限定商品",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/t5jqeQAB4LNNVgPC9"
             }
           ]
         },
@@ -153,18 +227,28 @@
             {
               "id": "3f66bda0-4caa-8053-aea8-cce17b3758bb",
               "name": "万家福",
-              "url": "https://maps.app.goo.gl/yE4ofCDKBSzj4d8k6",
-              "detailHtml": "（圧倒的な品揃え）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "圧倒的な品揃え",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/yE4ofCDKBSzj4d8k6"
             },
             {
               "id": "3f66bda0-4caa-80bd-82ab-f05f8b52310d",
               "name": "全聯福利中心",
-              "url": "https://maps.app.goo.gl/Q6uvpdJh7GZ6BEJ8A",
-              "detailHtml": "（スーパー）",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "スーパー",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/Q6uvpdJh7GZ6BEJ8A"
             }
           ]
         },
@@ -175,26 +259,26 @@
             {
               "id": "3f66bda0-4caa-8012-b0a5-d265795704c7",
               "name": "Cosmed康是美",
-              "url": "https://maps.app.goo.gl/n4TEQzcNuP9uQCia7",
-              "detailHtml": "",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/n4TEQzcNuP9uQCia7"
             },
             {
               "id": "3f66bda0-4caa-8057-97ee-c8539e447e6e",
               "name": "POYA寶雅",
-              "url": "https://maps.app.goo.gl/KyG965K1617iAoeb9",
-              "detailHtml": "",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/KyG965K1617iAoeb9"
             },
             {
               "id": "3f66bda0-4caa-80cd-b56e-f4ca8e9df6ea",
               "name": "watsons屈臣氏",
-              "url": "https://maps.app.goo.gl/us6ucx34EUfsrUmr9",
-              "detailHtml": "",
-              "curatedTags": "",
-              "className": "venue-list-item"
+              "className": "venue-list-item",
+              "tags": [],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/us6ucx34EUfsrUmr9"
             }
           ]
         }
