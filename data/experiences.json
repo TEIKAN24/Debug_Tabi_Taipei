@@ -16,20 +16,16 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "友達と盛れる",
+                  "text": "手作りチャーム",
+                  "tone": "auto"
+                },
+                {
+                  "text": "Y2K",
                   "tone": "auto"
                 }
               ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/yshrwhM4mcLm2WLA6"
-            },
-            {
-              "id": "3f76bda0-4caa-80fd-aa08-f9fcb9292c43",
-              "name": "Disco8b",
-              "className": "venue-list-item",
-              "tags": [],
-              "links": [],
-              "mapUrl": "https://maps.app.goo.gl/c1nCRQfEVgUttv877"
             },
             {
               "id": "3f76bda0-4caa-80cb-84d5-f4de15b300e5",
@@ -39,29 +35,38 @@
                 {
                   "text": "手作りチャーム",
                   "tone": "auto"
+                },
+                {
+                  "text": "かわいい",
+                  "tone": "auto"
                 }
               ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/nopRqv7dmqnxAD6x9"
             },
             {
-              "id": "3f76bda0-4caa-80f1-bd1d-df658fa4a40f",
-              "name": "FOTOLAB",
+              "id": "3f76bda0-4caa-80fd-aa08-f9fcb9292c43",
+              "name": "Disco8b",
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "旅の思い出に",
+                  "text": "Y2K",
                   "tone": "auto"
                 }
               ],
               "links": [],
-              "mapUrl": "https://maps.app.goo.gl/nya1GEDX6nsjZ2AaA"
+              "mapUrl": "https://maps.app.goo.gl/c1nCRQfEVgUttv877"
             },
             {
               "id": "3f76bda0-4caa-807d-a8fe-dc0fe26b912f",
               "name": "SNAPPP小福星拍貼機",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "レトロ",
+                  "tone": "auto"
+                }
+              ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/7bGnScy6V7JdkpAK9"
             },
@@ -69,14 +74,17 @@
               "id": "3f76bda0-4caa-8090-a8bf-c0fbc3ff4928",
               "name": "PHOTOBOOM",
               "className": "venue-list-item",
-              "tags": [
-                {
-                  "text": "遊び心たっぷり",
-                  "tone": "auto"
-                }
-              ],
+              "tags": [],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/PMcrzRq8f5tAS6EG6"
+            },
+            {
+              "id": "3f76bda0-4caa-80f1-bd1d-df658fa4a40f",
+              "name": "FOTOLAB",
+              "className": "venue-list-item",
+              "tags": [],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/nya1GEDX6nsjZ2AaA"
             },
             {
               "id": "3f76bda0-4caa-8005-9784-e37b1ee1ffc5",
@@ -134,6 +142,23 @@
           "title": "手作り",
           "items": [
             {
+              "id": "3f76bda0-4caa-800a-80ca-c2d7081fc267",
+              "name": "日星鑄字行",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "活字印刷",
+                  "tone": "auto"
+                },
+                {
+                  "text": "文字好き必見",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/5bL8SDQN9vS52QsJ6"
+            },
+            {
               "id": "3f76bda0-4caa-80d2-99ed-c77e14db88d6",
               "name": "PICK&COLLECT",
               "className": "venue-list-item",
@@ -160,10 +185,6 @@
                 {
                   "text": "ビーズ細工",
                   "tone": "auto"
-                },
-                {
-                  "text": "自分だけの一点",
-                  "tone": "auto"
                 }
               ],
               "links": [
@@ -174,23 +195,6 @@
                 }
               ],
               "mapUrl": "https://maps.app.goo.gl/jCKMecTrRnDkQQXt5"
-            },
-            {
-              "id": "3f76bda0-4caa-800a-80ca-c2d7081fc267",
-              "name": "日星鑄字行",
-              "className": "venue-list-item",
-              "tags": [
-                {
-                  "text": "活字印刷",
-                  "tone": "auto"
-                },
-                {
-                  "text": "文字好き必見",
-                  "tone": "auto"
-                }
-              ],
-              "links": [],
-              "mapUrl": "https://maps.app.goo.gl/5bL8SDQN9vS52QsJ6"
             }
           ]
         },
