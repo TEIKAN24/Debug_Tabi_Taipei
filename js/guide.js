@@ -601,10 +601,13 @@ function resizeResultViewport() {
 
 // Approx. fifteen visible Japanese characters; leave a few extra characters for the fade.
 // Segment by grapheme so emoji and combining characters are not cut in half.
+// v30.9.200: one shared segmenter; creating one per row was costly on phones.
+const graphemeSegmenter = typeof Intl !== "undefined" && Intl.Segmenter
+  ? new Intl.Segmenter("ja", {granularity:"grapheme"}) : null;
 function descriptionGraphemes(value) {
   const str = String(value || "");
-  if (typeof Intl !== "undefined" && Intl.Segmenter) {
-    return [...new Intl.Segmenter("ja", {granularity:"grapheme"}).segment(str)].map(part => part.segment);
+  if (graphemeSegmenter) {
+    return [...graphemeSegmenter.segment(str)].map(part => part.segment);
   }
   return Array.from(str);
 }
@@ -646,6 +649,9 @@ function setFoodEntryExpanded(row, expanded) {
   const preview = row.querySelector(".food-desc-preview");
   const full = row.querySelector(".food-desc-full");
   if (!button || !preview || !full) return;
+  // v30.9.200: measure only the description being opened (was every row on
+  // every keystroke, forcing one layout per row).
+  if (expanded) measureFoodDescription(row);
   row.classList.toggle("is-expanded", expanded);
   if (expanded) expandedDishName = row.dataset.dishName;
   else if (expandedDishName === row.dataset.dishName) expandedDishName = null;
@@ -736,15 +742,170 @@ foodDrawer?.addEventListener('food-search-closed', () => {
   }
 });
 
+// v30.9.201 — もしかして: one suggestion when a search finds nothing.
+// Handles swapped character order (橙汁柳 → 柳橙汁, also from scanned text),
+// one missing/extra/wrong character in longer words, and common variant or
+// simplified characters. It only suggests; the results never change on their own.
+const VARIANT_CHARS = {"魯":"滷","卤":"滷","鹵":"滷","麪":"麵","面":"麵","鷄":"雞","鸡":"雞","猪":"豬","饭":"飯","汤":"湯",
+  "鱼":"魚","虾":"蝦","臺":"台","糰":"團","团":"團","蚝":"蠔","酱":"醬","凤":"鳳","饺":"餃","锅":"鍋",
+  "贴":"貼","烧":"燒","肠":"腸","线":"線","葱":"蔥","饼":"餅","鲁":"滷","干":"乾","浆":"漿"};
+const foldChars = value => Array.from(normalized(value).replace(/\s+/g, ""))
+  .map(ch => VARIANT_CHARS[ch] || ch);
+function charBagDistance(a, b) {
+  const bag = new Map();
+  for (const ch of a) bag.set(ch, (bag.get(ch) || 0) + 1);
+  let unmatched = 0;
+  for (const ch of b) {
+    const n = bag.get(ch) || 0;
+    if (n) bag.set(ch, n - 1); else unmatched++;
+  }
+  let leftover = 0;
+  for (const n of bag.values()) leftover += n;
+  return Math.max(unmatched, leftover); // a substitution counts once
+}
+function suggestionFor(raw) {
+  const query = foldChars(raw);
+  // Short or emoji-only queries are not guessed at.
+  if (query.length < 2 || !/[\p{Script=Han}\p{Script=Katakana}\p{Script=Hiragana}]/u.test(query.join(""))) return "";
+  const pool = foods.filter(food => selected === cats[0] || food.category === selected);
+  let best = null;
+  const consider = (word, bonus) => {
+    const chars = foldChars(word);
+    if (chars.length < 2) return;
+    const distance = charBagDistance(query, chars);
+    // Same characters in any order; longer words may also differ by one.
+    const allowed = chars.length >= 4 && query.length >= 3 ? 1 : 0;
+    if (distance > allowed) return;
+    const score = (distance ? 0 : 10) + bonus - Math.abs(chars.length - query.length);
+    if (!best || score > best.score) best = {word, score};
+  };
+  for (const food of pool) {
+    for (const part of food.name.split(/[／/]/)) consider(part.trim(), 3);
+    for (const tag of food.tags || []) consider(String(tag).trim(), 0);
+  }
+  // Never suggest the very text that was typed.
+  if (!best || normalized(best.word) === normalized(raw).replace(/\s+/g, "")) return "";
+  return best.word;
+}
+
+// v30.9.202 — menu reading (batch search). When a normal search finds
+// nothing, the text is read as a menu (e.g. from iPhone「テキストをスキャン」):
+// every known dish name inside it is listed, in menu order. Prices, sizes and
+// symbols act as separators, so items glued together without line breaks
+// ("滷肉飯30雞肉飯35") still split. Overlaps keep the longer name
+// (蚵仔麵線 over 麵線). Leftover pieces whose characters are a known dish name
+// in another order (scan errors: 肉雞飯 → 雞肉飯) are matched too.
+const MENU_LETTER = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{L}ー々]/u;
+const menuFold = raw => Array.from(normalized(raw))
+  .map(ch => MENU_LETTER.test(ch) ? (VARIANT_CHARS[ch] || ch) : "|").join("");
+let menuIndexCache = null;
+function menuIndex() {
+  if (menuIndexCache?.foods === foods) return menuIndexCache.keys;
+  const keys = [];
+  for (const food of foods) {
+    const words = food.name.split(/[／/]/).map(part => part.trim());
+    // Chinese aliases kept in tags (三字以上の漢字だけ: 柳橙汁, 鮮榨果汁…).
+    for (const tag of food.tags || []) {
+      const text = String(tag).trim();
+      if (/^\p{Script=Han}{3,}$/u.test(text)) words.push(text);
+    }
+    for (const word of words) {
+      const key = menuFold(word).replace(/\|/g, "");
+      if (key.length >= 2) keys.push({food, key, word, bag: [...key].sort().join("")});
+    }
+  }
+  keys.sort((a, b) => b.key.length - a.key.length);
+  menuIndexCache = {foods, keys};
+  return keys;
+}
+function menuMatches(raw) {
+  const text = menuFold(raw);
+  const letters = text.replace(/\|/g, "");
+  // A menu reading needs a few characters of text to work on.
+  if (letters.length < 2) return {foods: [], words: []};
+  const keys = menuIndex().filter(entry => selected === cats[0] || entry.food.category === selected);
+  const taken = new Array(text.length).fill(false);
+  const hits = [];
+  const free = (start, end) => { for (let i = start; i < end; i++) if (taken[i]) return false; return true; };
+  const take = (start, end, entry, exact) => {
+    for (let i = start; i < end; i++) taken[i] = true;
+    hits.push({start, entry, exact});
+  };
+  // Longest names first. At each length, exact names, then pieces whose
+  // characters are that name in another order (3文字以上) — so a scrambled
+  // 麵線蚵仔 becomes 蚵仔麵線 before the shorter exact 麵線 can claim it.
+  const byLength = new Map();
+  for (const entry of keys) {
+    if (!byLength.has(entry.key.length)) byLength.set(entry.key.length, {list: [], bags: new Map()});
+    const group = byLength.get(entry.key.length);
+    group.list.push(entry);
+    if (!group.bags.has(entry.bag)) group.bags.set(entry.bag, entry);
+  }
+  let exactCount = 0;
+  for (const length of [...byLength.keys()].sort((a, b) => b - a)) {
+    const group = byLength.get(length);
+    for (const entry of group.list) {
+      let from = 0;
+      while (from <= text.length - length) {
+        const at = text.indexOf(entry.key, from);
+        if (at < 0) break;
+        if (free(at, at + length)) { take(at, at + length, entry, true); exactCount++; }
+        from = at + 1;
+      }
+    }
+    if (length < 3) continue;
+    for (let k = 0; k + length <= text.length; k++) {
+      if (!free(k, k + length)) continue;
+      const piece = text.slice(k, k + length);
+      if (piece.includes("|")) continue;
+      const entry = group.bags.get([...piece].sort().join(""));
+      if (entry) take(k, k + length, entry, false);
+    }
+  }
+  // Read as a menu only when the text looks like one: several pieces
+  // (spaces, prices, symbols between them) or at least one exact dish name.
+  // A lone scrambled word stays a normal search and gets もしかして instead.
+  const separated = text.replace(/^\|+|\|+$/g, "").includes("|");
+  if (!exactCount && !separated) return {foods: [], words: []};
+  hits.sort((a, b) => a.start - b.start);
+  const seen = new Set(), list = [], words = new Set();
+  for (const hit of hits) {
+    if (hit.exact) words.add(normalized(hit.entry.word));
+    if (seen.has(hit.entry.food)) continue;
+    seen.add(hit.entry.food);
+    list.push(hit.entry.food);
+  }
+  return {foods: list, words: [...words]};
+}
+
+// v30.9.200: results render in slices. The first slice fills the visible
+// list at once; the rest follow over the next frames, and a newer keystroke
+// cancels whatever is still pending. flushResults() completes it on demand.
+const FIRST_SLICE = 24, NEXT_SLICE = 48;
+let pendingRows = null, pendingFrame = 0;
+function flushResults() {
+  if (!pendingRows) return;
+  cancelAnimationFrame(pendingFrame);
+  const rest = pendingRows; pendingRows = null;
+  rest();
+}
 function drawResults() {
-  const matched = currentMatches();
-  count.textContent = `${matched.length} 件`;
+  cancelAnimationFrame(pendingFrame); pendingRows = null;
+  let matched = currentMatches();
+  // v30.9.202: nothing found → try reading the text as a menu.
+  let menuWords = null;
+  if (!matched.length && input.value.trim()) {
+    const menu = menuMatches(input.value);
+    if (menu.foods.length) { matched = menu.foods; menuWords = menu.words; }
+  }
+  count.textContent = menuWords ? `メニューから ${matched.length} 件` : `${matched.length} 件`;
   results.replaceChildren();
+  results.scrollTop = 0; // cheap while the list is empty
   results.style.maxHeight = "none";
   results.classList.toggle("scrolling", matched.length > (window.matchMedia("(max-width: 600px)").matches ? 2 : 3));
   const terms = searchTerms();
   // Include alternative spellings when highlighting an equivalent match.
-  const highlightTerms = [...new Set(terms.flatMap(variantsFor))];
+  const highlightTerms = menuWords || [...new Set(terms.flatMap(variantsFor))];
   if (!matched.length) {
     const empty = document.createElement("div");
     empty.className = "empty";
@@ -752,11 +913,32 @@ function drawResults() {
     face.className = "emoji";
     face.textContent = "🔎";
     const message = document.createElement("span");
-    message.textContent = "該当する料理が見つかりません。料理名・🍜・シーフードなどで検索してください。";
+    message.textContent = "該当する料理が見つかりません。";
     empty.append(face, message);
+    // v30.9.201: with no result, offer one close word to tap (もしかして).
+    const guess = suggestionFor(input.value);
+    if (guess) {
+      const hint = document.createElement("p");
+      hint.className = "food-suggest";
+      const label = document.createElement("span");
+      label.className = "food-suggest-label";
+      label.textContent = "もしかして";
+      const word = document.createElement("button");
+      word.type = "button";
+      word.className = "food-suggest-word";
+      word.textContent = guess;
+      word.setAttribute("aria-label", `${guess}で検索`);
+      word.addEventListener("click", () => {
+        input.value = guess;
+        onSearch();
+        input.blur();
+      });
+      hint.append(label, word);
+      empty.append(hint);
+    }
     results.append(empty);
   } else {
-    for (const food of matched) {
+    const buildRow = food => {
       const row = document.createElement("article");
       row.className = "result";
       const left = document.createElement("div");
@@ -856,16 +1038,35 @@ if (expandable) {
   row.append(left, meta);
 }
 
-      results.append(row);
-      // Keep this dish expanded when filtering or searching without leaving
-      // the food screen. If filtered out, restore it when it reappears.
-      if (expandable && food.name === expandedDishName) setFoodEntryExpanded(row, true);
+      return [row, expandable];
+    };
+    const appendRows = list => {
+      const fragment = document.createDocumentFragment();
+      const reopen = [];
+      for (const food of list) {
+        const [row, expandable] = buildRow(food);
+        fragment.append(row);
+        // Keep this dish expanded when filtering or searching without leaving
+        // the food screen. If filtered out, restore it when it reappears.
+        if (expandable && food.name === expandedDishName) reopen.push(row);
+      }
+      results.append(fragment);
+      reopen.forEach(row => setFoodEntryExpanded(row, true));
+    };
+    appendRows(matched.slice(0, FIRST_SLICE));
+    let next = FIRST_SLICE;
+    const step = () => {
+      if (!pendingRows) return;
+      appendRows(matched.slice(next, next + NEXT_SLICE));
+      next += NEXT_SLICE;
+      if (next < matched.length) pendingFrame = requestAnimationFrame(step);
+      else pendingRows = null;
+    };
+    if (next < matched.length) {
+      pendingRows = () => { appendRows(matched.slice(next)); next = matched.length; };
+      pendingFrame = requestAnimationFrame(step);
     }
   }
-  results.scrollTop = 0;
-  // Sizes are known only after the rows join the document and wrap at the
-  // current screen width. Collapsed previews now take exactly one line.
-  results.querySelectorAll('.food-entry-expandable').forEach(measureFoodDescription);
   resizeResultViewport();
 }
 function onSearch() {
@@ -875,7 +1076,18 @@ function onSearch() {
   foodExplorer.querySelectorAll("[data-example]").forEach(button =>
     button.setAttribute("aria-pressed", String(input.value === button.dataset.example)));
 }
-input.addEventListener("input", onSearch);
+// v30.9.200: typing no longer redraws the list on every keystroke. Input is
+// coalesced to one redraw per frame, and while a Japanese/Chinese IME is
+// composing it waits for a short pause (each kana fires its own input event).
+let searchFrame = 0, searchTimer = 0;
+function scheduleSearch(delay) {
+  cancelAnimationFrame(searchFrame); clearTimeout(searchTimer);
+  clear.classList.toggle("visible", input.value.length > 0);
+  if (delay) searchTimer = setTimeout(() => { searchFrame = requestAnimationFrame(onSearch); }, delay);
+  else searchFrame = requestAnimationFrame(onSearch);
+}
+input.addEventListener("input", event => scheduleSearch(event.isComposing ? 160 : 0));
+input.addEventListener("compositionend", () => scheduleSearch(0));
 // Preserve tapping the search icon or empty search-shell area to focus input,
 // without nesting the clear button inside a label (iOS Safari focus loop).
 foodExplorer.querySelector(".search-shell")?.addEventListener("click", event => {
@@ -928,6 +1140,7 @@ function showDishInSearch(query) {
   drawFilters();
   input.value = query;
   onSearch();
+  flushResults();
   // Open the dish whose name (or one of its ／ names) is the query; with a
   // single result, open that one.
   const key = normalized(query);
@@ -964,7 +1177,7 @@ foodExplorer.querySelectorAll("[data-example]").forEach(button => {
   });
 });
 window.addEventListener("resize", () => requestAnimationFrame(() => {
-  results.querySelectorAll('.food-entry-expandable').forEach(measureFoodDescription);
+  results.querySelectorAll('.food-entry-expandable.is-expanded').forEach(measureFoodDescription);
   resizeResultViewport();
 }));
 
