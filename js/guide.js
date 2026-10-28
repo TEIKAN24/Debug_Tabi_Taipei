@@ -453,6 +453,15 @@ if(!foodExplorer) return;
 // Keep both files in the same folder as this index.html on GitHub Pages.
 // CSV row order is preserved within each category; categories remain in the fixed order below.
 let foods = [];
+let marketFoods = [];
+const itemTypes = [
+  { id: 'food', label: '🍜 料理', category: null, title: '🔍 この料理、なに？', list: '料理一覧', placeholder: '例：肉、豚、とり、🥤' },
+  { id: 'seasoning', label: '🧂 調味料', category: '🧂 調味料', title: '🔍 この調味料、なに？', list: '調味料一覧', placeholder: '例：沙茶醬、醤油、香辛料' },
+  { id: 'fruit', label: '🍍 フルーツ', category: '🍍 フルーツ', title: '🔍 このフルーツ、なに？', list: 'フルーツ一覧', placeholder: '例：芭樂、マンゴー、蓮霧' },
+  { id: 'snack', label: '🍪 お菓子', category: '🍪 お菓子', title: '🔍 このお菓子、なに？', list: 'お菓子一覧', placeholder: '例：乖乖、可樂果、スナック' },
+  { id: 'drink', label: '🧋 飲み物', category: '🧋 飲み物', title: '🔍 この飲み物、なに？', list: '飲み物一覧', placeholder: '例：珍珠奶茶、烏龍茶、果汁' },
+];
+let selectedType = 'food';
 let synonymGroups = [];
 let normalizedGroups = [];
 
@@ -460,6 +469,10 @@ const cats = ["すべて", "🔰 初心者", "🏮 地元民", "⚔️ クセ強
 const input = foodExplorer.querySelector("#search");
 const clear = foodExplorer.querySelector("#clear");
 const filters = foodExplorer.querySelector("#filters");
+const typeTabs = foodExplorer.querySelector("#food-type-tabs");
+const mainTitle = foodExplorer.querySelector("#food-drawer-title");
+const listTitle = foodExplorer.querySelector("#list-title");
+const tools = foodExplorer.querySelector(".food-tools");
 const activeFilter = foodExplorer.querySelector("#food-active-filter");
 const activeFilterLabel = foodExplorer.querySelector("#food-active-filter-label");
 const results = foodExplorer.querySelector("#results");
@@ -485,13 +498,16 @@ function searchTerms() {
 function currentMatches() {
   const terms = searchTerms();
 
-  return foods.filter(food => {
-    // The difficulty filter still applies to all searches.
-    if (selected !== cats[0] && food.category !== selected) return false;
+  const currentType = itemTypes.find(type => type.id === selectedType) || itemTypes[0];
+  const source = selectedType === 'food' ? foods : marketFoods;
+  return source.filter(food => {
+    if (selectedType === 'food') {
+      if (selected !== cats[0] && food.category !== selected) return false;
+    } else if (food.category !== currentType.category) return false;
 
     // Include hidden tags so partial Japanese words and emoji can be searched.
     const text = normalized(
-      `${food.name} ${food.description} ${food.category} ${(food.tags || []).join(" ")}`
+      `${food.name} ${food.description} ${food.detail || ''} ${food.category} ${(food.tags || []).join(" ")}`
     );
 
     return terms.every(term => {
@@ -548,30 +564,40 @@ function syncActiveFilter() {
   activeFilter.hidden = !applied;
   activeFilterLabel.textContent = applied ? selected : "";
 }
-function drawFilters() {
-  filters.replaceChildren();
-  syncActiveFilter();
-  // v30.9.143: no すべて chip; tapping the active level again shows every level.
-  for (const cat of cats.slice(1)) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `pill${selected === cat ? " active" : ""}`;
-    button.setAttribute("aria-pressed", String(selected === cat));
-    const label = document.createElement("span");
-    label.textContent = cat;
-    const n = document.createElement("span");
-    n.className = "pill-count";
-    n.textContent = ` ${cat === cats[0] ? foods.length : foods.filter(f => f.category === cat).length}`;
-    button.append(label, n);
-    button.addEventListener("click", () => {
-      selected = selected === cat ? cats[0] : cat;
-      drawFilters();
-      drawResults();
-      // Selecting a difficulty closes the quick-search panel.
+function drawTypeTabs() {
+  if (!typeTabs) return;
+  typeTabs.replaceChildren();
+  for (const type of itemTypes) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'food-type-tab' + (type.id === selectedType ? ' active' : '');
+    button.setAttribute('aria-pressed', String(type.id === selectedType));
+    const count = type.id === 'food' ? foods.length : marketFoods.filter(item => item.category === type.category).length;
+    button.textContent = `${type.label} ${count}`;
+    button.addEventListener('click', () => {
+      if (selectedType === type.id) return;
+      selectedType = type.id;
+      selected = cats[0];
+      expandedDishName = null;
+      input.value = '';
+      input.blur();
+      tools.style.display = selectedType === 'food' ? '' : 'none';
       setToolsOpen(false);
+      mainTitle.textContent = type.title;
+      listTitle.textContent = type.list;
+      input.placeholder = type.placeholder;
+      drawTypeTabs();
+      drawFilters();
+      onSearch();
     });
-    filters.append(button);
+    typeTabs.append(button);
   }
+}
+function drawFilters() {
+  // v30.9.198: difficulty controls are retired; original grades remain in foods.csv
+  // for historical data, but play no part in search or display.
+  if (filters) filters.replaceChildren();
+  syncActiveFilter();
 }
 function resizeResultViewport() {
   const rows = [...results.querySelectorAll(".result")];
@@ -751,7 +777,9 @@ function drawResults() {
     face.className = "emoji";
     face.textContent = "🔎";
     const message = document.createElement("span");
-    message.textContent = "該当する料理が見つかりません。料理名・🍜・シーフードなどで検索してください。";
+    message.textContent = selectedType === 'food'
+      ? "該当する料理が見つかりません。料理名・🍜・シーフードなどで検索してください。"
+      : "該当する項目が見つかりません。日本語・中国語や特徴で検索してください。";
     empty.append(face, message);
     results.append(empty);
   } else {
@@ -795,7 +823,7 @@ meta.className = "result-meta";
 const tag = document.createElement("span");
 tag.className = "tag";
 tag.textContent = food.category;
-meta.append(tag);
+if (selectedType !== 'food') meta.append(tag);
 
 // 辣度：沒有設定就不顯示
 if (food.spice) {
@@ -917,6 +945,12 @@ document.getElementById("food-search")?.addEventListener("food-search-closed", (
   if (document.activeElement === input) input.blur();
   input.value = "";
   selected = cats[0];
+  selectedType = 'food';
+  tools.style.display = '';
+  mainTitle.textContent = itemTypes[0].title;
+  listTitle.textContent = itemTypes[0].list;
+  input.placeholder = itemTypes[0].placeholder;
+  drawTypeTabs();
   drawFilters();
   onSearch();
 });
@@ -924,6 +958,12 @@ document.getElementById("food-search")?.addEventListener("food-search-closed", (
 // all levels shown, and the dish itself opened when its name matches exactly.
 function showDishInSearch(query) {
   selected = cats[0];
+  selectedType = 'food';
+  tools.style.display = '';
+  mainTitle.textContent = itemTypes[0].title;
+  listTitle.textContent = itemTypes[0].list;
+  input.placeholder = itemTypes[0].placeholder;
+  drawTypeTabs();
   drawFilters();
   input.value = query;
   onSearch();
@@ -968,7 +1008,7 @@ window.addEventListener("resize", () => requestAnimationFrame(() => {
 }));
 
 // Minimal CSV parser: supports UTF-8 BOM, quoted commas, quotes, and newlines.
-function parseCsv(text) {
+function parseCsv(text, market = false) {
   const content = text.replace(/^\uFEFF/, "");
   const rows = [];
   let row = [], field = "", inQuotes = false;
@@ -998,7 +1038,8 @@ function parseCsv(text) {
   }
   return rows.map((values, position) => {
     const item = Object.fromEntries(headers.map((key, i) => [key, (values[i] || "").trim()]));
-    if (!item.name || !cats.includes(item.category)) {
+    const allowed = market ? itemTypes.slice(1).map(type => type.category) : cats.slice(1);
+    if (!item.name || !allowed.includes(item.category)) {
       throw new Error(`foods.csv の ${position + 2} 行目を確認してください。`);
     }
     return {
@@ -1017,36 +1058,42 @@ spice: ["1", "2", "3", "maybe"].includes(item.spice)
   : ""
 
 };
-  }).sort((a, b) => cats.indexOf(a.category) - cats.indexOf(b.category));
+  }).sort((a, b) => market ? 0 : cats.indexOf(a.category) - cats.indexOf(b.category));
 }
 
 async function loadData() {
   try {
-    const [foodResponse, synonymResponse] = await Promise.all([
+    const [foodResponse, marketResponse, synonymResponse] = await Promise.all([
       fetch("./food/foods.csv", { cache: "no-cache" }),
+      fetch("./food/market_items.csv", { cache: "no-cache" }),
       fetch("./food/synonyms.json", { cache: "no-cache" })
     ]);
     if (!foodResponse.ok || !synonymResponse.ok) {
       throw new Error("foods.csv または synonyms.json が見つかりません。");
     }
-    const [csvText, json] = await Promise.all([
-      foodResponse.text(), synonymResponse.json()
+    // Never let a missing optional market glossary hide the original food entries.
+    if (!marketResponse.ok) console.warn("food/market_items.csv は未公開です。");
+    const [csvText, marketCsvText, json] = await Promise.all([
+      foodResponse.text(), marketResponse.ok ? marketResponse.text() : Promise.resolve(''), synonymResponse.json()
     ]);
     const loadedFoods = parseCsv(csvText);
+    const loadedMarket = marketCsvText ? parseCsv(marketCsvText, true) : [];
     if (!Array.isArray(json.groups) || !json.groups.every(group =>
         Array.isArray(group) && group.every(word => typeof word === "string"))) {
       throw new Error("synonyms.json の groups を確認してください。");
     }
     foods = loadedFoods;
+    marketFoods = loadedMarket;
     synonymGroups = json.groups;
     normalizedGroups = synonymGroups.map(group => [...new Set(group.map(normalized))]);
     footerCount.textContent = String(foods.length);
     input.disabled = false;
+    drawTypeTabs();
     drawFilters();
     onSearch();
   } catch (error) {
     console.error("TAIPEI CITY GUIDE: data load error", error);
-    filters.replaceChildren();
+    filters?.replaceChildren();
     results.replaceChildren();
     results.classList.remove("scrolling");
     results.style.maxHeight = "none";
@@ -1054,7 +1101,7 @@ async function loadData() {
     count.textContent = "読み込みエラー";
     const notice = document.createElement("div");
     notice.className = "empty";
-    notice.textContent = "データを読み込めませんでした。GitHub Pages で開き、food/foods.csv・food/synonyms.json が指定のフォルダにあるか確認してください。";
+    notice.textContent = "データを読み込めませんでした。food/foods.csv・food/market_items.csv・food/synonyms.json の配置を確認してください。";
     results.append(notice);
   }
 }
