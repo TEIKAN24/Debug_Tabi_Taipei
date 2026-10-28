@@ -5157,60 +5157,75 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 #guide hr.chapter-glow--experiences{--chapter-glow:188,112,98;}
 #guide hr.chapter-glow--daytrips{--chapter-glow:126,149,170;}
 
-/* v30.9.181 — CITY WALK ONLY: 8-area editorial index swaps with inline browser.
-   Inherit existing monochrome palette and category chips; night markets untouched. */
+/* v30.9.182 — CITY WALK ONLY: color-coded 8-area index swaps with inline browser.
+   Open header tightens; each area has a tone (card bar + detail list glow).
+   Night markets and other chapters untouched. */
 #guide .walk-grid-ready > .indented > .tab{display:none!important}
 #guide .walk-viewing-detail .walk-area-grid{display:none!important}
 #guide .walk-area-grid[hidden]{display:none!important}
+
+/* Header: full size while closed, compact once open. */
+#guide details.walk-grid-ready > summary{transition:padding .22s ease}
+#guide details.walk-grid-ready > summary > .accordion-category-heading{transition:font-size .22s ease}
+#guide details.walk-grid-ready > summary::after{transition:font-size .22s ease}
+#guide details.walk-grid-ready[open] > summary{padding:8px 14px!important}
+#guide details.walk-grid-ready[open] > summary > .accordion-category-heading{font-size:12px!important;line-height:1.5!important;letter-spacing:.01em}
+#guide details.walk-grid-ready[open] > summary::after{font-size:15px;right:14px}
+#guide details.walk-grid-ready > .indented{margin:10px!important;padding:0!important}
+
+/* Area index */
 #guide .walk-area-grid{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
-  margin:7px 0 0;padding:0;min-width:0;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+  margin:0;padding:0;min-width:0;
 }
 #guide .walk-area-card{
-  appearance:none;min-width:0;min-height:81px;display:flex;flex-direction:column;
-  justify-content:center;align-items:flex-start;gap:4px;
-  padding:12px 12px;text-align:left;font:inherit;cursor:pointer;
-  background:var(--paper);color:var(--ink);border:1px solid var(--line);
-  border-radius:12px;-webkit-tap-highlight-color:transparent;
-  transition:background-color .18s ease,border-color .18s ease;
+  --walk-tone:161,161,161;
+  appearance:none;position:relative;min-width:0;min-height:94px;display:flex;flex-direction:column;
+  justify-content:flex-start;align-items:flex-start;gap:0;
+  padding:14px 13px 12px;text-align:left;font:inherit;cursor:pointer;
+  background:var(--paper);color:var(--ink);border:1px solid #333333;
+  border-radius:10px;-webkit-tap-highlight-color:transparent;
+  transition:background-color .18s ease,border-color .18s ease,transform .12s ease;
 }
-#guide .walk-area-card-name{font-size:12.5px;font-weight:760;line-height:1.45;letter-spacing:-.02em}
-#guide .walk-area-card-sub{font-size:10.5px;line-height:1.45;font-weight:500;color:var(--muted)}
-#guide .walk-area-card[aria-expanded="true"]{border-color:#B9B9B9;background:#191919}
-#guide .walk-area-card:focus-visible{
-  outline:2px solid var(--accent);outline-offset:2px;
+#guide .walk-area-card::before{
+  content:"";display:block;flex:none;width:26px;height:2px;border-radius:2px;
+  background:rgb(var(--walk-tone));margin:0 0 9px;
 }
+#guide .walk-area-card-name{font-size:14.5px;font-weight:650;line-height:1.4;letter-spacing:.02em}
+#guide .walk-area-card-sub{
+  margin-top:auto;padding-top:12px;font-size:10.5px;line-height:1.4;font-weight:500;
+  letter-spacing:.03em;color:#8C8C8C;
+}
+#guide .walk-area-card:hover{border-color:#4A4A4A}
+#guide .walk-area-card:active{transform:scale(.985);background:#141414}
+#guide .walk-area-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media(max-width:360px){
-  #guide .walk-area-grid{gap:7px}
-  #guide .walk-area-card{min-height:78px;padding:11px 9px}
-  #guide .walk-area-card-name{font-size:12px}
+  #guide .walk-area-card{min-height:88px;padding:12px 10px 11px}
+  #guide .walk-area-card-name{font-size:13.5px}
   #guide .walk-area-card-sub{font-size:10px}
 }
+
+/* Area detail */
 #guide .walk-inline-detail[hidden]{display:none!important}
 #guide .walk-inline-detail{
-  margin:7px 0 1px;border:0;border-radius:0;
-  background:transparent;color:var(--ink);overflow:hidden;
-  scroll-margin-top:74px;
+  margin:0;border:0;border-radius:0;background:transparent;color:var(--ink);overflow:hidden;
   animation:walk-detail-reveal .22s ease-out both;
 }
 #guide .walk-inline-inner{
   height:clamp(402px,60svh,522px);
-  display:flex;flex-direction:column;min-height:0;padding:3px 2px 9px;
+  display:flex;flex-direction:column;min-height:0;padding:2px 0 0;
 }
-#guide .walk-inline-top{display:flex;flex-direction:column;align-items:stretch;gap:8px;flex:none}
+#guide .walk-inline-top{display:flex;flex-direction:row;align-items:center;gap:4px;flex:none;margin:0 0 14px}
 #guide .walk-inline-back{
-  align-self:flex-start;min-height:36px;border:1px solid var(--line);border-radius:999px;
-  padding:7px 12px;background:var(--paper);color:var(--muted);
-  font:inherit;font-size:11.5px;font-weight:650;cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
+  flex:none;display:inline-grid;place-items:center;width:32px;height:40px;margin-left:-3px;
+  padding:0;border:0;border-radius:8px;background:transparent;color:var(--ink);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
-#guide .walk-inline-back:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-#guide .walk-inline-back:hover{color:var(--ink);border-color:var(--muted)}
-#guide .walk-inline-heading{font-size:15px;font-weight:760;line-height:1.45;margin:0!important;color:var(--ink)}
-#guide .walk-inline-description{
-  color:var(--muted);font-size:11px;line-height:1.55;
-  margin:3px 0 11px!important;min-height:17px;
-}
+#guide .walk-inline-back:hover{background:rgba(255,255,255,.05)}
+#guide .walk-inline-back:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+#guide .walk-inline-copy{min-width:0}
+#guide .walk-inline-heading{font-size:15px;font-weight:700;line-height:1.4;letter-spacing:.02em;margin:0!important;color:var(--ink)}
+#guide .walk-inline-description{color:#8C8C8C;font-size:11px;line-height:1.5;margin:2px 0 0!important}
 #guide .walk-inline-host{min-height:0;flex:1;display:flex;flex-direction:column;overflow:hidden}
 #guide .walk-inline-detail .area-panel{
   display:flex!important;flex:1;flex-direction:column;min-height:0!important;
@@ -5220,36 +5235,102 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 #guide .walk-inline-detail .area-cats{
   display:flex;flex:none;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
   scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
-  margin:0 -1px 9px!important;padding:2px 1px 9px!important;gap:7px;
+  margin:0!important;padding:0 0 14px!important;gap:6px;
+  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent);
+  mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent);
 }
 #guide .walk-inline-detail .area-cats::-webkit-scrollbar{display:none}
-#guide .walk-inline-detail .area-cat{flex:0 0 auto;min-height:35px}
+#guide .walk-inline-detail .area-cats.walk-chips-end{-webkit-mask-image:none;mask-image:none}
+#guide .walk-inline-detail .area-cat{
+  flex:0 0 auto;min-height:28px;padding:0 13px;font-size:11.5px;font-weight:600;
+  letter-spacing:.02em;
+}
+#guide .walk-inline-detail .area-cat-count{display:none}
+
+/* The list scrolls under a fixed glow in the area's tone. */
 #guide .walk-inline-detail .area-cat-panes{
-  flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
+  position:relative;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
-  border-top:1px solid var(--line);padding:10px 1px 18px;
-  mask-image:none!important;-webkit-mask-image:none!important;
+  border-top:0;padding:0 2px 12px;margin:0;
+  -webkit-mask-image:none!important;mask-image:none!important;
 }
+#guide .walk-inline-detail .area-cat-panes::before{
+  content:"";position:sticky;top:0;display:block;height:56px;margin:0 -2px -56px;
+  pointer-events:none;z-index:0;
+  background:linear-gradient(to bottom,
+    rgba(var(--walk-tone,161,161,161),calc(.92 * var(--walk-glow,1))) 0,
+    rgba(var(--walk-tone,161,161,161),calc(.5 * var(--walk-glow,1))) 22%,
+    rgba(var(--walk-tone,161,161,161),calc(.18 * var(--walk-glow,1))) 52%,
+    rgba(var(--walk-tone,161,161,161),0) 100%);
+  -webkit-mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+  filter:blur(2px);
+  animation:walk-glow-in .45s ease-out both;
+}
+#guide .walk-inline-detail .area-cat-panes.walk-list-more{
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 48px),transparent)!important;
+  mask-image:linear-gradient(to bottom,#000 calc(100% - 48px),transparent)!important;
+}
+#guide .walk-inline-detail .area-cat-pane{position:relative;z-index:1}
 #guide .walk-inline-detail .area-cat-pane[hidden]{display:none!important}
-#guide .walk-inline-detail .area-cat-pane .numbered-list{max-width:100%}
+#guide .walk-inline-detail .area-cat-pane .numbered-list{max-width:100%;margin:0!important;padding:0!important}
+
+/* Rows: index · name · tags on the right */
+#guide .walk-inline-detail .area-cat-pane li.venue-row{
+  display:grid!important;grid-template-columns:22px minmax(0,1fr)!important;column-gap:6px!important;align-items:center;
+  min-height:62px;padding:12px 0!important;margin:0!important;
+  border:0!important;border-bottom:1px solid #2A2A2A!important;
+}
+#guide .walk-inline-detail .area-cat-pane .venue-row-index{
+  align-self:center;font-size:9.5px!important;font-weight:500!important;letter-spacing:.04em;
+  color:#6E6E6E!important;line-height:1;
+}
+#guide .walk-inline-detail .area-cat-pane .venue-row-body{
+  display:flex!important;flex-direction:row!important;align-items:center;gap:10px!important;min-width:0;
+}
+#guide .walk-inline-detail .area-cat-pane .venue-name-line{
+  flex:1 1 auto;min-width:0;margin:0!important;
+  display:flex!important;flex-wrap:wrap;align-items:center;gap:4px 8px!important;
+}
+#guide .walk-inline-detail .area-cat-pane .venue-primary-links{min-width:0;max-width:100%}
+#guide .walk-inline-detail .area-cat-pane .venue-secondary-links{flex:none;margin:0!important}
+#guide .walk-inline-detail .area-cat-pane a.venue-main-link{
+  font-size:15px!important;font-weight:500!important;letter-spacing:.03em;line-height:1.45;
+  color:var(--ink)!important;text-decoration:none!important;
+  word-break:normal!important;overflow-wrap:break-word!important;
+}
+#guide .walk-inline-detail .area-cat-pane .venue-tag-list{
+  flex:0 1 auto;max-width:52%;justify-content:flex-end;margin:0!important;gap:4px 5px!important;
+}
+#guide .walk-inline-detail .area-cat-pane .venue-tag{
+  font-size:10px!important;line-height:1.3!important;padding:3px 6px!important;border-radius:5px!important;
+  white-space:nowrap;
+}
 #guide .walk-inline-detail .area-cat-pane a{color:var(--ink)}
-#guide .walk-inline-detail .area-cat-pane a[href^="https://maps.app.goo.gl"]{color:var(--accent)}
-html[data-theme="light"] #guide .walk-area-card{
-  background:#FFFFFF;border-color:#DDE2E3;color:#213038;
-}
+
+/* Light theme */
+html[data-theme="light"] #guide .walk-area-card{background:#FFFFFF;border-color:#DDE2E3;color:#213038}
+html[data-theme="light"] #guide .walk-area-card:hover{border-color:#B9C2C4}
+html[data-theme="light"] #guide .walk-area-card:active{background:#F4F5F5}
 html[data-theme="light"] #guide .walk-area-card-sub{color:#66737A}
-html[data-theme="light"] #guide .walk-area-card[aria-expanded="true"]{
-  background:#F2F3F3;border-color:#9FA8AA;
-}
-html[data-theme="light"] #guide .walk-inline-detail{background:transparent;color:#213038}
-html[data-theme="light"] #guide .walk-inline-back{background:#FFFFFF;border-color:#DDE2E3;color:#66737A}
-html[data-theme="light"] #guide .walk-inline-back:hover{border-color:#9FA8AA;color:#213038}
+html[data-theme="light"] #guide .walk-inline-detail{color:#213038}
+html[data-theme="light"] #guide .walk-inline-back{color:#213038}
+html[data-theme="light"] #guide .walk-inline-back:hover{background:rgba(0,0,0,.05)}
 html[data-theme="light"] #guide .walk-inline-heading{color:#213038}
 html[data-theme="light"] #guide .walk-inline-description{color:#66737A}
-html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane a{color:#213038}
-html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane a[href^="https://maps.app.goo.gl"]{color:#12639B}
+html[data-theme="light"] #guide .walk-inline-detail .area-cat-panes{--walk-glow:.55}
+html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane li.venue-row{border-bottom-color:#E3E7E8!important}
+html[data-theme="light"] #guide #walk-inline-detail.walk-inline-detail .area-cat-pane a.venue-main-link,
+html[data-theme="light"] #guide #walk-inline-detail.walk-inline-detail .area-cat-pane a.venue-main-link:visited{color:#213038!important}
+html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane .venue-row-index{color:#8A969C!important}
+
 @keyframes walk-detail-reveal{from{opacity:.55;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes walk-glow-in{from{opacity:0;transform:scaleX(.6)}to{opacity:1;transform:scaleX(1)}}
 @media(prefers-reduced-motion:reduce){
-  #guide .walk-area-card{transition:none}
-  #guide .walk-inline-detail{animation:none}
+  #guide .walk-area-card,
+  #guide details.walk-grid-ready > summary,
+  #guide details.walk-grid-ready > summary > .accordion-category-heading,
+  #guide details.walk-grid-ready > summary::after{transition:none}
+  #guide .walk-inline-detail,
+  #guide .walk-inline-detail .area-cat-panes::before{animation:none}
 }
