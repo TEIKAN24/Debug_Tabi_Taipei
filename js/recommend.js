@@ -1,4 +1,6 @@
-/* TAIPEI CITY GUIDE v30.9.131 — restaurant data from the 2026-10-25 backup (254 shops).
+/* v30.9.207 — おすすめ: from 20:00 火鍋 ranks lower than other meals (still shown until 23:00).
+   v30.9.206 — おすすめ: two cards of one kind per page are fine in every band (never three); in 深夜 other kinds stay one per page, but night cafés, bars, 熱炒 and 屋台料理 may fill two.
+   TAIPEI CITY GUIDE v30.9.131 — restaurant data from the 2026-10-25 backup (254 shops).
    v30.9.130 — 料理種類 can be combined; 推薦レベル (pickLevel 1 精選 / 2 必食) from the
    editor ranks and orders shops; short fixed-size note; the list side keeps the front's size; turns the other way.
    v30.9.129 — curated picks (guideTagSource) rank first again until editor badges
@@ -613,6 +615,9 @@
       late:{breakfast:30,bar:30,sweet:30,cafe:30,izakaya:30,snack:12,porridge:12,drink:12}
     };
     const nightFit=kind=>{
+      // v30.9.207: 火鍋 is a long sit-down meal; from 20:00 it drops further
+      // than other meals: 12 at 20:00, 0 at 21:30, -12 at 23:00 (still shown).
+      if(kind==='hotpot'&&evening>0)return Math.round(12-24*evening);
       if(MEALS.includes(kind))return Math.round(30*(1-evening));
       if(kind==='izakaya'||kind==='snack')return 30;
       if(kind==='bar')return evening>0?30:0;
@@ -702,29 +707,31 @@
       if(!pick)break; // Exhausted unique venues; no repeated cards or null item.
       take(pick);
     }
-    // v30.9.174: never three of the same kind on one page of three. When the band
-    // preference would do that, the third card trades places with the next
-    // differently-kinded shop further down the order.
-    const kindKey=item=>item.displayType||item.category||'';
-    // v30.9.194: a variety swap may only bring up a shop from the same opening
-    // tier whose score is close, never a weak one from far down the list.
+    // How many cards of one kind a page of three may hold.
+    // v30.9.174: two at most in every band (never three of the same kind).
+    // v30.9.192: 深夜 shows a spread of 宵夜 — one card per kind on each page;
+    // v30.9.206: except night cafés, bars, 熱炒 and 屋台料理, the few real
+    // choices of those hours, which may fill two cards (never three).
+    const LATE_PAIR_KINDS=['cafe','bar','izakaya','snack'];
+    // 深夜 counts shop kinds (熱炒 and 居酒屋 are one kind); other bands count
+    // the card label, as before.
+    const kindKey=state.time==='late'?kindOf:item=>item.displayType||item.category||'';
+    const pageLimit=item=>state.time==='late'&&!LATE_PAIR_KINDS.includes(kindOf(item))?1:2;
+    // v30.9.194: a variety swap prefers a shop from the same opening tier whose
+    // score is close (v30.9.206: falling back to the rest of that tier).
     const swappable=(slot,item)=>item.matchedGenreCount===slot.matchedGenreCount&&item.score>=slot.score-20;
-    for(let start=0;start+2<ordered.length;start+=3){
-      const k=kindKey(ordered[start]);
-      if(!k||kindKey(ordered[start+1])!==k||kindKey(ordered[start+2])!==k)continue;
-      const swap=ordered.findIndex((item,i)=>i>start+2&&kindKey(item)!==k&&swappable(ordered[start+2],item));
-      if(swap>0)[ordered[start+2],ordered[swap]]=[ordered[swap],ordered[start+2]];
-    }
-    // v30.9.192: 深夜 shows a spread of 宵夜 — one card per kind on each page of
-    // three (e.g. one 熱炒, not two), while enough different kinds remain later.
-    if(state.time==='late'){
-      for(let start=0;start+2<ordered.length;start+=3){
-        for(let i=start+1;i<start+3;i++){
-          const onPage=new Set(ordered.slice(start,i).map(kindKey));
-          if(!onPage.has(kindKey(ordered[i])))continue;
-          const swap=ordered.findIndex((item,j)=>j>=start+3&&!onPage.has(kindKey(item))&&swappable(ordered[i],item));
-          if(swap>0)[ordered[i],ordered[swap]]=[ordered[swap],ordered[i]];
-        }
+    for(let start=0;start+1<ordered.length;start+=3){
+      for(let i=start+1;i<Math.min(start+3,ordered.length);i++){
+        const earlier=ordered.slice(start,i).map(kindKey);
+        const over=item=>earlier.filter(k=>k===kindKey(item)).length>=pageLimit(item);
+        if(!over(ordered[i]))continue;
+        // The card trades places with the next shop further down that fits:
+        // first one with a close score; if there is none, any shop of the same
+        // opening tier, so the limit holds (it is never a closed shop).
+        const fits=(item,j)=>j>=start+3&&!over(item)&&item.matchedGenreCount===ordered[i].matchedGenreCount;
+        let swap=ordered.findIndex((item,j)=>fits(item,j)&&swappable(ordered[i],item));
+        if(swap<0)swap=ordered.findIndex(fits);
+        if(swap>0)[ordered[i],ordered[swap]]=[ordered[swap],ordered[i]];
       }
     }
     // Distance order is strictly ascending straight-line metres. Reuse the
