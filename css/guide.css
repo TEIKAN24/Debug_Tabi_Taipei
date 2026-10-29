@@ -526,10 +526,12 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   line-height:1.45;
   overflow-wrap:anywhere;
 }
-.site-content .venue-directory-section .venue-tag--featured {
+.site-content .venue-directory-section .venue-tag--featured,
+.site-content .venue-directory-section .venue-tag--tone-gold {
   border-color:#66533B;
 }
-.site-content .venue-directory-section .venue-tag--caution {
+.site-content .venue-directory-section .venue-tag--caution,
+.site-content .venue-directory-section .venue-tag--tone-red {
   background:#3F3032;
   border-color:#725252;
   color:#F4A89B;
@@ -1098,7 +1100,9 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 /* Ordinary directory rows and tags. */
 .site-content .venue-directory-section .venue-tag,
 .site-content .venue-directory-section .venue-tag--featured,
-.site-content .venue-directory-section .venue-tag--caution {
+.site-content .venue-directory-section .venue-tag--caution,
+.site-content .venue-directory-section .venue-tag--tone-gold,
+.site-content .venue-directory-section .venue-tag--tone-red {
  background-image:none!important;
  border:1px solid var(--outline-white)!important;box-shadow:none!important;
 
@@ -1181,7 +1185,9 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 }
 .site-content .venue-directory-section .venue-tag,
 .site-content .venue-directory-section .venue-tag--featured,
-.site-content .venue-directory-section .venue-tag--caution{
+.site-content .venue-directory-section .venue-tag--caution,
+.site-content .venue-directory-section .venue-tag--tone-gold,
+.site-content .venue-directory-section .venue-tag--tone-red{
  background:transparent!important;border-color:#444444!important;color:#C8C8C8!important;
 }
 /* Main typography: neutral white, gray supporting text. */
@@ -1267,7 +1273,8 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 /* =================== CSS 20: threads-nav-gradient-gold-tags-and-selected-label-fix-20261015 =================== */
 
 /* Keep the ordinary chips neutral; restore only the editorial recommendation gold. */
-.site-content .venue-directory-section .venue-tag--featured {
+.site-content .venue-directory-section .venue-tag--featured,
+.site-content .venue-directory-section .venue-tag--tone-gold {
   color:#EBC489!important;
   background:#423A2D!important;
   background-image:none!important;
@@ -1379,13 +1386,15 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
 .site-content .venue-directory-section details.night-market-directory .venue-row-index {color:#999!important;}
 .site-content .venue-directory-section details.night-market-directory .venue-row-body {gap:6px;}
 /* Restore warning labels (e.g. 八角なし or 臭い) to muted red, not neutral grey. */
-#guide .venue-directory-section .venue-tag--caution {
+#guide .venue-directory-section .venue-tag--caution,
+#guide .venue-directory-section .venue-tag--tone-red {
   color:#F4A89B!important;
   background:#3F3032!important;
   border:1px solid #725252!important;
 }
 /* Gold featured labels keep their previous appearance, including 孤独のグルメ. */
-#guide .venue-directory-section .venue-tag--featured {
+#guide .venue-directory-section .venue-tag--featured,
+#guide .venue-directory-section .venue-tag--tone-gold {
   color:#EBC489!important;
   background:#423A2D!important;
   border:1px solid #66533B!important;
@@ -3474,11 +3483,14 @@ html[data-theme="light"] #guide .venue-secondary-links a{
  background:#EAF3FB!important;color:#195E91!important;border-color:#B7D2E8!important;
 }
 html[data-theme="light"] #guide .site-content .venue-tag--featured,
-html[data-theme="light"] #guide .venue-directory-section .venue-tag--featured{
+html[data-theme="light"] #guide .venue-directory-section .venue-tag--featured,
+html[data-theme="light"] #guide .site-content .venue-tag--tone-gold,
+html[data-theme="light"] #guide .venue-directory-section .venue-tag--tone-gold{
  color:#815A1B!important;background:#F8EEDB!important;border-color:#DDC79E!important;
 }
-html[data-theme="light"] #guide .venue-directory-section .venue-tag--caution{color:#A94338!important;border-color:#DBB7B3!important;background:#FFF1EF!important;}
-html[data-theme="light"] #guide .venue-directory-section .venue-tag:not(.venue-tag--featured):not(.venue-tag--caution){color:#52636C!important;border-color:#CCD6DA!important;}
+html[data-theme="light"] #guide .venue-directory-section .venue-tag--caution,
+html[data-theme="light"] #guide .venue-directory-section .venue-tag--tone-red{color:#A94338!important;border-color:#DBB7B3!important;background:#FFF1EF!important;}
+html[data-theme="light"] #guide .venue-directory-section .venue-tag:not(.venue-tag--featured):not(.venue-tag--caution):not(.venue-tag--tone-gold):not(.venue-tag--tone-red){color:#52636C!important;border-color:#CCD6DA!important;}
 /* Food dictionary drawer follows theme; original green selection remains green. */
 html[data-theme="light"] #guide #food-search.food-drawer{
  background:#F7F8F7!important;color:#25343A!important;border-left-color:#CBD5D9!important;
@@ -5368,3 +5380,14 @@ html[data-theme="light"]{--drawer-chrome-edge:#F7F8F7;}
    at exactly 16ic the 16th character could still wrap onto a line of its own
    (e.g. 「マンゴー／や／スイカ」). One extra character of room prevents that. */
 #guide #food-explorer .food-desc-full{max-width:min(17ic,100%);}
+
+/* v30.9.211 — 注目の街歩きエリア colours come from data/areas.js: tone (both
+   themes) and an optional toneLight used only in the light theme. */
+#guide .walk-area-card,
+#guide details.area-directory-section{--walk-tone:var(--walk-tone-dark,161,161,161);}
+html[data-theme="light"] #guide .walk-area-card,
+html[data-theme="light"] #guide details.area-directory-section{--walk-tone:var(--walk-tone-light,var(--walk-tone-dark,161,161,161));}
+
+/* v30.9.212 — tag colours chosen in the editor (venue-tag--tone-gold / -red)
+   are styled by the same rules as the automatic gold / red tags above, so a
+   chosen colour shows even before the page script adds the matching class. */

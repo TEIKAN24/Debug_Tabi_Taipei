@@ -1827,7 +1827,7 @@ html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #re
   color:#A3A3A3!important; /* secondary information */
 }
 html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card-main .recommend-card-type{
-  color:#767676!important;
+  color:#6B6B6B!important; /* v30.9.211: 5.3:1 on the white card (#767676 was 4.27:1) */
 }
 #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card .recommend-venue{
   padding-top:max(0px,var(--rc-venue-y,0px))!important;

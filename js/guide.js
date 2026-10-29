@@ -15,7 +15,8 @@
   window.addEventListener("resize", () => { if (!frame) frame = requestAnimationFrame(run); }, {passive: true});
   window.tabiOnResize = fn => { callbacks.add(fn); return () => callbacks.delete(fn); };
 })();
-/* v30.9.210 — おすすめ cards aligned and badges ordered (see recommend.js); 旅行前に知っておきたいこと shortened, コンセント・電圧 added; edge light 1.5× slower.
+/* v30.9.211 — 注目の街歩きエリア from data/areas.js (built by js/areas.js, edited in editor/); editor tag colours now take effect on venue rows.
+   v30.9.210 — おすすめ cards aligned and badges ordered (see recommend.js); 旅行前に知っておきたいこと shortened, コンセント・電圧 added; edge light 1.5× slower.
    v30.9.209 — code health pass: search text prepared once; blur only after the dictionary settles; one resize dispatcher; dead CSS removed; strict mode in the search module.
    v30.9.208 — dictionary drawer opens smoothly (rows render on demand, no page-wide restyle); 名物 tiles open and scroll to their dish; 脆皮魷魚 → 炸魷魚. */
 /* v30.9.205 — food dictionary keyboard: the floating window keeps its size and place; iOS no longer pans the page (no jitter, no tap offset).
@@ -431,16 +432,21 @@
         for (const value of tags) {
           const tag = document.createElement('span');
           tag.className = 'venue-tag';
-          const caution = CAUTION.test(value);
-          const featured = HIGHLIGHT.test(value) || (firstLink.textContent.trim()==='甜満' && value==='人気急上昇中');
+          let caution = CAUTION.test(value);
+          let featured = !caution && (HIGHLIGHT.test(value) || (firstLink.textContent.trim()==='甜満' && value==='人気急上昇中'));
+          if (isJsonDirectory) {
+            // v30.9.211: a colour chosen in the editor (gold / red / grey) now
+            // replaces the automatic one. Before, it only added a class that
+            // no stylesheet used, so the choice never showed on the site.
+            const override = Object.prototype.hasOwnProperty.call(tagColors, value) ? tagColors[value] : 'auto';
+            if (['neutral', 'gold', 'red'].includes(override)) {
+              caution = override === 'red';
+              featured = override === 'gold';
+            }
+            tag.classList.add('venue-tag--tone-' + (caution ? 'red' : featured ? 'gold' : 'neutral'));
+          }
           if (caution) tag.classList.add('venue-tag--caution');
           else if (featured) tag.classList.add('venue-tag--featured');
-          if (isJsonDirectory) {
-            const override = Object.prototype.hasOwnProperty.call(tagColors, value) ? tagColors[value] : 'auto';
-            const tone = ['neutral', 'gold', 'red'].includes(override) ? override :
-              (caution ? 'red' : (featured ? 'gold' : 'neutral'));
-            tag.classList.add('venue-tag--tone-' + tone);
-          }
           tag.textContent = value;
           tagList.append(tag);
         }
@@ -3815,22 +3821,20 @@ update();
   if(!root||!original||!strip||!source)return;
   const tabs=[...strip.querySelectorAll(':scope > button.tab-pill')];
   const panels=[...source.querySelectorAll(':scope > .area-panel')];
-  if(tabs.length!==8||panels.length!==tabs.length)return;
+  if(!tabs.length||panels.length!==tabs.length)return;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
-  // Index = source tab order. name:null keeps the source tab label.
-  const areas=[
-    {name:null,sub:'古着・雑貨・カフェ',tone:'206,122,122'},        // 赤峰街・中山駅
-    {name:null,sub:'レトロ・台湾雑貨',tone:'240,161,116'},          // 迪化街・大稻埕
-    {name:null,sub:'グルメ・雑貨',tone:'246,207,70'},               // 永康街・東門駅
-    {name:'信義区・台北101',sub:'デパート・夜景',tone:'164,200,221'}, // 信義区
-    {name:null,sub:'地下街・おみやげ',tone:'32,84,211'},            // 台北駅
-    {name:null,sub:'ストリート・若者文化',tone:'214,220,208'},       // 西門町
-    {name:null,sub:'学生街・ローカル',tone:'98,137,54'},            // 公館
-    {name:null,sub:'ファッション・カフェ',tone:'222,110,75'}         // 東区
-  ];
-  // Display order (two columns, row by row).
-  const order=[0,2,5,3,1,4,6,7];
+  // v30.9.211: names, subtitles and colours come from data/areas.js (rendered
+  // by js/areas.js onto each source tab); the data lists areas in display order.
+  const areas=tabs.map(tab=>({name:null,sub:tab.dataset.walkSub||'',
+    tone:tab.dataset.walkTone||'161,161,161',toneLight:tab.dataset.walkToneLight||''}));
+  const order=tabs.map((_,i)=>i);
   const label=i=>areas[i].name||tabs[i].textContent.trim();
+  // Each area colour, with an optional lighter-theme variant (see the CSS).
+  const paintTone=(el,i)=>{
+    el.style.setProperty('--walk-tone-dark',areas[i].tone);
+    if(areas[i].toneLight)el.style.setProperty('--walk-tone-light',areas[i].toneLight);
+    else el.style.removeProperty('--walk-tone-light');
+  };
   const grid=document.createElement('div');grid.className='walk-area-grid';
   grid.setAttribute('role','group');grid.setAttribute('aria-label','街歩きエリアを選択');
   const detail=document.createElement('section');
@@ -3863,7 +3867,7 @@ update();
     detail.hidden=true;host.replaceChildren();
     grid.hidden=false;
     root.classList.remove('walk-viewing-detail');
-    root.style.removeProperty('--walk-tone');
+    root.style.removeProperty('--walk-tone-dark');root.style.removeProperty('--walk-tone-light');
     buttons.forEach(button=>button.setAttribute('aria-expanded','false'));
     if(restoreFocus&&focus?.isConnected)focus.focus({preventScroll:true});
     focusOrigin=null;
@@ -3875,7 +3879,7 @@ update();
     active=index;
     title.textContent=label(index);
     desc.textContent=panels[index].querySelector('.area-intro-description')?.textContent.trim()||'';
-    root.style.setProperty('--walk-tone',areas[index].tone);
+    paintTone(root,index);
     const clone=panels[index].cloneNode(true);
     clone.hidden=false;clone.removeAttribute('id');clone.removeAttribute('aria-labelledby');
     clone.removeAttribute('style');
@@ -4016,7 +4020,7 @@ update();
   };
   order.forEach(i=>{
     const button=document.createElement('button');button.type='button';button.className='walk-area-card';
-    button.style.setProperty('--walk-tone',areas[i].tone);
+    paintTone(button,i);
     button.setAttribute('aria-controls',detail.id);button.setAttribute('aria-expanded','false');
     button.setAttribute('aria-label',label(i)+' の詳細を表示');
     const name=document.createElement('span');name.className='walk-area-card-name';name.textContent=label(i);
