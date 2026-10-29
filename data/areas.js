@@ -62,7 +62,11 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "感性をくすぐる",
+                  "text": "アートブック",
+                  "tone": "auto"
+                },
+                {
+                  "text": "独立出版",
                   "tone": "auto"
                 }
               ],
@@ -83,7 +87,7 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "器好きに刺さる",
+                  "text": "暮らしの器",
                   "tone": "auto"
                 }
               ],
@@ -109,11 +113,11 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "写真・カメラ関連",
+                  "text": "フィルム写真",
                   "tone": "auto"
                 },
                 {
-                  "text": "フィルム好き",
+                  "text": "カメラ好き",
                   "tone": "auto"
                 }
               ],
@@ -227,25 +231,9 @@ window.TABI_AREAS={
               "links": []
             },
             {
-              "id": "3f66bda0-4caa-803d-8db2-fa8e99043859",
-              "name": "New Classique",
-              "mapUrl": "https://maps.app.goo.gl/pLDZLK7ef2Nvg5Wy5",
-              "className": "venue-list-item",
-              "tags": [],
-              "links": []
-            },
-            {
               "id": "3f66bda0-4caa-80d7-9cee-ffb9348f49b5",
               "name": "Mindful Market",
               "mapUrl": "https://maps.app.goo.gl/YmYDNawFaw2qq1Hk8",
-              "className": "venue-list-item",
-              "tags": [],
-              "links": []
-            },
-            {
-              "id": "3f66bda0-4caa-80b8-b931-eca63f23e502",
-              "name": "UR LIVING",
-              "mapUrl": "https://maps.app.goo.gl/yPqobwcD1mpTAXUD6",
               "className": "venue-list-item",
               "tags": [],
               "links": []
@@ -256,27 +244,6 @@ window.TABI_AREAS={
               "mapUrl": "https://maps.app.goo.gl/6zWXMGAvKUTr6N6M7",
               "className": "venue-list-item",
               "tags": [],
-              "links": []
-            },
-            {
-              "id": "3f66bda0-4caa-807b-bba9-f7290c889bfc",
-              "name": "rather 誠品南西店",
-              "mapUrl": "https://maps.app.goo.gl/YLvuUZRRUgfQSx7F6",
-              "className": "venue-list-item",
-              "tags": [],
-              "links": []
-            },
-            {
-              "id": "3f66bda0-4caa-804e-b551-f448a7cf814b",
-              "name": "A PRANK DOLLY",
-              "mapUrl": "https://www.aprankdolly.com/",
-              "className": "",
-              "tags": [
-                {
-                  "text": "古着",
-                  "tone": "auto"
-                }
-              ],
               "links": []
             },
             {
@@ -462,6 +429,46 @@ window.TABI_AREAS={
               ]
             }
           ]
+        },
+        {
+          "id": "areas-mvtmwpbx-i0zwb",
+          "title": "スポット",
+          "items": [
+            {
+              "id": "areas-mvtmx3dx-xnztb",
+              "name": "光點台北",
+              "mapUrl": "https://www.google.com/maps/place/%E5%85%89%E9%BB%9E%E5%8F%B0%E5%8C%97%EF%BC%88%E5%8F%B0%E5%8C%97%E4%B9%8B%E5%AE%B6%EF%BC%89/@25.053279,121.519586,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a9692373a641:0xbd0e5da84113d393!8m2!3d25.053279!4d121.5221609!16s%2Fm%2F09gnmz7?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "旧アメリカ大使公邸",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "映画館",
+                  "tone": "neutral"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtmy9y8-8qmqz",
+              "name": "臺北當代藝術館",
+              "mapUrl": "https://www.google.com/maps/place/%E8%87%BA%E5%8C%97%E7%95%B6%E4%BB%A3%E8%97%9D%E8%A1%93%E9%A4%A8/@25.0505691,121.5181984,17.81z/data=!4m6!3m5!1s0x3442a96c49f1e473:0xb4f74ae9ed21c1fb!8m2!3d25.0508047!4d121.5189766!16s%2Fm%2F0dd8fyr?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "現代アート",
+                  "tone": "auto"
+                },
+                {
+                  "text": "旧校舎",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            }
+          ]
         }
       ]
     },
@@ -484,8 +491,16 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "人気",
+                  "text": "台湾デザイン雑貨",
                   "tone": "auto"
+                },
+                {
+                  "text": "おみやげ",
+                  "tone": "auto"
+                },
+                {
+                  "text": "おすすめ",
+                  "tone": "gold"
                 }
               ],
               "links": []
@@ -512,10 +527,6 @@ window.TABI_AREAS={
               "mapUrl": "https://maps.app.goo.gl/HkZbazdYFDbuKmMc6",
               "className": "venue-list-item",
               "tags": [
-                {
-                  "text": "香水",
-                  "tone": "auto"
-                },
                 {
                   "text": "台湾茶香水",
                   "tone": "auto"
@@ -558,7 +569,12 @@ window.TABI_AREAS={
               "name": "白水豆花",
               "mapUrl": "https://www.google.com/maps/search/?api=1&query=%E7%99%BD%E6%B0%B4%E8%B1%86%E8%8A%B1%20%E5%8F%B0%E5%8C%97%E6%B0%B8%E5%BA%B7%E6%97%97%E8%89%A6%E5%BA%97%20%E8%87%BA%E5%8C%97%E5%B8%82%E5%A4%A7%E5%AE%89%E5%8D%80%E6%B0%B8%E5%BA%B7%E8%A1%9734%E8%99%9F",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "豆花専門店",
+                  "tone": "auto"
+                }
+              ],
               "links": []
             },
             {
@@ -603,6 +619,19 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [],
               "links": []
+            },
+            {
+              "id": "areas-mvtn0bzi-r5zp5",
+              "name": "榕錦時光生活園區",
+              "mapUrl": "https://www.google.com/maps/place/%E6%A6%95%E9%8C%A6%E6%99%82%E5%85%89%E7%94%9F%E6%B4%BB%E5%9C%92%E5%8D%80/@25.0303987,121.5234427,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a979075c710b:0xf2c6ce7963e83e59!8m2!3d25.0303939!4d121.526023!16s%2Fg%2F11swmcj5k9?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "日本古民家",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
             }
           ]
         },
@@ -656,8 +685,8 @@ window.TABI_AREAS={
       "title": "西門町",
       "subtitle": "ストリート・若者文化",
       "description": "台湾の若者文化とトレンドが集まる街。",
-      "tone": "#D6DCD0",
-      "toneLight": "#829570",
+      "tone": "#E285E0",
+      "toneLight": "#CC9ECD",
       "categories": [
         {
           "id": "3f66bda0-4caa-80c0-b7ca-e397f58a4d7e",
@@ -701,6 +730,10 @@ window.TABI_AREAS={
               "tags": [
                 {
                   "text": "水出し珈琲",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "老舗喫茶",
                   "tone": "auto"
                 }
               ],
@@ -720,6 +753,14 @@ window.TABI_AREAS={
               "tags": [
                 {
                   "text": "1908年築",
+                  "tone": "auto"
+                },
+                {
+                  "text": "赤レンガ建築",
+                  "tone": "auto"
+                },
+                {
+                  "text": "デザイン雑貨",
                   "tone": "auto"
                 }
               ],
@@ -751,8 +792,43 @@ window.TABI_AREAS={
               "name": "萬年商業大樓",
               "mapUrl": "https://maps.app.goo.gl/7dbYvXtLWGtKzhyC9",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "ホビー・模型",
+                  "tone": "auto"
+                },
+                {
+                  "text": "サブカル",
+                  "tone": "auto"
+                }
+              ],
               "links": []
+            },
+            {
+              "id": "areas-mvtn2wky-fm9pu",
+              "name": "台北天后宮",
+              "mapUrl": "https://www.google.com/maps/place/%E8%87%BA%E5%8C%97%E5%A4%A9%E5%90%8E%E5%AE%AE/@25.0428001,121.5037464,17z/data=!3m2!4b1!5s0x3442a909086c35c9:0x974c2e252a8438e4!4m6!3m5!1s0x3442a9090877246d:0xbcca9218828d6468!8m2!3d25.0427953!4d121.5063267!16s%2Fg%2F122s41c2?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "媽祖・弘法大師を祀る",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtn3yrs-g57jf",
+              "name": "臺北市中山堂",
+              "mapUrl": "https://www.google.com/maps/place/%E8%87%BA%E5%8C%97%E5%B8%82%E4%B8%AD%E5%B1%B1%E5%A0%82/@25.0431948,121.5070986,17z/data=!3m2!4b1!5s0x3442a9742c605c1b:0x33d138146c994885!4m6!3m5!1s0x3442a90ba2befa61:0xa1bd95bfff71ee4f!8m2!3d25.04319!4d121.5096789!16s%2Fg%2F11c1q7wl4m?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "歴史建築",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
             }
           ]
         },
@@ -1099,7 +1175,11 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "台北101撮影",
+                  "text": "台北101撮影スポット",
+                  "tone": "auto"
+                },
+                {
+                  "text": "旧軍人村",
                   "tone": "auto"
                 }
               ],
@@ -1131,8 +1211,51 @@ window.TABI_AREAS={
               "name": "富邦美術館",
               "mapUrl": "https://maps.app.goo.gl/uSMx13JuMamzWqge6",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "現代アート",
+                  "tone": "auto"
+                },
+                {
+                  "text": "建築",
+                  "tone": "auto"
+                }
+              ],
               "links": []
+            },
+            {
+              "id": "areas-mvtn5arx-t943q",
+              "name": "象山",
+              "mapUrl": "https://www.google.com/maps/place/%E8%B1%A1%E5%B1%B1%E6%AD%A5%E9%81%93/@25.0271741,121.5723546,17.81z/data=!4m6!3m5!1s0x3442ab1950005a23:0x907b0e39bfb279f6!8m2!3d25.027375!4d121.5709619!16s%2Fg%2F11rtw6p8x0?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "台北101を一望",
+                  "tone": "neutral"
+                },
+                {
+                  "text": "階段多め",
+                  "tone": "red"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtn7iqu-l3iak",
+              "name": "幾米月亮公車",
+              "mapUrl": "https://www.google.com/maps/place/%E5%B9%BE%E7%B1%B3%E6%9C%88%E4%BA%AE%E5%85%AC%E8%BB%8A/@25.0327587,121.5657351,17z/data=!4m15!1m8!3m7!1s0x3442abb14ad7ccd7:0x7ea15e61c0dd4ede!2z5bm-57Gz5pyI5Lqu5YWs6LuK!8m2!3d25.0327587!4d121.5657351!10e5!16s%2Fg%2F11b6gdhxww!3m5!1s0x3442abb14ad7ccd7:0x7ea15e61c0dd4ede!8m2!3d25.0327587!4d121.5657351!16s%2Fg%2F11b6gdhxww?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "絵本の世界",
+                  "tone": "auto"
+                },
+                {
+                  "text": "パブリックアート",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
             }
           ]
         },
@@ -1183,7 +1306,7 @@ window.TABI_AREAS={
             {
               "id": "3f66bda0-4caa-806c-8709-faad6c5768b3",
               "name": "台灣物產",
-              "mapUrl": "https://maps.app.goo.gl/3GnUTbtGYTMKKiVp6",
+              "mapUrl": "https://www.google.com/maps/place/%E5%8F%B0%E7%81%A3%E7%89%A9%E7%94%A2/@25.0546434,121.5073634,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a9138c8f9117:0xccbeeb0ab9df5375!8m2!3d25.0546386!4d121.5099437!16s%2Fg%2F11bzyncbzc?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
               "className": "venue-list-item",
               "tags": [],
               "links": []
@@ -1225,7 +1348,16 @@ window.TABI_AREAS={
               "name": "高建桶店",
               "mapUrl": "https://maps.app.goo.gl/dYjQ2GjQzPeniR9Z8",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "竹細工",
+                  "tone": "auto"
+                },
+                {
+                  "text": "生活道具",
+                  "tone": "auto"
+                }
+              ],
               "links": []
             },
             {
@@ -1312,6 +1444,10 @@ window.TABI_AREAS={
                 {
                   "text": "レトロ",
                   "tone": "auto"
+                },
+                {
+                  "text": "台湾茶",
+                  "tone": "auto"
                 }
               ],
               "links": []
@@ -1327,7 +1463,16 @@ window.TABI_AREAS={
               "name": "永樂市場",
               "mapUrl": "https://maps.app.goo.gl/MSjx1S2ewooh5L6p6",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "布市場",
+                  "tone": "auto"
+                },
+                {
+                  "text": "手芸好き",
+                  "tone": "auto"
+                }
+              ],
               "links": []
             },
             {
@@ -1337,6 +1482,40 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [],
               "links": []
+            },
+            {
+              "id": "areas-mvtn8gi1-pzjw5",
+              "name": "台北霞海城隍廟",
+              "mapUrl": "https://www.google.com/maps/place/%E8%87%BA%E5%8C%97%E9%9C%9E%E6%B5%B7%E5%9F%8E%E9%9A%8D%E5%BB%9F/@25.0555989,121.5076366,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a9147253c4e7:0x696d3ec54fe173d2!8m2!3d25.0555941!4d121.5102169!16s%2Fg%2F11x7vx8qn?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "縁結び",
+                  "tone": "auto"
+                },
+                {
+                  "text": "月下老人",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtn95w7-sjyr9",
+              "name": "大稻埕慈聖宮",
+              "mapUrl": "https://www.google.com/maps/place/%E5%A4%A7%E7%A8%BB%E5%9F%95%E6%85%88%E8%81%96%E5%AE%AE%E5%A4%A9%E4%B8%8A%E8%81%96%E6%AF%8D/@25.0603085,121.5094251,17z/data=!4m6!3m5!1s0x3442a93fd751c68d:0xfaa31035ff1a66fb!8m2!3d25.0602353!4d121.5121187!16s%2Fg%2F155sz0sh?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "媽祖廟",
+                  "tone": "auto"
+                },
+                {
+                  "text": "地元屋台街",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
             }
           ]
         },
@@ -1419,7 +1598,16 @@ window.TABI_AREAS={
               "name": "京站時尚広場",
               "mapUrl": "https://maps.app.goo.gl/uvm7onCF7Awvobms5",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "駅直結",
+                  "tone": "auto"
+                },
+                {
+                  "text": "ショッピング",
+                  "tone": "auto"
+                }
+              ],
               "links": []
             },
             {
@@ -1427,7 +1615,12 @@ window.TABI_AREAS={
               "name": "台北地下街（Y区）",
               "mapUrl": "https://maps.app.goo.gl/HxhqEk2g7o4m8Lb5A",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "アニメ・ゲーム",
+                  "tone": "auto"
+                }
+              ],
               "links": []
             },
             {
@@ -1503,8 +1696,66 @@ window.TABI_AREAS={
               "name": "劉山東牛肉麺",
               "mapUrl": "https://maps.app.goo.gl/ZFB7tPostr5Wr5bt7",
               "className": "venue-list-item",
-              "tags": [],
+              "tags": [
+                {
+                  "text": "老舗",
+                  "tone": "auto"
+                }
+              ],
               "links": []
+            }
+          ]
+        },
+        {
+          "id": "areas-mvtnagog-0nde6",
+          "title": "スポット",
+          "items": [
+            {
+              "id": "areas-mvtnaoxm-bnj6a",
+              "name": "北門",
+              "mapUrl": "https://www.google.com/maps/place/%E8%87%BA%E5%8C%97%E5%BA%9C%E5%9F%8E+%E5%8C%97%E9%96%80%EF%BC%88%E6%89%BF%E6%81%A9%E9%96%80%EF%BC%89/@25.0479483,121.5096814,18.45z/data=!4m6!3m5!1s0x3442a90da76baf3d:0x1c9e56bf8443f95f!8m2!3d25.047725!4d121.51123!16s%2Fg%2F155qw8px?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "清代の城門",
+                  "tone": "auto"
+                },
+                {
+                  "text": "歴史建築",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtnbpos-9qtna",
+              "name": "國立臺灣博物館 鐵道部",
+              "mapUrl": "https://www.google.com/maps/place/%E5%9C%8B%E7%AB%8B%E8%87%BA%E7%81%A3%E5%8D%9A%E7%89%A9%E9%A4%A8%E9%90%B5%E9%81%93%E9%83%A8%E5%9C%92%E5%8D%80/@25.0487737,121.5102615,18z/data=!3m1!4b1!4m6!3m5!1s0x3442a90d9b7d5965:0xcd93d5794fea5e36!8m2!3d25.0487719!4d121.5112073!16s%2Fg%2F1tg58t41?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "旧鉄道庁舎",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtnchud-5jorj",
+              "name": "臺北記憶倉庫",
+              "mapUrl": "https://www.google.com/maps/place/%E8%87%BA%E5%8C%97%E8%A8%98%E6%86%B6%E5%80%89%E5%BA%AB/@25.0476986,121.5111382,18z/data=!3m1!4b1!4m6!3m5!1s0x3442a9862c7ba801:0xad75309a1c2ed0d8!8m2!3d25.0476962!4d121.5124283!16s%2Fg%2F11fwg84xhy?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "旧三井倉庫",
+                  "tone": "auto"
+                },
+                {
+                  "text": "赤レンガ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
             }
           ]
         }
@@ -1529,7 +1780,7 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "自主出版",
+                  "text": "インディー出版",
                   "tone": "auto"
                 },
                 {
@@ -1635,7 +1886,7 @@ window.TABI_AREAS={
                   "tone": "auto"
                 },
                 {
-                  "text": "旧帝国大学",
+                  "text": "緑豊かな構内",
                   "tone": "auto"
                 }
               ],
@@ -1661,7 +1912,7 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "斜面の集落",
+                  "text": "坂道の集落",
                   "tone": "auto"
                 },
                 {
@@ -1686,6 +1937,23 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [],
               "links": []
+            },
+            {
+              "id": "areas-mvtne8ym-cw3gp",
+              "name": "煥民新村",
+              "mapUrl": "https://www.google.com/maps/place/%E8%9F%BE%E8%9C%8D%E5%B1%B1%E8%81%9A%E8%90%BD%E6%96%87%E5%8C%96%E4%B8%AD%E5%BF%83+%E7%85%A5%E6%B0%91%E6%96%B0%E6%9D%91/@25.0105647,121.5321984,16z/data=!4m6!3m5!1s0x3442aa1fa3149677:0x8542b77d5cb24c7f!8m2!3d25.0094299!4d121.539334!16s%2Fg%2F11c5_h32gq?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "空軍の旧官舎村",
+                  "tone": "auto"
+                },
+                {
+                  "text": "坂道の集落",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
             }
           ]
         },
@@ -1777,6 +2045,14 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [],
               "links": []
+            },
+            {
+              "id": "areas-mvtoaefc-ncxce",
+              "name": "明曜百貨",
+              "mapUrl": "https://www.google.com/maps/place/%E6%98%8E%E6%9B%9C%E7%99%BE%E8%B2%A8%E5%85%AC%E5%8F%B8/@25.0410947,121.5495786,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abc5a2d1f3fb:0xd9024adfb242723c!8m2!3d25.0410899!4d121.5521589!16s%2Fg%2F1tgkd_0z?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [],
+              "links": [],
+              "className": "venue-list-item"
             }
           ]
         },
@@ -1798,6 +2074,23 @@ window.TABI_AREAS={
               "mapUrl": "https://maps.app.goo.gl/fqodDCWNMUfSCv2h7",
               "className": "venue-list-item",
               "tags": [],
+              "links": []
+            },
+            {
+              "id": "3f66bda0-4caa-80bf-8e04-eb2d90eeea7d",
+              "name": "Super19991232",
+              "mapUrl": "https://www.google.com/maps/place/Super19991232/@25.0431605,121.5513767,18z/data=!3m1!4b1!4m6!3m5!1s0x3442abc445e3411b:0xb1ab316405152cd6!8m2!3d25.0431588!4d121.5523022!16s%2Fg%2F12m8_fxjr?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "Y2Kファッション",
+                  "tone": "auto"
+                },
+                {
+                  "text": "レトロ",
+                  "tone": "auto"
+                }
+              ],
               "links": []
             },
             {
@@ -1844,14 +2137,6 @@ window.TABI_AREAS={
               "id": "3f66bda0-4caa-808f-b547-c26388a95c44",
               "name": "Fashion Jump",
               "mapUrl": "https://maps.app.goo.gl/qoZ7a4rYgr5rnYhP6",
-              "className": "venue-list-item",
-              "tags": [],
-              "links": []
-            },
-            {
-              "id": "3f66bda0-4caa-80bf-8e04-eb2d90eeea7d",
-              "name": "niko and ...",
-              "mapUrl": "https://maps.app.goo.gl/vjYkHufnLtWQEyFG9",
               "className": "venue-list-item",
               "tags": [],
               "links": []
@@ -1915,6 +2200,359 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [],
               "links": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "areas-mvtohz8c-1t82d",
+      "title": "民生社區・富錦街",
+      "subtitle": "街歩き・カフェ・雑貨",
+      "description": "木漏れ日が心地よい、台北のおしゃれな住宅街。",
+      "tone": "#D6DCD0",
+      "toneLight": "#829470",
+      "categories": [
+        {
+          "id": "areas-mvtoq739-c95a5",
+          "title": "雑貨",
+          "items": [
+            {
+              "id": "areas-mvtoroxf-ya7vt",
+              "name": "FUJIN TREE 355",
+              "mapUrl": "https://www.google.com/maps/place/%E5%AF%8C%E9%8C%A6%E6%A8%B9355%E9%81%B8%E7%89%A9%E5%BA%97+FUJIN+TREE+355/@25.060684,121.5578764,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abf29177944b:0xb6e080f42e40f9c3!8m2!3d25.060684!4d121.5578764!16s%2Fg%2F1hf2rg3zj?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "セレクトショップ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtot3kf-owxy6",
+              "name": "funfuntown 放放堂",
+              "mapUrl": "https://www.google.com/maps/place/funfuntown+%E6%94%BE%E6%94%BE%E5%A0%82+%E5%8F%B0%E5%8C%97/@25.0607948,121.5553757,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abd23d3e73e5:0xc736a24155b0b661!8m2!3d25.06079!4d121.557956!16s%2Fg%2F119x13nfn?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "暮らしデザイン雑貨",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtp73ux-r2rdm",
+              "name": "琅茶本舗 Wolf Tea Shop",
+              "mapUrl": "https://www.google.com/maps/place/%E7%90%85%E8%8C%B6%E6%9C%AC%E8%88%97+Wolf+Tea+Shop+%2B+Gallery/@25.0592374,121.5499293,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ab5212e34dd1:0xeb80220f33758802!8m2!3d25.0592326!4d121.5525096!16s%2Fg%2F11g0j6884v?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "台湾茶と茶器",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtpbdxh-vm4v1",
+              "name": "小普羅旺斯",
+              "mapUrl": "https://www.google.com/maps/place/%E5%B0%8F%E6%99%AE%E7%BE%85%E6%97%BA%E6%96%AF/@25.0608961,121.5588361,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ab8d19c3f46d:0xe99cc0636cd45f5c!8m2!3d25.0608913!4d121.5614164!16s%2Fg%2F11h03dn4g?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "南仏風雑貨",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            }
+          ]
+        },
+        {
+          "id": "areas-mvtohz8c-dvkur",
+          "title": "カフェ・スイーツ",
+          "items": [
+            {
+              "id": "areas-mvtpco83-c9sti",
+              "name": "Woolloomooloo",
+              "mapUrl": "https://www.google.com/maps/place/Woolloomooloo/@25.0598355,121.5522979,20.9z/data=!4m6!3m5!1s0x3442abee3e94c0c3:0x5d80ef1f72d1a574!8m2!3d25.0596679!4d121.552209!16s%2Fg%2F1ts3hxmr?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "ブランチカフェ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtpdmly-eee1e",
+              "name": "French Twist Bakery",
+              "mapUrl": "https://www.google.com/maps/place/French+Twist+Bakery/@25.058823,121.5542203,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ab00073bc7a7:0x3f6f8c1d9dfe7df4!8m2!3d25.0588182!4d121.5568006!16s%2Fg%2F11zkhj2z9q?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "クロワッサン",
+                  "tone": "auto"
+                },
+                {
+                  "text": "人気のベーカリー",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtoub40-f54ol",
+              "name": "but.we love butter",
+              "mapUrl": "https://www.google.com/maps/place/but.we+love+butter/@25.0597232,121.5494544,17z/data=!4m14!1m7!3m6!1s0x3442abee47f7e1a3:0x4cbf177d90a57186!2sbut.we+love+butter!8m2!3d25.0597184!4d121.5520347!16s%2Fg%2F11g9syd1cl!3m5!1s0x3442abee47f7e1a3:0x4cbf177d90a57186!8m2!3d25.0597184!4d121.5520347!16s%2Fg%2F11g9syd1cl?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "バター菓子専門店",
+                  "tone": "auto"
+                },
+                {
+                  "text": "お土産",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtoqgkk-rkna2",
+              "name": "FUJIN TREE CAFE",
+              "mapUrl": "https://www.google.com/maps/place/%E5%AF%8C%E9%8C%A6%E6%A8%B9%E5%92%96%E5%95%A1+FUJIN+TREE+CAFE+%E5%AF%8C%E9%8C%A6%E5%BA%97/@25.060668,121.5551895,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abf2919352bf:0x36b1e9735eb8a873!8m2!3d25.0606632!4d121.5577698!16s%2Fg%2F1pzr027dr?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtpaj75-suwcj",
+              "name": "羅得奥商行 senet café",
+              "mapUrl": "https://www.google.com/maps/place/%E7%BE%85%E5%BE%97%E5%A5%A5%E5%95%86%E8%A1%8C+senet+caf%C3%A9/@25.0604832,121.5560579,17z/data=!4m15!1m8!3m7!1s0x3442abf2bc532491:0x7c59bf6dfb8b76bf!2z576F5b6X5aWl5ZWG6KGMIHNlbmV0IGNhZsOp!8m2!3d25.0604784!4d121.5586382!10e9!16s%2Fg%2F11d_8h34w6!3m5!1s0x3442abf2bc532491:0x7c59bf6dfb8b76bf!8m2!3d25.0604784!4d121.5586382!16s%2Fg%2F11d_8h34w6?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "カフェ＆ショップ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            }
+          ]
+        },
+        {
+          "id": "areas-mvtp8f35-ldyrr",
+          "title": "ファッション・アクセサリー",
+          "items": [
+            {
+              "id": "areas-mvtp8kjy-uwx0k",
+              "name": "tamen:",
+              "mapUrl": "https://www.google.com/maps/place/tamen:/@25.060692,121.5547793,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abd0d6dc979b:0x3c1c9cd10dbcca7!8m2!3d25.0606872!4d121.5573596!16s%2Fg%2F11vyy3fc6t?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "台湾発のデザイナー",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "areas-mvtomaeb-jm2lt",
+      "title": "淡水老街・重建街",
+      "subtitle": "歴史・夕日",
+      "description": "古い街並みと、美しい夕日が楽しめる港町。",
+      "tone": "#A8717C",
+      "toneLight": "",
+      "categories": [
+        {
+          "id": "areas-mvtomaeb-ispgy",
+          "title": "グルメ",
+          "items": [
+            {
+              "id": "areas-mvtoxe0h-folwa",
+              "name": "文化阿給",
+              "mapUrl": "https://www.google.com/maps/place/%E6%B7%A1%E6%B0%B4%E8%80%81%E8%A1%97%E6%96%87%E5%8C%96%E9%98%BF%E7%B5%A6/@25.1697462,121.4389056,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a550892352d3:0xd25f1bb39796cc4c!8m2!3d25.1697419!4d121.441221!16s%2Fg%2F1jmchk0r4?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "淡水名物",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtpl3e2-wo0yk",
+              "name": "許義魚酥",
+              "mapUrl": "https://www.google.com/maps/place/%E8%A8%B1%E7%BE%A9%E9%AD%9A%E9%85%A5(%E5%91%B3%E9%A6%99%E9%AD%9A%E4%B8%B8%E5%BA%97)/@25.1700086,121.4376974,17z/data=!3m2!4b1!5s0x3442a559843fb36b:0xb1d8e7a78b485596!4m6!3m5!1s0x3442a5598400fe97:0xcf674130be525788!8m2!3d25.1700038!4d121.4402777!16s%2Fg%2F1tdy250d?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "サクサク",
+                  "tone": "auto"
+                },
+                {
+                  "text": "魚スナック",
+                  "tone": "auto"
+                },
+                {
+                  "text": "淡水名物",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtpm1px-bpdcr",
+              "name": "阿婆鐵蛋",
+              "mapUrl": "https://www.google.com/maps/place/%E9%98%BF%E5%A9%86%E9%89%84%E8%9B%8B/@25.1704368,121.4365974,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a55a2e31e015:0xb010d9266da0cb71!8m2!3d25.170432!4d121.4391777!16s%2Fg%2F1v1tksk3?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "淡水名物",
+                  "tone": "auto"
+                },
+                {
+                  "text": "噛みごたえのある煮卵",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            }
+          ]
+        },
+        {
+          "id": "areas-mvtov9l3-81r0p",
+          "title": "スポット",
+          "items": [
+            {
+              "id": "areas-mvtovewj-i26o6",
+              "name": "淡水老街",
+              "mapUrl": "https://www.google.com/maps/place/%E6%B7%A1%E6%B0%B4%E8%80%81%E8%A1%97/@25.1691516,121.4409904,17.16z/data=!4m6!3m5!1s0x3442a55860ccfd91:0xa40c1b50cf3e21c5!8m2!3d25.168927!4d121.4440921!16s%2Fg%2F11bzs506yn?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtp1yx8-fp6g9",
+              "name": "淡水紅毛城",
+              "mapUrl": "https://www.google.com/maps/place/%E6%B7%A1%E6%B0%B4%E7%B4%85%E6%AF%9B%E5%9F%8E/@25.1736937,121.4336047,17z/data=!4m6!3m5!1s0x3442a54fc0269ea9:0xefd8a1452482dedd!8m2!3d25.1754267!4d121.4329366!16s%2Fg%2F11bc586fn6?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "1629 年建造",
+                  "tone": "auto"
+                },
+                {
+                  "text": "丘の上のスペイン要塞",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtoybez-trxg2",
+              "name": "福佑宮",
+              "mapUrl": "https://www.google.com/maps/place/%E7%A6%8F%E4%BD%91%E5%AE%AE/@25.1727351,121.4319028,15.87z/data=!4m6!3m5!1s0x3442a5598775bae1:0xfe930578a0776f7f!8m2!3d25.1702989!4d121.4399358!16s%2Fg%2F155ph0ch?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "淡水の歴史を見守る媽祖廟",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtoysyf-98uv2",
+              "name": "重建街",
+              "mapUrl": "https://www.google.com/maps/place/%E6%B7%A1%E6%B0%B4%E9%87%8D%E5%BB%BA%E8%A1%97/@25.1701468,121.439581,17.48z/data=!4m6!3m5!1s0x3442a557519613c1:0x6fff451e39072dec!8m2!3d25.1712493!4d121.4399104!16s%2Fg%2F1pzq553tr?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "石段と古い街並み",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtp0jqr-e5rq7",
+              "name": "長多田榮吉故居",
+              "mapUrl": "https://www.google.com/maps/place/%E6%B7%A1%E6%B0%B4%E8%A1%97%E9%95%B7%E5%A4%9A%E7%94%B0%E6%A6%AE%E5%90%89%E6%95%85%E5%B1%85/@25.1732373,121.434817,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a55a6e61dd69:0xcd57e5d233e4d66a!8m2!3d25.1732325!4d121.4373973!16s%2Fg%2F11bc6y_r3f?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "淡水河を望む日本邸宅",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtp3npj-lis7f",
+              "name": "前清英国領事官邸",
+              "mapUrl": "https://www.google.com/maps/place/%E5%89%8D%E6%B8%85%E8%8B%B1%E5%9B%BD%E9%A0%98%E4%BA%8B%E5%AE%98%E9%82%B8/@25.1750945,121.4335601,19z/data=!4m6!3m5!1s0x3442a54fdd4aedf7:0x2a7b885e597fdadc!8m2!3d25.175272!4d121.43351!16s%2Fg%2F1q629qv_m?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtpfwnn-kr0n1",
+              "name": "前清淡水関税務司官邸",
+              "mapUrl": "https://www.google.com/maps/place/%E5%89%8D%E6%B8%85%E6%B7%A1%E6%B0%B4%E9%96%A2%E7%A8%8E%E5%8B%99%E5%8F%B8%E5%AE%98%E9%82%B8/@25.1739687,121.4346389,17.56z/data=!4m6!3m5!1s0x3442a5506f0b8d23:0x1ba0193257e91ac7!8m2!3d25.174176!4d121.4362748!16s%2Fg%2F155prj_t?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "1860 年代",
+                  "tone": "auto"
+                },
+                {
+                  "text": "コロニアル様式",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtphu5n-r0yoe",
+              "name": "淡水教會",
+              "mapUrl": "https://www.google.com/maps/place/Tamsui+Presbyterian+Church/@25.171936,121.4385138,17z/data=!4m6!3m5!1s0x3442a55a6e17ddb7:0x7a11a0ddd8353a78!8m2!3d25.1719803!4d121.4385401!16s%2Fg%2F155pwn8m?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "赤レンガ",
+                  "tone": "auto"
+                },
+                {
+                  "text": "歴史ある教会",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "areas-mvtpje7v-nqa6o",
+              "name": "滬尾偕醫館",
+              "mapUrl": "https://www.google.com/maps/place/%E6%BB%AC%E5%B0%BE%E5%81%95%E5%8C%BB%E9%A4%A8/@25.1717988,121.4359688,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a55a6cec86f3:0x64adb1d27dd2448a!8m2!3d25.171794!4d121.4385491!16s%2Fg%2F155plhgh?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "西洋医学を伝える史跡",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
             }
           ]
         }
