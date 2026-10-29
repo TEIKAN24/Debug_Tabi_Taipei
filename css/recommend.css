@@ -1,27 +1,27 @@
 /* TAIPEI CITY GUIDE — v30.9.177 CSS maintenance.
    Original selector order, breakpoints, cascade and theme rules preserved. */
 /* v30.9.113 maintenance — removed rules for markup that no longer exists, overridden declarations and their orphaned notes; cascade order preserved. */
-.recommend-drawer-backdrop {position:fixed;inset:0;z-index:123;pointer-events:none;background:rgba(0,0,0,.62);opacity:0;transition:opacity .3s ease;}
+
 .recommend-drawer {position:fixed;z-index:124;top:0;bottom:0;left:0;width:min(100vw,480px);max-width:100vw;overflow:hidden;visibility:hidden;transform:translate3d(var(--recommend-offset,-480px),0,0);transition:transform .32s cubic-bezier(.2,.72,.22,1);background:#14191c;color:#f0f3f2;border-right:1px solid #343d3f;overscroll-behavior:contain;}
-body.recommend-swipe-active .recommend-drawer,body.recommend-drawer-open .recommend-drawer{visibility:visible;}
-body.recommend-swipe-active .recommend-drawer-backdrop{opacity:calc(var(--recommend-progress,0) * 1);}
-body.recommend-drawer-open .recommend-drawer-backdrop{pointer-events:auto;}
-body.recommend-swipe-active > .hero,body.recommend-swipe-active #guide > .divider,body.recommend-swipe-active #guide > .page-body,body.recommend-swipe-active > footer {transform-origin:50% 50%;transition:transform .32s ease,filter .32s ease;}
-body.recommend-swipe-dragging .recommend-drawer,body.recommend-swipe-dragging .recommend-drawer-backdrop,body.recommend-swipe-dragging > .hero,body.recommend-swipe-dragging #guide > .divider,body.recommend-swipe-dragging #guide > .page-body,body.recommend-swipe-dragging > footer{transition:none!important;}
-body.recommend-drawer-open .back-top,body.recommend-swipe-active .back-top {pointer-events:none!important;opacity:0!important;}
-body.recommend-swipe-dragging{user-select:none;-webkit-user-select:none;}
+
+
+
+
+
+
+
 .recommend-drawer-inner{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:calc(27px + env(safe-area-inset-top)) 20px calc(32px + env(safe-area-inset-bottom));scrollbar-width:thin;}
 #recommend-title{color:#f1f3f2;font-size:clamp(25px,6.3vw,30px);font-weight:760;letter-spacing:-.035em;}
 .recommend-intro{color:#adbbbc;}
 .recommend-controls{flex-wrap:wrap;}
 .recommend-control-wrap{position:relative;max-width:100%;}
-.recommend-control{display:inline-flex;gap:7px;align-items:center;min-height:42px;max-width:100%;border:1px solid #4b5858;border-radius:24px;padding:8px 11px;color:#e1e9e6;background:#20292a;font:690 12px/1.4 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;cursor:pointer;text-align:left;}
+.recommend-control{display:inline-flex;gap:7px;align-items:center;min-height:42px;max-width:100%;border:1px solid #4b5858;border-radius:24px;padding:8px 11px;color:#e1e9e6;background:#20292a;font:690 12px/1.4 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;cursor:pointer;text-align:left;}
 .recommend-control[aria-expanded="true"]{border-color:#93cbb7;}
 .recommend-control-arrow{font-size:14px;margin-left:2px;}
 .recommend-control span:nth-child(2){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .recommend-options{position:absolute;left:0;top:calc(100% + 6px);min-width:max(190px,100%);max-width:min(320px,calc(100vw - 34px));max-height:min(400px,65dvh);overflow:auto;z-index:150;display:grid;gap:2px;padding:7px;background:#263032;border:1px solid #536260;border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.38);}
 .recommend-options[hidden]{display:none!important;}
-.recommend-option{display:block;width:100%;border:0;border-radius:8px;padding:10px 12px;color:#e2eae7;background:transparent;font:600 12px/1.45 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;text-align:left;cursor:pointer;}
+.recommend-option{display:block;width:100%;border:0;border-radius:8px;padding:10px 12px;color:#e2eae7;background:transparent;font:600 12px/1.45 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;text-align:left;cursor:pointer;}
 .recommend-option[aria-pressed="true"]{background:#d9e7df;color:#253530;font-weight:750;}
 .recommend-location-status{color:#a8beb5;}
 .recommend-location-status[hidden]{display:none!important;}
@@ -38,13 +38,13 @@ body.recommend-swipe-dragging{user-select:none;-webkit-user-select:none;}
 .recommend-more{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;border:1px solid #4c5d5c;background:transparent;font-weight:680;cursor:pointer;}
 .recommend-more[hidden]{display:none!important;}
 .recommend-choices{display:flex;flex-wrap:wrap;gap:8px;}
-.recommend-pill{min-height:40px;border:1px solid #4b5858;border-radius:24px;padding:8px 11px;color:#c6d2d0;background:transparent;font:625 12px/1.35 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;cursor:pointer;white-space:normal;text-align:center;}
+.recommend-pill{min-height:40px;border:1px solid #4b5858;border-radius:24px;padding:8px 11px;color:#c6d2d0;background:transparent;font:625 12px/1.35 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;cursor:pointer;white-space:normal;text-align:center;}
 .recommend-pill[aria-pressed="true"]{background:#d8e6de;border-color:#d8e6de;color:#1d2a29;font-weight:760;}
 .recommend-advanced{border-top:1px solid #3a4546;margin-top:17px;padding-top:6px;}
 .recommend-advanced summary{color:#aab9b7;font-size:12px;list-style:none;cursor:pointer;padding:12px 0;display:flex;justify-content:space-between;align-items:center;}
 .recommend-advanced summary::-webkit-details-marker{display:none;}
-.recommend-advanced summary::after{content:'⌄';font-size:16px;color:#aab9b7;}
-.recommend-advanced[open] summary::after{content:'⌃';}
+.recommend-advanced summary::after{content:"⌄";font-size:16px;color:#aab9b7;}
+.recommend-advanced[open] summary::after{content:"⌃";}
 .recommend-help{margin:10px 0 0;color:#92a4a2;font-size:10.5px;line-height:1.65;}
 .recommend-disclaimer{color:#95a4a3;}
 .recommend-no-data{color:#d6d9d5;font-size:12px;}
@@ -67,31 +67,20 @@ html[data-theme="light"] .recommend-advanced{border-color:#d6dfdd;}
 html[data-theme="light"] .recommend-advanced summary{color:#54696c;}
 html[data-theme="light"] .recommend-relaxed{background:#fff8ea;color:#7d5824;border-color:#ead5a9;}
 @media(max-width:360px){.recommend-drawer-inner{padding-left:15px;padding-right:15px;}.recommend-controls{gap:6px;}.recommend-control{padding:8px 9px;font-size:11.5px;}}
-@media(prefers-reduced-motion:reduce){.recommend-card,.recommend-drawer,.recommend-drawer-backdrop{animation:none!important;transition:none!important;}}
+@media(prefers-reduced-motion:reduce){.recommend-card,.recommend-drawer{animation:none!important;transition:none!important;}}
 .recommend-drawer:focus,
 #guide #food-search.food-drawer:focus {outline:none!important;}
 /* A short edge shadow still communicates the sliding sheet. */
 .recommend-drawer {box-shadow:8px 0 22px rgba(0,0,0,.18);will-change:transform;}
 /* Only animate the translation of the underlying page. Brightness filters
    on long page sections force costly Safari rasterization during drags. */
-body.recommend-swipe-active > .hero,
-body.recommend-swipe-active #guide > .divider,
-body.recommend-swipe-active #guide > .page-body,
-body.recommend-swipe-active > footer {
-  transform:translate3d(var(--recommend-shift,0px),0,0)!important;
-  filter:none!important;
-}
+
 /* Keep the viewport and the drawer's scrolling surface the same tone,
    including Safari's translucent safe-area/browser chrome. */
 /* Remove visible focus outlines only from the dialog shell; all control
    focus-visible styles (keyboard access) are intentionally preserved. */
 .recommend-drawer:focus-visible {outline:none!important;}
-@media(prefers-reduced-motion:reduce){
-  body.recommend-swipe-active > .hero,
-  body.recommend-swipe-active #guide > .divider,
-  body.recommend-swipe-active #guide > .page-body,
-  body.recommend-swipe-active > footer {transition:none!important;}
-}
+
 html:not([data-theme="light"]) .recommend-drawer {
   --recommend-edge-color:#0D0D0D;
   background:#0D0D0D;
@@ -126,10 +115,6 @@ html[data-theme="light"] .recommend-drawer {--recommend-edge-color:#F7F8F7;}
   background:linear-gradient(to top,var(--recommend-edge-color,#0D0D0D) 0%,transparent 100%);
 }
 /* The root canvas is visible during drawer interaction on iOS Safari. */
-html:has(body.recommend-swipe-active),
-body.recommend-swipe-active {background:#0D0D0D!important;}
-html[data-theme="light"]:has(body.recommend-swipe-active),
-html[data-theme="light"] body.recommend-swipe-active {background:#F7F8F7!important;}
 .recommend-controls {position:relative;isolation:isolate;}
 .recommend-advanced {margin:0;border:0;padding:0;}
 .recommend-advanced-trigger {list-style:none;}
@@ -160,7 +145,7 @@ html[data-theme="light"] .recommend-advanced-panel {background:#fff;border-color
 .recommend-advanced-trigger .recommend-advanced-plus {display:inline-block;flex:none;color:#9AC9B5;font-size:17px;line-height:1;font-weight:450;}
 .recommend-has-selected .recommend-advanced-label {display:none;}
 .recommend-has-selected .recommend-advanced-trigger {width:40px;height:40px;min-height:40px;padding:0;border-radius:50%;}
-.recommend-active-chip {display:inline-flex;align-items:center;gap:7px;min-height:40px;max-width:100%;border-radius:24px;border:1px solid #7B9C8C;padding:7px 10px 7px 13px;font:660 12px/1.35 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;cursor:pointer;}
+.recommend-active-chip {display:inline-flex;align-items:center;gap:7px;min-height:40px;max-width:100%;border-radius:24px;border:1px solid #7B9C8C;padding:7px 10px 7px 13px;font:660 12px/1.35 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;cursor:pointer;}
 .recommend-active-chip-label {min-width:0;overflow-wrap:anywhere;text-align:left;}
 .recommend-active-chip-remove {color:#BBD9C9;font-size:16px;line-height:1;flex:none;}
 .recommend-active-chip:focus-visible {outline:2px solid #84d0b3;outline-offset:2px;}
@@ -191,7 +176,7 @@ html[data-theme="light"] .recommend-advanced-trigger .recommend-advanced-plus {c
 .recommend-advanced[open] > summary::after {
   content:none!important;display:none!important;
 }
-.recommend-advanced > summary::marker {content:'';}
+.recommend-advanced > summary::marker {content:"";}
 .recommend-advanced > summary::-webkit-details-marker {display:none!important;}
 .recommend-advanced-panel .recommend-pill::after {content:none!important;}
 @media(max-width:430px){
@@ -233,9 +218,7 @@ html[data-theme="light"] .recommend-advanced-trigger .recommend-advanced-plus {c
    fixed element at the viewport edge. Below 480px the drawer is full width,
    so the dimming backdrop is never seen once open; without it, Safari can
    only sample the drawer/root canvas, which share one tone. */
-@media(max-width:480px){
-  .recommend-drawer-backdrop {display:none!important;}
-}
+
 /* Draw the add icon using crossing strokes, not a font glyph whose visual
    center shifts between iOS system fonts and Android. */
 .recommend-controls-secondary .recommend-advanced-trigger {
@@ -255,7 +238,7 @@ html[data-theme="light"] .recommend-advanced-trigger .recommend-advanced-plus {c
 }
 .recommend-controls-secondary .recommend-advanced-plus::before,
 .recommend-controls-secondary .recommend-advanced-plus::after {
-  content:'';position:absolute;left:50%;top:50%;
+  content:"";position:absolute;left:50%;top:50%;
   background:currentColor;border-radius:2px;transform:translate(-50%,-50%);
 }
 .recommend-controls-secondary .recommend-advanced-plus::before {width:12px;height:1.6px;}
@@ -447,7 +430,7 @@ html[data-theme="light"] .recommend-station-controls .recommend-control-arrow{co
 .recommend-picker-location[hidden],.recommend-picker-station[hidden]{display:none!important;}
 .recommend-location-pin{display:flex;align-items:center;justify-content:center;color:#c7b6ed;}
 .recommend-location-copy strong{font-weight:740;}
-.recommend-mode-button{display:flex;align-items:center;justify-content:center;min-width:0;width:44px;height:57px;border:1px solid #514b58;border-radius:12px;color:#f0e7ff;background:#262629;padding:2px;cursor:pointer;font:700 10px/1.25 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;}
+.recommend-mode-button{display:flex;align-items:center;justify-content:center;min-width:0;width:44px;height:57px;border:1px solid #514b58;border-radius:12px;color:#f0e7ff;background:#262629;padding:2px;cursor:pointer;font:700 10px/1.25 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;}
 .recommend-mode-button:focus-visible,.recommend-native-field select:focus-visible{outline:2px solid var(--reco-accent,#C4A6FF);outline-offset:2px;}
 .recommend-mode-button .recommend-mode-pin{display:none;}
 .recommend-main-picker.is-station .recommend-mode-button .recommend-mode-text{display:none;}
@@ -473,7 +456,7 @@ html[data-theme="light"] .recommend-picker-location,html[data-theme="light"] .re
 .recommend-native-code{flex:0 0 auto;display:inline-flex;justify-content:center;align-items:center;min-height:15px;background:#4288c9;color:white;}
 .recommend-location-copy,.recommend-native-copy{display:flex;flex-direction:column;min-width:0;justify-content:center;gap:2px;}
 .recommend-native-chevron{position:relative;}
-.recommend-native-chevron::after{content:'';display:block;border:solid currentColor;transform:rotate(45deg);transition:transform .18s ease;}
+.recommend-native-chevron::after{content:"";display:block;border:solid currentColor;transform:rotate(45deg);transition:transform .18s ease;}
 .recommend-native-field.is-open .recommend-native-chevron::after{transform:rotate(-135deg) translate(-1px,-1px);}
 .recommend-picker-station[data-active="line"] .recommend-native-line,
 .recommend-picker-station[data-active="station"] .recommend-native-station{flex-grow:3;background:#30293a;}
@@ -681,7 +664,7 @@ html[data-theme="light"] .recommend-native-option-copy small{color:#282138;}
   position:relative;display:inline-flex;align-items:center;justify-content:center;max-width:100%;
   border:0;border-bottom:2px solid transparent;border-radius:0;
   background:transparent;color:#A6A0B0;
-  font:650 11px/1.25 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
+  font:650 11px/1.25 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
   white-space:nowrap;cursor:pointer;
 }
 .recommend-sort-option[aria-pressed="true"]{color:#F2E9FF;border-bottom-color:#BDA0EA;font-weight:760;}
@@ -715,11 +698,11 @@ html[data-theme="light"] .recommend-sort-option[aria-pressed="true"]{color:#5A3D
 .recommend-card{padding:0!important;border:1px solid #57525d!important;background:linear-gradient(90deg,#2B2B2E 0%,#2E2D31 100%)!important;overflow:hidden;box-shadow:none!important;}
 .recommend-card-shell{display:grid;grid-template-columns:minmax(0,1fr) 156px;box-sizing:border-box;}
 .recommend-card-main{display:flex;flex-direction:column;}
-.recommend-card-type{font:760 14px/1.2 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;color:#F1EEF6;letter-spacing:.01em;}
+.recommend-card-type{font:760 14px/1.2 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;color:#F1EEF6;letter-spacing:.01em;}
 .recommend-venue{color:#FBF8FF!important;text-decoration:none;font-size:clamp(17px,5.6vw,24px)!important;font-weight:790;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-wrap:balance;}
 .recommend-card-main{justify-content:flex-start;gap:0;}
 .recommend-card-side{display:grid;justify-items:end;align-items:start;}
-.recommend-distance-pill,.recommend-distance-pill-empty{display:inline-flex;align-items:center;max-width:100%;border-radius:999px;border:1px solid #66616B;background:rgba(34,34,36,.45);color:#FBF8FF;font:650 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;white-space:nowrap;}
+.recommend-distance-pill,.recommend-distance-pill-empty{display:inline-flex;align-items:center;max-width:100%;border-radius:999px;border:1px solid #66616B;background:rgba(34,34,36,.45);color:#FBF8FF;font:650 12px/1 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;white-space:nowrap;}
 .recommend-distance-pill-empty{visibility:hidden;}
 .recommend-distance-pill-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 16px;color:#FBF8FF;}
 .recommend-distance-pill-icon svg{display:block;width:100%;height:100%;}
@@ -727,7 +710,7 @@ html[data-theme="light"] .recommend-sort-option[aria-pressed="true"]{color:#5A3D
 .recommend-card-stars{display:flex;align-items:center;justify-content:flex-end;color:#7A674C;}
 .recommend-card-star{display:inline-flex;align-items:center;justify-content:center;line-height:0;flex:0 0 17px;}.recommend-card-star svg{display:block;width:100%;height:100%;}
 .recommend-guide-tags{align-content:flex-end;flex-wrap:wrap;margin-top:0!important;}
-.recommend-guide-tag{border:1px solid #66616B!important;background:#2E2D31!important;color:#F4F0F9!important;font:700 12px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif!important;white-space:nowrap;}
+.recommend-guide-tag{border:1px solid #66616B!important;background:#2E2D31!important;color:#F4F0F9!important;font:700 12px/1 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif!important;white-space:nowrap;}
 .recommend-guide-tag-featured{color:#E4C38D!important;background:#89704A55!important;border-color:#B58B49!important;}
 .recommend-guide-tag-caution{color:#F4B2A7!important;background:#6E403F55!important;border-color:#8E5D58!important;}
 html[data-theme="light"] .recommend-card{background:linear-gradient(90deg,#FFFFFF 0%,#FBF8FD 100%)!important;border-color:#D8D0DF!important;}
@@ -760,7 +743,7 @@ html[data-theme="light"] .recommend-guide-tag-caution{background:#FFF1EF!importa
   .recommend-source-captions .recommend-source-caption:last-child{grid-column:1;grid-row:1;justify-self:start;}
   .recommend-main-picker{
     display:grid!important;grid-template-columns:minmax(0,1fr) 83px!important;
-    grid-template-rows:36px 36px!important;grid-template-areas:'location time' 'location mode';
+    grid-template-rows:36px 36px!important;grid-template-areas:"location time" "location mode";
     column-gap:8px!important;row-gap:5px!important;
     min-width:0!important;height:77px!important;min-height:77px!important;
     align-items:stretch!important;
@@ -1260,11 +1243,11 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-caution{
   justify-self:end;align-self:start;
   position:relative;top:5px;
   color:#A7D9B7;
-  font:700 11.333px/1.25 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
+  font:700 11.333px/1.25 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
   letter-spacing:0;white-space:nowrap;text-align:right;
 }
 .recommend-drawer .recommend-opening-status::before{
-  content:'';flex:0 0 auto;border-radius:50%;
+  content:"";flex:0 0 auto;border-radius:50%;
   background:currentColor;
 }
 .recommend-drawer .recommend-opening-soon{color:#FFB967;}
@@ -1306,7 +1289,7 @@ html[data-theme="light"] .recommend-drawer .recommend-guide-tag-veg{
 .recommend-drawer .recommend-station-search-input{
   flex:1 1 auto;min-width:0;height:34px;box-sizing:border-box;margin:0;padding:0 10px;
   border:1px solid var(--reco-line);border-radius:8px;background:transparent;color:#EEEEEE;
-  font:600 16px/1.2 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
+  font:600 16px/1.2 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
   -webkit-appearance:none;appearance:none;
 }
 .recommend-drawer .recommend-station-search-input::placeholder{color:#9A9A9A;opacity:1;font-weight:500;}
@@ -1349,7 +1332,7 @@ html[data-theme="light"] .recommend-drawer .recommend-opening-next{color:#4A4A4A
 .food-flip-toggle{
   position:absolute;top:4px;right:0;z-index:3;display:inline-flex;align-items:center;gap:2px;
   min-height:32px;padding:0 13px;border-radius:999px;cursor:pointer;
-  font:700 12.5px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;letter-spacing:.02em;
+  font:700 12.5px/1 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;letter-spacing:.02em;
   color:#E6E6E6;background:transparent;border:1px solid #5A5A5A;-webkit-tap-highlight-color:transparent;
 }
 .food-flip-toggle:focus-visible{outline:2px solid #CCCCCC;outline-offset:2px;}
@@ -1381,7 +1364,7 @@ html[data-theme="light"] .food-flip-toggle{color:#3A3A3A;border-color:#BDBDBD;}
 #food-recommend-section .food-directory-tab{
   display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
   min-height:35px;padding:6px 12px;border-radius:999px;
-  font:650 12px/1.4 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
+  font:650 12px/1.4 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
   border:1px solid #515151;color:#C7C7C7;background:transparent;cursor:pointer;
   -webkit-tap-highlight-color:transparent;
 }
@@ -1404,7 +1387,7 @@ html[data-theme="light"] .food-flip-toggle{color:#3A3A3A;border-color:#BDBDBD;}
 #food-recommend-section .food-directory-row-main{min-width:0;display:flex;flex-direction:column;gap:7px;}
 #food-recommend-section .food-directory-name-line{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 9px;min-width:0;}
 #food-recommend-section .food-directory-link{font-size:14px;line-height:1.55;font-weight:680;text-decoration:none!important;color:#F0F0F0;overflow-wrap:anywhere;}
-#food-recommend-section .food-directory-link::after{content:' ↗';font-size:10px;opacity:.6;font-weight:400;}
+#food-recommend-section .food-directory-link::after{content:" ↗";font-size:10px;opacity:.6;font-weight:400;}
 #food-recommend-section .food-directory-branches{font-size:10px;line-height:1.4;border:1px solid #555;border-radius:999px;padding:2px 7px;color:#D3D3D3;white-space:nowrap;}
 #food-recommend-section .food-directory-badges{display:flex;gap:5px 6px;flex-wrap:wrap;align-items:center;min-width:0;}
 #food-recommend-section .food-directory-kind,#food-recommend-section .food-directory-tag{

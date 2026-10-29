@@ -1,3 +1,22 @@
+/* v30.9.209 — one shared, frame-coalesced resize dispatcher for every module.
+   iPhone Safari fires "resize" repeatedly while its toolbars collapse during a
+   scroll; ~12 separate listeners each measured the page in the same event,
+   forcing repeated layouts mid-scroll. Now they all run once per frame. */
+(() => {
+  "use strict";
+  const callbacks = new Set();
+  let frame = 0;
+  const run = () => {
+    frame = 0;
+    for (const fn of callbacks) {
+      try { fn(); } catch (error) { console.error(error); }
+    }
+  };
+  window.addEventListener("resize", () => { if (!frame) frame = requestAnimationFrame(run); }, {passive: true});
+  window.tabiOnResize = fn => { callbacks.add(fn); return () => callbacks.delete(fn); };
+})();
+/* v30.9.209 — code health pass: search text prepared once; blur only after the dictionary settles; one resize dispatcher; dead CSS removed; strict mode in the search module.
+   v30.9.208 — dictionary drawer opens smoothly (rows render on demand, no page-wide restyle); 名物 tiles open and scroll to their dish; 脆皮魷魚 → 炸魷魚. */
 /* v30.9.205 — food dictionary keyboard: the floating window keeps its size and place; iOS no longer pans the page (no jitter, no tap offset).
    v30.9.204 — food dictionary: difficulty levels and their filter removed (spice shown in their place). */
 /* v30.9.186 — chapters 03/05 directory JSON loader (preserves venue styling). */
@@ -443,14 +462,14 @@
 })();
 
 
-/* =================== JS 03: food-search-script v30.9.205 =================== */
+/* =================== JS 03: food-search-script v30.9.209 =================== */
 ;
 
 (function () {
+"use strict"; // v30.9.209: a directive only works as the first statement
 const foodExplorer=document.getElementById("food-explorer");
 if(!foodExplorer) return;
 
-"use strict";
 // The content is managed separately in foods.csv and synonyms.json.
 // Keep both files in the same folder as this index.html on GitHub Pages.
 // v30.9.204: the difficulty levels (初心者・地元民・クセ強・限界突破) are no
@@ -482,31 +501,40 @@ function searchTerms() {
   return normalized(input.value.trim()).split(/\s+/).filter(Boolean);
 }
 
-function currentMatches() {
-  const terms = searchTerms();
-
-  return foods.filter(food => {
+// v30.9.209: each dish's searchable text is normalized once when the data is
+// loaded (searchTextOf), and each typed term's synonym variants once per
+// search. Before, both were rebuilt for every one of ~1,500 dishes on every
+// keystroke.
+function searchTextOf(food) {
+  if (food.searchText === undefined) {
     // Include hidden tags so partial Japanese words and emoji can be searched.
     // food.category is only set for market items (調味料・フルーツ…).
-    const text = normalized(
+    food.searchText = normalized(
       `${food.name} ${food.description} ${food.detail || ""} ${food.category} ${(food.tags || []).join(" ")}`
     );
-
-    return terms.every(term => {
-      // One pepper (or 辛い) finds all marked spicy dishes, including "maybe".
-      // Two/three peppers require at least that numerical spice level.
-      const peppers = term.match(/🌶️/gu) || [];
-      if (peppers.length && peppers.join("") === term) {
-        return peppers.length === 1
-          ? Boolean(food.spice)
-          : peppers.length <= 3 && Number(food.spice) >= peppers.length;
-      }
-      if (term === "辛い") return Boolean(food.spice);
-
-      // Preserve the existing traditional/simplified/Japanese synonym groups.
-      return variantsFor(term).some(alias => text.includes(alias));
-    });
+  }
+  return food.searchText;
+}
+function currentMatches() {
+  const checks = searchTerms().map(term => {
+    // One pepper (or 辛い) finds all marked spicy dishes, including "maybe".
+    // Two/three peppers require at least that numerical spice level.
+    const peppers = term.match(/🌶️/gu) || [];
+    if (peppers.length && peppers.join("") === term) {
+      return peppers.length === 1
+        ? food => Boolean(food.spice)
+        : food => peppers.length <= 3 && Number(food.spice) >= peppers.length;
+    }
+    if (term === "辛い") return food => Boolean(food.spice);
+    // Preserve the existing traditional/simplified/Japanese synonym groups.
+    const aliases = variantsFor(term);
+    return food => {
+      const text = searchTextOf(food);
+      return aliases.some(alias => text.includes(alias));
+    };
   });
+  if (!checks.length) return foods.slice();
+  return foods.filter(food => checks.every(check => check(food)));
 }
 
 function addHighlightedText(parent, value, terms) {
@@ -540,7 +568,18 @@ function addHighlightedText(parent, value, terms) {
   }
   parent.append(document.createTextNode(original.slice(last)));
 }
+// v30.9.209: in the floating dictionary the list's height comes from the
+// window (max-height is fixed by CSS and the scroll tip is hidden), so the
+// row measuring below is skipped there. It forced a full layout on every
+// keystroke and was the single largest cost of typing.
+const floatingDictionary = Boolean(foodExplorer.closest(".is-floating"));
 function resizeResultViewport() {
+  if (floatingDictionary) {
+    results.classList.toggle("scrolling", results.childElementCount > 4);
+    scrollText.hidden = true;
+    scrollTip.hidden = true;
+    return;
+  }
   const rows = [...results.querySelectorAll(".result")];
   const mobile = window.matchMedia("(max-width: 600px)").matches;
   // Keep the dictionary compact: about four full rows with part of a fifth
@@ -841,19 +880,40 @@ function menuMatches(raw) {
   return {foods: list, words: [...words]};
 }
 
-// v30.9.200: results render in slices. The first slice fills the visible
-// list at once; the rest follow over the next frames, and a newer keystroke
-// cancels whatever is still pending. flushResults() completes it on demand.
-const FIRST_SLICE = 24, NEXT_SLICE = 48;
-let pendingRows = null, pendingFrame = 0;
-function flushResults() {
+// v30.9.208: results render on demand. The dictionary holds about 1,500
+// dishes; rendering all of them put ~10,000 elements inside the drawer, and
+// every style change on it (opening, closing, dragging) had to revisit them,
+// which is what made the drawer stutter. Now the first slice fills the list
+// and further slices are added only as the visitor scrolls towards the end.
+// flushResults() renders the rest at once when a caller needs every row.
+const FIRST_SLICE = 30, NEXT_SLICE = 40;
+let pendingRows = null; // () => boolean: renders one more slice; true when done
+let renderMoreFrame = 0;
+const moreSentinel = document.createElement("div");
+moreSentinel.className = "food-more-sentinel";
+moreSentinel.setAttribute("aria-hidden", "true");
+function renderMoreRows() {
+  renderMoreFrame = 0;
   if (!pendingRows) return;
-  cancelAnimationFrame(pendingFrame);
-  const rest = pendingRows; pendingRows = null;
-  rest();
+  if (pendingRows()) { pendingRows = null; moreSentinel.remove(); }
+  else results.append(moreSentinel); // keep it after the last row
+}
+const moreWatcher = "IntersectionObserver" in window
+  ? new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting) && !renderMoreFrame)
+        renderMoreFrame = requestAnimationFrame(renderMoreRows);
+    }, {root: results, rootMargin: "0px 0px 900px 0px"})
+  : null;
+moreWatcher?.observe(moreSentinel);
+function flushResults() {
+  cancelAnimationFrame(renderMoreFrame); renderMoreFrame = 0;
+  while (pendingRows && !pendingRows()) { /* render every remaining slice */ }
+  pendingRows = null;
+  moreSentinel.remove();
 }
 function drawResults() {
-  cancelAnimationFrame(pendingFrame); pendingRows = null;
+  cancelAnimationFrame(renderMoreFrame); renderMoreFrame = 0;
+  pendingRows = null; moreSentinel.remove();
   let matched = currentMatches();
   // v30.9.202: nothing found → try reading the text as a menu.
   let menuWords = null;
@@ -1002,16 +1062,14 @@ if (expandable) {
     };
     appendRows(matched.slice(0, FIRST_SLICE));
     let next = FIRST_SLICE;
-    const step = () => {
-      if (!pendingRows) return;
-      appendRows(matched.slice(next, next + NEXT_SLICE));
-      next += NEXT_SLICE;
-      if (next < matched.length) pendingFrame = requestAnimationFrame(step);
-      else pendingRows = null;
-    };
     if (next < matched.length) {
-      pendingRows = () => { appendRows(matched.slice(next)); next = matched.length; };
-      pendingFrame = requestAnimationFrame(step);
+      pendingRows = () => {
+        appendRows(matched.slice(next, next + NEXT_SLICE));
+        next += NEXT_SLICE;
+        return next >= matched.length;
+      };
+      // Without IntersectionObserver every row is rendered, as before.
+      if (moreWatcher) results.append(moreSentinel); else flushResults();
     }
   }
   resizeResultViewport();
@@ -1070,6 +1128,8 @@ document.getElementById("food-search")?.addEventListener("food-search-closed", (
 });
 // v30.9.142: a 名物 tile in 🏮 夜市 opens this dictionary with the dish searched,
 // and the dish itself opened when its name matches exactly.
+// v30.9.208: the dish is shown already open (no expanding animation) and the
+// list is scrolled so that it is the first row in view.
 function showDishInSearch(query) {
   input.value = query;
   onSearch();
@@ -1080,10 +1140,17 @@ function showDishInSearch(query) {
   const rows = [...results.querySelectorAll(".result")];
   const row = rows.find(item => normalized(item.dataset.dishName || "").split(/[／/]/).includes(key))
     || (rows.length === 1 && rows[0].classList.contains("food-entry-expandable") ? rows[0] : null);
-  if (row) {
+  if (!row) return;
+  if (row.classList.contains("food-entry-expandable")) {
     expandedDishName = row.dataset.dishName;
+    row.classList.add("food-instant-collapse"); // no height animation
     setFoodEntryExpanded(row, true);
+    row.getBoundingClientRect();
+    requestAnimationFrame(() => requestAnimationFrame(() => row.classList.remove("food-instant-collapse")));
   }
+  // The drawer is laid out while hidden, so the list can be scrolled now.
+  const offset = row.getBoundingClientRect().top - results.getBoundingClientRect().top;
+  results.scrollTop = Math.max(0, results.scrollTop + offset - 2);
 }
 document.addEventListener("click", event => {
   const tile = event.target instanceof Element && event.target.closest(".nm-specialty[data-food-query]");
@@ -1109,10 +1176,10 @@ foodExplorer.querySelectorAll("[data-example]").forEach(button => {
     input.blur();
   });
 });
-window.addEventListener("resize", () => requestAnimationFrame(() => {
+tabiOnResize(() => {
   results.querySelectorAll('.food-entry-expandable.is-expanded').forEach(measureFoodDescription);
   resizeResultViewport();
-}));
+});
 
 // Minimal CSV parser: supports UTF-8 BOM, quoted commas, quotes, and newlines.
 function parseCsv(text, isMarket = false) {
@@ -1191,6 +1258,7 @@ async function loadData() {
       throw new Error("synonyms.json の groups を確認してください。");
     }
     foods = [...loadedFoods, ...loadedMarket];
+    foods.forEach(searchTextOf); // prepare the search text once
     synonymGroups = json.groups;
     normalizedGroups = synonymGroups.map(group => [...new Set(group.map(normalized))]);
     footerCount.textContent = String(foods.length);
@@ -1602,7 +1670,7 @@ loadData();
   });
   strip.addEventListener('scroll',syncDirectoryFade,{passive:true});
   if('ResizeObserver' in window)new ResizeObserver(scheduleDirectoryAlignment).observe(strip);
-  window.addEventListener('resize',scheduleDirectoryAlignment,{passive:true});
+  tabiOnResize(scheduleDirectoryAlignment);
   scheduleDirectoryAlignment();
   const touchById=(touches,id)=>{
     for(const touch of touches)if(touch.identifier===id)return touch;
@@ -1691,7 +1759,7 @@ loadData();
     const observer = new ResizeObserver(syncAll);
     strips.forEach(strip => observer.observe(strip));
   }
-  window.addEventListener('resize',syncAll,{passive:true});
+  tabiOnResize(syncAll);
   document.addEventListener('toggle',syncAll,true);
   document.addEventListener('click',syncAll,true);
   syncAll();
@@ -1711,7 +1779,7 @@ loadData();
   let opened=false;
   let savedY=0, savedStyle=null, previousFocus=null;
   let drag=null, clickSuppressUntil=0;
-  let progress=0, raf=0;
+  let progress=0, raf=0, openFrame=0;
   let scheduledProgress=0;
   const width=()=>Math.min(window.innerWidth,480);
   const clamp=x=>Math.max(0,Math.min(1,x));
@@ -1722,12 +1790,20 @@ loadData();
       commitDraw();
     }else if(!raf) raf=requestAnimationFrame(commitDraw);
   }
+  // v30.9.208: the swipe variables live on the three elements that use them.
+  // Set on <body>, every change made the browser restyle the whole page
+  // (~14,000 elements) on each frame of a drag and at the start of each open.
+  const dock=document.querySelector('.food-theme-dock');
+  const swipeTargets=[drawer,backdrop,dock].filter(Boolean);
   function commitDraw(){
     raf=0;progress=scheduledProgress;
-    body.style.setProperty('--food-swipe-px',(width()*progress).toFixed(2)+'px');
-    body.style.setProperty('--food-swipe-progress',progress.toFixed(4));
-    // The page stays put behind the floating window (only blurred and dimmed).
-    body.style.setProperty('--food-main-shift',drawer.classList.contains('is-floating')?'0px':(-26*progress).toFixed(2)+'px');
+    const px=(width()*progress).toFixed(2)+'px',p=progress.toFixed(4);
+    for(const node of swipeTargets){
+      node.style.setProperty('--food-swipe-px',px);
+      node.style.setProperty('--food-swipe-progress',p);
+    }
+    // The page stays put behind the floating window (only blurred and dimmed);
+    // --food-main-shift is no longer used.
   }
   function lockPage(){
     if(savedStyle)return;
@@ -1752,16 +1828,40 @@ loadData();
     savedStyle=null;
     window.scrollTo({top:savedY,behavior:'instant'});
   }
+  // v30.9.209: the page behind is blurred only once the window has stopped
+  // moving (food-drawer-settled). Blurring the whole screen on every frame of
+  // the slide was the main GPU cost of opening on iPhone; during the motion
+  // the page is only dimmed, then the blur eases in.
+  let settleTimer=0;
+  function unsettle(){clearTimeout(settleTimer);settleTimer=0;body.classList.remove('food-drawer-settled');}
+  function settleWhenStill(){
+    clearTimeout(settleTimer);
+    const done=()=>{clearTimeout(settleTimer);settleTimer=0;drawer.removeEventListener('transitionend',onEnd);
+      if(opened&&!drag)body.classList.add('food-drawer-settled');};
+    const onEnd=event=>{if(event.target===drawer&&event.propertyName==='transform')done();};
+    drawer.addEventListener('transitionend',onEnd);
+    settleTimer=setTimeout(done,420); // fallback if transitionend is skipped
+  }
   function settle(shouldOpen){
     if(shouldOpen){
+      // v30.9.208: opened by a tap (not a drag), the page lock and class changes
+      // cost one heavy frame. Do them first, at the closed position, and start
+      // the slide one frame later, so the motion itself has no dropped frames.
+      const fromRest=!body.classList.contains('food-swipe-active');
       lockPage();
       drawer.setAttribute('aria-hidden','false');
       body.classList.add('food-drawer-open');
       body.classList.add('food-swipe-active');
       if(!opened)drawer.focus({preventScroll:true});
       opened=true;
-      draw(1,true);
+      if(fromRest){
+        draw(0,true);
+        cancelAnimationFrame(openFrame);
+        openFrame=requestAnimationFrame(()=>{openFrame=requestAnimationFrame(()=>{openFrame=0;if(opened&&!drag){draw(1,true);settleWhenStill();}});});
+      }else{draw(1,true);settleWhenStill();}
     }else{
+      cancelAnimationFrame(openFrame);openFrame=0;
+      unsettle();
       // Exiting this independent page resets its open description.
       if(opened) drawer.dispatchEvent(new Event('food-search-closed'));
       body.classList.remove('food-drawer-open');
@@ -1837,6 +1937,7 @@ loadData();
       /* Keep the gesture directional: left opens, right closes. */
       if((!opened && dx>=0) || (opened && dx<=0)){drag=null;return;}
       drag.activated=true;
+      unsettle();
       body.classList.add('food-swipe-active','food-swipe-dragging');
       syncChrome(true);
       drawer.setAttribute('aria-hidden','false');
@@ -1902,7 +2003,7 @@ loadData();
     else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
     else if(!drawer.contains(document.activeElement)){event.preventDefault();first.focus();}
   });
-  window.addEventListener('resize',()=>draw(opened?1:0,true),{passive:true});
+  tabiOnResize(()=>draw(opened?1:0,true));
   draw(0,true);
 })();
 
@@ -2653,7 +2754,7 @@ update();
     };
     const enqueue=()=>{if(!queued){queued=true;requestAnimationFrame(inspect);}};
     window.addEventListener('scroll',enqueue,{passive:true,capture:true});
-    window.addEventListener('resize',enqueue,{passive:true});
+    tabiOnResize(enqueue);
     guide.addEventListener('scroll',enqueue,{passive:true,capture:true});
   }
 })();
@@ -3378,7 +3479,7 @@ update();
   });
   const observer=new MutationObserver(()=>requestAnimationFrame(()=>lists.forEach(sync)));
   root.querySelectorAll('.venue-directory-section .tab-pills button.tab-pill').forEach(tab=>observer.observe(tab,{attributes:true,attributeFilter:['aria-selected']}));
-  window.addEventListener('resize',()=>lists.forEach(sync),{passive:true});
+  tabiOnResize(()=>lists.forEach(sync));
   window.addEventListener('load',()=>lists.forEach(sync),{once:true});
   requestAnimationFrame(()=>lists.forEach(sync));
 })();
@@ -3628,7 +3729,7 @@ update();
   guide.addEventListener('toggle',all,true);
   const observer=new MutationObserver(all);
   guide.querySelectorAll('.venue-directory-section .tab-pills button.tab-pill').forEach(tab=>observer.observe(tab,{attributes:true,attributeFilter:['aria-selected']}));
-  window.addEventListener('resize',all,{passive:true});
+  tabiOnResize(all);
   window.addEventListener('load',all,{once:true});
   all();
 })();
@@ -4185,7 +4286,7 @@ update();
     cancelAnimationFrame(refreezeFrame);
     refreezeFrame = requestAnimationFrame(() => { if (isOpen() && !typing()) freeze(); });
   }
-  window.addEventListener('resize', refreezeSoon, {passive: true});
+  tabiOnResize(refreezeSoon);
   window.addEventListener('orientationchange', () => {
     if (typing()) input.blur();
     setTimeout(refreezeSoon, 120);

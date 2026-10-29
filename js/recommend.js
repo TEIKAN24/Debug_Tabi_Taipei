@@ -34,7 +34,11 @@
    bars and 熱炒 are recommended again. */
 (() => {
   'use strict';
-  const VERSION='30.9.196';
+  // v30.9.209: the version comes from this script's own ?v= (index.html is
+  // the single place to bump it); data files are fetched with the same value.
+  const VERSION=(()=>{try{return new URL(document.currentScript.src).searchParams.get('v')||'30.9.209';}catch(e){return '30.9.209';}})();
+  // Shared, frame-coalesced resize dispatcher from guide.js (fallback: own listener).
+  const onResize=fn=>window.tabiOnResize?window.tabiOnResize(fn):window.addEventListener('resize',fn,{passive:true});
   const drawer = document.getElementById('taipei-recommender');
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
@@ -989,7 +993,7 @@
     advancedPanel.style.width=`${Math.round(row.width)}px`;
     advancedPanel.style.maxWidth='none';
   }
-  window.addEventListener('resize',placeAdvancedPanel,{passive:true});
+  onResize(placeAdvancedPanel);
   drawer.addEventListener('click',e=>{
     if(!e.target.closest('.recommend-control-time-wrap'))closeOptions();
     if(!e.target.closest('.recommend-control-advanced-wrap'))advanced.open=false;
@@ -1283,9 +1287,9 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     node.dataset.fade=maxScroll<2?'none':node.scrollLeft<2?'right':node.scrollLeft>=maxScroll-2?'left':'both';
     node.tabIndex=maxScroll>=2?0:-1;
   }
-  window.addEventListener('resize',()=>{
+  onResize(()=>{
     document.querySelectorAll('.recommend-guide-tags').forEach(updateTagFade);
-  },{passive:true});
+  });
   // A choice without any registered shop for the current time band and place
   // is greyed out; a selection that has just become impossible is cleared.
   const UNAVAILABLE_TITLE='この時間帯・場所に該当する登録店はありません';
@@ -1584,7 +1588,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     );
   }
   directoryPanel?.addEventListener('scroll',updateDirectoryScrollFade,{passive:true});
-  window.addEventListener('resize',()=>requestAnimationFrame(updateDirectoryScrollFade),{passive:true});
+  onResize(updateDirectoryScrollFade);
   function selectDirectoryTab(key,focus){
     if(directoryChoice===key)return;
     directoryChoice=key;
@@ -1613,7 +1617,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       inner.style.setProperty('--food-back-height',height+'px');
       requestAnimationFrame(updateDirectoryScrollFade);
     };
-    window.addEventListener('resize',()=>{if(face==='back')updateBackHeight();},{passive:true});
+    onResize(()=>{if(face==='back')updateBackHeight();});
     window.visualViewport?.addEventListener('resize',()=>{if(face==='back')updateBackHeight();},{passive:true});
     const show=name=>{
       face=name;flip.dataset.face=name;

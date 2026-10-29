@@ -7,7 +7,7 @@
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:22px;-webkit-text-size-adjust:100%;}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;line-height:1.75;font-size:14px;overflow-wrap:anywhere}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;line-height:1.75;font-size:14px;overflow-wrap:anywhere}
 a{color:#bd4c3f;text-decoration:none}a:hover{text-decoration:underline}
 button,a{-webkit-tap-highlight-color:transparent}
 button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
@@ -37,8 +37,8 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .site-content details.nested-accordion > summary{padding:11px 12px;font-size:13px;font-weight:650}
 .site-content details summary:not(:where(#taipei-recommender *)){display:list-item;cursor:pointer;list-style:none;position:relative;padding:12px 13px;padding-right:35px;font-weight:650;line-height:1.5}
 .site-content details summary::-webkit-details-marker{display:none}
-.site-content details summary::after{content:'+';position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:19px;font-weight:400;transition:transform .15s ease}
-.site-content details[open] > summary::after{content:'−'}
+.site-content details summary::after{content:"+";position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:19px;font-weight:400;transition:transform .15s ease}
+.site-content details[open] > summary::after{content:"−"}
 .site-content details[open] > summary{border-bottom:1px solid var(--line)}
 .site-content details > :not(summary):not(:where(#taipei-recommender *)){margin-left:14px;margin-right:14px}
 .site-content details > :last-child:not(:where(#taipei-recommender *)){margin-bottom:14px}
@@ -57,7 +57,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .site-content table{border-collapse:collapse;font-size:12px;margin:10px 0}
 .site-content th,.site-content td{border:1px solid #e9e9e9;padding:7px 8px;min-width:85px}
 
-.site-content a[href^="https://maps.app.goo.gl"]::after{content:' ↗';font-size:10px;opacity:.58}
+.site-content a[href^="https://maps.app.goo.gl"]::after{content:" ↗";font-size:10px;opacity:.58}
 .site-content a:not([href^="https://maps.app.goo.gl"]):not(:where(#taipei-recommender *)){text-decoration:underline;text-underline-offset:3px}
 .site-content mark{border-radius:3px;padding:0 1px}
 .site-content figure{margin:12px 0}
@@ -355,22 +355,17 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
     font-size: 17px; color: var(--muted); cursor: pointer;
   }
 #food-explorer .clear.visible{ display: inline-grid; place-items: center; }
-#food-explorer .clear:focus-visible, #food-explorer .pill:focus-visible, #food-explorer .quick button:focus-visible{ outline: 2px solid var(--focus); outline-offset: 2px; }
+#food-explorer .clear:focus-visible, #food-explorer .quick button:focus-visible{ outline: 2px solid var(--focus); outline-offset: 2px; }
 #food-explorer .quick{ display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 12px; font-size: 12px; color: var(--muted); }
 #food-explorer .quick button{
     font: inherit; color: var(--muted); background: transparent; border: 1px solid var(--border);
     padding: 3px 9px; border-radius: 30px; cursor: pointer;
   }
 #food-explorer .quick button:hover{ border-color: var(--accent); color: var(--accent); }
-#food-explorer .filters{ display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 11px; }
-#food-explorer .pill{
-    border: 1px solid var(--border); background: var(--soft);
-    border-radius: 100px; padding: 7px 10px;
-    cursor: pointer; color: var(--text); font: inherit;
-    font-size: 12px; transition: background .15s, border-color .15s;
-  }
-#food-explorer .pill.active{ background: var(--accent-faint); color: var(--accent); border-color: var(--accent); font-weight: 650; }
-#food-explorer .pill-count{ opacity: .75; margin-left: 3px; font-variant-numeric: tabular-nums; }
+
+
+
+
 #food-explorer .results-head{ display: flex; gap: 10px; align-items: center; justify-content: space-between; padding-bottom: 9px; border-bottom: 1px solid var(--border); }
 
 #food-explorer .result-count{ font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -434,7 +429,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 @media  (max-width: 420px) {
 #food-explorer .tag{ font-size: 9px; }
 #food-explorer .result{ gap: 5px; }
-#food-explorer .pill{ font-size: 11px; padding: 7px 9px; }}
+}
 @media  (prefers-reduced-motion: reduce) {#food-explorer, #food-explorer *{ transition: none !important; }}
 /* Original food-search surface (#252727), with the existing mint-green accents. */
 #food-explorer{display:block;width:100%;margin:0;padding:0;color-scheme:dark;background:transparent;color:var(--text);font-size:14px;line-height:1.55;}
@@ -456,7 +451,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 #food-explorer mark{background:#365E4B;color:#fff;border-radius:2px;padding:0 1px;}
 #food-explorer .search-shell input{height:49px;font-size:16px;color:var(--text);background:transparent;}
 #food-explorer .search-shell input::placeholder{color:var(--muted);}
-#food-explorer .quick button,#food-explorer .pill{touch-action:manipulation;}
+#food-explorer .quick button{touch-action:manipulation;}
 @media(max-width:420px){#food-explorer .food-panel{padding:18px 13px 15px;border-radius:15px;}}
 
 /* =================== CSS 05: venue-directory-style =================== */
@@ -510,7 +505,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   text-underline-offset:3px;
 }
 .site-content .venue-directory-section .venue-name-line a.venue-main-link::after {
-  content:' ↗';
+  content:" ↗";
   font-size:11px;
   opacity:.70;
   font-weight:500;
@@ -587,7 +582,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   border-radius:6px;text-align:center;text-decoration:none!important;line-height:1.4;max-width:128px;
   overflow-wrap:anywhere;
 }
-.site-content .venue-directory-section .venue-secondary-links a::after{content:'↗';opacity:.8;margin-left:3px;font-size:9px;}
+.site-content .venue-directory-section .venue-secondary-links a::after{content:"↗";opacity:.8;margin-left:3px;font-size:9px;}
 @media(max-width:365px){
  .site-content .venue-directory-section .venue-secondary-links{max-width:100px;}
  .site-content .venue-directory-section .venue-secondary-links a{padding:4px 5px;}
@@ -625,16 +620,9 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   #food-explorer .quick::-webkit-scrollbar {display:none;}
   #food-explorer .quick > span {flex:0 0 auto;margin-right:3px;}
   #food-explorer .quick button {flex:0 0 35px;height:35px;display:inline-grid;place-items:center;padding:0;font-size:16px;}
-  #food-explorer .filters {
-    flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;min-width:0;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain;
-    margin:10px -2px 12px;padding:3px 2px 7px;gap:7px;
-    scroll-snap-type:x proximity;
-  }
-  #food-explorer .filters::-webkit-scrollbar {display:none;}
-  #food-explorer .filters .pill {
-    flex:0 0 auto;min-height:39px;white-space:nowrap;scroll-snap-align:start;padding:7px 11px;
-  }
+  
+  
+  
   #food-explorer .results-head {padding-bottom:8px;}
   #food-explorer .result {padding:11px 1px;gap:8px;}
   #food-explorer .dish {line-height:1.45;}
@@ -689,11 +677,11 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   background:#1E282E;border:1px solid #3D4D57;border-radius:13px;margin:9px 0;
 }
 .site-content details.destination-card > summary::after {
-  content:'';width:8px;height:8px;border-right:1.6px solid #AFC0C9;
+  content:"";width:8px;height:8px;border-right:1.6px solid #AFC0C9;
   border-bottom:1.6px solid #AFC0C9;right:17px;
   transform:translateY(-65%) rotate(45deg);
 }
-.site-content details.destination-card[open] > summary::after {content:'';transform:translateY(-30%) rotate(225deg);}
+.site-content details.destination-card[open] > summary::after {content:"";transform:translateY(-30%) rotate(225deg);}
 .site-content details.destination-card[open] > summary {border-bottom:1px solid #3D4D57;}
 @media(max-width:350px) {
   .site-content .travel-key-title {font-size:13px;}
@@ -912,7 +900,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   .quick-nav .nav-subtitle {font-size:11.5px;line-height:1.45;}
   #food-explorer .intro {font-size:12px;}
   #food-explorer .quick > span {font-size:11px;}
-  #food-explorer .filters .pill {font-size:11.5px;}
+  
   #food-explorer .desc {font-size:12px;line-height:1.55;}
   #food-explorer .tag {font-size:10.5px;}
   #food-explorer .scroll-tip,#food-explorer .foot {font-size:11px;}
@@ -1056,7 +1044,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
   .site-content .destination-card .tab-pill {font-size:12px;}
   #food-explorer .quick > span {font-size:11.5px;}
   #food-explorer .intro,#food-explorer .desc {font-size:12.5px;line-height:1.65;}
-  #food-explorer .filters .pill {font-size:12px;}
+  
   #food-explorer .tag,#food-explorer .scroll-tip,#food-explorer .foot {font-size:11.5px;}
   #food-explorer .dish {font-size:14.5px;}
 }
@@ -1080,7 +1068,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 /* Transparent ordinary option surfaces. */
 .site-content .airport-direction-button,
 .site-content .airport-direction-button:hover,
-.site-content .airport-direction-button[aria-expanded='true'],
+.site-content .airport-direction-button[aria-expanded="true"],
 .site-content .destination-card .tab-panel,
 .site-content .destination-info-group,
 .site-content .destination-card .tab-panel details.nested-accordion,
@@ -1099,14 +1087,14 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .destination-card .tab-pill,
 .site-content .tab-pill:hover,
 .site-content .destination-card .tab-pill:hover,
-.site-content .tab-pill[aria-selected='true'],
-.site-content .destination-card .tab-pill[aria-selected='true'] {
+.site-content .tab-pill[aria-selected="true"],
+.site-content .destination-card .tab-pill[aria-selected="true"] {
  background:transparent!important; background-image:none!important;
  border-color:var(--outline-white)!important;box-shadow:none!important;
  color:#DCE4E8!important;
 }
-.site-content .tab-pill[aria-selected='true'],
-.site-content .destination-card .tab-pill[aria-selected='true'] {outline-offset:-3px;}
+.site-content .tab-pill[aria-selected="true"],
+.site-content .destination-card .tab-pill[aria-selected="true"] {outline-offset:-3px;}
 /* Ordinary directory rows and tags. */
 .site-content .venue-directory-section .venue-tag,
 .site-content .venue-directory-section .venue-tag--featured,
@@ -1183,12 +1171,12 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
  background:transparent!important;box-shadow:none!important;border-color:#494949!important;
  color:#C4C4C4!important;
 }
-.site-content .tab-pill[aria-selected='true'],
-.site-content .destination-card .tab-pill[aria-selected='true']{
+.site-content .tab-pill[aria-selected="true"],
+.site-content .destination-card .tab-pill[aria-selected="true"]{
  background:transparent!important;outline:none!important;border-color:#E3E3E3!important;
  color:#FFFFFF!important;
 }
-.site-content .airport-direction-button[aria-expanded='true']{
+.site-content .airport-direction-button[aria-expanded="true"]{
  background:#171717!important;border-color:#D3D3D3!important;box-shadow:none!important;
 }
 .site-content .venue-directory-section .venue-tag,
@@ -1331,7 +1319,7 @@ html,body{background:#0D0D0D!important;color:#E7E7E7;}
 
 /* Keep pinch-to-zoom and normal panning. Suppress double-tap zoom on modern
    iOS Safari / Android browsers without disabling accessibility zoom. */
-html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .site-content button, .site-content details > summary:not(:where(#taipei-recommender *)), #food-explorer button, #food-explorer .pill, #food-explorer .quick button { touch-action:manipulation; }
+html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .site-content button, .site-content details > summary:not(:where(#taipei-recommender *)), #food-explorer button, #food-explorer .quick button { touch-action:manipulation; }
 /* A focused open area reads as a current selection without a bright new box. */
 .site-content .area-directory-section .area-category-list > details[open] > summary {
   color:#FAFAFA!important;
@@ -1685,8 +1673,8 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
   border-color:var(--accent)!important;
   box-shadow:0 0 0 2px rgba(131,211,176,.13), inset 0 1px 0 rgba(255,255,255,.085)!important;
 }
-#guide #food-explorer .pill { background:rgba(255,255,255,.032)!important; border-color:rgba(255,255,255,.11)!important; }
-#guide #food-explorer .pill.active { background:rgba(131,211,176,.11)!important; border-color:rgba(131,211,176,.50)!important; color:var(--accent)!important; }
+
+
 #guide #food-explorer .results-head, #guide #food-explorer .result { border-color:rgba(255,255,255,.10)!important; }
 .quick-nav::before, #guide .food-browser-banner::before { content:none!important; display:none!important; }
 @media(prefers-reduced-motion:reduce){ .quick-nav > .nav-button:nth-child(n){ transition:none!important; } }
@@ -2016,7 +2004,8 @@ body.food-drawer-open .food-drawer-backdrop {
   pointer-events:none;
 
 }
-body.food-swipe-dragging {user-select:none;-webkit-user-select:none;}
+/* v30.9.208: only the drawer (user-select is inherited: on <body> it restyled the whole page per drag). */
+body.food-swipe-dragging #food-search {user-select:none;-webkit-user-select:none;}
 body.food-drawer-open .food-drawer-backdrop {pointer-events:auto;}
 body.food-swipe-dragging .hero,
 body.food-swipe-dragging #guide > .divider,
@@ -2127,13 +2116,8 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   flex-basis:37px!important;width:37px!important;height:37px!important;
   border-radius:50%;
 }
-#guide #food-search #food-explorer .filters {
-  margin:8px 0 13px!important;
-  gap:7px!important;padding:2px 0 5px!important;
-}
-#guide #food-search #food-explorer .filters .pill {
-  font-size:11.5px!important;
-}
+
+
 #guide #food-search #food-explorer .food-panel > section {
   flex:1 1 auto;display:flex;flex-direction:column;
 }
@@ -2211,8 +2195,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 }
 /* The popular chips and difficulty filters must never be squeezed to slivers
    by a long result list; only the list itself is scrollable. */
-#guide #food-search #food-explorer .quick,
-#guide #food-search #food-explorer .filters {
+#guide #food-search #food-explorer .quick{
   flex:0 0 auto!important;
   height:auto!important;
   min-height:0!important;
@@ -3039,7 +3022,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
 }
 #guide a.external-action-link::after,
 #guide .venue-secondary-links a::after {
-  content:'↗';font-size:.95em;line-height:1;
+  content:"↗";font-size:.95em;line-height:1;
 }
 #guide a.external-action-link:hover,
 #guide .venue-secondary-links a:hover {background:rgba(47,116,207,.27);}
@@ -3095,7 +3078,7 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
   min-height:30px;padding:5px 10px;border-radius:100px;
   border:1px solid rgba(82,153,245,.60);background:rgba(47,116,207,.14);
   color:#88C4FF!important;font:700 11px/1.3 -apple-system,BlinkMacSystemFont,
-  'Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;
+  "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
   white-space:nowrap;text-decoration:none!important;letter-spacing:.01em;
   transition:background .16s ease,border-color .16s ease;
 }
@@ -3514,7 +3497,7 @@ html[data-theme="light"] #guide #food-explorer :is(.pill.active,.filter.active){
  position:fixed;top:calc(14px + env(safe-area-inset-top));right:71px;z-index:121;
  display:inline-flex;align-items:center;justify-content:center;gap:5px;
  min-width:77px;min-height:41px;padding:7px 10px;
- font:700 11px/1.2 -apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;
+ font:700 11px/1.2 -apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;
  background:rgba(29,31,32,.95);color:#F2F2F2;border:1px solid #535A5D;border-radius:999px;
  box-shadow:0 3px 12px rgba(0,0,0,.18);cursor:pointer;white-space:nowrap;
  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
@@ -3714,7 +3697,7 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback
 }
 #guide .sights-day-trips .daytrip-inline-accordion > summary::-webkit-details-marker{display:none!important;}
 #guide .sights-day-trips .daytrip-inline-accordion > summary::after{
-  content:''!important;position:absolute!important;right:9px!important;top:50%!important;
+  content:""!important;position:absolute!important;right:9px!important;top:50%!important;
   display:block;width:8px;height:8px;border-right:1.6px solid currentColor;
   border-bottom:1.6px solid currentColor;color:#B7C1C5;
   transform:translateY(-65%) rotate(45deg)!important;
@@ -3771,13 +3754,8 @@ html[data-theme="light"] #guide #food-search #food-explorer .quick button{
 html[data-theme="light"] #guide #food-search #food-explorer .quick button:focus-visible{
   border-color:#4D997D!important;
 }
-html[data-theme="light"] #guide #food-search #food-explorer .filters .pill{
-  border:1px solid #B9C8C9!important;background:#FAFBFA!important;
-  color:#40575D!important;
-}
-html[data-theme="light"] #guide #food-search #food-explorer .filters .pill.active{
-  background:#E1F2E9!important;border-color:#9AD8BD!important;color:#195B43!important;
-}
+
+
 html[data-theme="light"] #guide #food-search #food-explorer .results-head{
   border-bottom:1px solid #BDC9CA!important;
 }
@@ -4365,7 +4343,7 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:focus-visible{
   font-size:14px;font-weight:700;
 }
 #guide .venue-directory-section .tab-panel > .guided-fixed-heading > button::after{
-  content:'−';position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  content:"−";position:absolute;right:13px;top:50%;transform:translateY(-50%);
   color:var(--muted,#a0a0a0);font-size:18px;font-weight:400;
 }
 #guide .venue-directory-section .tab-panel > .guided-fixed-heading > button:focus-visible{
@@ -4564,76 +4542,60 @@ html[data-theme="light"] #guide #food-search.food-drawer::before {
 html[data-theme="light"] #guide #food-search.food-drawer::after {
   background:linear-gradient(to top,#F7F8F7 0%,transparent 100%)!important;
 }
-html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active)) {
-  --drawer-chrome-edge:#0D0D0D;
+/* v30.9.208: --drawer-chrome-edge is now set once per theme (bottom of this
+   file). Switching an inherited custom property on <html> whenever a drawer
+   opened made the browser restyle every element of the page. */
+html:has(body.food-swipe-active) {
   background-color:#0D0D0D!important;
   color-scheme:dark;
 }
-html[data-theme="light"]:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active)) {
-  --drawer-chrome-edge:#F7F8F7;
+html[data-theme="light"]:has(body.food-swipe-active) {
   background-color:#F7F8F7!important;
   color-scheme:light;
 }
-body:is(.recommend-swipe-active,.food-swipe-active) {
+body.food-swipe-active {
   background-color:var(--drawer-chrome-edge,#0D0D0D)!important;
 }
 /* Positioned on html rather than on the scroll-locked body, these stay
    attached to the visual viewport as the body is fixed at -scrollY. */
-html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::before,
-html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::after {
+html:has(body.food-swipe-active)::before,
+html:has(body.food-swipe-active)::after {
   content:"";position:fixed;left:0;right:0;width:100%;
   pointer-events:none;z-index:210;
   height:calc(20px + env(safe-area-inset-top,0px));
   background:linear-gradient(to bottom,var(--drawer-chrome-edge,#0D0D0D),transparent);
 }
-html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::before {top:0;}
-html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::after {
+html:has(body.food-swipe-active)::before {top:0;}
+html:has(body.food-swipe-active)::after {
   top:auto;bottom:0;height:calc(26px + env(safe-area-inset-bottom,0px));
   background:linear-gradient(to top,var(--drawer-chrome-edge,#0D0D0D),transparent);
 }
 /* Avoid doubling the existing per-drawer fades when the viewport-wide bridge
    is visible. Keep the drawer's own solid K95/light canvas unchanged. */
-body.recommend-swipe-active .recommend-drawer::before,
-body.recommend-swipe-active .recommend-drawer::after {opacity:0;}
+
 body.food-swipe-active #guide #food-search.food-drawer::before,
 body.food-swipe-active #guide #food-search.food-drawer::after {opacity:0!important;}
 @media(prefers-reduced-motion:reduce){
- html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::before,
- html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::after {transition:none;}
+ html:has(body.food-swipe-active)::before,
+ html:has(body.food-swipe-active)::after {transition:none;}
 }
 
 /* v30.9.60 — keep the bottom edge flat while either side drawer is active.
    The earlier full-width ::after gradient resembled a shadow along the
    bottom of the screen during touch-dragging. Keep the solid root canvas
    and the top safe-area bridge, but do not dim the bottom viewport edge. */
-html:is(:has(body.recommend-swipe-active),:has(body.food-swipe-active))::after {
+html:has(body.food-swipe-active)::after {
   content:none!important;
   display:none!important;
 }
 /* The drawers move as solid surfaces without casting a shadow on the
    underlying guide while opening, dragging, or closing. */
-body.recommend-swipe-active .recommend-drawer,
+
 body.food-swipe-active #guide #food-search.food-drawer {
   box-shadow:none!important;
 }
-#guide #food-search #food-explorer .filters .pill {
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  box-sizing:border-box!important;
-  min-height:32px!important;
-  height:32px!important;
-  border-radius:999px!important;
-  padding:3px 10px!important;
-  line-height:1.2!important;
-}
-@media(max-width:600px){
-  #guide #food-search #food-explorer .filters .pill {
-    min-height:30px!important;
-    height:30px!important;
-    padding:3px 9px!important;
-  }
-}
+
+
 /* The outgoing drawer must never cast a shadow once it is sliding offscreen.
    A legacy default box-shadow reappeared for one frame after swipe-active was
    removed, even though its drag-state override was shadowless. */
@@ -4797,15 +4759,12 @@ body #guide #food-search.food-drawer.is-floating .food-char{padding:0;border:1px
 }
 body #guide #food-search.food-drawer.is-floating #food-explorer .quick button[aria-pressed="true"]{border-color:#F2F2F2!important;background:#2A2A2A!important;}
 body #guide #food-search.food-drawer.is-floating .food-char[aria-pressed="true"]{background:#F2F2F2;border-color:#F2F2F2;color:#111111;}
-body #guide #food-search.food-drawer.is-floating .filters{display:flex!important;flex-wrap:nowrap!important;margin:0!important;overflow-x:auto;scrollbar-width:none;}
-body #guide #food-search.food-drawer.is-floating .filters::-webkit-scrollbar{display:none;}
-body #guide #food-search.food-drawer.is-floating .filters .pill{
-  flex:none;display:inline-flex!important;align-items:center;gap:4px;
-  border:1px solid #3D3D3D!important;border-radius:999px!important;background:#161616!important;color:#E4E4E4!important;white-space:nowrap;box-shadow:none!important;
-}
-body #guide #food-search.food-drawer.is-floating .filters .pill .pill-count{color:#A8A8A8!important;}
-body #guide #food-search.food-drawer.is-floating .filters .pill.active{background:#F2F2F2!important;border-color:#F2F2F2!important;color:#111111!important;}
-body #guide #food-search.food-drawer.is-floating .filters .pill.active .pill-count{color:#555555!important;}
+
+
+
+
+
+
 body #guide #food-search.food-drawer.is-floating .food-list{position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;margin:20px 0 0!important;}
 body #guide #food-search.food-drawer.is-floating .results-head{display:flex!important;align-items:baseline;justify-content:space-between;margin:0!important;padding:0 2px 10px!important;}
 body #guide #food-search.food-drawer.is-floating .results-head h3{margin:0!important;font-size:14px!important;font-weight:700!important;color:#E8E8E8!important;}
@@ -4838,10 +4797,10 @@ html[data-theme="light"] body #guide #food-search.food-drawer.is-floating #food-
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating #food-explorer .quick button[aria-pressed="true"]{border-color:#222!important;background:#E8E8E8!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-char{background:#F4F4F4;border-color:#D4D4D4;color:#222;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-char[aria-pressed="true"]{background:#222;border-color:#222;color:#FFF;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .filters .pill{background:#F4F4F4!important;border-color:#D4D4D4!important;color:#2A2A2A!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .filters .pill .pill-count{color:#666!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .filters .pill.active{background:#222!important;border-color:#222!important;color:#FFF!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .filters .pill.active .pill-count{color:#CCC!important;}
+
+
+
+
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .results-head h3,html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result-count{color:#222!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-list::before{background:linear-gradient(to bottom,rgba(201,160,80,.30),rgba(201,160,80,.10) 50%,rgba(201,160,80,0) 92%);}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result{border-bottom-color:#DDDDDD!important;}
@@ -4861,12 +4820,23 @@ body #guide #food-search.food-drawer.is-floating .food-list::before{
   -webkit-mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent);
   mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent);
 }
+/* v30.9.209: dimmed while the window slides; the blur is added once it has
+   stopped (body.food-drawer-settled). Same look when open, far less GPU work
+   per frame of the slide. brightness() comes first so the two lists
+   interpolate (the blur eases in from 0). */
 html body .food-drawer-backdrop{
   background:transparent!important;
-  -webkit-backdrop-filter:blur(7px) brightness(.68);backdrop-filter:blur(7px) brightness(.68);
+  -webkit-backdrop-filter:brightness(.68);backdrop-filter:brightness(.68);
+}
+html body.food-drawer-settled .food-drawer-backdrop{
+  -webkit-backdrop-filter:brightness(.68) blur(7px);backdrop-filter:brightness(.68) blur(7px);
+  transition:opacity .32s ease,visibility 0s,-webkit-backdrop-filter .22s ease-out,backdrop-filter .22s ease-out!important;
 }
 html[data-theme="light"] body .food-drawer-backdrop{
-  -webkit-backdrop-filter:blur(7px) brightness(.84);backdrop-filter:blur(7px) brightness(.84);
+  -webkit-backdrop-filter:brightness(.84);backdrop-filter:brightness(.84);
+}
+html[data-theme="light"] body.food-drawer-settled .food-drawer-backdrop{
+  -webkit-backdrop-filter:brightness(.84) blur(7px);backdrop-filter:brightness(.84) blur(7px);
 }
 body #guide #food-search.food-drawer.is-floating .search-shell{
   margin-top:9px!important; /* half of v30.9.144's 18px gap */
@@ -4890,14 +4860,8 @@ body #guide #food-search.food-drawer.is-floating #food-explorer .quick button{
   width:44px!important;height:44px!important;font-size:22px!important;
 }
 body #guide #food-search.food-drawer.is-floating .food-char{height:34px!important;font-size:15px!important;}
-body #guide #food-search.food-drawer.is-floating .filters{
-  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:7px!important;overflow:visible!important;padding:0!important;
-}
-body #guide #food-search.food-drawer.is-floating .filters .pill{
-  justify-content:center!important;min-width:0!important;width:100%!important;
-  min-height:33px!important;padding:0 7px!important;font-size:11.5px!important;
-}
+
+
 body #guide #food-search.food-drawer.is-floating .food-list{margin-top:14px!important;}
 body #guide #food-search.food-drawer.is-floating .results-head{
   border:0!important;border-bottom:none!important;box-shadow:none!important;
@@ -4946,22 +4910,10 @@ body #guide #food-search.food-drawer.is-floating .food-tools{
 body #guide #food-search.food-drawer.is-floating .food-tools-toggle{
   flex:0 0 auto;
 }
-body #guide #food-search.food-drawer.is-floating .food-active-filter{
-  display:inline-flex;align-items:center;justify-content:center;gap:7px;
-  margin-left:auto;min-height:29px;max-width:calc(100% - 148px);
-  padding:0 9px 0 11px;border:1px solid #81704E;border-radius:999px;
-  background:rgba(176,138,70,.16);color:#F0DEB7;
-  font:inherit;font-size:11.5px;font-weight:650;line-height:1.2;
-  white-space:nowrap;cursor:pointer;touch-action:manipulation;
-  -webkit-tap-highlight-color:transparent;
-}
-body #guide #food-search.food-drawer.is-floating .food-active-filter[hidden]{display:none!important;}
-body #guide #food-search.food-drawer.is-floating .food-active-filter-x{
-  font-size:16px;line-height:1;font-weight:500;opacity:.85;
-}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-active-filter{
-  background:#F9F0DA;color:#654D1F;border-color:#C9B687;
-}
+
+
+
+
 body #guide #food-search.food-drawer.is-floating .search-shell{cursor:text;}
 body #guide #food-search.food-drawer.is-floating .clear{
   position:relative;z-index:2;touch-action:manipulation;
@@ -5047,7 +4999,7 @@ body.food-drawer-open .food-theme-dock .theme-preview-toggle{pointer-events:auto
   display:inline-flex!important;align-items:center;gap:8px;width:auto!important;height:auto!important;min-height:38px;
   padding:0 16px 0 13px!important;margin:0!important;border-radius:999px!important;
   border:1px solid #3A3A3A!important;background:#121212!important;color:#EDEDED!important;
-  font:700 13px/1 -apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif!important;letter-spacing:.08em;
+  font:700 13px/1 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif!important;letter-spacing:.08em;
   box-shadow:0 8px 24px rgba(0,0,0,.35)!important;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 .food-theme-dock .theme-dot{width:15px;height:15px;border-radius:50%;background:#EDEDED;flex:none;}
@@ -5393,3 +5345,26 @@ body #guide #food-search.food-drawer.is-floating .result-meta .spice{
 }
 body #guide #food-search.food-drawer.is-floating .food-tools-panel{padding-bottom:13px!important;}
 body #guide #food-search.food-drawer.is-floating .food-tools-panel .food-chars{margin-bottom:0!important;}
+
+
+/* =================== CSS v30.9.208 — smooth dictionary drawer =================== */
+/* The page behind the floating dictionary stays put: it is never moved,
+   scaled or dimmed by a filter (the backdrop dims it). The old transform,
+   filter, transition and will-change on these four very large sections kept
+   them on giant compositing layers and, at every open/close, started a
+   filter transition over the whole page. */
+html:root body > .hero,
+html:root #guide > .divider,
+html:root #guide > .page-body,
+html:root body > footer{
+  transform:none!important;filter:none!important;transition:none!important;will-change:auto!important;
+}
+/* Constant per theme (see the note at the drawer edge bridge). */
+html{--drawer-chrome-edge:#0D0D0D;}
+html[data-theme="light"]{--drawer-chrome-edge:#F7F8F7;}
+/* Rows of the dictionary are added as this marker nears the end of the list. */
+#food-explorer #results .food-more-sentinel{display:block;height:1px;margin:0;padding:0;pointer-events:none;}
+/* The expanded description already breaks after 16 characters (in JS);
+   at exactly 16ic the 16th character could still wrap onto a line of its own
+   (e.g. 「マンゴー／や／スイカ」). One extra character of room prevents that. */
+#guide #food-explorer .food-desc-full{max-width:min(17ic,100%);}
