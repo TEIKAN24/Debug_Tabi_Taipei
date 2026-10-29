@@ -657,7 +657,7 @@ window.TABI_AREAS={
       "subtitle": "ストリート・若者文化",
       "description": "台湾の若者文化とトレンドが集まる街。",
       "tone": "#D6DCD0",
-      "toneLight": "",
+      "toneLight": "#829570",
       "categories": [
         {
           "id": "3f66bda0-4caa-80c0-b7ca-e397f58a4d7e",
