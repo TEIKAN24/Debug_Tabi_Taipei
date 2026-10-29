@@ -1811,3 +1811,63 @@ html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline .re
 html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline .recommend-source-caption,
 html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-time-caption,
 html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-area-label{color:#1E1E1E!important;}
+
+/* =================== v30.9.210 — recommendation cards =================== */
+/* Alignment offsets are measured in recommend.js (alignCards):
+   --rc-type-y   centres the kind / チェーン店 row on the distance marker;
+   --rc-venue-y  moves a one-line shop name down onto the opening status;
+   --rc-status-y moves the status up to the first line of a wrapped name.
+   The shop name is shifted with padding, not position/transform, because its
+   ::after covers the whole card as the tap target. */
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-type-row{
+  transform:translateY(var(--rc-type-y,0px));
+}
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card-main .recommend-card-type{
+  top:0!important; /* centred with the チェーン店 pill by the row itself */
+  color:#A3A3A3!important; /* secondary information */
+}
+html[data-theme="light"] #food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card-main .recommend-card-type{
+  color:#767676!important;
+}
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-card .recommend-venue{
+  padding-top:max(0px,var(--rc-venue-y,0px))!important;
+}
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-opening-status{
+  transform:translateY(var(--rc-status-y,0px));
+}
+/* Badges 3% larger (9.8px → 10.094px, with padding and corners in step). */
+#food-recommend-section .recommend-drawer.is-inline #recommend-results .recommend-guide-tag{
+  font-size:10.094px!important;padding:3.09px 6.18px!important;border-radius:3.09px!important;
+}
+/* 一覧 (back face): the チェーン店 pill is the front's pill, centred on the name. */
+#food-recommend-section .food-directory-name-line{align-items:center;}
+#food-recommend-section .food-directory-branches{
+  font-size:9.5px;line-height:1.4;padding:1px 6px;border:1px solid #555;border-radius:999px;color:#D3D3D3;font-weight:400;
+}
+html[data-theme="light"] #food-recommend-section .food-directory-branches{color:#555;border-color:#C6C6C6;}
+/* Neutral greys instead of the faint purple left in dark mode. */
+#food-recommend-section .recommend-drawer .recommend-sort-option{color:#A6A6A6;}
+#food-recommend-section .recommend-drawer .recommend-sort-option[aria-pressed="true"]{color:#D4D4D4;border-bottom-color:#B6B6B6;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer .recommend-sort-option{color:#6B6B6B;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer .recommend-sort-option[aria-pressed="true"]{color:#676767;border-bottom-color:#8E8E8E;}
+#food-recommend-section .recommend-drawer .recommend-sort-option:focus-visible{outline-color:#B4B4B4;}
+#food-recommend-section .recommend-drawer .recommend-distance-pill,
+#food-recommend-section .recommend-drawer .recommend-distance-pill-label{color:#FAFAFA;}
+html[data-theme="light"] #food-recommend-section .recommend-drawer .recommend-distance-pill,
+html[data-theme="light"] #food-recommend-section .recommend-drawer .recommend-distance-pill-label{color:#2D2D2D;}
+#food-recommend-section .recommend-native-empty{color:#EAEAEA;}
+#food-recommend-section .recommend-native-empty small{color:#B5B5B5;}
+#food-recommend-section .recommend-native-code.is-empty{border-color:#444;}
+html[data-theme="light"] #food-recommend-section .recommend-native-empty{color:#3A3A3A;background-color:#F5F5F5;}
+html[data-theme="light"] #food-recommend-section .recommend-native-empty small{color:#757575;}
+/* 時間帯指定中: the chosen band breathes together with its caption. */
+.recommend-drawer #recommend-time-label.is-breathing{animation:recommend-caption-breathe 1s ease-in-out infinite;}
+@media (prefers-reduced-motion:reduce){.recommend-drawer #recommend-time-label.is-breathing{animation:none;}}
+/* 時間帯指定中 is one character longer than before; on phones under 375px the
+   caption is tightened so it stays within the time button's width. */
+@media (max-width:374px){
+  #food-recommend-section .recommend-source-caption:has(#recommend-time-caption.is-breathing){gap:2px!important;}
+  #food-recommend-section .recommend-source-caption:has(#recommend-time-caption.is-breathing) .recommend-caption-icon{width:11px!important;height:11px!important;flex-basis:11px!important;}
+  #food-recommend-section .recommend-source-caption:has(#recommend-time-caption.is-breathing) .recommend-caption-icon svg{width:11px!important;height:11px!important;}
+  #food-recommend-section #recommend-time-caption.is-breathing{font-size:10px!important;letter-spacing:-.01em;}
+}

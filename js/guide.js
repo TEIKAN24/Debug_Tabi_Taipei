@@ -15,7 +15,8 @@
   window.addEventListener("resize", () => { if (!frame) frame = requestAnimationFrame(run); }, {passive: true});
   window.tabiOnResize = fn => { callbacks.add(fn); return () => callbacks.delete(fn); };
 })();
-/* v30.9.209 — code health pass: search text prepared once; blur only after the dictionary settles; one resize dispatcher; dead CSS removed; strict mode in the search module.
+/* v30.9.210 — おすすめ cards aligned and badges ordered (see recommend.js); 旅行前に知っておきたいこと shortened, コンセント・電圧 added; edge light 1.5× slower.
+   v30.9.209 — code health pass: search text prepared once; blur only after the dictionary settles; one resize dispatcher; dead CSS removed; strict mode in the search module.
    v30.9.208 — dictionary drawer opens smoothly (rows render on demand, no page-wide restyle); 名物 tiles open and scroll to their dish; 脆皮魷魚 → 炸魷魚. */
 /* v30.9.205 — food dictionary keyboard: the floating window keeps its size and place; iOS no longer pans the page (no jitter, no tap offset).
    v30.9.204 — food dictionary: difficulty levels and their filter removed (spice shown in their place). */
@@ -1301,23 +1302,27 @@ loadData();
       notice.before(alert);
       alert.append(notice);
     }
-    const topics=[
-      ['🧳','アメニティは持参前に確認'],
-      ['🚻','場所によって利用ルールが異なる'],
-      ['🚰','飲む前にチェック'],
-      ['🚇','MRT・バス・歩行時のルール'],
-      ['💳','現金・カード・悠遊カード'],
-      ['🎟️','買い物後のレシートもチェック']
-    ];
-    [...wrapper.querySelectorAll(':scope > details.nested-accordion')].forEach((detail,i)=>{
+    // v30.9.210: icons and subtitles are looked up by each topic's title, so
+    // adding or reordering a topic can no longer shift them onto the wrong card.
+    const topics={
+      '宿泊先のアメニティ事情':['🧳','アメニティは持参前に確認'],
+      'トイレの紙事情':['🚻','場所によって利用ルールが異なる'],
+      '水道水':['🚰','飲む前にチェック'],
+      'コンセント・電圧':['🔌','変換プラグ不要・電圧は110V'],
+      '交通・移動':['🚇','MRT・バス・歩行時のルール'],
+      'お金・支払い・交通系IC':['💳','現金・カード・悠遊カード'],
+      'レシートは宝くじ':['🎟️','買い物後のレシートもチェック']
+    };
+    [...wrapper.querySelectorAll(':scope > details.nested-accordion')].forEach(detail=>{
       detail.classList.add('travel-topic');
       const summary=detail.querySelector(':scope > summary');
       if(!summary)return;
       const label=summary.textContent.trim();
+      const topic=topics[label]||['💡',''];
       const icon=document.createElement('span');
       icon.className='travel-topic-icon';
       icon.setAttribute('aria-hidden','true');
-      icon.textContent=(topics[i]||['💡',''])[0];
+      icon.textContent=topic[0];
       const copy=document.createElement('span');
       copy.className='travel-topic-copy';
       const name=document.createElement('span');
@@ -1325,7 +1330,7 @@ loadData();
       name.textContent=label;
       const note=document.createElement('span');
       note.className='travel-topic-subtitle';
-      note.textContent=(topics[i]||['',''])[1];
+      note.textContent=topic[1];
       copy.append(name,note);
       summary.classList.add('travel-topic-summary');
       summary.replaceChildren(icon,copy);

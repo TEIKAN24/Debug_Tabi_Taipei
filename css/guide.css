@@ -5041,7 +5041,7 @@ html body .food-drawer-backdrop{
   background:linear-gradient(to left,rgba(176,138,70,.558),rgba(176,138,70,.162) 45%,rgba(176,138,70,0));
   -webkit-mask-image:linear-gradient(to bottom,transparent,#000 22%,#000 78%,transparent);
   mask-image:linear-gradient(to bottom,transparent,#000 22%,#000 78%,transparent);
-  opacity:0;animation:food-edge-breathe 5s linear infinite;
+  opacity:0;animation:food-edge-breathe 7.5s linear infinite; /* v30.9.210: 1.5× slower (was 5s) */
 }
 @keyframes food-edge-breathe{
   0%{opacity:0;animation-timing-function:ease-in-out;}

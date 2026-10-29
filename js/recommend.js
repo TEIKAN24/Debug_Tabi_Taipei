@@ -1,4 +1,5 @@
-/* v30.9.207 — おすすめ: from 20:00 火鍋 ranks lower than other meals (still shown until 23:00).
+/* v30.9.210 — おすすめ cards: kind row centred on the distance marker, name on the status; grey kind; badges +3% and ordered grey → red → gold on both faces; 時間帯指定中 with the band breathing; no purple greys.
+   v30.9.207 — おすすめ: from 20:00 火鍋 ranks lower than other meals (still shown until 23:00).
    v30.9.206 — おすすめ: two cards of one kind per page are fine in every band (never three); in 深夜 other kinds stay one per page, but night cafés, bars, 熱炒 and 屋台料理 may fill two.
    TAIPEI CITY GUIDE v30.9.131 — restaurant data from the 2026-10-25 backup (254 shops).
    v30.9.130 — 料理種類 can be combined; 推薦レベル (pickLevel 1 精選 / 2 必食) from the
@@ -36,7 +37,7 @@
   'use strict';
   // v30.9.209: the version comes from this script's own ?v= (index.html is
   // the single place to bump it); data files are fetched with the same value.
-  const VERSION=(()=>{try{return new URL(document.currentScript.src).searchParams.get('v')||'30.9.209';}catch(e){return '30.9.209';}})();
+  const VERSION=(()=>{try{return new URL(document.currentScript.src).searchParams.get('v')||'30.9.210';}catch(e){return '30.9.210';}})();
   // Shared, frame-coalesced resize dispatcher from guide.js (fallback: own listener).
   const onResize=fn=>window.tabiOnResize?window.tabiOnResize(fn):window.addEventListener('resize',fn,{passive:true});
   const drawer = document.getElementById('taipei-recommender');
@@ -489,6 +490,19 @@
       tags.push(tag);
     }
     return tags;
+  }
+  // v30.9.210: one badge order on both faces, left to right:
+  // grey dish names → other grey labels → green (ベジ) → red → gold (rightmost).
+  // Within each group the editor's order is kept.
+  const DISH_TAG=/麺|麵|餃|小籠包|包子|氷|豆花|鍋|粉圓|愛玉|仙草|麻糬|ドーナツ|プリン|ケーキ|ロール|スムージー|ジュース|お茶|茶|珈琲|コーヒー|トースト|おにぎり|煮込み|ジェラート|チョコ|お菓子|点心|金萱|魯肉飯|滷肉飯|揚げ物|目玉焼き/;
+  const NOT_DISH_TAG=/人気|あり|必見|シェフ|バー|カフェ|限定|系/;
+  const isDishTag=text=>DISH_TAG.test(text)&&!NOT_DISH_TAG.test(text);
+  const BADGE_RANK={dish:0,neutral:1,veg:2,caution:3,featured:4};
+  function orderBadges(list,toneOf,textOf){
+    const rank=entry=>{const tone=toneOf(entry);
+      return tone==='featured'||tone==='caution'||tone==='veg'?BADGE_RANK[tone]:isDishTag(textOf(entry))?BADGE_RANK.dish:BADGE_RANK.neutral;};
+    return list.map((entry,index)=>({entry,index,rank:rank(entry)}))
+      .sort((a,b)=>a.rank-b.rank||a.index-b.index).map(x=>x.entry);
   }
 
 
@@ -1029,9 +1043,14 @@
     syncActiveConditions();
     const timeName=TIME.find(([value])=>value===state.time)?.[1]||'昼';
     timeLabel.textContent=timeName;
-    timeCaption.textContent=state.timeMode==='current'?'現在時刻':'時間帯指定';
-    // A chosen band is not "now": the caption breathes (one bright/dim cycle a second).
-    timeCaption.classList.toggle('is-breathing',state.timeMode!=='current');
+    timeCaption.textContent=state.timeMode==='current'?'現在時刻':'時間帯指定中';
+    // A chosen band is not "now": the caption breathes (one bright/dim cycle a
+    // second), and v30.9.210: the chosen band itself breathes with it.
+    const breathing=state.timeMode!=='current';
+    for(const node of [timeCaption,timeLabel]){
+      if(node.classList.contains('is-breathing')===breathing)continue;
+      node.classList.toggle('is-breathing',breathing);
+    }
     const isStation=state.areaMode==='station';
     areaLabel.textContent=isStation?'駅から検索':'現在地';
     mainPicker.classList.toggle('is-station',isStation);
@@ -1311,6 +1330,40 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     lastWhenUnavailable(moods,categoryControls);
     if(cleared){state.page=0;syncUI();}
   }
+  // v30.9.210: card alignment, measured so it holds at every width and font:
+  // the kind (and チェーン店) row is centred on the distance marker, and the
+  // shop name's first line on the opening status. A one-line name moves down
+  // to the status; a wrapped name keeps its place (it would run into the
+  // badges) and the status moves up to its first line instead.
+  function alignCards(){
+    // Hidden (folded section, back face): nothing to measure; keep the last values.
+    const cards=[...results.querySelectorAll('.recommend-card')].filter(card=>card.getClientRects().length&&card.offsetHeight);
+    for(const card of cards)for(const name of ['--rc-type-y','--rc-venue-y','--rc-status-y'])card.style.removeProperty(name);
+    const center=r=>(r.top+r.bottom)/2;
+    const plans=cards.map(card=>{
+      const row=card.querySelector('.recommend-type-row'),pill=card.querySelector('.recommend-distance-pill');
+      const venue=card.querySelector('.recommend-venue'),status=card.querySelector('.recommend-opening-status');
+      if(!venue||!status)return null;
+      const plan={card};
+      if(row&&pill)plan.type=center(pill.getBoundingClientRect())-center(row.getBoundingClientRect());
+      const box=venue.getBoundingClientRect(),style=getComputedStyle(venue);
+      const lineHeight=parseFloat(style.lineHeight)||box.height;
+      const firstLine=box.top+parseFloat(style.paddingTop||0)+lineHeight/2;
+      const gap=center(status.getBoundingClientRect())-firstLine;
+      if(box.height>lineHeight*1.5)plan.status=-gap;else plan.venue=gap;
+      return plan;
+    });
+    for(const plan of plans){
+      if(!plan)continue;
+      const set=(name,value)=>{if(Number.isFinite(value)&&Math.abs(value)>.25)plan.card.style.setProperty(name,value.toFixed(2)+'px');};
+      set('--rc-type-y',plan.type);set('--rc-venue-y',plan.venue);set('--rc-status-y',plan.status);
+      plan.card.classList.toggle('recommend-card-wrapped',plan.status!==undefined);
+    }
+  }
+  onResize(alignCards);
+  // Re-measure when the cards first become visible (section unfolded, flip back).
+  if('ResizeObserver' in window){let alignFrame=0;new ResizeObserver(()=>{cancelAnimationFrame(alignFrame);alignFrame=requestAnimationFrame(alignCards);}).observe(results);}
+  document.fonts?.ready?.then(()=>{if(results.querySelector('.recommend-card'))alignCards();});
   function renderResults(){
     refreshChoiceAvailability();
     updateSortControls();
@@ -1385,7 +1438,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
         }
       }
       if(starsCount)side.append(starsWrap);
-      const tags=cardTags(item);
+      const tags=orderBadges(cardTags(item),tag=>cardTagTone(tag,item),tag=>String(tag.text||''));
       if(tags.length){
         const tagList=el('div','recommend-guide-tags');
         tagList.setAttribute('aria-label','ガイドの店情報（横方向にスクロールできます）');
@@ -1406,7 +1459,12 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       card.append(shell);
       results.append(card);
     });
-    requestAnimationFrame(()=>results.querySelectorAll('.recommend-guide-tags').forEach(updateTagFade));
+    requestAnimationFrame(()=>{
+      // Gold badges sit at the right end: a strip too long for the card
+      // starts scrolled to that end so they stay in view.
+      results.querySelectorAll('.recommend-guide-tags').forEach(node=>{node.scrollLeft=node.scrollWidth;updateTagFade(node);});
+      alignCards();
+    });
     more.hidden=ordered.length<=3;
     disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}距離は直線、営業状況は通常営業時間による目安です。`;
   }
@@ -1558,7 +1616,8 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       // Purple cuisine badges are useful only in the dessert and dim-sum tabs.
       // v30.9.196: no purple kind badges in the directory; the tab names the kind.
       const tagKeys=new Set();
-      if(pickLevelOf(v)>=2){tagKeys.add('おすすめ');badges.append(directoryNode('span','food-directory-tag food-directory-tag--featured','おすすめ'));}
+      const badgeList=[];
+      if(pickLevelOf(v)>=2){tagKeys.add('おすすめ');badgeList.push({text:'おすすめ',tone:'featured'});}
       for(const tag of (Array.isArray(v.guideTags)?v.guideTags:[])){
         if(!tag||typeof tag.text!=='string'||!tag.text.trim())continue;
         const text=tag.text.trim();if(tagKeys.has(text))continue;
@@ -1569,8 +1628,10 @@ ${GEO_MAX_METERS}m 內：${near} 筆
         if(/ビブグルマン|必比登/i.test(text)&&!/(?:19|20)\d{2}/.test(text)&&!v.guideTagSource)continue;
         tagKeys.add(text);
         const tone=tag.tone==='featured'?'featured':tag.tone==='caution'?'caution':tag.tone==='veg'?'veg':'editorial';
-        badges.append(directoryNode('span','food-directory-tag food-directory-tag--'+tone,text));
+        badgeList.push({text,tone});
       }
+      for(const badge of orderBadges(badgeList,b=>b.tone,b=>b.text))
+        badges.append(directoryNode('span','food-directory-tag food-directory-tag--'+badge.tone,badge.text));
       // Do not synthesize a second plain ビブグルマン badge from awards data.
       if(badges.childElementCount)body.append(badges);
       li.append(body);list.append(li);
