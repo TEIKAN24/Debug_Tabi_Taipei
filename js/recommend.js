@@ -1,3 +1,4 @@
+/* v30.9.219 — fix valid New Taipei venues wrongly excluded by old Taipei bounding box; retain 1200m straight-line search. */
 /* v30.9.218 — seven additional debugLocation presets; production GPS and UI unchanged. */
 /* v30.9.217 — location English: District, City; outside: Outside Taipei Area. No UI/layout changes. */
 /* v30.9.216 — complete cumulative recommender update: Taipei/New Taipei geolocation, clean distance copy, New Taipei branches. */
@@ -315,8 +316,13 @@
       if(!response.ok)throw new Error('restaurant database unavailable');
       const data=await response.json();
       if(data.schemaVersion!==1||!Array.isArray(data.venues))throw new Error('restaurant schema invalid');
+      // Keep every valid registered coordinate. The actual search radius is
+      // applied later in contextCandidates() with GEO_MAX_METERS=1200.
+      // The previous Taipei-centred longitude/latitude rectangle incorrectly
+      // removed Jiufen, Ruifang, Pingxi and parts of Yingge before distance search.
       nearbyVenues=data.venues.filter(r=>r&&typeof r.name==='string'&&Array.isArray(r.branches)&&r.branches.some(b=>
-        Number.isFinite(b.lat)&&Number.isFinite(b.lng)&&b.lat>24.9&&b.lat<25.3&&b.lng>121.35&&b.lng<121.73));
+        Number.isFinite(b.lat)&&Number.isFinite(b.lng)&&Math.abs(b.lat)<=90&&Math.abs(b.lng)<=180&&
+        !(b.lat===0&&b.lng===0)));
       directoryVenues=data.venues.filter(r=>r&&typeof r.name==='string'&&r.name.trim()&&Array.isArray(r.branches));
       directoryLoaded=true;
       nearbyCatalog=null;nearbyReady=true;
