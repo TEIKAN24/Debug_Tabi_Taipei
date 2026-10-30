@@ -1,3 +1,5 @@
+/* v30.9.221 — add V/K/LB New Taipei rail lines, 35 stations (no styling or venue data changes). */
+/* v30.9.220 — preserve the canonical 408-venue catalog; code-only location filter correction (no data overwrite). */
 /* v30.9.219 — fix valid New Taipei venues wrongly excluded by old Taipei bounding box; retain 1200m straight-line search. */
 /* v30.9.218 — seven additional debugLocation presets; production GPS and UI unchanged. */
 /* v30.9.217 — location English: District, City; outside: Outside Taipei Area. No UI/layout changes. */
@@ -156,7 +158,7 @@
   // Static station coordinates are used on-device: no geolocation permission,
   // API key, third-party request or location upload in station mode.
   let metroLines=[],metroStations=[],stationsReady=false,stationsFailed=false;
-  const LINE_EN={BR:'Wenhu Line',R:'Tamsui-Xinyi Line',G:'Songshan-Xindian Line',O:'Zhonghe-Xinlu Line',BL:'Bannan Line',Y:'Circular Line'};
+  const LINE_EN={BR:'Wenhu Line',R:'Tamsui-Xinyi Line',G:'Songshan-Xindian Line',O:'Zhonghe-Xinlu Line',BL:'Bannan Line',Y:'Circular Line',V:'Danhai Light Rail',K:'Ankeng Light Rail',LB:'Sanying Line'};
   const DISTRICTS={
     '中正區':['中正区','Zhongzheng Dist.'],'大安區':['大安区','Da’an Dist.'],'中山區':['中山区','Zhongshan Dist.'],
     '大同區':['大同区','Datong Dist.'],'萬華區':['万華区','Wanhua Dist.'],'松山區':['松山区','Songshan Dist.'],
@@ -267,11 +269,11 @@
       if(!response.ok)throw new Error('station file unavailable');
       const data=await response.json();
       if(data.schemaVersion!==1||!Array.isArray(data.lines)||!Array.isArray(data.stations))throw new Error('station file invalid');
-      metroLines=data.lines.filter(x=>/^(BR|R|G|O|BL|Y)$/.test(x.id)&&typeof x.name==='string');
+      metroLines=data.lines.filter(x=>/^(BR|R|G|O|BL|Y|V|K|LB)$/.test(x.id)&&typeof x.name==='string');
       metroStations=data.stations.filter(x=>metroLines.some(line=>line.id===x.line)&&
         typeof x.code==='string'&&typeof x.name==='string'&&
         Number.isFinite(x.lat)&&Number.isFinite(x.lng)&&x.lat>24.8&&x.lat<25.3&&x.lng>121.3&&x.lng<121.8);
-      stationsReady=metroLines.length===6&&metroStations.length>=130;
+      stationsReady=metroLines.length===9&&metroStations.length>=170;
       if(!stationsReady)throw new Error('station list incomplete');
       stationsFailed=false;
     }catch(_){stationsFailed=true;metroLines=[];metroStations=[];}
