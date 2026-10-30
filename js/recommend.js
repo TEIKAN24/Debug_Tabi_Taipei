@@ -1,3 +1,6 @@
+/* v30.9.216 — complete cumulative recommender update: Taipei/New Taipei geolocation, clean distance copy, New Taipei branches. */
+/* v30.9.214 — remove river/bridge distance notice; New Taipei drink branches added in food/nearby.json. No CSS/layout changes. */
+/* v30.9.213 — Taipei and New Taipei GPS, offline approximate district labels; cross-city 1200m straight-line ranking unchanged. */
 /* v30.9.210 — おすすめ cards: kind row centred on the distance marker, name on the status; grey kind; badges +3% and ordered grey → red → gold on both faces; 時間帯指定中 with the band breathing; no purple greys.
    v30.9.207 — おすすめ: from 20:00 火鍋 ranks lower than other meals (still shown until 23:00).
    v30.9.206 — おすすめ: two cards of one kind per page are fine in every band (never three); in 深夜 other kinds stay one per page, but night cafés, bars, 熱炒 and 屋台料理 may fill two.
@@ -213,6 +216,46 @@
     // For close calls, prefer not to incorrectly call someone outside Taipei.
     return inside||borderMeters<=Math.max(450,Math.min(1000,accuracy||0));
   }
+  // Offline, rounded district outlines from ronnywang/twgeojson (MOI administrative data).
+  // Coarse polygons identify a district approximately, never a walking route.
+  const METRO_DISTRICT_OUTLINES = [["士林區","T",[[121.5838,25.1945],[121.577,25.1671],[121.6081,25.1313],[121.5957,25.1142],[121.525,25.0742],[121.4573,25.1081],[121.4903,25.1152],[121.4985,25.0976],[121.5172,25.0994],[121.5671,25.1887]]],["大同區","T",[[121.5176,25.0794],[121.5202,25.0502],[121.5059,25.0491],[121.5047,25.0779]]],["大安區","T",[[121.5408,25.0445],[121.5578,25.0451],[121.5649,25.0072],[121.538,25.0084],[121.5216,25.0282]]],["中山區","T",[[121.5532,25.0918],[121.5696,25.0758],[121.5385,25.0715],[121.5439,25.0448],[121.519,25.0484],[121.5252,25.0821]]],["中正區","T",[[121.5215,25.048],[121.5329,25.0455],[121.5216,25.0282],[121.532,25.0086],[121.5041,25.03]]],["內湖區","T",[[121.5955,25.114],[121.628,25.0835],[121.6163,25.064],[121.5735,25.0519],[121.5515,25.0899]]],["文山區","T",[[121.5959,25.0149],[121.6,24.9769],[121.6181,24.9668],[121.5619,24.9646],[121.5523,24.9869],[121.5318,24.9902],[121.536,25.011]]],["北投區","T",[[121.5641,25.1982],[121.5612,25.1632],[121.5172,25.0994],[121.4633,25.1138],[121.5026,25.1729],[121.5203,25.1699],[121.5549,25.2085]]],["松山區","T",[[121.5715,25.0732],[121.5801,25.0493],[121.5439,25.0448],[121.5385,25.0715]]],["信義區","T",[[121.5811,25.045],[121.5922,25.0313],[121.5659,25.0081],[121.5578,25.0452]]],["南港區","T",[[121.6222,25.059],[121.6217,25.0404],[121.664,25.0233],[121.5782,25.0132],[121.5922,25.0313],[121.5798,25.053]]],["萬華區","T",[[121.5128,25.0232],[121.4933,25.0092],[121.4837,25.0369],[121.5099,25.0482]]],["八里區","N",[[121.4344,25.1669],[121.4623,25.116],[121.4161,25.1299],[121.3929,25.0799],[121.3953,25.1002],[121.3663,25.137],[121.3899,25.1474],[121.3915,25.1679]]],["三芝區","N",[[121.5077,25.2824],[121.5265,25.261],[121.5482,25.2662],[121.5445,25.2414],[121.566,25.215],[121.5218,25.1791],[121.4855,25.1972],[121.4964,25.2306],[121.4459,25.2419]]],["三重區","N",[[121.4938,25.0926],[121.5049,25.0496],[121.4663,25.0385],[121.4658,25.0667]]],["三峽區","N",[[121.4096,24.9426],[121.4575,24.9461],[121.4921,24.9171],[121.4718,24.877],[121.4962,24.8419],[121.4548,24.792],[121.4055,24.8423],[121.3358,24.8443],[121.358,24.8532],[121.345,24.8669],[121.3543,24.8736],[121.3175,24.9163],[121.3653,24.9475]]],["土城區","N",[[121.4563,24.994],[121.4797,24.9903],[121.4797,24.9636],[121.4387,24.936],[121.4092,24.9417],[121.4103,24.9649]]],["中和區","N",[[121.4899,25.0121],[121.532,24.9911],[121.4819,24.9635],[121.4797,24.9903],[121.4637,24.9959]]],["五股區","N",[[121.4252,25.1322],[121.4585,25.1143],[121.4656,25.0656],[121.4021,25.0764],[121.415,25.0825],[121.401,25.118]]],["平溪區","N",[[121.7983,25.0755],[121.8169,25.0421],[121.7637,24.9962],[121.7731,24.9814],[121.7182,24.9749],[121.7223,25.0073],[121.7032,25.032]]],["永和區","N",[[121.5314,25.0093],[121.5314,24.9954],[121.5134,24.9934],[121.4941,25.0091],[121.5106,25.0218]]],["石門區","N",[[121.5373,25.3],[121.5979,25.2915],[121.6203,25.2751],[121.6182,25.256],[121.566,25.215],[121.5445,25.2414],[121.5482,25.2662],[121.5265,25.261],[121.5082,25.2783]]],["石碇區","N",[[121.6927,25.0416],[121.7268,24.9893],[121.7178,24.9714],[121.6669,24.9524],[121.6779,24.9221],[121.6489,24.8954],[121.6534,24.8706],[121.6352,24.8574],[121.5758,24.8751],[121.5663,24.9036],[121.5985,24.9105],[121.598,24.9447],[121.6457,24.9982],[121.6405,25.0234]]],["汐止區","N",[[121.625,25.1397],[121.6558,25.0935],[121.7261,25.0578],[121.7127,25.0336],[121.6886,25.0416],[121.6504,25.0276],[121.6217,25.0404],[121.6259,25.0967],[121.5955,25.114]]],["坪林區","N",[[121.7782,24.9841],[121.7941,24.9774],[121.7781,24.9196],[121.7934,24.8997],[121.785,24.874],[121.708,24.8389],[121.6456,24.8595],[121.6489,24.8954],[121.6779,24.9221],[121.6669,24.9524]]],["板橋區","N",[[121.4807,25.0394],[121.4889,25.0163],[121.4269,24.9727],[121.4488,25.0274]]],["林口區","N",[[121.3682,25.1328],[121.3953,25.1002],[121.3929,25.0799],[121.4003,25.1064],[121.4126,25.0963],[121.4053,25.0631],[121.3549,25.0651],[121.3405,25.0741],[121.3492,25.0824],[121.2827,25.1097],[121.2966,25.1261]]],["金山區","N",[[121.6297,25.2655],[121.6521,25.2252],[121.6111,25.196],[121.5967,25.1656],[121.5799,25.1656],[121.5838,25.1945],[121.5593,25.2102],[121.6158,25.2534],[121.6179,25.2733]]],["泰山區","N",[[121.4023,25.075],[121.4454,25.0694],[121.4418,25.0414],[121.4209,25.0289],[121.3845,25.0525],[121.3771,25.0727],[121.4037,25.0626]]],["烏來區","N",[[121.5421,24.8922],[121.7075,24.8389],[121.6882,24.8161],[121.6258,24.8088],[121.6254,24.7951],[121.5922,24.7878],[121.5974,24.7275],[121.5433,24.7057],[121.5368,24.6884],[121.4798,24.6738],[121.4233,24.7626],[121.4837,24.818],[121.4972,24.8483],[121.4883,24.8622]]],["貢寮區","N",[[121.9205,25.1207],[121.9129,25.0883],[121.9321,25.0327],[121.9978,25.0201],[122.0048,25.003],[121.8637,24.9621],[121.8968,25.0396],[121.8755,25.0946]]],["淡水區","N",[[121.4516,25.2442],[121.4977,25.2295],[121.4855,25.1972],[121.5225,25.1749],[121.5026,25.1729],[121.4589,25.1227],[121.4475,25.1565],[121.404,25.1839]]],["深坑區","N",[[121.6359,25.0236],[121.6391,24.9806],[121.6,24.9769],[121.5975,25.0146]]],["新店區","N",[[121.5368,24.9903],[121.5605,24.965],[121.6093,24.9639],[121.5985,24.9105],[121.5663,24.9036],[121.5758,24.8751],[121.5398,24.8938],[121.4804,24.8618],[121.4718,24.8771],[121.4921,24.9171],[121.4574,24.946]]],["新莊區","N",[[121.4602,25.0684],[121.4663,25.0385],[121.43,24.9952],[121.3906,25.042],[121.4263,25.0301]]],["瑞芳區","N",[[121.8213,25.135],[121.8217,25.1211],[121.9251,25.128],[121.8957,25.1012],[121.8537,25.0954],[121.8297,25.0649],[121.834,25.0444],[121.8174,25.042],[121.7979,25.0759],[121.7613,25.0791],[121.7499,25.1097],[121.7949,25.1128],[121.8037,25.136]]],["萬里區","N",[[121.652,25.219],[121.6782,25.2016],[121.7019,25.217],[121.6852,25.1907],[121.7011,25.1694],[121.6047,25.1308],[121.5899,25.1637],[121.6167,25.201]]],["樹林區","N",[[121.4138,25.0189],[121.432,25.0036],[121.4288,24.9721],[121.3972,24.9425],[121.3611,24.9454],[121.3823,24.9648],[121.3688,24.9768],[121.4031,24.9992],[121.3925,25.0155]]],["雙溪區","N",[[121.8583,25.0964],[121.8771,25.0923],[121.8911,25.0164],[121.8415,24.9544],[121.8536,24.9252],[121.8317,24.9049],[121.7936,24.8997],[121.7781,24.9196],[121.7928,24.9831],[121.7636,24.9961],[121.834,25.0444],[121.8323,25.0715]]],["蘆洲區","N",[[121.4659,25.102],[121.4913,25.0949],[121.4738,25.0724],[121.4553,25.084]]],["鶯歌區","N",[[121.345,24.9801],[121.3822,24.9647],[121.322,24.928],[121.3235,24.9726]]]];
+  const NEW_TAIPEI_DISTRICT_EN = {"八里區":"Bali","三芝區":"Sanzhi","三重區":"Sanchong","三峽區":"Sanxia","土城區":"Tucheng","中和區":"Zhonghe","五股區":"Wugu","平溪區":"Pingxi","永和區":"Yonghe","石門區":"Shimen","石碇區":"Shiding","汐止區":"Xizhi","坪林區":"Pinglin","板橋區":"Banqiao","林口區":"Linkou","金山區":"Jinshan","泰山區":"Taishan","烏來區":"Wulai","貢寮區":"Gongliao","淡水區":"Tamsui","深坑區":"Shenkeng","新店區":"Xindian","新莊區":"Xinzhuang","瑞芳區":"Ruifang","萬里區":"Wanli","樹林區":"Shulin","雙溪區":"Shuangxi","蘆洲區":"Luzhou","鶯歌區":"Yingge"};
+  function pointInOutline(lat,lng,outline){
+    let inside=false;
+    for(let i=0,j=outline.length-1;i<outline.length;j=i++){
+      const a=outline[i],b=outline[j];
+      if((a[1]>lat)!==(b[1]>lat)&&lng<(b[0]-a[0])*(lat-a[1])/(b[1]-a[1])+a[0])inside=!inside;
+    }
+    return inside;
+  }
+  function outlineBorderMeters(lat,lng,outline){
+    const x=lng*101000,y=lat*111200;
+    let nearest=Infinity;
+    for(let i=0,j=outline.length-1;i<outline.length;j=i++){
+      const a=outline[j],b=outline[i],ax=a[0]*101000,ay=a[1]*111200,bx=b[0]*101000,by=b[1]*111200;
+      const dx=bx-ax,dy=by-ay,t=Math.min(1,Math.max(0,((x-ax)*dx+(y-ay)*dy)/(dx*dx+dy*dy||1)));
+      nearest=Math.min(nearest,Math.hypot(x-(ax+dx*t),y-(ay+dy*t)));
+    }
+    return nearest;
+  }
+  function greaterTaipeiRegion(lat,lng,accuracy=0){
+    if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat<24.65||lat>25.32||lng<121.26||lng>122.02)return null;
+    // City is determined by point-in-polygon, NOT by a rectangle containing
+    // neighbouring Taoyuan or Keelung. Exact municipality is preferred.
+    const exact=METRO_DISTRICT_OUTLINES.filter(d=>pointInOutline(lat,lng,d[2]));
+    const match=exact.find(d=>d[1]==='T')||exact.find(d=>d[1]==='N');
+    if(match)return {city:match[1],district:match[0],estimated:true};
+    // The rounded outlines are intentionally coarse; a close edge is treated
+    // as uncertain rather than instantly claiming an unrelated district.
+    const tolerance=Math.min(180,Math.max(70,Number.isFinite(accuracy)?accuracy:0));
+    const nearby=METRO_DISTRICT_OUTLINES.map(d=>({d,meters:outlineBorderMeters(lat,lng,d[2])}))
+      .filter(x=>x.meters<=tolerance).sort((a,b)=>a.meters-b.meters);
+    if(nearby.length)return {city:nearby[0].d[1],district:null,estimated:true};
+    // Existing city outline is kept as a fallback for gaps in district geometry.
+    if(pointInOutline(lat,lng,TAIPEI_OUTLINE))return {city:'T',district:null,estimated:true};
+    return null;
+  }
+
   function currentStation(){return metroStations.find(x=>x.code===state.stationCode&&x.line===state.line)||null;}
   function stationOrigin(){const x=currentStation();return x?{lat:x.lat,lng:x.lng}:null;}
   async function loadMetroStations(){
@@ -1080,10 +1123,16 @@
     stationCode.classList.toggle('is-empty',!selectedStation);
     for(const option of lineList.querySelectorAll('.recommend-native-option-line'))option.setAttribute('aria-selected',String(option.dataset.value===state.line));
     for(const option of stationMenu.querySelectorAll('.recommend-native-option'))option.setAttribute('aria-selected',String(option.dataset.value===state.stationCode));
-    const district=nearbyDistrict(state.position);
-    districtName.textContent=state.locationStatus==='outside'?'台北市外':district?`台北市 ${district[0]}`:state.locationStatus==='loading'?'測位中':'現在地';
-    districtEn.textContent=state.locationStatus==='outside'?'Outside Taipei':district?`${district[1]} Taipei City`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':state.locationStatus==='idle'?'タップして現在地を取得':'Location';
-    currentLocation.title=state.locationStatus==='outside'?'現在地は台北市の対象エリア外です。':district?'登録店の所在地から推定した行政区です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
+    const region=state.locationStatus==='success'&&state.position?greaterTaipeiRegion(state.position.lat,state.position.lng,state.position.accuracy):null;
+    const inferred=region?.city==='T'?nearbyDistrict(state.position):null;
+    const district=region?.district||null;
+    const jpDistrict=district?district.replace(/區$/,'区'):inferred?.[0]||'';
+    const cityJa=region?.city==='N'?'新北市':region?.city==='T'?'台北市':'';
+    const cityEn=region?.city==='N'?'New Taipei City':'Taipei City';
+    const districtEnglish=district?(region.city==='N'?NEW_TAIPEI_DISTRICT_EN[district]:DISTRICTS[district]?.[1]):inferred?.[1];
+    districtName.textContent=state.locationStatus==='outside'?'台北・新北エリア外':cityJa?`${cityJa}${jpDistrict?' '+jpDistrict:''}`:state.locationStatus==='loading'?'測位中':'現在地';
+    districtEn.textContent=state.locationStatus==='outside'?'Outside Greater Taipei':cityJa?`${districtEnglish?districtEnglish+' · ':''}${cityEn}`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':state.locationStatus==='idle'?'タップして現在地を取得':'Location';
+    currentLocation.title=state.locationStatus==='outside'?'現在地は台北市・新北市の対象エリア外です。':cityJa?'表示された行政区は位置座標からの概算です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
     for(const b of categoryControls)b.setAttribute('aria-pressed',String(state.categories.includes(b.dataset.value)));
     const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!nearbyReady)?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${nearbyVenues.reduce((n,v)=>n+v.branches.length,0)}店舗からご案内します。`};
@@ -1159,7 +1208,7 @@
     debugPosition={lat,lng,accuracy:10};
     try{sessionStorage.setItem('taipeiDebugLocation',JSON.stringify({lat,lng}));}catch(e){}
     geoRun++;state.areaMode='current';state.area='';
-    const inside=inTaipeiCity(lat,lng,debugPosition.accuracy);
+    const inside=!!greaterTaipeiRegion(lat,lng,debugPosition.accuracy);
     state.position=inside?{...debugPosition}:null;
     state.locationStatus=inside?'success':'outside';state.page=0;
     syncUI();renderResults();return true;
@@ -1215,7 +1264,7 @@
       const lat=point?point[2]:Number(panel.querySelector('#recommend-debug-lat').value);
       const lng=point?point[3]:Number(panel.querySelector('#recommend-debug-lng').value);
       if((select.value==='custom'&&(!panel.querySelector('#recommend-debug-lat').value||!panel.querySelector('#recommend-debug-lng').value))||!setDebugPosition(lat,lng)){
-        feedback.textContent='請輸入有效的台北地區經緯度';return;
+        feedback.textContent='請輸入有效的台北市／新北市經緯度';return;
       }
       feedback.textContent=`模擬定位已套用：${lat.toFixed(4)}, ${lng.toFixed(4)}`;
       toggle.title=`模擬定位：${lat.toFixed(4)}, ${lng.toFixed(4)}`;
@@ -1241,7 +1290,7 @@
       const {latitude,longitude,accuracy}=pos.coords;
       if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||!Number.isFinite(accuracy)||accuracy>1000){
         state.position=null;state.locationStatus='imprecise';
-      }else if(!inTaipeiCity(latitude,longitude,accuracy)){
+      }else if(!greaterTaipeiRegion(latitude,longitude,accuracy)){
         state.position=null;state.locationStatus='outside';
       }else{
         state.position={lat:latitude,lng:longitude,accuracy}; // session only; never persisted or transmitted
@@ -1370,7 +1419,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     if(state.areaMode==='station'&&(!currentStation()||!nearbyReady)){
       results.replaceChildren(el('p','recommend-no-data',stationsFailed?'駅データを読み込めませんでした。':currentStation()?'位置データを読み込み中です。':`路線と駅を選ぶと、駅から${GEO_MAX_METERS}m以内のおすすめを表示します。`));
       count.textContent='駅を選択';more.hidden=true;relaxed.hidden=true;
-      disclaimer.textContent='※ 選択駅からの直線距離を基準にご案内します。';
+      disclaimer.textContent='※ 距離は直線です。';
       return;
     }
     const {ordered,timeCount,lifted,nearbyFallback,useDistance,nearbyCount}=recommendedPool();
@@ -1466,7 +1515,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       alignCards();
     });
     more.hidden=ordered.length<=3;
-    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}距離は直線、営業状況は通常営業時間による目安です。`;
+    disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}距離は直線です。営業時間は目安です。`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
   // Update labels while the panel stays open; no repeated geolocation request.
