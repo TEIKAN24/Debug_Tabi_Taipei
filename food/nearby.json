@@ -3,6 +3,1228 @@
   "source": "TAIPEI 店家分店管理編輯器 v1.19 · 2026-10-30",
   "venues": [
     {
+      "id": "food-added-mvvc3ye6-zrjh4",
+      "name": "Soleil croissant",
+      "industries": [
+        "カフェ"
+      ],
+      "industryVerified": "推估",
+      "category": "cafe",
+      "displayType": "カフェ",
+      "volume": [],
+      "timeBands": [
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "クロワッサン",
+          "tone": "editorial"
+        },
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvvc3ye6-zrjh4-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9514261,
+          "lng": 121.3474682,
+          "address": "新北市鶯歌區同慶里育英街93號",
+          "mapUrl": "https://www.google.com/maps/place/Soleil+croissant%E5%8F%AF%E9%A0%8C%E5%92%96%E5%95%A1%E5%BB%B3+%E9%B6%AF%E6%AD%8C%E8%80%81%E8%A1%97%E5%BA%97%EF%BC%88%E7%87%9F%E9%81%8B%E6%99%82%E9%96%93%E4%BE%9DIG%E7%82%BA%E4%B8%BB%EF%BC%81%EF%BC%89/@24.9514261,121.3474682,17z/data=!4m15!1m8!3m7!1s0x34681f2f4c0992b3:0xf3c4eba3dacf545!2zU29sZWlsIGNyb2lzc2FudOWPr-mgjOWSluWVoeW7syDptq_mrYzogIHooZflupfvvIjnh5_pgYvmmYLplpPkvp1JR-eCuuS4u--8ge-8iQ!8m2!3d24.9514261!4d121.3474682!10e5!16s%2Fg%2F11xn005b65!3m5!1s0x34681f2f4c0992b3:0xf3c4eba3dacf545!8m2!3d24.9514261!4d121.3474682!16s%2Fg%2F11xn005b65?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "14:00",
+                "18:00"
+              ]
+            ],
+            "tue": [],
+            "wed": [],
+            "thu": [],
+            "fri": [
+              [
+                "14:00",
+                "18:00"
+              ]
+            ],
+            "sat": [
+              [
+                "14:00",
+                "18:30"
+              ]
+            ],
+            "sun": [
+              [
+                "14:00",
+                "18:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvvc09w4-l02d5",
+      "name": "HAN'S BURGER",
+      "industries": [
+        "各国・創作料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "アメリカ料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ハンバーガー",
+          "tone": "editorial"
+        },
+        {
+          "text": "おすすめ",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 1,
+      "branches": [
+        {
+          "id": "food-added-mvvc09w4-l02d5-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9518809,
+          "lng": 121.3487872,
+          "address": "新北市鶯歌區同慶里陶瓷街18號",
+          "mapUrl": "https://www.google.com/maps/place/HAN'S+BURGER+(%E9%B6%AF%E6%AD%8C%E5%89%B5%E5%A7%8B%E5%BA%97)/@24.9518857,121.3462069,17z/data=!4m14!1m7!3m6!1s0x34681f5c61dff89f:0x617e7147d935f52e!2zSEFOJ1MgQlVSR0VSICjptq_mrYzlibXlp4vlupcp!8m2!3d24.9518809!4d121.3487872!16s%2Fg%2F11y5v9mzkv!3m5!1s0x34681f5c61dff89f:0x617e7147d935f52e!8m2!3d24.9518809!4d121.3487872!16s%2Fg%2F11y5v9mzkv?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "19:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvvbwhiv-zilqw",
+      "name": "夥房",
+      "industries": [
+        "カフェ"
+      ],
+      "industryVerified": "推估",
+      "category": "cafe",
+      "displayType": "カフェ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "藝術工房",
+          "tone": "editorial"
+        },
+        {
+          "text": "鉄道線路沿い",
+          "tone": "editorial"
+        },
+        {
+          "text": "おすすめ",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 1,
+      "branches": [
+        {
+          "id": "food-added-mvvbwhiv-zilqw-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.950461,
+          "lng": 121.3496275,
+          "address": "新北市鶯歌區同慶里中正二路78號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%A4%A5%E6%88%BF/@24.950461,121.3470526,17z/data=!4m15!1m8!3m7!1s0x34681ffca8e18d1d:0xab5c02e0b924f0c7!2z5aSl5oi_!8m2!3d24.950461!4d121.3496275!10e5!16s%2Fg%2F11rj66pgm5!3m5!1s0x34681ffca8e18d1d:0xab5c02e0b924f0c7!8m2!3d24.950461!4d121.3496275!16s%2Fg%2F11rj66pgm5?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [],
+            "wed": [
+              [
+                "13:00",
+                "18:00"
+              ]
+            ],
+            "thu": [],
+            "fri": [],
+            "sat": [
+              [
+                "13:00",
+                "18:00"
+              ]
+            ],
+            "sun": []
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvvbqfqn-gvpr4",
+      "name": "Q咖啡",
+      "industries": [
+        "カフェ"
+      ],
+      "industryVerified": "推估",
+      "category": "cafe",
+      "displayType": "カフェ",
+      "volume": [],
+      "timeBands": [
+        "morning",
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ラテ",
+          "tone": "editorial"
+        },
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvvbqfqn-gvpr4-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9541163,
+          "lng": 121.345511,
+          "address": "新北市鶯歌區建國里南雅路493號",
+          "mapUrl": "https://www.google.com/maps/place/Q%E5%92%96%E5%95%A1%EF%BD%9C%E6%89%8B%E6%B2%96+%E2%80%A2+%E5%96%AE%E5%93%81%E5%92%96%E5%95%A1%E8%B1%86%E5%B0%88%E9%96%80+%E2%80%A2+%E5%95%86%E7%94%A8%E6%89%B9%E7%99%BC%E9%85%8D%E8%B1%86%E6%8E%A8%E8%96%A6+%E2%80%A2+TISCA%E5%85%A8%E5%9C%8B%E6%9D%AF%E6%B8%AC%E5%86%A0%E8%BB%8D/@24.9541211,121.3429307,17z/data=!3m1!4b1!4m6!3m5!1s0x3468026aeef3c043:0x75e32c3e4f83740b!8m2!3d24.9541163!4d121.345511!16s%2Fg%2F11f3x52qq6?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "19:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "19:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "19:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "19:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "19:00"
+              ]
+            ],
+            "sat": [
+              [
+                "10:00",
+                "18:00"
+              ]
+            ],
+            "sun": [
+              [
+                "10:00",
+                "18:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvvboemr-61fuz",
+      "name": "回味切仔麵",
+      "industries": [
+        "小吃"
+      ],
+      "industryVerified": "推估",
+      "category": "snack",
+      "displayType": "屋台料理・軽食",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "焼肉飯",
+          "tone": "editorial"
+        },
+        {
+          "text": "ローカル",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvvboemr-61fuz-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9539318,
+          "lng": 121.3483978,
+          "address": "新北市鶯歌區建國路232巷12號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%9B%9E%E5%91%B3%E5%88%87%E4%BB%94%E9%BA%B5/@24.9539342,121.3471077,18z/data=!3m1!4b1!4m6!3m5!1s0x34681eac09b4f697:0x7fe3d747ccbfbbc6!8m2!3d24.9539318!4d121.3483978!16s%2Fg%2F11c2lt6hb5?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "sun": []
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvvbmpnl-q493z",
+      "name": "日知常屋",
+      "industries": [
+        "カフェ"
+      ],
+      "industryVerified": "推估",
+      "category": "cafe",
+      "displayType": "カフェ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvvbmpnl-q493z-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9494688,
+          "lng": 121.3497146,
+          "address": "新北市鶯歌區尖山里尖山路61-2號",
+          "mapUrl": "https://www.google.com/maps/place/%E6%97%A5%E7%9F%A5%E5%B8%B8%E5%B1%8B/@24.9494688,121.3497146,17z/data=!4m15!1m8!3m7!1s0x34681f5b1585f35f:0x8e5e32ffe9d37f34!2z5pel55-l5bi45bGL!8m2!3d24.9494688!4d121.3497146!10e5!16s%2Fg%2F11krcqqf68!3m5!1s0x34681f5b1585f35f:0x8e5e32ffe9d37f34!8m2!3d24.9494688!4d121.3497146!16s%2Fg%2F11krcqqf68?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "13:00",
+                "18:00"
+              ]
+            ],
+            "tue": [
+              [
+                "13:00",
+                "18:00"
+              ]
+            ],
+            "wed": [],
+            "thu": [],
+            "fri": [
+              [
+                "13:00",
+                "18:00"
+              ]
+            ],
+            "sat": [
+              [
+                "13:00",
+                "18:00"
+              ]
+            ],
+            "sun": [
+              [
+                "13:00",
+                "18:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvvbj31p-q8pr3",
+      "name": "ESUWA",
+      "industries": [
+        "スイーツ"
+      ],
+      "industryVerified": "推估",
+      "category": "sweet",
+      "displayType": "スイーツ",
+      "volume": [],
+      "timeBands": [
+        "morning",
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "レモンチーズシナモンロール",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvvbj31p-q8pr3-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9520401,
+          "lng": 121.3473929,
+          "address": "新北市鶯歌區同慶里育英街67號3樓",
+          "mapUrl": "https://www.google.com/maps/place/ESUWA+%E8%82%89%E6%A1%82%E5%8D%B7%26%E5%8F%AF%E9%A0%8C%E5%B0%88%E5%A3%B2%E8%99%95/@24.9520449,121.3448126,17z/data=!3m1!4b1!4m6!3m5!1s0x34681fc35727e2bf:0xea1cb76b356be9ed!8m2!3d24.9520401!4d121.3473929!16s%2Fg%2F11ny1hf752?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "18:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "18:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "18:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "18:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "18:00"
+              ]
+            ],
+            "sat": [
+              [
+                "10:30",
+                "18:00"
+              ]
+            ],
+            "sun": [
+              [
+                "10:30",
+                "18:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvvbgi5y-4il11",
+      "name": "十二春台式早午餐",
+      "industries": [
+        "モーニング"
+      ],
+      "industryVerified": "推估",
+      "category": "breakfast",
+      "displayType": "朝食",
+      "volume": [],
+      "timeBands": [
+        "morning",
+        "lunch"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "ブランチ",
+          "tone": "editorial"
+        },
+        {
+          "text": "台湾式",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvvbgi5y-4il11-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9538008,
+          "lng": 121.3373823,
+          "address": "新北市鶯歌區永昌里永智街43巷29號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%8D%81%E4%BA%8C%E6%98%A5%E5%8F%B0%E5%BC%8F%E6%97%A9%E5%8D%88%E9%A4%90/@24.9538008,121.3373823,16z/data=!4m15!1m8!3m7!1s0x34681bfe8491b261:0xbfaff7570371fc71!2z5Y2B5LqM5pil5Y-w5byP5pep5Y2I6aSQ!8m2!3d24.9538008!4d121.3373823!10e5!16s%2Fg%2F11hc_tpqhq!3m5!1s0x34681bfe8491b261:0xbfaff7570371fc71!8m2!3d24.9538008!4d121.3373823!16s%2Fg%2F11hc_tpqhq?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "morning",
+            "lunch"
+          ],
+          "days": {
+            "mon": [
+              [
+                "08:00",
+                "13:30"
+              ]
+            ],
+            "tue": [
+              [
+                "08:00",
+                "13:30"
+              ]
+            ],
+            "wed": [],
+            "thu": [],
+            "fri": [
+              [
+                "08:00",
+                "13:30"
+              ]
+            ],
+            "sat": [
+              [
+                "08:00",
+                "14:00"
+              ]
+            ],
+            "sun": [
+              [
+                "08:00",
+                "14:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvvbc38o-d9yb5",
+      "name": "厚道飲食店",
+      "industries": [
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "炸排骨飯",
+          "tone": "editorial"
+        },
+        {
+          "text": "人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 1,
+      "branches": [
+        {
+          "id": "food-added-mvvbc38o-d9yb5-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9509038,
+          "lng": 121.3478106,
+          "address": "新北市鶯歌區同慶里尖山埔路79號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%8E%9A%E9%81%93%E9%A3%B2%E9%A3%9F%E5%BA%97/@24.9509038,121.3478106,17z/data=!4m15!1m8!3m7!1s0x34681eac9021a51b:0x12648f80eda1d592!2z5Y6a6YGT6aOy6aOf5bqX!8m2!3d24.9509038!4d121.3478106!10e5!16s%2Fg%2F1tg5xc99!3m5!1s0x34681eac9021a51b:0x12648f80eda1d592!8m2!3d24.9509038!4d121.3478106!16s%2Fg%2F1tg5xc99?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "16:30",
+                "19:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "16:30",
+                "19:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "16:30",
+                "19:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "16:30",
+                "19:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "14:30"
+              ],
+              [
+                "16:30",
+                "19:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "15:00"
+              ],
+              [
+                "16:00",
+                "19:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "15:00"
+              ],
+              [
+                "16:00",
+                "19:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvvamhba-jxapn",
+      "name": "穎村食光",
+      "industries": [
+        "各国・創作料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "ヨーロッパ料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "メインディッシュ要予約",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvvamhba-jxapn-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9531783,
+          "lng": 121.354666,
+          "address": "新北市鶯歌區文化路213巷16號217巷步行50公尺左手邊",
+          "mapUrl": "https://www.google.com/maps/place/%E7%A9%8E%E6%9D%91%E9%A3%9F%E5%85%89%EF%BC%88%E4%B8%BB%E9%A4%90%E9%A0%90%E7%B4%84%E5%88%B6%EF%BC%89/@24.9531783,121.354666,19z/data=!4m6!3m5!1s0x34681c0254417e4f:0x8f299430ff758d5f!8m2!3d24.9531783!4d121.354666!16s%2Fg%2F1tyytw02?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [],
+            "wed": [
+              [
+                "12:00",
+                "18:00"
+              ]
+            ],
+            "thu": [
+              [
+                "12:00",
+                "18:00"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "18:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "15:30"
+              ],
+              [
+                "17:30",
+                "20:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "15:30"
+              ],
+              [
+                "17:30",
+                "20:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvvagyxg-74rq8",
+      "name": "NuMove 續行",
+      "industries": [
+        "各国・創作料理",
+        "カフェ"
+      ],
+      "industryVerified": "推估",
+      "category": "cafe",
+      "displayType": "カフェ",
+      "volume": [],
+      "timeBands": [
+        "morning",
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvvagyxg-74rq8-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9387389,
+          "lng": 121.3673491,
+          "address": "新北市三峽區鳶山里復興路257號",
+          "mapUrl": "https://www.google.com/maps/place/NuMove+%E7%BA%8C%E8%A1%8C%EF%BD%9C%E5%8C%97%E5%A4%A7%E7%AB%99%E5%89%8D%E9%96%80%E5%B8%82/@24.9387389,121.3673491,19z/data=!4m6!3m5!1s0x34681b49fb9080e3:0x5385d90d81cf90c7!8m2!3d24.9387389!4d121.3673491!16s%2Fg%2F11zys_k4k9?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "08:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "08:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "08:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "08:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "08:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "08:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "08:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvva4m8p-zik5u",
+      "name": "老地方丨越南料理",
+      "industries": [
+        "各国・創作料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "ベトナム料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvva4m8p-zik5u-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9582856,
+          "lng": 121.4167086,
+          "address": "新北市土城區頂埔里頂埔街1-1號",
+          "mapUrl": "https://www.google.com/maps/place/%E8%80%81%E5%9C%B0%E6%96%B9%E4%B8%A8%E8%B6%8A%E5%8D%97%E6%96%99%E7%90%86/@24.9581142,121.4167066,21z/data=!4m6!3m5!1s0x34681d4c02d0d4ff:0x17f64805fc1bc70a!8m2!3d24.9582856!4d121.4167086!16s%2Fg%2F11rghcylkm?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ],
+            "tue": [],
+            "wed": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "20:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvv9ynj3-qxqvb",
+      "name": "楊記鍋貼",
+      "industries": [
+        "餃子"
+      ],
+      "industryVerified": "推估",
+      "category": "dumpling",
+      "displayType": "餃子",
+      "volume": [],
+      "timeBands": [
+        "morning",
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "焼き棒餃子",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvv9ynj3-qxqvb-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9570504,
+          "lng": 121.4151224,
+          "address": "新北市土城區頂福里中央路四段250號",
+          "mapUrl": "https://www.google.com/maps/place/%E6%A5%8A%E8%A8%98%E9%8D%8B%E8%B2%BC/@24.9573738,121.4156163,17.47z/data=!4m6!3m5!1s0x34681cecefb61021:0x82b4befd125765d!8m2!3d24.9570504!4d121.4151224!16s%2Fg%2F1pzttl_0y?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "06:00",
+                "19:30"
+              ]
+            ],
+            "tue": [
+              [
+                "06:00",
+                "19:30"
+              ]
+            ],
+            "wed": [
+              [
+                "06:00",
+                "19:30"
+              ]
+            ],
+            "thu": [
+              [
+                "06:00",
+                "19:30"
+              ]
+            ],
+            "fri": [
+              [
+                "06:00",
+                "19:30"
+              ]
+            ],
+            "sat": [
+              [
+                "06:00",
+                "12:00"
+              ]
+            ],
+            "sun": [
+              [
+                "06:00",
+                "12:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
       "id": "food-added-mvv85y8z-s8p53",
       "name": "Merci vielle",
       "industries": [
@@ -4271,97 +5493,6 @@
               [
                 "14:00",
                 "21:30"
-              ]
-            ]
-          },
-          "timeSource": "Google Maps（直接複製文字）",
-          "timeCheckedAt": "2026-10-30"
-        }
-      ]
-    },
-    {
-      "id": "food-added-mvv2o2vs-uk8e6",
-      "name": "三合號 SUMMER HOUSE",
-      "industries": [
-        "モーニング"
-      ],
-      "industryVerified": "推估",
-      "category": "breakfast",
-      "displayType": "朝食",
-      "volume": [],
-      "timeBands": [
-        "morning",
-        "lunch"
-      ],
-      "timeVerified": "營業時間自動",
-      "chain": false,
-      "awards": {
-        "bowls": "",
-        "bibGourmand2026": false,
-        "highestBowls": 0
-      },
-      "guideTags": [
-        {
-          "text": "ブランチ",
-          "tone": "editorial"
-        },
-        {
-          "text": "おすすめ",
-          "tone": "featured"
-        }
-      ],
-      "awardDish": "",
-      "irregularHours": false,
-      "pickLevel": 0,
-      "branches": [
-        {
-          "id": "food-added-mvv2o2vs-uk8e6-main",
-          "label": "本店",
-          "name": "",
-          "lat": 24.9557298,
-          "lng": 121.3528106,
-          "address": "新北市鶯歌區中鶯里和平街3號",
-          "mapUrl": "https://www.google.com/maps/place/%E4%B8%89%E5%90%88%E8%99%9F+SUMMER+HOUSE/@24.9557298,121.3528106,17z/data=!4m15!1m8!3m7!1s0x34681ff9e50b7241:0x43c3b208e0cbba33!2z5LiJ5ZCI6JmfIFNVTU1FUiBIT1VTRQ!8m2!3d24.9557298!4d121.3528106!10e5!16s%2Fg%2F11j4k5tkx2!3m5!1s0x34681ff9e50b7241:0x43c3b208e0cbba33!8m2!3d24.9557298!4d121.3528106!16s%2Fg%2F11j4k5tkx2?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
-          "timeBands": [
-            "morning",
-            "lunch"
-          ],
-          "days": {
-            "mon": [],
-            "tue": [
-              [
-                "06:30",
-                "13:00"
-              ]
-            ],
-            "wed": [
-              [
-                "06:30",
-                "13:00"
-              ]
-            ],
-            "thu": [
-              [
-                "06:30",
-                "13:00"
-              ]
-            ],
-            "fri": [
-              [
-                "06:30",
-                "13:00"
-              ]
-            ],
-            "sat": [
-              [
-                "06:30",
-                "13:00"
-              ]
-            ],
-            "sun": [
-              [
-                "06:30",
-                "13:00"
               ]
             ]
           },
