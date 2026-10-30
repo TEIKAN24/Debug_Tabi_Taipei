@@ -1,3 +1,5 @@
+/* v30.9.218 — seven additional debugLocation presets; production GPS and UI unchanged. */
+/* v30.9.217 — location English: District, City; outside: Outside Taipei Area. No UI/layout changes. */
 /* v30.9.216 — complete cumulative recommender update: Taipei/New Taipei geolocation, clean distance copy, New Taipei branches. */
 /* v30.9.214 — remove river/bridge distance notice; New Taipei drink branches added in food/nearby.json. No CSS/layout changes. */
 /* v30.9.213 — Taipei and New Taipei GPS, offline approximate district labels; cross-city 1200m straight-line ranking unchanged. */
@@ -1131,7 +1133,8 @@
     const cityEn=region?.city==='N'?'New Taipei City':'Taipei City';
     const districtEnglish=district?(region.city==='N'?NEW_TAIPEI_DISTRICT_EN[district]:DISTRICTS[district]?.[1]):inferred?.[1];
     districtName.textContent=state.locationStatus==='outside'?'台北・新北エリア外':cityJa?`${cityJa}${jpDistrict?' '+jpDistrict:''}`:state.locationStatus==='loading'?'測位中':'現在地';
-    districtEn.textContent=state.locationStatus==='outside'?'Outside Greater Taipei':cityJa?`${districtEnglish?districtEnglish+' · ':''}${cityEn}`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':state.locationStatus==='idle'?'タップして現在地を取得':'Location';
+    const districtEnLabel=districtEnglish?`${districtEnglish.replace(/\s+Dist\.?$/i,'')} Dist.`:'';
+    districtEn.textContent=state.locationStatus==='outside'?'Outside Taipei Area':cityJa?`${districtEnLabel?districtEnLabel+', ':''}${cityEn}`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':state.locationStatus==='idle'?'タップして現在地を取得':'Location';
     currentLocation.title=state.locationStatus==='outside'?'現在地は台北市・新北市の対象エリア外です。':cityJa?'表示された行政区は位置座標からの概算です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
     for(const b of categoryControls)b.setAttribute('aria-pressed',String(state.categories.includes(b.dataset.value)));
@@ -1201,7 +1204,19 @@
   let geoRun=0; // Initialized before persisted debug position can be restored.
   // Debug-only location override, enabled solely by ?debugLocation=1.
   const debugEnabled=new URLSearchParams(location.search).get('debugLocation')==='1';
-  const debugPoints=[['station','台北車站',25.046255,121.517532],['ximen','西門町',25.0421,121.5081],['zhongshan','中山站',25.0526,121.5204]];
+  const debugPoints=[
+    ['station','台北車站',25.046255,121.517532],
+    ['ximen','西門町',25.0421,121.5081],
+    ['zhongshan','中山站',25.0526,121.5204],
+    // Debug presets: representative MRT stations, plus Jiufen Old Street.
+    ['xinyi','信義（台北101）',25.033102,121.563292],
+    ['songshan','松山（南京三民）',25.051652,121.564708],
+    ['tamsui','淡水',25.167818,121.445561],
+    ['jiufen','九份',25.1098,121.8441],
+    ['banqiao','板橋',25.013618,121.462302],
+    ['xindian','新店',24.957855,121.537584],
+    ['sanchong','三重',25.060274,121.492156]
+  ];
   let debugPosition=null;
   function setDebugPosition(lat,lng){
     if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat<24.7||lat>25.4||lng<121.2||lng>122)return false;
@@ -1224,7 +1239,7 @@
     toggle.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
     const panel=document.createElement('section');panel.id='recommend-debug-location';
     panel.setAttribute('aria-label','模擬定位設定');panel.hidden=true;
-    panel.innerHTML='<div class="recommend-debug-header"><strong>模擬定位設定</strong><button id="recommend-debug-close" type="button" aria-label="關閉設定">×</button></div><label for="recommend-debug-select">測試位置</label><select id="recommend-debug-select"><option value="station">台北車站</option><option value="ximen">西門町</option><option value="zhongshan">中山站</option><option value="custom">自訂座標</option><option value="real">恢復真實定位</option></select><div id="recommend-debug-custom" hidden><input id="recommend-debug-lat" type="number" step="any" placeholder="緯度 Latitude" inputmode="decimal"><input id="recommend-debug-lng" type="number" step="any" placeholder="經度 Longitude" inputmode="decimal"></div><button id="recommend-debug-apply" type="button">套用位置</button><small id="recommend-debug-feedback">只影響網站距離計算，不會更改手機 GPS。</small>';
+    panel.innerHTML='<div class="recommend-debug-header"><strong>模擬定位設定</strong><button id="recommend-debug-close" type="button" aria-label="關閉設定">×</button></div><label for="recommend-debug-select">測試位置</label><select id="recommend-debug-select"><option value="station">台北車站</option><option value="ximen">西門町</option><option value="zhongshan">中山站</option><option value="xinyi">信義（台北101）</option><option value="songshan">松山（南京三民）</option><option value="tamsui">淡水</option><option value="jiufen">九份</option><option value="banqiao">板橋</option><option value="xindian">新店</option><option value="sanchong">三重</option><option value="custom">自訂座標</option><option value="real">恢復真實定位</option></select><div id="recommend-debug-custom" hidden><input id="recommend-debug-lat" type="number" step="any" placeholder="緯度 Latitude" inputmode="decimal"><input id="recommend-debug-lng" type="number" step="any" placeholder="經度 Longitude" inputmode="decimal"></div><button id="recommend-debug-apply" type="button">套用位置</button><small id="recommend-debug-feedback">只影響網站距離計算，不會更改手機 GPS。</small>';
     // Keep the popover outside .recommend-drawer-inner: that mobile container
     // has a fixed height and overflow:hidden, so an inline debug panel hid results.
     drawer.append(toggle,panel);
