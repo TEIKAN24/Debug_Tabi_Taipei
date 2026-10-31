@@ -1871,3 +1871,19 @@ html[data-theme="light"] #food-recommend-section .recommend-native-empty small{c
   #food-recommend-section .recommend-source-caption:has(#recommend-time-caption.is-breathing) .recommend-caption-icon svg{width:11px!important;height:11px!important;}
   #food-recommend-section #recommend-time-caption.is-breathing{font-size:10px!important;letter-spacing:-.01em;}
 }
+
+/* v30.9.222 — dish-name badges are buttons to the food dictionary (as the
+   night-market specialties); a dotted underline marks them. */
+#food-recommend-section button.food-directory-tag,
+#food-recommend-section button.recommend-guide-tag{
+  -webkit-appearance:none;appearance:none;margin:0;font-family:inherit;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+#food-recommend-section button.is-dish{
+  text-decoration-line:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:2.5px;
+  text-decoration-color:color-mix(in srgb,currentColor 60%,transparent);
+}
+#food-recommend-section button.is-dish:active{opacity:.7;}
+#food-recommend-section button.is-dish:focus-visible{outline:2px solid currentColor;outline-offset:2px;}
+/* 🥢 before まずはこの3軒！ */
+#recommend-title .recommend-title-emoji{margin-right:.22em;letter-spacing:0;}

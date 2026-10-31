@@ -551,6 +551,100 @@
   const NOT_DISH_TAG=/人気|あり|必見|シェフ|バー|カフェ|限定|系/;
   const isDishTag=text=>DISH_TAG.test(text)&&!NOT_DISH_TAG.test(text);
   const BADGE_RANK={dish:0,neutral:1,veg:2,caution:3,featured:4};
+  // v30.9.218: dish-name badges open the food dictionary, like 夜市の名物.
+  // Badge text → the exact dish name in food/foods.csv or market_items.csv.
+  // A badge that is itself a dish name needs no entry: guide.js matches it
+  // once the dictionary is loaded (window.tabiFoodDish).
+  const TAG_DISH={
+    '牛肉麺':'牛肉麵',
+    '水餃子':'水餃',
+    '焼き餃子':'煎餃',
+    '蒸し餃子':'蒸餃',
+    '焼き棒餃子':'鍋貼',
+    'かき氷':'剉冰',
+    'マンゴーかき氷':'芒果冰',
+    'チャーハン':'炒飯',
+    '焼肉飯':'燒肉飯',
+    '炸排骨飯':'排骨飯',
+    'ミルクレープ':'千層蛋糕',
+    'バスクチーズケーキ':'巴斯克乳酪蛋糕',
+    'シナモンロール':'肉桂捲',
+    'シフォンケーキ':'戚風蛋糕',
+    'クロワッサン':'可頌',
+    'シュークリーム':'泡芙',
+    'カヌレ':'可麗露',
+    '臭豆腐あり':'臭豆腐',
+    '蛋餅類人気':'蛋餅',
+    '糯米腸':'米腸',
+    '牛角麵包':'金牛角',
+    '冷麺':'涼麵',
+    'ヤギ肉鍋':'羊肉爐',
+    '台湾式ベビーカステラ':'雞蛋糕',
+    '今川焼き':'紅豆餅',
+    '台湾おにぎり':'飯糰',
+    '紫米台湾おにぎり':'紫米飯糰',
+    '台湾南部風おこわ':'米糕',
+    '台湾北部風おこわ':'油飯',
+    '台湾風煮込み':'滷味',
+    '台湾鉄板ステーキ':'夜市牛排',
+    '草餅の名店':'草仔粿',
+    '脆皮豬':'脆皮燒肉',
+    '高山金萱':'金萱茶',
+    '水出し珈琲':'冰滴咖啡',
+    '焼き小籠包が人気':'生煎包',
+    '豚足の煮込み':'滷豬腳',
+    '豚足料理':'滷豬腳',
+    '豚足飯':'豬腳飯',
+    '豚角煮丼':'焢肉飯',
+    '台湾豚角煮丼':'焢肉飯',
+    'もち米の腸詰にソーセージを挟んだもの':'大腸包小腸',
+    'さつまいもボール':'地瓜球',
+    '薬膳スープ料理':'藥燉排骨',
+    '焼きエリンギ':'杏鮑菇',
+    '揚げイカ':'炸魷魚',
+    '塩ゆで鶏肉と野菜':'鹽水雞',
+    '蒸しパン':'饅頭',
+    '魚スープ':'鮮魚湯',
+    'カキオムレツ':'蚵仔煎',
+    '焼きトウモロコシ':'烤玉米',
+    '鶏もも肉唐揚げ':'炸雞腿',
+    'おでん':'關東煮',
+    'ジュース':'果汁',
+    '粉圓':'粉圓冰',
+    '烏龍茶小籠包':'小籠包',
+    '唐揚げ乗せルーローハン':'滷肉飯',
+    '泡菜燒肉蛋餅':'泡菜蛋餅',
+    '薯餅塔':'薯餅',
+    '獅子頭蛋餅':'蛋餅',
+    'ミルクもち':'麻糬',
+    'プリン':'焦糖布丁',
+    '芝芝金萱':'金萱茶',
+    'お茶シフォンケーキ':'戚風蛋糕',
+    'レモンチーズシナモンロール':'肉桂捲',
+    'スパイスカレー':'咖哩飯'
+  };
+  function dishQueryFor(text){
+    const t=String(text||'').trim();
+    if(Object.prototype.hasOwnProperty.call(TAG_DISH,t))return TAG_DISH[t];
+    return typeof window.tabiFoodDish==='function'?window.tabiFoodDish(t):'';
+  }
+  // A badge: a plain label, or a button to the dish when it is in the dictionary.
+  function badgeChip(className,text){
+    const query=dishQueryFor(text);
+    const chip=document.createElement(query?'button':'span');
+    chip.className=className;chip.textContent=text;
+    if(query){chip.type='button';chip.classList.add('is-dish');chip.dataset.foodQuery=query;
+      chip.setAttribute('aria-label',text+'を料理辞典で見る');}
+    return chip;
+  }
+  // Badges drawn before the dictionary finished loading become buttons later.
+  document.addEventListener('tabi:food-data-ready',()=>{
+    document.querySelectorAll('#food-recommend-section span.recommend-guide-tag, #food-recommend-section span.food-directory-tag').forEach(old=>{
+      if(!dishQueryFor(old.textContent))return;
+      old.replaceWith(badgeChip(old.className,old.textContent));
+    });
+  });
+
   function orderBadges(list,toneOf,textOf){
     const rank=entry=>{const tone=toneOf(entry);
       return tone==='featured'||tone==='caution'||tone==='veg'?BADGE_RANK[tone]:isDishTag(textOf(entry))?BADGE_RANK.dish:BADGE_RANK.neutral;};
@@ -1516,7 +1610,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
         tagList.setAttribute('aria-label','ガイドの店情報（横方向にスクロールできます）');
         const tagTrack=el('div','recommend-tag-track');
         for(const tag of tags){
-          const chip=el('span','recommend-guide-tag',tag.text);
+          const chip=badgeChip('recommend-guide-tag',tag.text);
           const tone=cardTagTone(tag,item);
           if(tone==='featured')chip.classList.add('recommend-guide-tag-featured');
           if(tone==='caution')chip.classList.add('recommend-guide-tag-caution');
@@ -1631,6 +1725,36 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     if(text!==undefined)element.textContent=String(text);
     return element;
   }
+  // The badges a row shows (also used to order the rows).
+  function directoryBadges(v){
+    const tagKeys=new Set();
+    const badgeList=[];
+    if(pickLevelOf(v)>=2){tagKeys.add('おすすめ');badgeList.push({text:'おすすめ',tone:'featured'});}
+    for(const tag of (Array.isArray(v.guideTags)?v.guideTags:[])){
+      if(!tag||typeof tag.text!=='string'||!tag.text.trim())continue;
+      const text=tag.text.trim();if(tagKeys.has(text))continue;
+      // A chain has one dedicated label by the name, never a duplicate chip.
+      if(text==='チェーン店')continue;
+      // Hide undated auto-generated Bib Gourmand badges; retain a year or
+      // user-maintained editorial tag from the original guide list.
+      if(/ビブグルマン|必比登/i.test(text)&&!/(?:19|20)\d{2}/.test(text)&&!v.guideTagSource)continue;
+      tagKeys.add(text);
+      const tone=tag.tone==='featured'?'featured':tag.tone==='caution'?'caution':tag.tone==='veg'?'veg':'editorial';
+      badgeList.push({text,tone});
+    }
+    return badgeList;
+  }
+  // v30.9.218: row order in 一覧 — おすすめ → other gold → 八角なし → other red
+  // → green → grey only → no badge; ties keep the previous order.
+  function directoryRank(v){
+    const badges=directoryBadges(v);
+    if(badges.some(b=>b.text==='おすすめ'))return 0;
+    if(badges.some(b=>b.tone==='featured'))return 1;
+    if(badges.some(b=>b.text==='八角なし'))return 2;
+    if(badges.some(b=>b.tone==='caution'))return 3;
+    if(badges.some(b=>b.tone==='veg'))return 4;
+    return badges.length?5:6;
+  }
   function renderFoodDirectory(){
     if(!directoryRoot||!directoryTabs||!directoryPanel)return;
     if(!directoryLoaded){
@@ -1668,7 +1792,8 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     }));
     const activeTab=directoryTabs.querySelector('[aria-selected="true"]');
     directoryPanel.setAttribute('aria-labelledby',activeTab?.id||'');
-    const rows=(buckets.get(directoryChoice)||[]).slice().sort((a,b)=>pickLevelOf(b)-pickLevelOf(a));
+    const rows=(buckets.get(directoryChoice)||[]).map((v,index)=>({v,index,rank:directoryRank(v)}))
+      .sort((a,b)=>a.rank-b.rank||pickLevelOf(b.v)-pickLevelOf(a.v)||a.index-b.index).map(x=>x.v);
     const heading=directoryNode('div','food-directory-summary');
     heading.append(directoryNode('span','food-directory-summary-title',DIRECTORY_TYPES.find(([key])=>key===directoryChoice)?.[1]||''));
     heading.append(directoryNode('span','food-directory-summary-count',rows.length+' 店'));
@@ -1687,23 +1812,9 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       const badges=directoryNode('div','food-directory-badges');
       // Purple cuisine badges are useful only in the dessert and dim-sum tabs.
       // v30.9.196: no purple kind badges in the directory; the tab names the kind.
-      const tagKeys=new Set();
-      const badgeList=[];
-      if(pickLevelOf(v)>=2){tagKeys.add('おすすめ');badgeList.push({text:'おすすめ',tone:'featured'});}
-      for(const tag of (Array.isArray(v.guideTags)?v.guideTags:[])){
-        if(!tag||typeof tag.text!=='string'||!tag.text.trim())continue;
-        const text=tag.text.trim();if(tagKeys.has(text))continue;
-        // A chain has one dedicated label by the name, never a duplicate chip.
-        if(text==='チェーン店')continue;
-        // Hide undated auto-generated Bib Gourmand badges; retain a year or
-        // user-maintained editorial tag from the original guide list.
-        if(/ビブグルマン|必比登/i.test(text)&&!/(?:19|20)\d{2}/.test(text)&&!v.guideTagSource)continue;
-        tagKeys.add(text);
-        const tone=tag.tone==='featured'?'featured':tag.tone==='caution'?'caution':tag.tone==='veg'?'veg':'editorial';
-        badgeList.push({text,tone});
-      }
+      const badgeList=directoryBadges(v);
       for(const badge of orderBadges(badgeList,b=>b.tone,b=>b.text))
-        badges.append(directoryNode('span','food-directory-tag food-directory-tag--'+badge.tone,badge.text));
+        badges.append(badgeChip('food-directory-tag food-directory-tag--'+badge.tone,badge.text));
       // Do not synthesize a second plain ビブグルマン badge from awards data.
       if(badges.childElementCount)body.append(badges);
       li.append(body);list.append(li);

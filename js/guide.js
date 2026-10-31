@@ -1160,7 +1160,8 @@ function showDishInSearch(query) {
   results.scrollTop = Math.max(0, results.scrollTop + offset - 2);
 }
 document.addEventListener("click", event => {
-  const tile = event.target instanceof Element && event.target.closest(".nm-specialty[data-food-query]");
+  // 夜市の名物 and, since v30.9.218, dish-name badges on the restaurant cards and in 一覧.
+  const tile = event.target instanceof Element && event.target.closest("button[data-food-query]");
   if (!tile) return;
   showDishInSearch(tile.dataset.foodQuery);
   document.dispatchEvent(new CustomEvent("tabi:open-food-search"));
@@ -1266,6 +1267,15 @@ async function loadData() {
     }
     foods = [...loadedFoods, ...loadedMarket];
     foods.forEach(searchTextOf); // prepare the search text once
+    // v30.9.218: a restaurant badge whose text is a dish name (or one of its
+    // ／ names) opens that dish; recommend.js asks through this lookup.
+    const dishByName = new Map();
+    foods.forEach(food => String(food.name).split(/[／/]/).forEach(alt => {
+      const key = normalized(alt.trim());
+      if (key && !dishByName.has(key)) dishByName.set(key, alt.trim());
+    }));
+    window.tabiFoodDish = text => dishByName.get(normalized(String(text || "").trim())) || "";
+    document.dispatchEvent(new CustomEvent("tabi:food-data-ready"));
     synonymGroups = json.groups;
     normalizedGroups = synonymGroups.map(group => [...new Set(group.map(normalized))]);
     footerCount.textContent = String(foods.length);
