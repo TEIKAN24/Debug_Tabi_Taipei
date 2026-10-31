@@ -473,7 +473,20 @@ window.TABI_NIGHT_MARKETS={
         "ローカル",
         "大通り沿い"
       ],
-      "specialties": [],
+      "specialties": [
+        {
+          "label": "夜市牛排",
+          "query": "夜市牛排"
+        },
+        {
+          "label": "豬血糕",
+          "query": "豬血糕"
+        },
+        {
+          "label": "三峽金牛角",
+          "query": "三峽金牛角"
+        }
+      ],
       "destination": "三峽中華路夜市"
     }
   ]
