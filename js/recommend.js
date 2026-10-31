@@ -556,6 +556,7 @@
   // A badge that is itself a dish name needs no entry: guide.js matches it
   // once the dictionary is loaded (window.tabiFoodDish).
   const TAG_DISH={
+    // same dish under another name
     '牛肉麺':'牛肉麵',
     '水餃子':'水餃',
     '焼き餃子':'煎餃',
@@ -610,14 +611,20 @@
     '鶏もも肉唐揚げ':'炸雞腿',
     'おでん':'關東煮',
     'ジュース':'果汁',
-    '粉圓':'粉圓冰',
-    '烏龍茶小籠包':'小籠包',
+    'プリン':'布丁',
+    '牛肉餡餅':'餡餅',
+    '台湾ドーナツ':'脆皮鮮奶甜甜圈',
+    'ドーナツ':'甜甜圈',
+    '手作りドーナツ':'甜甜圈',
+    '台湾カステラ':'古早味蛋糕',
+    '一人鍋':'小火鍋',
+    '炭火トースト':'炭烤吐司',
+    'ポークリブトーストサンド':'排骨吐司',
+    '緑豆スムージー':'綠豆沙',
+    'お餅入りかき氷':'麻糬冰',
+    // closest entry (the shop's own variant is not in the dictionary)
     '唐揚げ乗せルーローハン':'滷肉飯',
-    '泡菜燒肉蛋餅':'泡菜蛋餅',
-    '薯餅塔':'薯餅',
-    '獅子頭蛋餅':'蛋餅',
     'ミルクもち':'麻糬',
-    'プリン':'焦糖布丁',
     '芝芝金萱':'金萱茶',
     'お茶シフォンケーキ':'戚風蛋糕',
     'レモンチーズシナモンロール':'肉桂捲',
@@ -1746,6 +1753,14 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   }
   // v30.9.218: row order in 一覧 — おすすめ → other gold → 八角なし → other red
   // → green → grey only → no badge; ties keep the previous order.
+  // v30.9.224: inside a 一覧 row, badges read in the same priority from the left:
+  // おすすめ → gold → 八角なし → red → grey (dish names first) → green.
+  // The cards of まずはこの3軒 keep their own order (gold at the right end).
+  function directoryBadgeOrder(list){
+    const rank=b=>b.text==='おすすめ'?0:b.tone==='featured'?1:b.text==='八角なし'?2:b.tone==='caution'?3:
+      b.tone==='veg'?6:isDishTag(b.text)?4:5;
+    return list.map((b,index)=>({b,index,rank:rank(b)})).sort((x,y)=>x.rank-y.rank||x.index-y.index).map(x=>x.b);
+  }
   function directoryRank(v){
     const badges=directoryBadges(v);
     if(badges.some(b=>b.text==='おすすめ'))return 0;
@@ -1813,7 +1828,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       // Purple cuisine badges are useful only in the dessert and dim-sum tabs.
       // v30.9.196: no purple kind badges in the directory; the tab names the kind.
       const badgeList=directoryBadges(v);
-      for(const badge of orderBadges(badgeList,b=>b.tone,b=>b.text))
+      for(const badge of directoryBadgeOrder(badgeList))
         badges.append(badgeChip('food-directory-tag food-directory-tag--'+badge.tone,badge.text));
       // Do not synthesize a second plain ビブグルマン badge from awards data.
       if(badges.childElementCount)body.append(badges);
