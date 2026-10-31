@@ -1158,6 +1158,13 @@ function showDishInSearch(query) {
   // The drawer is laid out while hidden, so the list can be scrolled now.
   const offset = row.getBoundingClientRect().top - results.getBoundingClientRect().top;
   results.scrollTop = Math.max(0, results.scrollTop + offset - 2);
+  // v30.9.229: the dish glows softly three times once the drawer is open.
+  row.classList.remove("food-entry-flash");
+  void row.offsetWidth;
+  row.classList.add("food-entry-flash");
+  row.addEventListener("animationend", event => {
+    if (event.animationName === "food-entry-flash") row.classList.remove("food-entry-flash");
+  }, { once: true });
 }
 document.addEventListener("click", event => {
   // 夜市の名物 and, since v30.9.218, dish-name badges on the restaurant cards and in 一覧.

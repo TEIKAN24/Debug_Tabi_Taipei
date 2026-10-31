@@ -5420,12 +5420,12 @@ html[data-theme="light"] #guide details.area-directory-section{--walk-tone:var(-
 }
 #top{
   --hero-shrink:.6;
-  --horizon-rgb:214,177,103;--horizon-alpha:.22;
+  --horizon-rgb:214,177,103;--horizon-alpha:.3;
   --greet-ink:#F7F7F7;--stack-ink:#8B969C;
   --welcome-ink:#B1B1B1;--tagline-ink:#54595E;
 }
 html[data-theme="light"] #top{
-  --horizon-rgb:196,146,58;--horizon-alpha:.24;
+  --horizon-rgb:196,146,58;--horizon-alpha:.32;
   --greet-ink:#22292D;--stack-ink:#68747B;
   --welcome-ink:#4A5156;--tagline-ink:#88939A;
 }
@@ -5445,6 +5445,10 @@ html[data-theme="light"] #top{
     rgba(var(--horizon-rgb),calc(var(--horizon-alpha) * .14)) 70%,
     rgba(var(--horizon-rgb),0) 100%);
   transform-origin:50% 100%;
+  /* v30.9.229: both ends fade out within the screen (the element is 160vw
+     wide, so the screen spans 18.75%–81.25% of it). */
+  -webkit-mask-image:linear-gradient(90deg,transparent 19%,#000 37%,#000 63%,transparent 81%);
+          mask-image:linear-gradient(90deg,transparent 19%,#000 37%,#000 63%,transparent 81%);
 }
 
 /* Wordmark */
@@ -5537,3 +5541,43 @@ html.hero-intro-skip #top .hero-greeting-line{opacity:1;animation:none;transform
   -webkit-tap-highlight-color:transparent;transition:opacity .18s ease;
 }
 #top .hero-greeting.is-swapping{opacity:0;}
+
+/* v30.9.229 — a dish opened from a name (restaurant badge, night-market
+   specialty) glows softly three times once the drawer has slid in. The row's
+   own background is fixed (!important), so the glow is a layer behind it. */
+#guide #food-explorer .result.food-entry-flash{position:relative;isolation:isolate;}
+#guide #food-explorer .result.food-entry-flash::before{
+  content:"";position:absolute;z-index:-1;inset:2px -8px;border-radius:12px;pointer-events:none;
+  background:rgba(235,196,137,.17);box-shadow:0 0 0 1px rgba(235,196,137,.22);opacity:0;
+  animation:food-entry-flash 2.4s cubic-bezier(.45,0,.55,1) .45s both;
+}
+html[data-theme="light"] #guide #food-explorer .result.food-entry-flash::before{
+  background:rgba(214,166,80,.16);box-shadow:0 0 0 1px rgba(214,166,80,.3);
+}
+@keyframes food-entry-flash{
+  0%{opacity:0}14%{opacity:1}31%{opacity:.08}
+  47%{opacity:1}64%{opacity:.08}80%{opacity:1}100%{opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  #guide #food-explorer .result.food-entry-flash::before{animation:food-entry-flash-once 1.6s ease .45s both;}
+  @keyframes food-entry-flash-once{0%,100%{opacity:0}25%,70%{opacity:1}}
+}
+
+/* v30.9.229 — 公式サイト of TWAC: a little room before から申請する. */
+#guide .travel-twac a.external-action-link{margin-right:.4em;}
+
+/* v30.9.229 — the TWAC button's colours on every link button: 交通パス
+   公式サイト, and 公式／予約／交代式… under each place. Colours only.
+   (:not(#_) only raises the weight over the general .site-content link colour.) */
+html body #guide a.external-action-link:not(#_),
+html body #guide .venue-secondary-links a:not(#_){
+  color:#79B9FF!important;background-color:rgba(47,116,207,.14)!important;border-color:rgba(82,153,245,.56)!important;
+}
+html body #guide a.external-action-link:not(#_):hover,
+html body #guide .venue-secondary-links a:not(#_):hover{background-color:rgba(47,116,207,.27)!important;}
+html[data-theme="light"] body #guide a.external-action-link:not(#_):not(#__),
+html[data-theme="light"] body #guide .venue-secondary-links a:not(#_):not(#__){
+  color:#195E91!important;background-color:#EAF3FB!important;border-color:#B7D2E8!important;
+}
+html[data-theme="light"] body #guide a.external-action-link:not(#_):not(#__):hover,
+html[data-theme="light"] body #guide .venue-secondary-links a:not(#_):not(#__):hover{background-color:#DCEBF8!important;}
