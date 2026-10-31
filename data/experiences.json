@@ -4,7 +4,7 @@
   "groups": [
     {
       "id": "3f76bda0-4caa-80d2-8841-c76e1f8f749a",
-      "title": "✨  台湾ならではの体験",
+      "title": "✨  体験",
       "categories": [
         {
           "id": "3f76bda0-4caa-8069-9f71-c1e593688b35",
@@ -123,7 +123,7 @@
         },
         {
           "id": "3f76bda0-4caa-808d-b875-c2c237f456c2",
-          "title": "台湾シャンプー",
+          "title": "台湾シャンプー・マッサージ",
           "items": [
             {
               "id": "3f76bda0-4caa-8031-aca3-cab46d0128ff",
@@ -338,7 +338,7 @@
         },
         {
           "id": "3f76bda0-4caa-8076-9a54-c190947938c3",
-          "title": "カラオケ",
+          "title": "占い・カラオケ",
           "items": [
             {
               "id": "experiences-mvwlta5p-bwwge",
