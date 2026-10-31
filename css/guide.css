@@ -5585,12 +5585,13 @@ html[data-theme="light"] body #guide .venue-secondary-links a:not(#_):not(#__):h
 /* =================== v30.9.230 — ONE LIST STYLE ===================
    Chapters 03 / 05 lists take the City Walk row style, and both now put the
    labels under the name: index · name … 公式／予約 on the right, labels
-   below. A glow in the chapter colour (the top page cards: 観光 blue,
-   体験・おみやげ pink) rises at the top of the list when the section opens,
-   like the City Walk area glow. */
-#guide details.venue-tone-sights{--venue-tone:115,163,210;}
-#guide details.venue-tone-experience{--venue-tone:204,145,172;}
-#guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels{position:relative;}
+   below. A glow in the chapter colour (the glow at the top of each chapter,
+   hr.chapter-glow--…) rises at the top of the list once the section has
+   opened, like the City Walk area glow (v30.9.231: guide.js adds
+   .venue-glow-in when the page has stopped gliding to the section). */
+#guide details.venue-tone-sights{--venue-tone:138,158,122;}
+#guide details.venue-tone-experience{--venue-tone:188,112,98;}
+#guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels{position:relative;margin-top:8px!important;}
 #guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels::before{
   content:"";position:absolute;left:0;right:0;top:0;height:56px;pointer-events:none;z-index:0;
   background:linear-gradient(to bottom,
@@ -5601,12 +5602,16 @@ html[data-theme="light"] body #guide .venue-secondary-links a:not(#_):not(#__):h
   -webkit-mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
           mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
   filter:blur(2px);
-  animation:walk-glow-in .45s ease-out both;
+  opacity:0;transform-origin:50% 0;
 }
+#guide details.venue-glow-in:is(.venue-tone-sights,.venue-tone-experience) .tab-panels::before{
+  animation:venue-glow-in .7s cubic-bezier(.2,.7,.3,1) both;
+}
+@keyframes venue-glow-in{from{opacity:0;transform:scaleX(.55)}to{opacity:1;transform:scaleX(1)}}
 #guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels > .tab-panel{position:relative;z-index:1;}
 html[data-theme="light"] #guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels{--venue-glow:.55;}
 @media(prefers-reduced-motion:reduce){
-  #guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels::before{animation:none;}
+  #guide details.venue-glow-in:is(.venue-tone-sights,.venue-tone-experience) .tab-panels::before{animation:none;opacity:1;}
 }
 
 /* Rows (chapters 03 / 05 and City Walk alike) */
@@ -5644,3 +5649,9 @@ html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide 
 html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-row-index{color:#8A969C!important;}
 html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) a.venue-main-link:not(#_):not(#__),
 html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) a.venue-main-link:not(#_):not(#__):visited{color:#213038!important;}
+
+/* v30.9.231 — 公式／予約… link buttons, page-wide: 15% see-through, softer. */
+html body #guide a.external-action-link:not(#_),
+html body #guide .venue-secondary-links a:not(#_){opacity:.85;}
+html body #guide a.external-action-link:not(#_):hover,
+html body #guide .venue-secondary-links a:not(#_):hover{opacity:1;}
