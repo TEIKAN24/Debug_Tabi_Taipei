@@ -325,36 +325,49 @@
      → day 2 / 3 / 4 / 7 of the trip → a late night again → up early again →
      back the same day → the same time three days running → the time greeting.
      (The rarer ones come first, so a frequent one never takes their day.)
-     Special greetings are kept for the rest of their stretch, so a reload
-     shows them again; each comes once (a day, or ever for visits and days). */
+     Each comes once (a day, or ever for visits and trip days). The first visit
+     stays 30 s, visit 10 / 50 and trip days 10 min, back the same day 10 s;
+     the others stay for the rest of their stretch. A reload in that time
+     shows the same greeting. */
+  // How long some greetings stay before the time greeting takes over (ms).
+  const SHOW_FIRST=30*1000,SHOW_MILESTONE=10*60*1000,SHOW_BACK=10*1000;
   function pickGreeting(){
+    const at=now.getTime();
     const minute=SPECIAL.minute[now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')];
-    if(!store)return minute||entries[choose(slot,part,entries,now,null)].lines;
+    if(!store)return {lines:minute||entries[choose(slot,part,entries,now,null)].lines};
     const info=bookkeeping();
     const first=store.first&&typeof store.first==='object'?store.first:null;
     if(!first){
       const i=Math.floor(Math.random()*FIRST_GREETINGS.length);
-      store.first={d:today,pool:slot.pool,w:part,i};
-      return FIRST_GREETINGS[i];
+      store.first={d:today,i,until:at+SHOW_FIRST};
+      return {lines:FIRST_GREETINGS[i],ms:SHOW_FIRST};
     }
-    if(first.d===today&&first.pool===slot.pool&&first.w===part&&FIRST_GREETINGS[first.i])return FIRST_GREETINGS[first.i];
-    if(minute)return minute;
+    if(Number(first.until)>at&&FIRST_GREETINGS[first.i])return {lines:FIRST_GREETINGS[first.i],ms:first.until-at};
+    if(minute)return {lines:minute};
     const sp=store.special;
-    if(sp&&sp.d===today&&sp.pool===slot.pool&&sp.w===part&&Array.isArray(sp.lines))return sp.lines;
+    if(sp&&Array.isArray(sp.lines)){
+      if(sp.until?Number(sp.until)>at:(sp.d===today&&sp.pool===slot.pool&&sp.w===part))
+        return {lines:sp.lines,ms:sp.until?sp.until-at:0};
+    }
     const once=store.once&&typeof store.once==='object'?store.once:(store.once={});
-    const keep=(key,lines)=>{once[key]=today;store.special={d:today,pool:slot.pool,w:part,lines};return lines;};
-    if(info.newVisit&&SPECIAL.visits[info.count]&&!once['visit'+info.count])return keep('visit'+info.count,SPECIAL.visits[info.count]);
+    // A special greeting is kept for its time (ms), or else for the rest of its stretch.
+    const keep=(key,lines,ms)=>{once[key]=today;
+      store.special={d:today,pool:slot.pool,w:part,lines,until:ms?at+ms:0};return {lines,ms:ms||0};};
+    if(info.newVisit&&SPECIAL.visits[info.count]&&!once['visit'+info.count])
+      return keep('visit'+info.count,SPECIAL.visits[info.count],SHOW_MILESTONE);
     const tripDay=today-first.d+1;
-    if(SPECIAL.trip[tripDay]&&!once['trip'+tripDay])return keep('trip'+tripDay,pickOne(SPECIAL.trip[tripDay]));
+    if(SPECIAL.trip[tripDay]&&!once['trip'+tripDay])return keep('trip'+tripDay,pickOne(SPECIAL.trip[tripDay]),SHOW_MILESTONE);
     if(slot.pool==='night'&&info.owlYesterday&&once.owl!==today)return keep('owl',pickOne(SPECIAL.owl));
     if(sinceTurn<60&&info.earlyYesterday&&once.early!==today)return keep('early',SPECIAL.early);
-    if(info.prevLast&&dayNumber(new Date(info.prevLast))===today&&now.getTime()-info.prevLast>=3*3600000&&
-       sinceTurn>=360&&once.back!==today)return keep('back',pickOne(SPECIAL.back));
+    if(info.prevLast&&dayNumber(new Date(info.prevLast))===today&&at-info.prevLast>=3*3600000&&
+       sinceTurn>=360&&once.back!==today)return keep('back',pickOne(SPECIAL.back),SHOW_BACK);
     const near=list=>list.some(m=>Math.abs(m-sinceTurn)<=60);
     if(near(info.before[1])&&near(info.before[2])&&once.habit!==today)return keep('habit',SPECIAL.habit);
-    return entries[choose(slot,part,entries,now,store)].lines;
+    return {lines:entries[choose(slot,part,entries,now,store)].lines};
   }
-  const baseLines=pickGreeting().map(text=>text.replace('{101}',COLOURS_101[now.getDay()]));
+  const fill=(list,when)=>list.map(text=>text.replace('{101}',COLOURS_101[when.getDay()]));
+  const picked=pickGreeting();
+  let baseLines=fill(picked.lines,now);
   if(store)writeStore(store);
   let lines=baseLines;
 
@@ -399,7 +412,7 @@
       lines=list;lineEls=makeLines(list);fit();
       greet.classList.remove('is-swapping');
       if(holdMs)swapTimer=setTimeout(()=>{if(token===swapToken)swapTo(baseLines,0);},holdMs);
-    },280);
+    },180);
   }
 
   function setupMoments(){
@@ -410,11 +423,11 @@
       taps++;clearTimeout(tapTimer);
       tapTimer=setTimeout(()=>{
         const n=taps;taps=0;
-        if(n>=3){swapTo(SPECIAL.tickle,2400);return;}
+        if(n>=3){swapTo(SPECIAL.tickle,1400);return;}
         if(n!==2)return;
         let reply;do{reply=pickOne(SPECIAL.replies);}while(SPECIAL.replies.length>1&&reply===lastReply);
-        lastReply=reply;swapTo(reply,2000);
-      },320);
+        lastReply=reply;swapTo(reply,1200);
+      },230);
     });
     if(!store)return;
     // Back at the top after a long scroll (once a day), and light mode at night
@@ -447,6 +460,26 @@
     }).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   }
   setupMoments();
+
+  /* A greeting with a time limit (first visit 30 s, visit 10 / 50 and trip days
+     10 min, back the same day 10 s) hands over to the time greeting once its
+     time is up, counted from when the greeting has fully appeared. */
+  function whenDone(callback){
+    if(hero.classList.contains('hero--done')){callback();return;}
+    new MutationObserver((records,observer)=>{
+      if(!hero.classList.contains('hero--done'))return;
+      observer.disconnect();callback();
+    }).observe(hero,{attributes:true,attributeFilter:['class']});
+  }
+  if(picked.ms>0)whenDone(()=>setTimeout(()=>{
+    const at=new Date(),next=slotFor(at),list=GREETINGS[next.slot.pool].map(entryOf);
+    baseLines=fill(list[choose(next.slot,next.part,list,at,store)].lines,at);
+    if(store){
+      if(store.special&&store.special.until)store.special.until=Math.min(store.special.until,at.getTime());
+      writeStore(store);
+    }
+    swapTo(baseLines,0);
+  },picked.ms));
 
   function fontReady(limit){
     if(!document.fonts||!document.fonts.load)return Promise.resolve();

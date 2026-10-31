@@ -5534,6 +5534,6 @@ html.hero-intro-skip #top .hero-greeting-line{opacity:1;animation:none;transform
    on it, and the swap is a quick cross-fade. */
 #top .hero-greeting{
   touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
-  -webkit-tap-highlight-color:transparent;transition:opacity .28s ease;
+  -webkit-tap-highlight-color:transparent;transition:opacity .18s ease;
 }
 #top .hero-greeting.is-swapping{opacity:0;}
