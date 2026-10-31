@@ -179,10 +179,10 @@
   /* The longest line must stay on one line: shrink the greeting uniformly if needed. */
   function fit(){
     greet.style.removeProperty('--greet-fit');
-    const room=greet.clientWidth;
+    const room=greet.parentElement.clientWidth;
     let scale=1;
     lineEls.forEach(el=>{
-      const need=el.getBoundingClientRect().width;
+      const need=el.getBoundingClientRect().width+(parseFloat(getComputedStyle(el).marginLeft)||0);
       if(room>0&&need>room+.5)scale=Math.min(scale,room/need);
     });
     if(scale<1)greet.style.setProperty('--greet-fit',(Math.floor(scale*1000)/1000).toFixed(3));
