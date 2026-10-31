@@ -5675,3 +5675,7 @@ html body #guide .venue-secondary-links a:not(#_):hover{opacity:1;}
   font-size:19.5px!important;line-height:1.3!important;font-weight:700!important;letter-spacing:-.02em!important;word-spacing:0;
 }
 #guide .chapter-lead{margin:1.6px 0 18px!important;padding-left:4px!important;font-size:11.75px!important;line-height:1.6!important;}
+
+/* v30.9.236 — さっそく出発！ with corners like the specialty buttons above it
+   (6px on a 41px button; 7px keeps the same feel on this 50px one). */
+#guide #night-markets-section #night-markets-tabs .nm-go{border-radius:7px;}

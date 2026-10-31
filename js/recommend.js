@@ -1247,7 +1247,7 @@
     currentLocation.title=state.locationStatus==='outside'?'現在地は台北市・新北市の対象エリア外です。':cityJa?'表示された行政区は位置座標からの概算です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
     for(const b of categoryControls)b.setAttribute('aria-pressed',String(state.categories.includes(b.dataset.value)));
-    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は対象地域外です。通常のおすすめを表示します。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!nearbyReady)?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${nearbyVenues.reduce((n,v)=>n+v.branches.length,0)}店舗からご案内します。`};
+    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は台北市・新北市の対象エリア外です。「駅から検索」もご利用ください。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!nearbyReady)?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${nearbyVenues.reduce((n,v)=>n+v.branches.length,0)}店舗からご案内します。`};
     locationStatus.textContent=!isStation?messages[state.locationStatus]||'':
       stationsFailed?'駅データを読み込めませんでした。再読み込みしてください。':
       !stationsReady?'駅データを読み込み中…':
@@ -1545,6 +1545,13 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       count.textContent='駅を選択';more.hidden=true;relaxed.hidden=true;
       disclaimer.textContent='※ 距離は直線です。';
       return;
+    }
+    // v30.9.235: outside Taipei / New Taipei, no restaurant is suggested.
+    if(state.areaMode==='current'&&state.locationStatus==='outside'){
+      visibleRecommendations=[];
+      results.replaceChildren(el('p','recommend-no-data','エリア対象外です。'));
+      count.textContent='エリア外';more.hidden=true;relaxed.hidden=true;
+      reportDebug(0);return;
     }
     const {ordered,timeCount,lifted,nearbyFallback,useDistance,nearbyCount}=recommendedPool();
     results.replaceChildren();

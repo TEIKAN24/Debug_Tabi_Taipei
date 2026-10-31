@@ -186,8 +186,9 @@
       panels[i].hidden=!on;
     });
     if(moveFocus) pills[index].focus({preventScroll:true});
-    // Recommendation pills get their own controlled position below.
-    if(tablist.closest('.venue-directory-section:not(.area-directory-section)')) return;
+    // Recommendation pills (and, since v30.9.236, the night markets) get their
+    // own controlled position below.
+    if(tablist.closest('.venue-directory-section:not(.area-directory-section), #night-markets-section')) return;
     // Anticipate the next category before the selected pill reaches the right edge.
     // A mostly-visible pill stays put; a pill nearing the edge moves to the left
     // fifth of the strip, leaving space to discover and tap the following pills.
@@ -225,12 +226,10 @@
     const previous=pills[index-1];
     const gap=parseFloat(getComputedStyle(strip).columnGap)||0;
     const leftSpace=previous ? Math.round(previous.offsetWidth/2+gap+2) : 2;
-    const last=pills[pills.length-1];
-    const followingWidth=(last.offsetLeft+last.offsetWidth)-(selected.offsetLeft+selected.offsetWidth);
-    // Just enough invisible end-space for the last (or penultimate) pill to
-    // sit in the second slot, rather than sticking against the right edge.
-    const trailing=Math.max(0,Math.ceil(strip.clientWidth-leftSpace-selected.offsetWidth-followingWidth-12));
-    strip.style.setProperty('--recommendation-tail-space',trailing+'px');
+    // v30.9.236: no invisible end-space any more. Like the City Walk chips, a
+    // strip already scrolled to its end stays there: the last pills are
+    // selected in place instead of the strip sliding past them.
+    strip.style.setProperty('--recommendation-tail-space','0px');
     requestAnimationFrame(()=>{
       const max=Math.max(0,strip.scrollWidth-strip.clientWidth);
       const wanted=selected.offsetLeft-strip.offsetLeft-leftSpace;
@@ -244,11 +243,14 @@
     pills.forEach((pill,index)=>{
       const isAreaTablist = Boolean(tablist.closest('.area-directory-section'));
       const isRecommendedTablist = Boolean(tablist.closest('.venue-directory-section:not(.area-directory-section)'));
+      // v30.9.236: night markets — the chosen market moves to the second slot
+      // until the strip reaches its end, like the City Walk chips.
+      const isNightTablist = Boolean(tablist.closest('#night-markets-section'));
       pill.addEventListener('click',()=>{
         activateTab(tablist,index);
         const panel=tablist.nextElementSibling?.children[index];
         if (isAreaTablist || isRecommendedTablist || panel?.classList.contains('guided-focus-panel')) prepareGuidedTab(panel);
-        if (isRecommendedTablist) alignRecommendationPill(tablist, pill);
+        if (isRecommendedTablist || isNightTablist) alignRecommendationPill(tablist, pill);
       });
       pill.addEventListener('keydown',e=>{
         if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
@@ -258,7 +260,7 @@
         activateTab(tablist,next,true);
         const panel=tablist.nextElementSibling?.children[normalized];
         if (isAreaTablist || isRecommendedTablist || panel?.classList.contains('guided-focus-panel')) prepareGuidedTab(panel);
-        if (isRecommendedTablist) alignRecommendationPill(tablist, pills[normalized]);
+        if (isRecommendedTablist || isNightTablist) alignRecommendationPill(tablist, pills[normalized]);
       });
     });
   });
@@ -1721,12 +1723,9 @@ loadData();
     const gap=parseFloat(getComputedStyle(strip).columnGap)||0;
     const previous=buttons[index-1];
     const leftSpace=previous?Math.round(previous.offsetWidth/2+gap+2):2;
-    const last=buttons[buttons.length-1];
-    const followingWidth=last.getBoundingClientRect().right-selected.getBoundingClientRect().right;
-    // Invisible scrollable tail allows the final categories to use the same
-    // position as the middle ones, without moving or resizing real bubbles.
-    const tail=Math.max(0,Math.ceil(strip.clientWidth-leftSpace-selected.offsetWidth-followingWidth-12));
-    strip.style.setProperty('--food-directory-tail-space',tail+'px');
+    // v30.9.236: no invisible tail past the last category; once the strip
+    // reaches its end it stays there (like the City Walk chips).
+    strip.style.setProperty('--food-directory-tail-space','0px');
     const max=Math.max(0,strip.scrollWidth-strip.clientWidth);
     const wanted=strip.scrollLeft+selected.getBoundingClientRect().left-strip.getBoundingClientRect().left-leftSpace;
     const destination=Math.max(0,Math.min(max,wanted));
