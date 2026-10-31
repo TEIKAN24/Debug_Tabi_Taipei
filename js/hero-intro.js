@@ -193,10 +193,11 @@
   };
   // Taipei 101's daily lighting follows the rainbow by weekday (Sunday first).
   const COLOURS_101=['紫','赤','オレンジ','黄','緑','青','藍'];
-  /* Time slots in minutes after 05:00 (the day turns at 05:00, so 22:30–04:59
+  /* Time slots in minutes after 05:00 (the day turns at 05:00, so 23:00–04:59
      is still the same night). parts splits a slot into equal stretches of
      roughly 40–60 minutes; each stretch has its own greeting, which stays put
-     however often the page is opened. A pool needs at least 3 × parts
+     however often the page is opened. Every switch moves by up to ±5 minutes,
+     differently each day (see stretchAt()). A pool needs at least 3 × parts
      greetings for the three-day rule below. */
   const SLOTS=[
     {pool:'dawn',      start:0,    end:150,  parts:3},  // 05:00–07:29, every 50 min
@@ -204,13 +205,14 @@
     {pool:'noon',      start:360,  end:480,  parts:3},  // 11:00–12:59, every 40 min
     {pool:'afternoon', start:480,  end:720,  parts:5},  // 13:00–16:59, every 48 min
     {pool:'dinner',    start:720,  end:870,  parts:3},  // 17:00–19:29, every 50 min
-    {pool:'evening',   start:870,  end:1050, parts:4},  // 19:30–22:29, every 45 min
-    {pool:'night',     start:1050, end:1290, parts:4},  // 22:30–02:29, every hour
-    {pool:'awake',     start:1290, end:1440, parts:1}   // 02:30–04:59
+    {pool:'evening',   start:870,  end:1080, parts:4},  // 19:30–22:59, every ~52 min
+    {pool:'night',     start:1080, end:1230, parts:3},  // 23:00–01:29, every 50 min
+    {pool:'awake',     start:1230, end:1440, parts:1}   // 01:30–04:59
   ];
   const STORE_KEY='tabi-hero-greeting-v5';
   const NO_REPEAT_DAYS=3;     // a greeting is not shown again on the next two days
-  const DAY_TURN_HOUR=5;      // 02:30–04:59 still belongs to the previous day
+  const DAY_TURN_HOUR=5;      // 00:00–04:59 still belongs to the previous day
+  const SWITCH_JITTER=5;      // minutes a switch may move, either way
   const GREET_AT=1250;        // ms after the intro starts
   const LINE_GAP=600;         // ms between the starts of consecutive lines
   const FONT_WAIT=1800;       // never hold the greeting longer than this for the font
@@ -218,13 +220,28 @@
 
   const entryOf=e=>Array.isArray(e)?{lines:e}:e;
   const minutesOf=text=>{const [h,m]=String(text).split(':').map(Number);return h*60+m;};
-  /* Slot and its stretch for the current time. */
-  function slotFor(now){
-    const m=(now.getHours()*60+now.getMinutes()-DAY_TURN_HOUR*60+1440)%1440;
-    const slot=SLOTS.find(x=>m>=x.start&&m<x.end)||SLOTS[0];
-    const part=Math.min(slot.parts-1,Math.floor((m-slot.start)*slot.parts/(slot.end-slot.start)));
-    return {slot,part};
+  /* The stretches of a day: each start (except 05:00) moved by a fixed amount
+     between −5 and +5 minutes that depends only on the date, so every reload
+     that day agrees on it. */
+  function seeded(n){const x=Math.sin(n*12.9898+78.233)*43758.5453;return x-Math.floor(x);}
+  function stretchesOf(day){
+    const list=[];
+    SLOTS.forEach(slot=>{for(let part=0;part<slot.parts;part++){
+      const start=slot.start+(slot.end-slot.start)*part/slot.parts;
+      const shift=start===0?0:Math.round((seeded(day*131+list.length)*2-1)*SWITCH_JITTER);
+      list.push({slot,part,start:start+shift});
+    }});
+    return list;
   }
+  /* Slot and stretch for a moment (key names the stretch). */
+  function stretchAt(now){
+    const day=dayNumber(now);
+    const m=(now.getHours()*60+now.getMinutes()+now.getSeconds()/60-DAY_TURN_HOUR*60+1440)%1440;
+    let current=null;
+    for(const s of stretchesOf(day))if(m>=s.start)current=s;
+    return {slot:current.slot,part:current.part,key:day+':'+current.slot.pool+':'+current.part};
+  }
+  const slotFor=stretchAt;
   function dayNumber(now){
     const d=new Date(now.getTime()-DAY_TURN_HOUR*3600000);
     return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000);
@@ -330,7 +347,7 @@
      the others stay for the rest of their stretch. A reload in that time
      shows the same greeting. */
   // How long some greetings stay before the time greeting takes over (ms).
-  const SHOW_FIRST=30*1000,SHOW_MILESTONE=10*60*1000,SHOW_BACK=10*1000;
+  const SHOW_FIRST=30*1000,SHOW_MILESTONE=10*60*1000,SHOW_HALF_HOUR=30*60*1000,SHOW_BACK=10*1000;
   function pickGreeting(){
     const at=now.getTime();
     const minute=SPECIAL.minute[now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')];
@@ -357,8 +374,8 @@
       return keep('visit'+info.count,SPECIAL.visits[info.count],SHOW_MILESTONE);
     const tripDay=today-first.d+1;
     if(SPECIAL.trip[tripDay]&&!once['trip'+tripDay])return keep('trip'+tripDay,pickOne(SPECIAL.trip[tripDay]),SHOW_MILESTONE);
-    if(slot.pool==='night'&&info.owlYesterday&&once.owl!==today)return keep('owl',pickOne(SPECIAL.owl));
-    if(sinceTurn<60&&info.earlyYesterday&&once.early!==today)return keep('early',SPECIAL.early);
+    if(slot.pool==='night'&&info.owlYesterday&&once.owl!==today)return keep('owl',pickOne(SPECIAL.owl),SHOW_HALF_HOUR);
+    if(sinceTurn<60&&info.earlyYesterday&&once.early!==today)return keep('early',SPECIAL.early,SHOW_HALF_HOUR);
     if(info.prevLast&&dayNumber(new Date(info.prevLast))===today&&at-info.prevLast>=3*3600000&&
        sinceTurn>=360&&once.back!==today)return keep('back',pickOne(SPECIAL.back),SHOW_BACK);
     const near=list=>list.some(m=>Math.abs(m-sinceTurn)<=60);
@@ -461,9 +478,15 @@
   }
   setupMoments();
 
-  /* A greeting with a time limit (first visit 30 s, visit 10 / 50 and trip days
-     10 min, back the same day 10 s) hands over to the time greeting once its
-     time is up, counted from when the greeting has fully appeared. */
+  /* The greeting follows the clock while the page stays open: a new stretch
+     brings its greeting, a special minute shows for that minute, and a
+     greeting with a time limit (first visit 30 s; visit 10 / 50 and trip days
+     10 min; late night and early again 30 min; back the same day 10 s) hands
+     over to the time greeting when its time is up, counted from when it has
+     fully appeared. Nothing runs in between: one timer is set for the next
+     moment something changes (nextChange()), and the greeting is checked
+     again whenever the page is seen again (a phone waking up, a tab coming
+     back). Nothing runs while the page is hidden. */
   function whenDone(callback){
     if(hero.classList.contains('hero--done')){callback();return;}
     new MutationObserver((records,observer)=>{
@@ -471,15 +494,86 @@
       observer.disconnect();callback();
     }).observe(hero,{attributes:true,attributeFilter:['class']});
   }
-  if(picked.ms>0)whenDone(()=>setTimeout(()=>{
-    const at=new Date(),next=slotFor(at),list=GREETINGS[next.slot.pool].map(entryOf);
-    baseLines=fill(list[choose(next.slot,next.part,list,at,store)].lines,at);
-    if(store){
-      if(store.special&&store.special.until)store.special.until=Math.min(store.special.until,at.getTime());
-      writeStore(store);
+  const minuteKey=at=>at.getHours()+':'+String(at.getMinutes()).padStart(2,'0');
+  const sameLines=(x,y)=>x.length===y.length&&x.every((t,i)=>t===y[i]);
+  // 05:00 of the greeting day that a moment belongs to.
+  function dayTurn(at){
+    const d=new Date(at.getTime()-DAY_TURN_HOUR*3600000);
+    return new Date(d.getFullYear(),d.getMonth(),d.getDate(),DAY_TURN_HOUR,0,0,0);
+  }
+  // When a stretch greeting with an end time (the 101 line) must give way.
+  function untilOf(pool,list,at){
+    const entry=GREETINGS[pool].map(entryOf).find(e=>sameLines(fill(e.lines,at),list));
+    if(!entry||!entry.until)return Infinity;
+    const [h,m]=entry.until.split(':').map(Number);
+    return new Date(at.getFullYear(),at.getMonth(),at.getDate(),h,m,0,0).getTime();
+  }
+  const startMinute=SPECIAL.minute[minuteKey(now)];
+  let stretchKey=slotFor(now).key;
+  // The greeting of this stretch (not a special minute, which only lasts a minute).
+  let stretchLines=startMinute&&picked.lines===startMinute?null:baseLines;
+  let stretchUntil=stretchLines?untilOf(slotFor(now).slot.pool,stretchLines,now):Infinity;
+  let holding=picked.ms>0,holdUntil=Infinity,timer=0;
+  function release(){
+    holding=false;stretchLines=null;
+    if(store&&store.special&&store.special.until){store.special.until=Math.min(store.special.until,Date.now());writeStore(store);}
+  }
+  /* The next moment the greeting may change: the next stretch, the start or
+     end of a special minute, the end of a time limit. */
+  function nextChange(at){
+    const t=at.getTime(),times=[];
+    if(holding)times.push(holdUntil);
+    if(stretchUntil>t)times.push(stretchUntil);
+    const turn=dayTurn(at),m=(t-turn.getTime())/60000;
+    const next=stretchesOf(dayNumber(at)).find(s=>s.start>m);
+    times.push(next?turn.getTime()+next.start*60000:turn.getTime()+24*3600000);
+    for(const key of Object.keys(SPECIAL.minute)){
+      const [h,mm]=key.split(':').map(Number);
+      for(const add of [0,1]){
+        const s=new Date(at.getFullYear(),at.getMonth(),at.getDate()+add,h,mm,0,0).getTime();
+        if(s>t)times.push(s);
+        if(s<=t&&t<s+60000)times.push(s+60000);
+      }
     }
-    swapTo(baseLines,0);
-  },picked.ms));
+    return Math.min(...times);
+  }
+  function schedule(){
+    clearTimeout(timer);
+    const wait=nextChange(new Date())-Date.now();
+    // A little after the moment itself; never longer than 6 h in one go.
+    timer=setTimeout(followClock,Math.min(Math.max(wait,0)+250,6*3600000));
+  }
+  // Time on the page counts as being here: a reload later is not "back".
+  function noteHere(){
+    if(!store||!store.visits)return;
+    store.visits.last=Date.now();writeStore(store);
+  }
+  function followClock(){
+    if(document.visibilityState==='hidden'){clearTimeout(timer);noteHere();return;}
+    if(holding&&Date.now()>=holdUntil)release();   // also after the phone slept
+    if(!holding){
+      const at=new Date(),pos=slotFor(at);
+      if(at.getTime()>=stretchUntil)stretchLines=null;
+      if(pos.key!==stretchKey||!stretchLines){
+        stretchKey=pos.key;
+        const list=GREETINGS[pos.slot.pool].map(entryOf);
+        stretchLines=fill(list[choose(pos.slot,pos.part,list,at,store)].lines,at);
+        stretchUntil=untilOf(pos.slot.pool,stretchLines,at);
+        if(store)writeStore(store);
+      }
+      const want=SPECIAL.minute[minuteKey(at)]||stretchLines;
+      if(!sameLines(want,baseLines)){baseLines=want;swapTo(baseLines,0);}
+      if(store&&store.visits&&at.getTime()-(Number(store.visits.last)||0)>5*60000)noteHere();
+    }
+    schedule();
+  }
+  whenDone(()=>{
+    if(holding){holdUntil=Date.now()+picked.ms;setTimeout(()=>{if(holding)release();followClock();},picked.ms);}
+    schedule();
+    document.addEventListener('visibilitychange',followClock);
+    window.addEventListener('pageshow',followClock);
+    window.addEventListener('pagehide',noteHere);
+  });
 
   function fontReady(limit){
     if(!document.fonts||!document.fonts.load)return Promise.resolve();
