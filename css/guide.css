@@ -5650,9 +5650,10 @@ html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide 
 html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) a.venue-main-link:not(#_):not(#__),
 html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) a.venue-main-link:not(#_):not(#__):visited{color:#213038!important;}
 
-/* v30.9.231 — 公式／予約… link buttons, page-wide: 15% see-through, softer. */
+/* v30.9.231 / v30.9.234 — 公式／予約… link buttons, page-wide, light and dark:
+   70% opacity, softer. */
 html body #guide a.external-action-link:not(#_),
-html body #guide .venue-secondary-links a:not(#_){opacity:.85;}
+html body #guide .venue-secondary-links a:not(#_){opacity:.7;}
 html body #guide a.external-action-link:not(#_):hover,
 html body #guide .venue-secondary-links a:not(#_):hover{opacity:1;}
 
@@ -5662,7 +5663,10 @@ html body #guide .venue-secondary-links a:not(#_):hover{opacity:1;}
    against the design screenshot on the same device. */
 #guide hr.chapter-glow{margin-bottom:-65.4px!important;}
 #guide .chapter-eyebrow{
-  margin:0 0 17px!important;padding-left:5.7px!important;
+  margin:5px 0 12px!important;padding-left:5.2px!important;
+  /* v30.9.234: 5px lower (the title stays put) and drawn 110% wide; the
+     padding is scaled with it, so the left edge stays where it was. */
+  display:block;width:fit-content;transform:scaleX(1.1);transform-origin:0 50%;
   font-family:"DIN Alternate","DIN 2014","D-DIN",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif!important;
   font-size:10px!important;line-height:1.4!important;font-weight:700!important;letter-spacing:.11em!important;color:#9A9A9A!important;
 }
