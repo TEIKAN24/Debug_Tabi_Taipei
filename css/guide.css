@@ -5130,19 +5130,26 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 #guide .walk-viewing-detail .walk-area-grid{display:none!important}
 #guide .walk-area-grid[hidden]{display:none!important}
 
-/* Header: full size while closed, compact once open. */
+/* Header: full size while closed, compact once open.
+   v30.9.x: also chapters 03 (SIGHTS) and 05 (EXPERIENCES) via .compact-open-header. */
 #guide details.walk-grid-ready > summary,
-#guide details.night-market-section > summary{transition:padding .22s ease}
+#guide details.night-market-section > summary,
+#guide details.compact-open-header > summary{transition:padding .22s ease}
 #guide details.walk-grid-ready > summary > .accordion-category-heading,
-#guide details.night-market-section > summary > .accordion-category-heading{transition:font-size .22s ease}
+#guide details.night-market-section > summary > .accordion-category-heading,
+#guide details.compact-open-header > summary > .accordion-category-heading{transition:font-size .22s ease}
 #guide details.walk-grid-ready > summary::after,
-#guide details.night-market-section > summary::after{transition:font-size .22s ease}
+#guide details.night-market-section > summary::after,
+#guide details.compact-open-header > summary::after{transition:font-size .22s ease}
 #guide details.walk-grid-ready[open] > summary,
-#guide details.night-market-section[open] > summary{padding:8px 14px!important}
+#guide details.night-market-section[open] > summary,
+#guide details.compact-open-header[open] > summary{padding:8px 14px!important}
 #guide details.walk-grid-ready[open] > summary > .accordion-category-heading,
-#guide details.night-market-section[open] > summary > .accordion-category-heading{font-size:12px!important;line-height:1.5!important;letter-spacing:.01em}
+#guide details.night-market-section[open] > summary > .accordion-category-heading,
+#guide details.compact-open-header[open] > summary > .accordion-category-heading{font-size:12px!important;line-height:1.5!important;letter-spacing:.01em}
 #guide details.walk-grid-ready[open] > summary::after,
-#guide details.night-market-section[open] > summary::after{font-size:15px;right:14px}
+#guide details.night-market-section[open] > summary::after,
+#guide details.compact-open-header[open] > summary::after{font-size:15px;right:14px}
 #guide details.walk-grid-ready > .indented{margin:10px!important;padding:0!important}
 
 /* Area index */
@@ -5302,7 +5309,10 @@ html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane .venue-row-in
   #guide .walk-area-card,
   #guide details.walk-grid-ready > summary,
   #guide details.walk-grid-ready > summary > .accordion-category-heading,
-  #guide details.walk-grid-ready > summary::after{transition:none}
+  #guide details.walk-grid-ready > summary::after,
+  #guide details.compact-open-header > summary,
+  #guide details.compact-open-header > summary > .accordion-category-heading,
+  #guide details.compact-open-header > summary::after{transition:none}
   #guide .walk-inline-detail,
   #guide .walk-inline-detail .area-cat-panes::before{animation:none}
 }
