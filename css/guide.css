@@ -5656,17 +5656,18 @@ html body #guide .venue-secondary-links a:not(#_){opacity:.85;}
 html body #guide a.external-action-link:not(#_):hover,
 html body #guide .venue-secondary-links a:not(#_):hover{opacity:1;}
 
-/* v30.9.232 — chapter titles: a smaller, quieter eyebrow (DIN where the
-   system has it: iPhone, iPad, Mac) set further above a lighter title; a
-   smaller lead closer to the title; the block sits 3.5px in from the card
-   edge. */
+/* v30.9.233 — chapter titles after the design (iPhone): the number line in
+   DIN Alternate Bold ("03 - SIGHTS") sits high in the chapter glow, a 19.5px
+   title, an 11.75px lead close under it, then the first menu. Measured
+   against the design screenshot on the same device. */
+#guide hr.chapter-glow{margin-bottom:-65.4px!important;}
 #guide .chapter-eyebrow{
-  margin:0 0 18px!important;padding-left:3.5px!important;
+  margin:0 0 17px!important;padding-left:5.7px!important;
   font-family:"DIN Alternate","DIN 2014","D-DIN",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif!important;
-  font-size:9.5px!important;line-height:1.4!important;font-weight:700!important;letter-spacing:.08em!important;
+  font-size:10px!important;line-height:1.4!important;font-weight:700!important;letter-spacing:.11em!important;color:#9A9A9A!important;
 }
 #guide .chapter-eyebrow + h2{
-  padding-left:3.5px!important;
-  font-size:17.5px!important;line-height:1.3!important;font-weight:700!important;letter-spacing:.03em!important;word-spacing:.11em;
+  padding-left:2.6px!important;
+  font-size:19.5px!important;line-height:1.3!important;font-weight:700!important;letter-spacing:-.02em!important;word-spacing:0;
 }
-#guide .chapter-lead{margin:5.5px 0 12.5px!important;padding-left:3.5px!important;font-size:11px!important;line-height:1.6!important;}
+#guide .chapter-lead{margin:1.6px 0 18px!important;padding-left:4px!important;font-size:11.75px!important;line-height:1.6!important;}
