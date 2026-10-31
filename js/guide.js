@@ -316,11 +316,53 @@
 (function () {
   'use strict';
 
-  function enhanceVenueRows() {
-  const containers = document.querySelectorAll('.site-content .venue-directory-section');
-  for (const pane of document.querySelectorAll('.site-content .venue-directory-section .tab-panel')) { pane.tabIndex = 0; }
   const HIGHLIGHT = /おすすめ|孤独のグルメ|ミシュラン|超行列|一番人気|高人気|ビブグルマン|人気老舗|人気店|行列店|エビ水餃|抹茶焼き氷|芝麻湯圓|鴨舌|水出し珈琲|目玉焼き魯肉飯/;
   const CAUTION = /八角なし|治安|注意|⚠|臭い/;
+
+  /* v30.9.230 — the data-driven lists (chapters 03 / 05 and the City Walk
+     areas) read in one order: places with おすすめ first, then gold, 八角なし,
+     red, grey, then those without labels; ties keep the editor's order. The
+     labels inside a row follow the same order from the left. */
+  function tagTone(value, colors) {
+    const override = Object.prototype.hasOwnProperty.call(colors, value) ? colors[value] : 'auto';
+    if (override === 'red' || override === 'gold' || override === 'neutral') return override;
+    return CAUTION.test(value) ? 'red' : HIGHLIGHT.test(value) ? 'gold' : 'neutral';
+  }
+  function tagRank(value, tone) {
+    return value === 'おすすめ' ? 0 : tone === 'gold' ? 1 : value === '八角なし' ? 2 : tone === 'red' ? 3 : 4;
+  }
+  function colorsOf(li) {
+    try {
+      const parsed = JSON.parse(li.dataset.tagColors || '{}');
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+    } catch (_) { return {}; }
+  }
+  function rowRank(li) {
+    const colors = colorsOf(li);
+    const tags = (li.dataset.curatedTags || '').split('、').map(v => v.trim()).filter(Boolean);
+    return tags.length ? Math.min(...tags.map(v => tagRank(v, tagTone(v, colors)))) : 5;
+  }
+  function sortDataLists() {
+    const byRank = units => units.map((unit, index) => ({unit, index, rank: rowRank(unit.matches('li') ? unit : unit.querySelector('li'))}))
+      .sort((a, b) => a.rank - b.rank || a.index - b.index).map(x => x.unit);
+    // Chapters 03 / 05: one list per category.
+    for (const ol of document.querySelectorAll('.site-content ol[data-directory-panel]')) {
+      const items = [...ol.children].filter(li => li.matches('li'));
+      if (!items.length || items.some(li => li.classList.contains('venue-row'))) continue;
+      ol.append(...byRank(items));
+    }
+    // City Walk: one list per shop inside each category pane.
+    for (const pane of document.querySelectorAll('.site-content .area-cat-pane')) {
+      const lists = [...pane.children].filter(ol => ol.matches('ol') && ol.querySelector(':scope > li'));
+      if (!lists.length || lists.some(ol => ol.querySelector(':scope > li.venue-row'))) continue;
+      byRank(lists).forEach((ol, i) => { ol.start = i + 1; pane.append(ol); });
+    }
+  }
+
+  function enhanceVenueRows() {
+  sortDataLists();
+  const containers = document.querySelectorAll('.site-content .venue-directory-section');
+  for (const pane of document.querySelectorAll('.site-content .venue-directory-section .tab-panel')) { pane.tabIndex = 0; }
   const groupCounts = new Map();
 
   for (const section of containers) {
@@ -333,7 +375,8 @@
       if (li.classList.contains('venue-row')) continue;
 
       const ol = li.closest('ol');
-      const nearestGroup = li.closest('details.nested-accordion, .tab-panel, details.root-accordion');
+      // v30.9.230: each City Walk category counts from 01, like the 03 / 05 lists.
+      const nearestGroup = li.closest('details.nested-accordion, .area-cat-pane, .tab-panel, details.root-accordion');
       if (!ol || !nearestGroup) continue;
 
       // Real subsection breaks (headings, notes, <hr>) reset numbering;
@@ -426,6 +469,11 @@
         } catch (_) { /* invalid overrides fall back to automatic colors */ }
       }
 
+      if (isJsonDirectory && tags.length > 1) {
+        const ranked = tags.map((value, index) => ({value, index, rank: tagRank(value, tagTone(value, tagColors))}));
+        ranked.sort((a, b) => a.rank - b.rank || a.index - b.index);
+        tags.splice(0, tags.length, ...ranked.map(x => x.value));
+      }
       if (tags.length) {
         const tagList = document.createElement('div');
         tagList.className = 'venue-tag-list';

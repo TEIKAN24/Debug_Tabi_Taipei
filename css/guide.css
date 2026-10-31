@@ -5581,3 +5581,66 @@ html[data-theme="light"] body #guide .venue-secondary-links a:not(#_):not(#__){
 }
 html[data-theme="light"] body #guide a.external-action-link:not(#_):not(#__):hover,
 html[data-theme="light"] body #guide .venue-secondary-links a:not(#_):not(#__):hover{background-color:#DCEBF8!important;}
+
+/* =================== v30.9.230 — ONE LIST STYLE ===================
+   Chapters 03 / 05 lists take the City Walk row style, and both now put the
+   labels under the name: index · name … 公式／予約 on the right, labels
+   below. A glow in the chapter colour (the top page cards: 観光 blue,
+   体験・おみやげ pink) rises at the top of the list when the section opens,
+   like the City Walk area glow. */
+#guide details.venue-tone-sights{--venue-tone:115,163,210;}
+#guide details.venue-tone-experience{--venue-tone:204,145,172;}
+#guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels{position:relative;}
+#guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:56px;pointer-events:none;z-index:0;
+  background:linear-gradient(to bottom,
+    rgba(var(--venue-tone),calc(.92 * var(--venue-glow,1))) 0,
+    rgba(var(--venue-tone),calc(.5 * var(--venue-glow,1))) 22%,
+    rgba(var(--venue-tone),calc(.18 * var(--venue-glow,1))) 52%,
+    rgba(var(--venue-tone),0) 100%);
+  -webkit-mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+          mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+  filter:blur(2px);
+  animation:walk-glow-in .45s ease-out both;
+}
+#guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels > .tab-panel{position:relative;z-index:1;}
+html[data-theme="light"] #guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels{--venue-glow:.55;}
+@media(prefers-reduced-motion:reduce){
+  #guide details:is(.venue-tone-sights,.venue-tone-experience) .tab-panels::before{animation:none;}
+}
+
+/* Rows (chapters 03 / 05 and City Walk alike) */
+:is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) li.venue-row{
+  display:grid!important;grid-template-columns:22px minmax(0,1fr)!important;column-gap:6px!important;align-items:start!important;
+  min-height:0!important;padding:12px 0!important;margin:0!important;
+  border:0!important;border-bottom:1px solid #2A2A2A!important;
+}
+:is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-row-index{
+  align-self:start!important;padding-top:6px!important;margin:0!important;width:auto!important;
+  font-size:9.5px!important;font-weight:500!important;letter-spacing:.04em!important;line-height:1!important;color:#6E6E6E!important;
+}
+:is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-row-body{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important;min-width:0;
+}
+:is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-name-line{
+  display:flex!important;flex-wrap:wrap;align-items:center;gap:4px 8px!important;margin:0!important;min-width:0;
+}
+:is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-primary-links{flex:1 1 auto;min-width:0;max-width:100%;}
+:is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-secondary-links{
+  flex:none;margin:0 0 0 auto!important;
+}
+:is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) a.venue-main-link:not(#_){
+  font-size:15px!important;font-weight:500!important;letter-spacing:.03em!important;line-height:1.45!important;
+  color:var(--ink)!important;text-decoration:none!important;word-break:normal!important;overflow-wrap:break-word!important;
+}
+:is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-tag-list{
+  display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;flex:none!important;max-width:none!important;
+  margin:0!important;gap:4px 5px!important;
+}
+:is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-tag{
+  font-size:10px!important;line-height:1.3!important;padding:3px 6px!important;border-radius:5px!important;white-space:nowrap;
+}
+html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) li.venue-row{border-bottom-color:#E3E7E8!important;}
+html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-row-index{color:#8A969C!important;}
+html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) a.venue-main-link:not(#_):not(#__),
+html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) a.venue-main-link:not(#_):not(#__):visited{color:#213038!important;}
