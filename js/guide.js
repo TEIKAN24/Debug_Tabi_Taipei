@@ -4489,9 +4489,8 @@ update();
   syncOpen();
 })();
 
-/* v30.9.231 — chapters 03 / 05: the glow at the top of the list rises once the
-   opened section has come to rest (the page glides to it first), so it is
-   actually seen, like the City Walk area glow. */
+/* v30.9.231 — chapters 03 / 05: the glow at the top of the list rises shortly
+   after the section opens (0.3 s), like the City Walk area glow. */
 (() => {
   document.querySelectorAll('details.venue-tone-sights, details.venue-tone-experience').forEach(detail => {
     let token = 0;
@@ -4499,16 +4498,11 @@ update();
       const mine = ++token;
       detail.classList.remove('venue-glow-in');
       if (!detail.open) return;
-      let last = window.scrollY, still = 0, waited = 0;
-      const tick = () => {
+      // v30.9.232: 0.3 s after opening, while the page finishes its glide.
+      setTimeout(() => {
         if (mine !== token || !detail.open) return;
-        const y = window.scrollY;
-        still = Math.abs(y - last) < 1 ? still + 1 : 0;
-        last = y; waited += 80;
-        if (still >= 2 || waited >= 1400) { void detail.offsetWidth; detail.classList.add('venue-glow-in'); }
-        else setTimeout(tick, 80);
-      };
-      setTimeout(tick, 120);
+        void detail.offsetWidth; detail.classList.add('venue-glow-in');
+      }, 300);
     });
   });
 })();

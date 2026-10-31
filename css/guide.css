@@ -5655,3 +5655,18 @@ html body #guide a.external-action-link:not(#_),
 html body #guide .venue-secondary-links a:not(#_){opacity:.85;}
 html body #guide a.external-action-link:not(#_):hover,
 html body #guide .venue-secondary-links a:not(#_):hover{opacity:1;}
+
+/* v30.9.232 — chapter titles: a smaller, quieter eyebrow (DIN where the
+   system has it: iPhone, iPad, Mac) set further above a lighter title; a
+   smaller lead closer to the title; the block sits 3.5px in from the card
+   edge. */
+#guide .chapter-eyebrow{
+  margin:0 0 18px!important;padding-left:3.5px!important;
+  font-family:"DIN Alternate","DIN 2014","D-DIN",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif!important;
+  font-size:9.5px!important;line-height:1.4!important;font-weight:700!important;letter-spacing:.08em!important;
+}
+#guide .chapter-eyebrow + h2{
+  padding-left:3.5px!important;
+  font-size:17.5px!important;line-height:1.3!important;font-weight:700!important;letter-spacing:.03em!important;word-spacing:.11em;
+}
+#guide .chapter-lead{margin:5.5px 0 12.5px!important;padding-left:3.5px!important;font-size:11px!important;line-height:1.6!important;}
