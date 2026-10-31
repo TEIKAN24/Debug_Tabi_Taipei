@@ -48,6 +48,10 @@
                 {
                   "text": "旧公共浴場",
                   "tone": "auto"
+                },
+                {
+                  "text": "工事のため2027年10月まで休館",
+                  "tone": "red"
                 }
               ],
               "links": [],
@@ -754,8 +758,8 @@
                   "tone": "auto"
                 },
                 {
-                  "text": "人気",
-                  "tone": "auto"
+                  "text": "おすすめ",
+                  "tone": "gold"
                 }
               ],
               "links": [],
@@ -782,6 +786,10 @@
                 {
                   "text": "台北101撮影スポット",
                   "tone": "auto"
+                },
+                {
+                  "text": "おすすめ",
+                  "tone": "gold"
                 }
               ],
               "links": [],
