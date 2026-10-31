@@ -5401,3 +5401,122 @@ html[data-theme="light"] #guide details.area-directory-section{--walk-tone:var(-
 /* v30.9.212 — tag colours chosen in the editor (venue-tag--tone-gold / -red)
    are styled by the same rules as the automatic gold / red tags above, so a
    chosen colour shows even before the page script adds the matching class. */
+
+/* =================== v30.9.213 — TOP PAGE INTRO ===================
+   Opening frame: TAIPEI CITY GUIDE above a full-size TABI / TAIPEI, with a
+   golden horizon high under the title. Then (js/hero-intro.js adds the
+   classes): the guide line fades out in place, the wordmark shrinks, a
+   two-line TAIPEI / CITY GUIDE slides out from behind its right edge, the
+   horizon sinks and settles, and the greeting fades in line by line.
+   The cards below never move: the stage keeps one height throughout.
+   .hero--intro    transitions on (absent in the static / reduced-motion case)
+   .hero--settled  final layout
+   .hero--greeting greeting lines play
+   .hero--done     greeting finished (masks removed) */
+@font-face{
+  font-family:"Tabi Greeting Serif";
+  src:url("../assets/fonts/tabi-greeting-serif.woff2") format("woff2");
+  font-weight:400;font-style:normal;font-display:swap;
+}
+#top{
+  --hero-shrink:.6;
+  --horizon-rgb:214,177,103;--horizon-alpha:.22;
+  --greet-ink:#F7F7F7;--stack-ink:#8B969C;
+  --welcome-ink:#B1B1B1;--tagline-ink:#54595E;
+}
+html[data-theme="light"] #top{
+  --horizon-rgb:196,146,58;--horizon-alpha:.24;
+  --greet-ink:#22292D;--stack-ink:#68747B;
+  --welcome-ink:#4A5156;--tagline-ink:#88939A;
+}
+#top .hero-stage{position:relative;padding-bottom:74px;}
+#top .hero-masthead{position:relative;z-index:1;margin:0!important;}
+#top .hero-greeting{position:relative;z-index:1;}
+
+/* Golden horizon: a vertical gold fade under a wide elliptical top edge.
+   Settling squashes it from the bottom, which both lowers and flattens it. */
+#top .hero-horizon{
+  position:absolute;z-index:0;bottom:0;left:calc(50% - 80vw);width:160vw;height:125px;
+  pointer-events:none;border-radius:50% 50% 0 0 / 91px 91px 0 0;
+  background:linear-gradient(to bottom,
+    rgba(var(--horizon-rgb),var(--horizon-alpha)) 0,
+    rgba(var(--horizon-rgb),calc(var(--horizon-alpha) * .62)) 25%,
+    rgba(var(--horizon-rgb),calc(var(--horizon-alpha) * .34)) 47%,
+    rgba(var(--horizon-rgb),calc(var(--horizon-alpha) * .14)) 70%,
+    rgba(var(--horizon-rgb),0) 100%);
+  transform-origin:50% 100%;
+}
+
+/* Wordmark */
+#top .hero-masthead .hero-lockup{align-self:flex-start;transform-origin:0 0;}
+/* TAIPEI / CITY GUIDE: sized in the wordmark's em (it shrinks with it); takes no
+   width, sits on the wordmark baseline and is clipped at the wordmark's edge. */
+#top .hero-brandstack{
+  display:inline-block;flex:none;width:0;min-width:0;overflow:visible;white-space:nowrap;
+  font-size:.405em;line-height:1.05;letter-spacing:.15em;font-weight:520;
+}
+#top .hero-brandstack-clip{display:inline-block;padding-left:1.3em;clip-path:inset(-1.6em -40em -.6em 0);}
+#top .hero-brandstack-text{display:inline-block;position:relative;transform:translateX(calc(-100% - 1.4em));opacity:0;}
+#top .hero-brandstack-top{position:absolute;left:0;bottom:100%;}
+#top .hero-brandstack,#top .hero-brandstack *{
+  color:var(--stack-ink)!important;-webkit-text-fill-color:var(--stack-ink)!important;
+  background:transparent!important;letter-spacing:.15em!important;
+}
+
+/* Greeting (Source Han Serif design; self-hosted subset first) */
+#top .hero-greeting{
+  margin:26px 0 0!important;padding:0;
+  font-family:"Tabi Greeting Serif","Source Han Serif JP","Source Han Serif","源ノ明朝","Noto Serif JP","Noto Serif CJK JP","Hiragino Mincho ProN","Yu Mincho","YuMincho",serif;
+  font-weight:400;font-size:calc(clamp(17px,4.85vw,22px) * var(--greet-fit,1));
+  line-height:1.32;letter-spacing:.04em;color:var(--greet-ink);
+  font-feature-settings:"halt";font-kerning:normal;
+  min-height:2.64em;-webkit-font-smoothing:antialiased;
+}
+#top .hero-greeting-line{display:block;width:fit-content;white-space:nowrap;margin-left:1.1em;opacity:0;}
+#top .hero-greeting-line + .hero-greeting-line{margin-left:2.25em;}
+#top.hero--greeting:not(.hero--done) .hero-greeting-line{
+  -webkit-mask-image:linear-gradient(90deg,#000 0,#000 40%,transparent 60%);
+          mask-image:linear-gradient(90deg,#000 0,#000 40%,transparent 60%);
+  -webkit-mask-size:250% 100%;mask-size:250% 100%;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  animation:hero-greet-line var(--line-dur,1000ms) cubic-bezier(.32,.08,.24,1) var(--line-delay,0ms) both;
+}
+@keyframes hero-greet-line{
+  0%{opacity:0;transform:translateY(.14em);-webkit-mask-position:100% 0;mask-position:100% 0;}
+  55%{opacity:1;}
+  100%{opacity:1;transform:none;-webkit-mask-position:0 0;mask-position:0 0;}
+}
+#top.hero--done .hero-greeting-line,
+html.hero-intro-skip #top .hero-greeting-line{opacity:1;animation:none;transform:none;}
+
+/* Timeline */
+#top.hero--intro .hero-brandline{transition:opacity .6s cubic-bezier(.4,0,.2,1) .2s;}
+#top.hero--intro .hero-lockup{transition:transform 1.1s cubic-bezier(.65,0,.25,1) .3s;}
+#top.hero--intro .hero-brandstack-text{transition:transform 1.6s cubic-bezier(.33,.8,.25,1) 1.3s,opacity 1s ease 1.3s;}
+#top.hero--intro .hero-horizon{transition:transform 2.3s cubic-bezier(.5,0,.15,1) .35s,opacity 2.3s ease .35s;}
+:is(#top.hero--settled,html.hero-intro-skip #top) .hero-brandline{opacity:0;}
+:is(#top.hero--settled,html.hero-intro-skip #top) .hero-lockup{transform:scale(var(--hero-shrink));}
+:is(#top.hero--settled,html.hero-intro-skip #top) .hero-brandstack-text{transform:none;opacity:1;}
+:is(#top.hero--settled,html.hero-intro-skip #top) .hero-horizon{transform:scaleY(.35);opacity:.86;}
+#top.hero--static :is(.hero-brandline,.hero-lockup,.hero-brandstack-text,.hero-horizon){transition:none!important;}
+
+/* Cards right under the settled horizon; the welcome note follows them. */
+#top .quick-nav{margin-top:6px;}
+#top .hero-welcome{margin:30px 0 0;padding:0 4px;}
+#top .hero-welcome .welcome{
+  margin:0!important;font-size:13px!important;font-weight:700!important;line-height:1.55!important;
+  letter-spacing:.02em!important;color:var(--welcome-ink)!important;
+}
+#top .hero-welcome .tagline{
+  margin:1px 0 0!important;max-width:none!important;font-size:12px!important;line-height:1.7!important;
+  letter-spacing:0!important;color:var(--tagline-ink)!important;
+}
+/* Phones: the one-sentence tagline stays on one line, using part of the right gutter. */
+@media(max-width:649px){
+  #top .hero-welcome{margin-right:-14px;}
+  #top .hero-welcome .tagline{font-size:clamp(11px,calc((100vw - 26px) / 30.5),12px)!important;}
+}
+@media(min-width:650px){
+  #top .hero-welcome .welcome{font-size:14px!important;}
+  #top .hero-welcome .tagline{font-size:13px!important;}
+}
