@@ -41,6 +41,110 @@ window.TABI_NIGHT_MARKETS={
       "destination": "饒河街觀光夜市"
     },
     {
+      "id": "shilin",
+      "name": "士林夜市",
+      "lead": "台湾最大級の規模を誇る夜市。観光客も多め。",
+      "access": {
+        "type": "mrt",
+        "code": "R15",
+        "color": "#E3002C",
+        "station": "劍潭駅",
+        "exit": "1"
+      },
+      "hours": "16:00–00:00（目安）・年中無休",
+      "crowded": "18:00–21:00",
+      "features": [
+        "大規模",
+        "観光客が多い",
+        "種類が豊富",
+        "アクセス抜群",
+        "手頃な価格",
+        "店舗が密集"
+      ],
+      "specialties": [
+        {
+          "label": "雞排",
+          "query": "雞排"
+        },
+        {
+          "label": "生煎包",
+          "query": "生煎包"
+        },
+        {
+          "label": "蚵仔煎",
+          "query": "蚵仔煎"
+        }
+      ],
+      "destination": "士林夜市"
+    },
+    {
+      "id": "night-markets-mvw4ekms-u2vgl",
+      "name": "基隆廟口夜市",
+      "lead": "黄色い提灯が並ぶ、港町・基隆の夜市。\n海鮮料理や昔ながらの屋台料理が楽しめる。",
+      "access": {
+        "type": "text",
+        "label": "アクセス",
+        "text": "台鉄「基隆」で下車"
+      },
+      "hours": "17:00–00:00（目安）・年中無休",
+      "crowded": "週末の夜",
+      "features": [
+        "コンパクト",
+        "昼間から営業の店が多い",
+        "創業100年を超える老舗",
+        "黄色い提灯"
+      ],
+      "specialties": [
+        {
+          "label": "鼎邊趖",
+          "query": "鼎邊趖"
+        },
+        {
+          "label": "營養三明治",
+          "query": "營養三明治"
+        },
+        {
+          "label": "泡泡冰",
+          "query": "泡泡冰"
+        }
+      ],
+      "destination": "基隆廟口夜市"
+    },
+    {
+      "id": "night-markets-mvw4uqit-hk7eb",
+      "name": "板橋湳雅夜市",
+      "lead": "観光客向けというよりも\n「地元の生活感」が色濃いローカル夜市。",
+      "access": {
+        "type": "mrt",
+        "code": "BL06",
+        "color": "#0070BD",
+        "station": "府中駅",
+        "exit": "1"
+      },
+      "hours": "17:00–01:00（目安）・年中無休",
+      "crowded": "週末の夜",
+      "features": [
+        "ローカル感が強い",
+        "名物グルメ・老舗が豊富",
+        "台北近郊"
+      ],
+      "specialties": [
+        {
+          "label": "麻油雞",
+          "query": "麻油雞"
+        },
+        {
+          "label": "排骨酥湯",
+          "query": "排骨酥湯"
+        },
+        {
+          "label": "和牛滷肉飯",
+          "query": "和牛滷肉飯"
+        }
+      ],
+      "destination": ""
+    },
+    {
       "id": "ningxia",
       "name": "寧夏夜市",
       "lead": "台湾らしい屋台グルメを、\nコンパクトに食べ歩きたい人におすすめ。",
@@ -109,43 +213,6 @@ window.TABI_NIGHT_MARKETS={
         }
       ],
       "destination": "師大夜市"
-    },
-    {
-      "id": "shilin",
-      "name": "士林夜市",
-      "lead": "台湾最大級の規模を誇る夜市。観光客も多め。",
-      "access": {
-        "type": "mrt",
-        "code": "R15",
-        "color": "#E3002C",
-        "station": "劍潭駅",
-        "exit": "1"
-      },
-      "hours": "16:00–00:00（目安）・年中無休",
-      "crowded": "18:00–21:00",
-      "features": [
-        "大規模",
-        "観光客が多い",
-        "種類が豊富",
-        "アクセス抜群",
-        "手頃な価格",
-        "店舗が密集"
-      ],
-      "specialties": [
-        {
-          "label": "雞排",
-          "query": "雞排"
-        },
-        {
-          "label": "生煎包",
-          "query": "生煎包"
-        },
-        {
-          "label": "蚵仔煎",
-          "query": "蚵仔煎"
-        }
-      ],
-      "destination": "士林夜市"
     },
     {
       "id": "linjiang",
@@ -387,6 +454,27 @@ window.TABI_NIGHT_MARKETS={
         }
       ],
       "destination": "景美夜市"
+    },
+    {
+      "id": "night-markets-mvw54ikz-xgr1t",
+      "name": "三峽夜市",
+      "lead": "三峡老街や鶯歌観光の締めくくりに。\n火曜・金曜限定の、地元で親しまれる夜市。",
+      "access": {
+        "type": "mrt",
+        "code": "LB06",
+        "color": "#4EB3DC",
+        "station": "三峽",
+        "exit": ""
+      },
+      "hours": "17:30頃〜22:30頃（火・金のみ）",
+      "crowded": "19:00–21:30",
+      "features": [
+        "小規模",
+        "ローカル",
+        "大通り沿い"
+      ],
+      "specialties": [],
+      "destination": "三峽中華路夜市"
     }
   ]
 };
