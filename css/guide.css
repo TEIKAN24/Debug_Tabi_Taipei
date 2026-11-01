@@ -5693,9 +5693,9 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-s
 #guide .walk-inline-detail .walk-inline-top{align-items:flex-start;}
 #guide .walk-inline-detail .walk-inline-copy{flex:1 1 auto;min-width:0;}
 #guide .walk-inline-detail a.walk-inline-go{
-  flex:none;align-self:flex-start;margin:2px 0 0 10px;display:inline-flex;align-items:center;justify-content:center;text-align:center;
+  flex:none;align-self:flex-start;margin:0.5px 0 0 10px;display:inline-flex;align-items:center;justify-content:center;text-align:center;
   /* v30.9.244: inner space above/below text -10% (6.5px→5.85px), horizontal -15% (13px→11.05px). */
-  min-height:24.7px;padding:0 11.05px;border-radius:6px;
+  min-height:24.7px;padding:0 8.05px 0 14.05px;border-radius:6px;
   background:#F2F2F2!important;color:#111111!important;-webkit-text-fill-color:#111111;
   font-size:13px;font-weight:800;letter-spacing:.04em;line-height:1;text-decoration:none!important;white-space:nowrap;
   opacity:1!important;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
@@ -5703,3 +5703,21 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-s
 #guide .walk-inline-detail a.walk-inline-go:active{opacity:.75!important;}
 #guide .walk-inline-detail a.walk-inline-go:focus-visible{outline:2px solid #CCCCCC;outline-offset:3px;}
 html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go{background:#222222!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF;}
+
+/* v30.9.245 — City Walk: nudge 出発！ text 3px right (unchanged outer width),
+   raise the button 1.5px. Give 台北駅 and 東区 a full-width,
+   single-line description beneath their heading/button on mobile only. */
+@media (max-width:649px){
+  #guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) .walk-inline-top{
+    display:grid;grid-template-columns:32px minmax(0,1fr) auto;grid-template-rows:auto auto;
+    column-gap:4px;row-gap:0;align-items:start;
+  }
+  #guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) .walk-inline-copy{display:contents;}
+  #guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) .walk-inline-back{grid-column:1;grid-row:1;}
+  #guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) .walk-inline-heading{grid-column:2;grid-row:1;}
+  #guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) a.walk-inline-go{grid-column:3;grid-row:1;}
+  #guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) .walk-inline-description{
+    grid-column:2/4;grid-row:2;min-width:0;white-space:nowrap;
+    font-size:clamp(10px,3vw,11px);letter-spacing:-.02em;
+  }
+}

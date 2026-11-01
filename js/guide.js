@@ -3949,6 +3949,7 @@ update();
     if(active===-1)focusOrigin=trigger;
     active=index;
     title.textContent=label(index);
+    detail.dataset.walkArea=label(index);
     desc.textContent=panels[index].querySelector('.area-intro-description')?.textContent.trim()||'';
     const destination=tabs[index].dataset.walkDestination||label(index);
     go.href='https://www.google.com/maps/dir/?api=1&travelmode=transit&destination='+encodeURIComponent(destination);

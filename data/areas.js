@@ -2030,7 +2030,7 @@ window.TABI_AREAS={
       "title": "東区",
       "destination": "捷運忠孝復興站",
       "subtitle": "ファッション・カフェ",
-      "description": "セレクトショップやカフェが点在するおしゃれな街。",
+      "description": "セレクトショップやカフェが点在するお洒落な街。",
       "tone": "#DE6E4B",
       "toneLight": "",
       "categories": [
