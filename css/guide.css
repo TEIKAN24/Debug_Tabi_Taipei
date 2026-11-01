@@ -5679,3 +5679,11 @@ html body #guide .venue-secondary-links a:not(#_):hover{opacity:1;}
 /* v30.9.236 — さっそく出発！ with corners like the specialty buttons above it
    (6px on a 41px button; 7px keeps the same feel on this 50px one). */
 #guide #night-markets-section #night-markets-tabs .nm-go{border-radius:7px;}
+
+/* v30.9.237 — night-market specialties open the food dictionary: a light grey
+   solid underline invites the tap (as on the dish badges of the restaurants). */
+#guide #night-markets-section #night-markets-tabs .nm-specialty{
+  text-decoration-line:underline!important;text-decoration-style:solid!important;text-decoration-thickness:1px!important;
+  text-underline-offset:4px!important;text-decoration-color:#BDBDBD!important;
+}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty{text-decoration-color:#AEB5B9!important;}

@@ -1,7 +1,869 @@
 {
   "schemaVersion": 1,
-  "source": "TAIPEI 店家分店管理編輯器 v1.19 · 2026-10-30",
+  "source": "TAIPEI 店家分店管理編輯器 v1.19 · 2026-11-01",
   "venues": [
+    {
+      "id": "food-added-mvx8952k-2cjnf",
+      "name": "新店北鴨鴨肉羹",
+      "industries": [
+        "小吃"
+      ],
+      "industryVerified": "推估",
+      "category": "snack",
+      "displayType": "屋台料理・軽食",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvx8952k-2cjnf-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9626757,
+          "lng": 121.5396745,
+          "address": "新北市新店區文明里光明街169號",
+          "mapUrl": "https://www.google.com/maps/place/%E6%96%B0%E5%BA%97%E5%8C%97%E9%B4%A8%E9%B4%A8%E8%82%89%E7%BE%B9/@24.9597998,121.5387651,17z/data=!4m6!3m5!1s0x3468018982f850e1:0x9c6b0e223e895ec4!8m2!3d24.9626757!4d121.5396745!16s%2Fg%2F1tj944sb?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "wed": [],
+            "thu": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvx87xom-qtpgf",
+      "name": "劉漣麵",
+      "industries": [
+        "麺類"
+      ],
+      "industryVerified": "推估",
+      "category": "noodle",
+      "displayType": "麺類",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "地元人気",
+          "tone": "editorial"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvx87xom-qtpgf-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9597998,
+          "lng": 121.5387651,
+          "address": "新北市新店區廣明里光明街68號",
+          "mapUrl": "https://www.google.com/maps/place/%E5%8A%89%E6%BC%A3%E9%BA%B5+%E6%96%B0%E5%BA%97%E5%85%89%E6%98%8E%E7%B8%BD%E5%BA%97/@24.9597998,121.5387651,17z/data=!4m15!1m8!3m7!1s0x346801899dde5abf:0xa3a1a9b13546f622!2z5YqJ5ryj6bq1IOaWsOW6l-WFieaYjue4veW6lw!8m2!3d24.9597998!4d121.5387651!10e5!16s%2Fg%2F11btt7nmm8!3m5!1s0x346801899dde5abf:0xa3a1a9b13546f622!8m2!3d24.9597998!4d121.5387651!16s%2Fg%2F11btt7nmm8?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [],
+            "sun": [
+              [
+                "11:30",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvx85i50-en8i1",
+      "name": "曹麵道",
+      "industries": [
+        "麺類",
+        "小吃"
+      ],
+      "industryVerified": "推估",
+      "category": "noodle",
+      "displayType": "麺類",
+      "volume": [],
+      "timeBands": [
+        "morning",
+        "lunch",
+        "afternoon"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvx85i50-en8i1-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9557347,
+          "lng": 121.5370135,
+          "address": "新北市新店區新店里新店路171號",
+          "mapUrl": "https://www.google.com/maps/place/%E6%9B%B9%E9%BA%B5%E9%81%93%EF%BC%88%E5%8E%9F%E6%96%B0%E5%BA%97%E9%98%BF%E5%A9%86%E9%BA%B5%EF%BC%89/@24.9557347,121.5370135,17z/data=!4m15!1m8!3m7!1s0x346801876042201b:0xd58f295f79517aea!2z5pu56bq16YGT77yI5Y6f5paw5bqX6Zi_5amG6bq177yJ!8m2!3d24.9557347!4d121.5370135!10e5!16s%2Fg%2F1hc3jpjz_!3m5!1s0x346801876042201b:0xd58f295f79517aea!8m2!3d24.9557347!4d121.5370135!16s%2Fg%2F1hc3jpjz_?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "08:00",
+                "15:00"
+              ]
+            ],
+            "wed": [
+              [
+                "08:00",
+                "15:00"
+              ]
+            ],
+            "thu": [
+              [
+                "08:00",
+                "15:00"
+              ]
+            ],
+            "fri": [
+              [
+                "08:00",
+                "15:00"
+              ]
+            ],
+            "sat": [
+              [
+                "08:00",
+                "15:00"
+              ]
+            ],
+            "sun": [
+              [
+                "08:00",
+                "15:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvw3bgds-58aw8",
+      "name": "Gino Pizza Napoletana",
+      "industries": [
+        "各国・創作料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "ピザ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": true,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "Asia-Pacific 50 Top Pizza",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "branch-mvw3dh7n-npdt0z",
+          "label": "Gino Pizza Napoletana 新莊中原店",
+          "name": "Gino Pizza Napoletana Gino Pizza Napoletana 新莊中原店",
+          "lat": 25.0545668,
+          "lng": 121.4495013,
+          "address": "新北市新莊區中原里中原路360號",
+          "mapUrl": "https://www.google.com/maps/place/Gino+Pizza+Napoletana+%E6%96%B0%E8%8E%8A%E4%B8%AD%E5%8E%9F%E5%BA%97/@25.0545668,121.4469264,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a87bb8171e5b:0x922a8198770067fd!8m2!3d25.0545668!4d121.4495013!16s%2Fg%2F11b6hm05fs?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "tue": [],
+            "wed": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "branch-mvw3dxqo-iw6ngw",
+          "label": "Gino Pizza Napoletana 三重店",
+          "name": "Gino Pizza Napoletana Gino Pizza Napoletana 三重店",
+          "lat": 25.0563048,
+          "lng": 121.4937089,
+          "address": "新北市三重區永春里中正南路155號",
+          "mapUrl": "https://www.google.com/maps/place/Gino+Pizza+Napoletana+%E4%B8%89%E9%87%8D%E5%BA%97/@25.0563048,121.491134,17z/data=!4m15!1m8!3m7!1s0x346803c430a5da53:0x15f47398e91a1811!2zR2lubyBQaXp6YSBOYXBvbGV0YW5hIOS4iemHjeW6lw!8m2!3d25.0563048!4d121.4937089!10e9!16s%2Fg%2F11fhxc03wl!3m5!1s0x346803c430a5da53:0x15f47398e91a1811!8m2!3d25.0563048!4d121.4937089!16s%2Fg%2F11fhxc03wl?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "tue": [],
+            "wed": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "branch-mvw3ek0x-tfg3lr",
+          "label": "Gino Pizza Napoletana 蘆洲店",
+          "name": "Gino Pizza Napoletana Gino Pizza Napoletana 蘆洲店",
+          "lat": 25.0825809,
+          "lng": 121.4619544,
+          "address": "新北市蘆洲區忠義里長安街108巷27-1號",
+          "mapUrl": "https://www.google.com/maps/place/Gino+Pizza+Napoletana+%E8%98%86%E6%B4%B2%E5%BA%97/@25.0825809,121.4593795,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a8ba0b0b58c9:0xac113bf3bd79ec41!8m2!3d25.0825809!4d121.4619544!16s%2Fg%2F1v6p1zk3?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "tue": [],
+            "wed": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:30",
+                "14:30"
+              ],
+              [
+                "17:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:30",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:30",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvw365aj-n0l7s",
+      "name": "PEPPINO 培皮諾小館",
+      "industries": [
+        "各国・創作料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "ピザ",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [
+        {
+          "text": "2014 Pizza Napoletana STG優勝",
+          "tone": "featured"
+        }
+      ],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvw365aj-n0l7s-main",
+          "label": "本店",
+          "name": "",
+          "lat": 25.0400709,
+          "lng": 121.5357611,
+          "address": "臺北市大安區民輝里濟南路三段42號",
+          "mapUrl": "https://www.google.com/maps/place/PEPPINO+%E5%9F%B9%E7%9A%AE%E8%AB%BE%E5%B0%8F%E9%A4%A8/@25.0400709,121.5331862,17z/data=!3m1!5s0x3442a97d968288d3:0xc2461f92536d25f4!4m14!1m7!3m6!1s0x3442a9062beeb401:0xa01e8cbad9d79114!2zUEVQUElOTyDln7nnmq7oq77lsI_ppKg!8m2!3d25.0400709!4d121.5357611!16s%2Fg%2F11mvqr9tdm!3m5!1s0x3442a9062beeb401:0xa01e8cbad9d79114!8m2!3d25.0400709!4d121.5357611!16s%2Fg%2F11mvqr9tdm?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "17:30",
+                "19:20"
+              ],
+              [
+                "19:30",
+                "21:30"
+              ]
+            ],
+            "wed": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "17:30",
+                "19:20"
+              ],
+              [
+                "19:30",
+                "21:30"
+              ]
+            ],
+            "thu": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "17:30",
+                "19:20"
+              ],
+              [
+                "19:30",
+                "21:30"
+              ]
+            ],
+            "fri": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "17:30",
+                "19:20"
+              ],
+              [
+                "19:30",
+                "21:30"
+              ]
+            ],
+            "sat": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "17:30",
+                "19:20"
+              ],
+              [
+                "19:30",
+                "21:30"
+              ]
+            ],
+            "sun": [
+              [
+                "12:00",
+                "14:30"
+              ],
+              [
+                "17:30",
+                "19:20"
+              ],
+              [
+                "19:30",
+                "21:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvw2x13p-2y4ss",
+      "name": "港都熱炒",
+      "industries": [
+        "熱炒"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾式居酒屋",
+      "volume": [],
+      "timeBands": [
+        "night",
+        "late"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvw2x13p-2y4ss-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9926285,
+          "lng": 121.517261,
+          "address": "新北市中和區大勇街12號10號",
+          "mapUrl": "https://www.google.com/maps/place/%E6%B8%AF%E9%83%BD%E7%86%B1%E7%82%92+%E4%B8%AD%E5%92%8C%E7%B8%BD%E5%BA%97/@24.9926285,121.5146861,17z/data=!3m1!4b1!4m6!3m5!1s0x3468020b007090b9:0xee6d85c0a32f6733!8m2!3d24.9926285!4d121.517261!16s%2Fg%2F1th0854h?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "night",
+            "late"
+          ],
+          "days": {
+            "mon": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "tue": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "wed": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "thu": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "fri": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "sat": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ],
+            "sun": [
+              [
+                "17:00",
+                "01:00"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "food-added-mvw2t8wt-f9efq",
+      "name": "超人鱸魚",
+      "industries": [
+        "台湾料理"
+      ],
+      "industryVerified": "推估",
+      "category": "meal",
+      "displayType": "台湾料理",
+      "volume": [],
+      "timeBands": [
+        "lunch",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": false,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "food-added-mvw2t8wt-f9efq-main",
+          "label": "本店",
+          "name": "",
+          "lat": 24.9691934,
+          "lng": 121.5417635,
+          "address": "新北市新店區北新路一段349號",
+          "mapUrl": "https://www.google.com/maps/place/%E8%B6%85%E4%BA%BA%E9%B1%B8%E9%AD%9A/@24.968413,121.5418382,17.9z/data=!4m6!3m5!1s0x346801f6205f6f85:0x23b160dd8e2473a4!8m2!3d24.9691934!4d121.5417635!16s%2Fg%2F11xc78w6c?authuser=0&entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
+          "timeBands": [
+            "lunch",
+            "night"
+          ],
+          "days": {
+            "mon": [],
+            "tue": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "19:30"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "19:30"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "19:30"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "19:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "19:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "14:00"
+              ],
+              [
+                "17:00",
+                "19:30"
+              ]
+            ]
+          },
+          "timeSource": "Google Maps（直接複製文字）",
+          "timeCheckedAt": "2026-10-31"
+        }
+      ]
+    },
     {
       "id": "food-added-mvvc3ye6-zrjh4",
       "name": "Soleil croissant",
@@ -209,7 +1071,7 @@
           "tone": "editorial"
         },
         {
-          "text": "鉄道線路沿い",
+          "text": "線路沿い",
           "tone": "editorial"
         },
         {
@@ -1252,7 +2114,7 @@
           "tone": "editorial"
         },
         {
-          "text": "隠れ屋",
+          "text": "隠れ家",
           "tone": "editorial"
         }
       ],
@@ -3247,7 +4109,7 @@
       },
       "guideTags": [
         {
-          "text": "唐揚げ乗せルーローハン",
+          "text": "唐揚げのせルーローハン",
           "tone": "editorial"
         },
         {
@@ -74388,7 +75250,7 @@
       },
       "guideTags": [
         {
-          "text": "目玉焼き乗せ",
+          "text": "目玉焼きのせ",
           "tone": "editorial"
         },
         {
@@ -101022,7 +101884,7 @@
       },
       "guideTags": [
         {
-          "text": "ASIA50 入選",
+          "text": "アジア50ベスト選出",
           "tone": "featured"
         }
       ],
@@ -102482,7 +103344,7 @@
       },
       "guideTags": [
         {
-          "text": "揚げ物や",
+          "text": "揚げ物屋",
           "tone": "editorial"
         }
       ],
@@ -103538,6 +104400,1793 @@
           },
           "timeSource": "Google Maps（直接複製文字）",
           "timeCheckedAt": "2026-10-30"
+        }
+      ]
+    },
+    {
+      "id": "food-added-qingshan-20261031",
+      "name": "青山",
+      "industries": [
+        "ドリンク"
+      ],
+      "industryVerified": "推估",
+      "category": "drink",
+      "displayType": "ドリンク",
+      "volume": [],
+      "timeBands": [
+        "morning",
+        "lunch",
+        "afternoon",
+        "night"
+      ],
+      "timeVerified": "營業時間自動",
+      "chain": true,
+      "awards": {
+        "bowls": "",
+        "bibGourmand2026": false,
+        "highestBowls": 0
+      },
+      "guideTags": [],
+      "awardDish": "",
+      "irregularHours": false,
+      "pickLevel": 0,
+      "branches": [
+        {
+          "id": "sipspot-qingshan-5e847d6fbb93",
+          "label": "中山南西店",
+          "name": "青山 中山南西店",
+          "lat": 25.0515094,
+          "lng": 121.5215293,
+          "address": "104臺北市中山區民安里中山北路一段140巷13號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E4%B8%AD%E5%B1%B1%E5%8D%97%E8%A5%BF%E5%BA%97/data=!4m7!3m6!1s0x3442a984ccb7d9bb:0x394154ddd5754de5!8m2!3d25.0515094!4d121.5215293!16s%2Fg%2F11wxp202_4!19sChIJu9m3zISpQjQR5U111d1UQTk?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyOC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-3904a0b2694d",
+          "label": "信義ATT店",
+          "name": "青山 信義ATT店",
+          "lat": 25.0353136,
+          "lng": 121.5660659,
+          "address": "110臺北市信義區西村里松壽路12號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E4%BF%A1%E7%BE%A9ATT%E5%BA%97/data=!4m7!3m6!1s0x3442ab004f1e662d:0xa5c8a4c97bc6a2cb!8m2!3d25.0353136!4d121.5660659!16s%2Fg%2F11yts9p9wv!19sChIJLWYeTwCrQjQRy6LGe8mkyKU?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "23:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "23:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-74b1b17cd1b7",
+          "label": "光華三創店",
+          "name": "青山 光華三創店",
+          "lat": 25.0434957,
+          "lng": 121.5316353,
+          "address": "100410臺北市中正區梅花里八德路一段82巷9弄18號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%85%89%E8%8F%AF%E4%B8%89%E5%89%B5%E5%BA%97/data=!4m7!3m6!1s0x3442a9536c1269c1:0x35fbe4643096095!8m2!3d25.0434957!4d121.5316353!16s%2Fg%2F11x_z152f3!19sChIJwWkSbFOpQjQRlWAJQ0a-XwM?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-df44456ea3d2",
+          "label": "台北伊通店",
+          "name": "青山 台北伊通店",
+          "lat": 25.0528304,
+          "lng": 121.5346981,
+          "address": "104臺北市中山區中央里伊通街68之2號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%8F%B0%E5%8C%97%E4%BC%8A%E9%80%9A%E5%BA%97/data=!4m7!3m6!1s0x3442a9007120cdd7:0x939bd3194635b658!8m2!3d25.0528304!4d121.5346981!16s%2Fg%2F11ypmh16q8!19sChIJ180gcQCpQjQRWLY1RhnTm5M?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "20:30"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "20:30"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "20:30"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "20:30"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "20:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-60a7eeba78e8",
+          "label": "台北內湖店",
+          "name": "青山 台北內湖店",
+          "lat": 25.0815098,
+          "lng": 121.5714891,
+          "address": "114臺北市內湖區麗山里內湖路一段423號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%8F%B0%E5%8C%97%E5%85%A7%E6%B9%96%E5%BA%97/data=!4m7!3m6!1s0x3442adc26af334d7:0xa7112f331237ad98!8m2!3d25.0815098!4d121.5714891!16s%2Fg%2F11z1xvkzrh!19sChIJ1zTzasKtQjQRmK03EjMvEac?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "20:30"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "20:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "20:30"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "20:30"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "20:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-58bbe5e6924b",
+          "label": "台北南港店",
+          "name": "青山 台北南港店",
+          "lat": 25.0550435,
+          "lng": 121.6136504,
+          "address": "115臺北市南港區南港里南港路一段153號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%8F%B0%E5%8C%97%E5%8D%97%E6%B8%AF%E5%BA%97/data=!4m7!3m6!1s0x3442ab00766404bf:0x4a5fb0b99e80e196!8m2!3d25.0550435!4d121.6136504!16s%2Fg%2F11yqv_zbhv!19sChIJvwRkdgCrQjQRluGAnrmwX0o?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:30",
+                "20:30"
+              ]
+            ],
+            "tue": [
+              [
+                "10:30",
+                "20:30"
+              ]
+            ],
+            "wed": [
+              [
+                "10:30",
+                "20:30"
+              ]
+            ],
+            "thu": [
+              [
+                "10:30",
+                "20:30"
+              ]
+            ],
+            "fri": [
+              [
+                "10:30",
+                "20:30"
+              ]
+            ],
+            "sat": [
+              [
+                "10:30",
+                "20:30"
+              ]
+            ],
+            "sun": [
+              [
+                "10:30",
+                "20:30"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-3b77979cda95",
+          "label": "台北晴光店",
+          "name": "青山 台北晴光店",
+          "lat": 25.0642878,
+          "lng": 121.5244606,
+          "address": "104臺北市中山區雙城街15-2號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+-%E5%8F%B0%E5%8C%97%E6%99%B4%E5%85%89%E5%BA%97/data=!4m7!3m6!1s0x3442a9001dc1298b:0x8e35330f5672ee24!8m2!3d25.0642878!4d121.5244606!16s%2Fg%2F11zh9hmptt!19sChIJiynBHQCpQjQRJO5yVg8zNY4?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-9d3ed46fd322",
+          "label": "台北東湖店",
+          "name": "青山 台北東湖店",
+          "lat": 25.0682142,
+          "lng": 121.6170128,
+          "address": "114臺北市內湖區東湖路141號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1+-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%8F%B0%E5%8C%97%E6%9D%B1%E6%B9%96%E5%BA%97/data=!4m7!3m6!1s0x3442ade8f290d48b:0x6d5dcf8846a4956e!8m2!3d25.0682142!4d121.6170128!16s%2Fg%2F11nv70pvfr!19sChIJi9SQ8uitQjQRbpWkRojPXW0?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "10:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-e09d8bad4414",
+          "label": "台北松菸店",
+          "name": "青山 台北松菸店",
+          "lat": 25.0420668,
+          "lng": 121.5637389,
+          "address": "110臺北市信義區忠孝東路四段559巷12號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%8F%B0%E5%8C%97%E6%9D%BE%E8%8F%B8%E5%BA%97/data=!4m7!3m6!1s0x3442abfe1d4f173b:0x4ef39078ec189986!8m2!3d25.0420668!4d121.5637389!16s%2Fg%2F11zh374j5_!19sChIJOxdPHf6rQjQRhpkY7HiQ804?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "20:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-2a489ab3cecf",
+          "label": "台北永康店",
+          "name": "青山 台北永康店",
+          "lat": 25.0332573,
+          "lng": 121.529745,
+          "address": "106臺北市大安區永康里永康街2號之3",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%8F%B0%E5%8C%97%E6%B0%B8%E5%BA%B7%E5%BA%97/data=!4m7!3m6!1s0x3442a96a3b5fff3f:0x8482e871777683d6!8m2!3d25.0332573!4d121.529745!16s%2Fg%2F11xt75pvs5!19sChIJP_9fO2qpQjQR1oN2d3HogoQ?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:30",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:30",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:30",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:30",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:30",
+                "22:30"
+              ]
+            ],
+            "sat": [
+              [
+                "10:30",
+                "22:30"
+              ]
+            ],
+            "sun": [
+              [
+                "10:30",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-b6a7bfa99433",
+          "label": "台北錦州店",
+          "name": "青山 台北錦州店",
+          "lat": 25.0600746,
+          "lng": 121.5431883,
+          "address": "10491臺北市中山區江山里錦州街446號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1+-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%8F%B0%E5%8C%97%E9%8C%A6%E5%B7%9E%E5%BA%97/data=!4m7!3m6!1s0x3442ab216a790283:0xcf4c35c12c1fd34!8m2!3d25.0600746!4d121.5431883!16s%2Fg%2F11n4pzfm2d!19sChIJgwJ5aiGrQjQRNP3BElzD9Aw?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:30",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:30",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:30",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:30",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:30",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "10:30",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "10:30",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-49811284334d",
+          "label": "台大公館店",
+          "name": "青山 台大公館店",
+          "lat": 25.015384,
+          "lng": 121.5328877,
+          "address": "100046臺北市中正區文盛里羅斯福路四段24巷1號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%8F%B0%E5%A4%A7%E5%85%AC%E9%A4%A8%E5%BA%97/data=!4m7!3m6!1s0x3442a969c073e93d:0x7e03d0e70eacc12a!8m2!3d25.015384!4d121.5328877!16s%2Fg%2F11yr57270w!19sChIJPelzwGmpQjQRKsGsDufQA34?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-bf4f5eb72396",
+          "label": "大安通化店",
+          "name": "青山 大安通化店",
+          "lat": 25.0321054,
+          "lng": 121.5543751,
+          "address": "106臺北市大安區通化里通化街7號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%A4%A7%E5%AE%89%E9%80%9A%E5%8C%96%E5%BA%97/data=!4m7!3m6!1s0x3442abf54b25ff5d:0xdb1f2676fe838f26!8m2!3d25.0321054!4d121.5543751!16s%2Fg%2F11wg92wz11!19sChIJXf8lS_WrQjQRJo-D_nYmH9s?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyNy4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-dc8dd2d8346b",
+          "label": "忠孝復興店",
+          "name": "青山 忠孝復興店",
+          "lat": 25.0443792,
+          "lng": 121.5463349,
+          "address": "106臺北市大安區光武里大安路一段21號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1+-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%BF%A0%E5%AD%9D%E5%BE%A9%E8%88%88%E5%BA%97/data=!4m7!3m6!1s0x3442ab003b60f557:0xd2a5008f69ac29d9!8m2!3d25.0443792!4d121.5463349!16s%2Fg%2F11wbj6ys2t!19sChIJV_VgOwCrQjQR2SmsaY8ApdI?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyOC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-af1019bff182",
+          "label": "石牌裕民店",
+          "name": "青山 石牌裕民店",
+          "lat": 25.1166399,
+          "lng": 121.5179516,
+          "address": "112臺北市北投區振華里裕民一路47號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E7%9F%B3%E7%89%8C%E8%A3%95%E6%B0%91%E5%BA%97/data=!4m7!3m6!1s0x3442affaf59a3d1d:0x47caec8946386bf3!8m2!3d25.1166399!4d121.5179516!16s%2Fg%2F11z1www5p8!19sChIJHT2a9fqvQjQR82s4Ronsykc?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-11bbef9a856a",
+          "label": "三重重新店",
+          "name": "青山 三重重新店",
+          "lat": 25.0632997,
+          "lng": 121.5012996,
+          "address": "241新北市三重區永興里重新路一段100號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E4%B8%89%E9%87%8D%E9%87%8D%E6%96%B0%E5%BA%97/data=!4m7!3m6!1s0x3442a9d6c7aff7e1:0xdae39dc2f93a8d40!8m2!3d25.0632997!4d121.5012996!16s%2Fg%2F11yxj1vs50!19sChIJ4fevx9apQjQRQI06-cKd49o?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-48dfc0b845fc",
+          "label": "中和員山店",
+          "name": "青山 中和員山店",
+          "lat": 25.0008176,
+          "lng": 121.4814901,
+          "address": "235新北市中和區安穗里員山路210號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E4%B8%AD%E5%92%8C%E5%93%A1%E5%B1%B1%E5%BA%97/data=!4m7!3m6!1s0x34680329dc3999dd:0x231adcc1f0e1279e!8m2!3d25.0008176!4d121.4814901!16s%2Fg%2F11yyl510d8!19sChIJ3Zk53CkDaDQRnifh8MHcGiM?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "sat": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "sun": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-ca1b7ecd4a23",
+          "label": "中和興南店",
+          "name": "青山 中和興南店",
+          "lat": 24.9887904,
+          "lng": 121.5098544,
+          "address": "235新北市中和區東南里興南路一段89號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1+%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C-%E4%B8%AD%E5%92%8C%E8%88%88%E5%8D%97%E5%BA%97/data=!4m7!3m6!1s0x346803000b4a6ed9:0xf0f782b2543dc892!8m2!3d24.9887904!4d121.5098544!16s%2Fg%2F11yt3bmxfy!19sChIJ2W5KCwADaDQRksg9VLKC9_A?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-a415c11e490c",
+          "label": "五股成泰店",
+          "name": "青山 五股成泰店",
+          "lat": 25.0829591,
+          "lng": 121.4377354,
+          "address": "248新北市五股區五股里成泰路二段106號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E4%BA%94%E8%82%A1%E6%88%90%E6%B3%B0%E5%BA%97/data=!4m7!3m6!1s0x3442a7004bb06029:0xebdfe102630107e0!8m2!3d25.0829591!4d121.4377354!16s%2Fg%2F11myd2dg4w!19sChIJKWCwSwCnQjQR4AcBYwLh3-s?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyOC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "21:30"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "21:30"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "21:30"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "21:30"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "21:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "21:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "21:30"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-ffb233c3ba94",
+          "label": "土城裕民店",
+          "name": "青山 土城裕民店",
+          "lat": 24.9878049,
+          "lng": 121.4493539,
+          "address": "236新北市土城區學成里裕民路63號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E5%9C%9F%E5%9F%8E%E8%A3%95%E6%B0%91%E5%BA%97/data=!4m7!3m6!1s0x3468030064405427:0xb349fac66ecbb5b7!8m2!3d24.9878049!4d121.4493539!16s%2Fg%2F11ml1s5w7q!19sChIJJ1RAZAADaDQRt7XLbsb6SbM?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyNy4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "21:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "21:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "21:30"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-1d1592b47081",
+          "label": "新店大坪林店",
+          "name": "青山 新店大坪林店",
+          "lat": 24.981726,
+          "lng": 121.5414338,
+          "address": "231新北市新店區北新路三段89號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E6%96%B0%E5%BA%97%E5%A4%A7%E5%9D%AA%E6%9E%97%E5%BA%97/data=!4m7!3m6!1s0x34680125e9fc5621:0x9485fa597eda04d7!8m2!3d24.981726!4d121.5414338!16s%2Fg%2F11nqs7r0v8!19sChIJIVb86SUBaDQR1wTafln6hZQ?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "20:30"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-245f0b621963",
+          "label": "新莊富國店",
+          "name": "青山 新莊富國店",
+          "lat": 25.0243551,
+          "lng": 121.4244348,
+          "address": "242新北市新莊區富國路182號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E6%96%B0%E8%8E%8A%E5%AF%8C%E5%9C%8B%E5%BA%97/data=!4m7!3m6!1s0x3442a73d5acc1f55:0x57f17a6c15612f9d!8m2!3d25.0243551!4d121.4244348!16s%2Fg%2F11zxxkpky_!19sChIJVR_MWj2nQjQRnS9hFWx68Vc?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyNy4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-473424d30713",
+          "label": "新莊新泰店",
+          "name": "青山 新莊新泰店",
+          "lat": 25.0388843,
+          "lng": 121.4469235,
+          "address": "242新北市新莊區立德里新泰路214號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E6%96%B0%E8%8E%8A%E6%96%B0%E6%B3%B0%E5%BA%97/data=!4m7!3m6!1s0x3442a9004ddadc4b:0xc59077a5eaa03173!8m2!3d25.0388843!4d121.4469235!16s%2Fg%2F11ycc7jg_p!19sChIJS9zaTQCpQjQRczGg6qV3kMU?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyNy4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "22:30"
+              ]
+            ],
+            "sat": [
+              [
+                "10:00",
+                "22:30"
+              ]
+            ],
+            "sun": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-39a929638e34",
+          "label": "板橋府中店",
+          "name": "青山 板橋府中店",
+          "lat": 25.0103006,
+          "lng": 121.4623772,
+          "address": "220新北市板橋區福丘里中山路一段102-1號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E6%9D%BF%E6%A9%8B%E5%BA%9C%E4%B8%AD%E5%BA%97/data=!4m7!3m6!1s0x3442a9690dc7eff7:0x761aae1f7059906f!8m2!3d25.0103006!4d121.4623772!16s%2Fg%2F11mct4qg3t!19sChIJ9-_HDWmpQjQRb5BZcB-uGnY?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyNy4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "22:30"
+              ]
+            ],
+            "sat": [
+              [
+                "10:30",
+                "22:30"
+              ]
+            ],
+            "sun": [
+              [
+                "10:30",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-c0d234f38691",
+          "label": "林口文化店",
+          "name": "青山 林口文化店",
+          "lat": 25.0675233,
+          "lng": 121.3649727,
+          "address": "244新北市林口區麗林里文化二路一段32號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E6%9E%97%E5%8F%A3%E6%96%87%E5%8C%96%E5%BA%97/data=!4m7!3m6!1s0x3442a7cb665db067:0x56b71633d069d0e8!8m2!3d25.0675233!4d121.3649727!16s%2Fg%2F11xrp5wzfn!19sChIJZ7BdZsunQjQR6NBp0DMWt1Y?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyOC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:30",
+                "21:50"
+              ]
+            ],
+            "tue": [
+              [
+                "10:30",
+                "21:50"
+              ]
+            ],
+            "wed": [
+              [
+                "10:30",
+                "21:50"
+              ]
+            ],
+            "thu": [
+              [
+                "10:30",
+                "21:50"
+              ]
+            ],
+            "fri": [
+              [
+                "10:30",
+                "21:50"
+              ]
+            ],
+            "sat": [
+              [
+                "10:30",
+                "21:50"
+              ]
+            ],
+            "sun": [
+              [
+                "10:30",
+                "21:50"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-9939b21f02bd",
+          "label": "樹林中山店",
+          "name": "青山 樹林中山店",
+          "lat": 24.9921561,
+          "lng": 121.4236746,
+          "address": "238新北市樹林區中山路一段44號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E6%A8%B9%E6%9E%97%E4%B8%AD%E5%B1%B1%E5%BA%97/data=!4m7!3m6!1s0x34681d59ee95273b:0x17bd69b6b6069dba!8m2!3d24.9921561!4d121.4236746!16s%2Fg%2F11z_p5lr8y!19sChIJOyeV7lkdaDQRup0GtrZpvRc?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyNy4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-c2e81ce9dd28",
+          "label": "永和樂華店",
+          "name": "青山 永和樂華店",
+          "lat": 25.0089634,
+          "lng": 121.5143624,
+          "address": "234新北市永和區前溪里永和路一段180號1樓",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E6%B0%B8%E5%92%8C%E6%A8%82%E8%8F%AF%E5%BA%97/data=!4m7!3m6!1s0x3442a9006993948b:0xe72541467de018f1!8m2!3d25.0089634!4d121.5143624!16s%2Fg%2F11yp4dnp9s!19sChIJi5STaQCpQjQR8RjgfUZBJec?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "23:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "23:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-a93797c2a885",
+          "label": "淡水英專店",
+          "name": "青山 淡水英專店",
+          "lat": 25.1713571,
+          "lng": 121.445625,
+          "address": "251新北市淡水區中興里英專路71號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E6%B7%A1%E6%B0%B4%E8%8B%B1%E5%B0%88%E5%BA%97/data=!4m7!3m6!1s0x3442af00597bff15:0xc4b415a1cf511791!8m2!3d25.1713571!4d121.445625!16s%2Fg%2F11ytxlgv3g!19sChIJFf97WQCvQjQRkRdRz6EVtMQ?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "tue": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "wed": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "thu": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "fri": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sat": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ],
+            "sun": [
+              [
+                "11:00",
+                "21:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
+        },
+        {
+          "id": "sipspot-qingshan-00bb5dcd1413",
+          "label": "蘆洲光華店",
+          "name": "青山 蘆洲光華店",
+          "lat": 25.0824484,
+          "lng": 121.4661102,
+          "address": "247新北市蘆洲區光明里光華路142號",
+          "mapUrl": "https://www.google.com/maps/place/%E9%9D%92%E5%B1%B1-%E9%9D%92%E8%8C%B6%E5%B0%88%E6%A5%AD%E8%A3%BD%E4%BD%9C+%E8%98%86%E6%B4%B2%E5%85%89%E8%8F%AF%E5%BA%97/data=!4m7!3m6!1s0x3442a95e14f521c1:0x714ed9873f6f3cda!8m2!3d25.0824484!4d121.4661102!16s%2Fg%2F11xchxbc0h!19sChIJwSH1FF6pQjQR2jxvP4fZTnE?authuser=0&hl=zh-TW&g_ep=EgoyMDI2MTAyMC4wIJJjKgBIAVAD&rclk=1",
+          "timeBands": [
+            "morning",
+            "lunch",
+            "afternoon",
+            "night"
+          ],
+          "days": {
+            "mon": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "tue": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "wed": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "thu": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "fri": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "sat": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ],
+            "sun": [
+              [
+                "10:00",
+                "22:00"
+              ]
+            ]
+          },
+          "timeSource": "SipSpot 青山門市資料（使用者提供快照；非官網獨立查證）",
+          "timeCheckedAt": "2026-10-31"
         }
       ]
     }

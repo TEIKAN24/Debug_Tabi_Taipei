@@ -508,7 +508,7 @@
     const live=liveStatus(branch,item,clock,walk);
     return live.code==='closed'?nextOpening(branch,item,clock,null):live;
   }
-  const OPENING_LABEL={open:'営業中',soon:'もうすぐ閉店',opening:'もうすぐ営業',closed:'営業時間外',irregular:'不定期営業',unknown:'営業時間未確認'};
+  const OPENING_LABEL={open:'営業中',soon:'もうすぐ閉店',opening:'もうすぐ開店',closed:'営業時間外',irregular:'不定期営業',unknown:'営業時間未確認'};
   function timingLabel(t){
     if(t.code==='next')return `（${WEEKDAY_JA[t.day]}）${clockText(t.at)}から`;
     return OPENING_LABEL[t.code]||OPENING_LABEL.unknown;
@@ -623,7 +623,7 @@
     '緑豆スムージー':'綠豆沙',
     'お餅入りかき氷':'麻糬冰',
     // closest entry (the shop's own variant is not in the dictionary)
-    '唐揚げ乗せルーローハン':'滷肉飯',
+    '唐揚げのせルーローハン':'滷肉飯',
     'ミルクもち':'麻糬',
     '芝芝金萱':'金萱茶',
     'お茶シフォンケーキ':'戚風蛋糕',
@@ -1244,16 +1244,16 @@
     districtName.textContent=state.locationStatus==='outside'?'台北・新北エリア外':cityJa?`${cityJa}${jpDistrict?' '+jpDistrict:''}`:state.locationStatus==='loading'?'測位中':'現在地';
     const districtEnLabel=districtEnglish?`${districtEnglish.replace(/\s+Dist\.?$/i,'')} Dist.`:'';
     districtEn.textContent=state.locationStatus==='outside'?'Outside Taipei Area':cityJa?`${districtEnLabel?districtEnLabel+', ':''}${cityEn}`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':state.locationStatus==='idle'?'タップして現在地を取得':'Location';
-    currentLocation.title=state.locationStatus==='outside'?'現在地は台北市・新北市の対象エリア外です。':cityJa?'表示された行政区は位置座標からの概算です。境界付近では異なる場合があります。':'現在地の座標を使って推薦します。';
+    currentLocation.title=state.locationStatus==='outside'?'現在地は台北市・新北市の対象エリア外です。':cityJa?'表示された行政区は位置座標からの概算です。境界付近では異なる場合があります。':'現在地をもとにおすすめを表示します。';
     for(const b of timeControls)b.setAttribute('aria-pressed',String(b.dataset.value===state.timeMode));
     for(const b of categoryControls)b.setAttribute('aria-pressed',String(state.categories.includes(b.dataset.value)));
-    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は台北市・新北市の対象エリア外です。「駅から検索」もご利用ください。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!nearbyReady)?'登録店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${nearbyVenues.reduce((n,v)=>n+v.branches.length,0)}店舗からご案内します。`};
+    const messages={idle:'',loading:'現在地を確認しています…',unsupported:'位置情報に対応していません。通常のおすすめを表示します。',denied:'位置情報が許可されていません。通常のおすすめを表示します。',outside:'現在地は台北市・新北市の対象エリア外です。「駅から検索」もご利用ください。',imprecise:'位置情報の精度が足りません。通常のおすすめを表示します。',error:'現在地を取得できませんでした。通常のおすすめを表示します。',success:(!nearbyReady)?'掲載店の位置情報を読み込んでいます…':`現在地から直線${GEO_MAX_METERS}m以内・位置登録済み${nearbyVenues.reduce((n,v)=>n+v.branches.length,0)}店舗からご案内します。`};
     locationStatus.textContent=!isStation?messages[state.locationStatus]||'':
       stationsFailed?'駅データを読み込めませんでした。再読み込みしてください。':
       !stationsReady?'駅データを読み込み中…':
       !state.line?'路線を選んでください。':
       !selectedStation?'駅を選んでください。':
-      `選択した駅から直線${GEO_MAX_METERS}m以内の登録店を検索します。`;
+      `選択した駅から直線${GEO_MAX_METERS}m以内の掲載店を検索します。`;
     locationStatus.hidden=!locationStatus.textContent;
   }
   // The Geolocation API requires HTTPS and explicit browser permission.
@@ -1484,7 +1484,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   });
   // A choice without any registered shop for the current time band and place
   // is greyed out; a selection that has just become impossible is cleared.
-  const UNAVAILABLE_TITLE='この時間帯・場所に該当する登録店はありません';
+  const UNAVAILABLE_TITLE='この時間帯・場所に該当する掲載店はありません';
   function refreshChoiceAvailability(){
     const buttons=categoryControls;
     if(!nearbyReady){for(const b of buttons){b.disabled=false;b.removeAttribute('title');}moods.append(...categoryControls);return;}
@@ -1559,8 +1559,8 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       more.hidden=true;
       relaxed.hidden=false;
       relaxed.textContent=timeCount===0?(state.timeMode==='current'?
-        (useDistance?`いま営業中の登録店は、直線${GEO_MAX_METERS}m以内にありません。時間帯を指定するとご覧いただけます。`:'いま営業中の収録店はありません。時間帯を指定してご覧ください。'):
-        (useDistance?`選択地点から直線${GEO_MAX_METERS}m以内に該当する登録店はありません。`:'この時間帯に合う収録店は、まだありません。時間帯を変更してご覧ください。')):'該当店が見つかりません。';
+        (useDistance?`いま営業中の掲載店は、直線${GEO_MAX_METERS}m以内にありません。時間帯を指定するとご覧いただけます。`:'いま営業中の掲載店はありません。時間帯を指定してご覧ください。'):
+        (useDistance?`選択地点から直線${GEO_MAX_METERS}m以内に該当する掲載店はありません。`:'この時間帯に合う掲載店は、まだありません。時間帯を変更してご覧ください。')):'該当店が見つかりません。';
       results.append(el('p','recommend-no-data','おすすめ情報を準備中です。'));
       count.textContent='0軒';reportDebug(0);return;
     }
@@ -1576,7 +1576,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       locationStatus.hidden=false;
     }
     if(useDistance&&!nearbyFallback){
-      locationStatus.textContent=`${state.areaMode==='station'?'選択駅':'現在地'}から直線${GEO_MAX_METERS}m以内の位置データ登録済み${nearbyCount}軒を検索中（位置登録済み${nearbyVenues.reduce((n,v)=>n+v.branches.length,0)}店舗）。`;
+      locationStatus.textContent=`${state.areaMode==='station'?'選択駅':'現在地'}から直線${GEO_MAX_METERS}m以内の${nearbyCount}軒をご案内します。`;
       locationStatus.hidden=false;
     }
     reportDebug(ordered.length);

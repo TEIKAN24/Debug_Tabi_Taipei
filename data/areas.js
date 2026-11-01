@@ -960,7 +960,7 @@ window.TABI_AREAS={
       "id": "3f66bda0-4caa-8061-bcf4-f2ea3e8ea786",
       "title": "信義区・台北101",
       "subtitle": "デパート・夜景",
-      "description": "百貨店が集まる、台北のショッピング中心地。",
+      "description": "百貨店が集まる、台北のショッピングの中心地。",
       "tone": "#A4C8DD",
       "toneLight": "",
       "categories": [
@@ -1122,7 +1122,7 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "スカイレストラン有り",
+                  "text": "スカイレストランあり",
                   "tone": "auto"
                 },
                 {
@@ -2236,7 +2236,7 @@ window.TABI_AREAS={
               "mapUrl": "https://www.google.com/maps/place/funfuntown+%E6%94%BE%E6%94%BE%E5%A0%82+%E5%8F%B0%E5%8C%97/@25.0607948,121.5553757,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abd23d3e73e5:0xc736a24155b0b661!8m2!3d25.06079!4d121.557956!16s%2Fg%2F119x13nfn?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
               "tags": [
                 {
-                  "text": "暮らしデザイン雑貨",
+                  "text": "暮らしのデザイン雑貨",
                   "tone": "auto"
                 }
               ],
@@ -2449,7 +2449,7 @@ window.TABI_AREAS={
               "mapUrl": "https://www.google.com/maps/place/%E6%B7%A1%E6%B0%B4%E7%B4%85%E6%AF%9B%E5%9F%8E/@25.1736937,121.4336047,17z/data=!4m6!3m5!1s0x3442a54fc0269ea9:0xefd8a1452482dedd!8m2!3d25.1754267!4d121.4329366!16s%2Fg%2F11bc586fn6?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
               "tags": [
                 {
-                  "text": "1629 年建造",
+                  "text": "1629年建造",
                   "tone": "auto"
                 },
                 {
@@ -2513,7 +2513,7 @@ window.TABI_AREAS={
               "mapUrl": "https://www.google.com/maps/place/%E5%89%8D%E6%B8%85%E6%B7%A1%E6%B0%B4%E9%96%A2%E7%A8%8E%E5%8B%99%E5%8F%B8%E5%AE%98%E9%82%B8/@25.1739687,121.4346389,17.56z/data=!4m6!3m5!1s0x3442a5506f0b8d23:0x1ba0193257e91ac7!8m2!3d25.174176!4d121.4362748!16s%2Fg%2F155prj_t?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
               "tags": [
                 {
-                  "text": "1860 年代",
+                  "text": "1860年代",
                   "tone": "auto"
                 },
                 {

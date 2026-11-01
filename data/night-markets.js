@@ -16,12 +16,12 @@ window.TABI_NIGHT_MARKETS={
         "station": "松山駅",
         "exit": "5"
       },
-      "hours": "17:00−24:00（目安）・年中無休",
+      "hours": "17:00–24:00（目安）・年中無休",
       "crowded": "週末の夜",
       "features": [
         "アクセス抜群",
         "B級グルメの宝庫",
-        "ミシュラン常連店の宝庫",
+        "ミシュラン常連店が多い",
         "一本道・回りやすい"
       ],
       "specialties": [
@@ -51,7 +51,7 @@ window.TABI_NIGHT_MARKETS={
         "station": "劍潭駅",
         "exit": "1"
       },
-      "hours": "16:00–00:00（目安）・年中無休",
+      "hours": "16:00–24:00（目安）・年中無休",
       "crowded": "18:00–21:00",
       "features": [
         "大規模",
@@ -86,7 +86,7 @@ window.TABI_NIGHT_MARKETS={
         "label": "アクセス",
         "text": "台鉄「基隆」で下車"
       },
-      "hours": "17:00–00:00（目安）・年中無休",
+      "hours": "17:00–24:00（目安）・年中無休",
       "crowded": "週末の夜",
       "features": [
         "コンパクト",
@@ -139,7 +139,7 @@ window.TABI_NIGHT_MARKETS={
         },
         {
           "label": "和牛滷肉飯",
-          "query": "和牛滷肉飯"
+          "query": "滷肉飯"
         }
       ],
       "destination": ""
@@ -200,7 +200,7 @@ window.TABI_NIGHT_MARKETS={
       ],
       "specialties": [
         {
-          "label": "塩酥鶏",
+          "label": "鹽酥雞",
           "query": "鹹酥雞"
         },
         {
@@ -225,7 +225,7 @@ window.TABI_NIGHT_MARKETS={
         "station": "信義安和駅",
         "exit": "4"
       },
-      "hours": "18:00–00:00（目安）・年中無休",
+      "hours": "18:00–24:00（目安）・年中無休",
       "crowded": "週末の夜",
       "features": [
         "コンパクト",
@@ -260,7 +260,7 @@ window.TABI_NIGHT_MARKETS={
         "station": "龍山寺駅",
         "exit": "1"
       },
-      "hours": "16:00–00:00（目安）・年中無休",
+      "hours": "16:00–24:00（目安）・年中無休",
       "crowded": "雨の日、週末の夜",
       "features": [
         "アーケード付き",
@@ -270,14 +270,14 @@ window.TABI_NIGHT_MARKETS={
       "specialties": [
         {
           "label": "魯肉飯",
-          "query": "魯肉飯"
+          "query": "滷肉飯"
         },
         {
           "label": "果汁",
           "query": "果汁"
         },
         {
-          "label": "焼麻糬",
+          "label": "燒麻糬",
           "query": "麻糬"
         }
       ],
@@ -308,7 +308,7 @@ window.TABI_NIGHT_MARKETS={
           "query": "刈包"
         },
         {
-          "label": "葱抓餅",
+          "label": "蔥抓餅",
           "query": "蔥抓餅"
         },
         {
@@ -362,7 +362,7 @@ window.TABI_NIGHT_MARKETS={
         "label": "アクセス",
         "text": "バス「南機場公寓」停留所下車"
       },
-      "hours": "17:00–00:00（目安）・年中無休",
+      "hours": "17:00–24:00（目安）・年中無休",
       "crowded": "19:00–21:00",
       "features": [
         "ローカルな雰囲気",
@@ -371,11 +371,11 @@ window.TABI_NIGHT_MARKETS={
       ],
       "specialties": [
         {
-          "label": "水餃子",
+          "label": "水餃",
           "query": "水餃"
         },
         {
-          "label": "焼餅",
+          "label": "燒餅",
           "query": "燒餅"
         },
         {
@@ -388,7 +388,7 @@ window.TABI_NIGHT_MARKETS={
     {
       "id": "shuangcheng",
       "name": "雙城街夜市",
-      "lead": "実質24時間近く、何かしらの食事が楽しめる。",
+      "lead": "朝から深夜まで、ほぼ一日中何かしら食べられる。",
       "access": {
         "type": "mrt",
         "code": "O10",
@@ -396,7 +396,7 @@ window.TABI_NIGHT_MARKETS={
         "station": "中山國小駅",
         "exit": "1"
       },
-      "hours": "08:00–00:00（目安）・年中無休",
+      "hours": "08:00–24:00（目安）・年中無休",
       "crowded": "週末の夜",
       "features": [
         "小規模",
@@ -406,7 +406,7 @@ window.TABI_NIGHT_MARKETS={
       ],
       "specialties": [
         {
-          "label": "麺線",
+          "label": "麵線",
           "query": "麵線"
         },
         {
@@ -414,7 +414,7 @@ window.TABI_NIGHT_MARKETS={
           "query": "海鮮粥"
         },
         {
-          "label": "水餃子",
+          "label": "水餃",
           "query": "水餃"
         }
       ],
@@ -431,7 +431,7 @@ window.TABI_NIGHT_MARKETS={
         "station": "景美駅",
         "exit": "1"
       },
-      "hours": "17:00–00:00（目安）・年中無休",
+      "hours": "17:00–24:00（目安）・年中無休",
       "crowded": "週末の夜",
       "features": [
         "ローカル感が強い",
@@ -466,7 +466,7 @@ window.TABI_NIGHT_MARKETS={
         "station": "三峽",
         "exit": ""
       },
-      "hours": "17:30頃〜22:30頃（火・金のみ）",
+      "hours": "17:30頃–22:30頃（火・金のみ）",
       "crowded": "19:00–21:30",
       "features": [
         "小規模",
@@ -484,7 +484,7 @@ window.TABI_NIGHT_MARKETS={
         },
         {
           "label": "三峽金牛角",
-          "query": "三峽金牛角"
+          "query": "金牛角"
         }
       ],
       "destination": "三峽中華路夜市"

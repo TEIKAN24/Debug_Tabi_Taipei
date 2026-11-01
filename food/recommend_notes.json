@@ -193,7 +193,7 @@
     },
     {
       "name": "臨江街夜市 巷口無名麵店",
-      "text": "肉麻麺のほか、豚の内臓や頭骨肉のスープも候補。",
+      "text": "肉麻麺のほか、豚の内臓や頭骨肉のスープも人気。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -252,7 +252,7 @@
     },
     {
       "name": "一甲子餐飲",
-      "text": "割包と焢肉飯が看板候補。角煮を挟むか、ご飯にのせるか。",
+      "text": "割包と焢肉飯が看板メニュー。角煮を挟むか、ご飯にのせるか。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://guide.michelin.com/tw/zh_TW/taipei-region/restaurants/bib-gourmand",
@@ -308,7 +308,7 @@
     },
     {
       "name": "萍姊酸菜麵",
-      "text": "酸菜入りワンタン麺と、目玉焼きをのせた乾麺が推薦料理。",
+      "text": "酸菜入りワンタン麺と、目玉焼きをのせた乾麺が選出料理。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -330,7 +330,7 @@
     },
     {
       "name": "1976道地香港美食 敦南本店",
-      "text": "豉汁排骨飯が「500碗」に選出。豆鼓の風味を生かした排骨ご飯。",
+      "text": "豉汁排骨飯が「500碗」に選出。豆豉の風味を生かした排骨ご飯。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -352,7 +352,7 @@
     },
     {
       "name": "Foldie",
-      "text": "胡桃とベーコンを使ったサンドイッチが推薦料理。",
+      "text": "胡桃とベーコンを使ったサンドイッチが選出料理。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -550,7 +550,7 @@
     },
     {
       "name": "史大華精緻麵食安和店",
-      "text": "キムチと肉そぼろの汁麺が2026年の推薦料理。",
+      "text": "キムチと肉そぼろの汁麺が2026年の選出料理。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -616,7 +616,7 @@
     },
     {
       "name": "呂巷仔口麵食館",
-      "text": "肺管頭（豚の気管）が推薦料理。内臓系の小吃が好きな人に。",
+      "text": "肺管頭（豚の気管）が選出料理。内臓系の小吃が好きな人に。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -660,7 +660,7 @@
     },
     {
       "name": "大樹下古早麵",
-      "text": "粿仔條羹が2026年の推薦料理。米粉の平麺をとろみスープで。",
+      "text": "粿仔條羹が2026年の選出料理。米粉の平麺をとろみスープで。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -737,7 +737,7 @@
     },
     {
       "name": "小辣椒魷魚羹",
-      "text": "イカのとろみスープ「魷魚羹」が推薦料理。",
+      "text": "イカのとろみスープ「魷魚羹」が選出料理。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -847,7 +847,7 @@
     },
     {
       "name": "曾記便當",
-      "text": "揚げ鶏もも肉の弁当が推薦料理。ご飯をしっかり食べたいときに。",
+      "text": "揚げ鶏もも肉の弁当が選出料理。ご飯をしっかり食べたいときに。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -880,7 +880,7 @@
     },
     {
       "name": "桃源街老王記牛肉麵店",
-      "text": "紅焼と清燉、2種類の牛肉麺が「500碗」の推薦料理。",
+      "text": "紅焼と清燉、2種類の牛肉麺が「500碗」の選出料理。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -902,7 +902,7 @@
     },
     {
       "name": "永康牛肉麵",
-      "text": "牛肉麺に加え、四川風の漬物も2026年の推薦料理。",
+      "text": "牛肉麺に加え、四川風の漬物も2026年の選出料理。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",
@@ -913,7 +913,7 @@
     },
     {
       "name": "江家原汁排骨湯",
-      "text": "排骨スープが複数年選出。梅干菜など副菜も候補。",
+      "text": "排骨スープが複数年選出。梅干菜など副菜も人気。",
       "basis": "award_dish",
       "sourceUrls": [
         "https://500times.udn.com/wtimes/story/123497/9547367",

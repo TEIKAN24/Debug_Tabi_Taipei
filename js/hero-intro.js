@@ -189,7 +189,7 @@
     replies:[['なに？👀'],['呼んだ？'],['はーい'],['ん？'],['ここにいるよ🙋']],  // double tap
     tickle:['くすぐったいよ'],                                         // three taps
     bright:['まぶしくない？🌙'],      // light mode chosen at night, the first time only
-    top:['おかえり、トップへ。']      // back at the top after a long scroll, once a day
+    top:['おかえり、トップへ。']      // back at the top after a long scroll, once only
   };
   // Taipei 101's daily lighting follows the rainbow by weekday (Sunday first).
   const COLOURS_101=['紫','赤','オレンジ','黄','緑','青','藍'];
@@ -457,7 +457,8 @@
       if(pendingBright){pendingBright=false;swapTo(SPECIAL.bright,3500);wentFar=false;return;}
       const day=dayNumber(new Date());
       const once=store.once&&typeof store.once==='object'?store.once:(store.once={});
-      if(wentFar&&once.top!==day){once.top=day;writeStore(store);wentFar=false;swapTo(SPECIAL.top,4000);}
+      // v30.9.237: shown once only (ever, in this browser).
+      if(wentFar&&!store.topShown){store.topShown=true;once.top=day;writeStore(store);wentFar=false;swapTo(SPECIAL.top,4000);}
     };
     if('IntersectionObserver' in window){
       new IntersectionObserver(items=>{
@@ -588,7 +589,11 @@
     fontReady(3000).then(fit);
   }
 
+  const START_DELAY=300;      // v30.9.237: the intro starts 0.3 s after the page appears
   function play(){
+    setTimeout(start,START_DELAY);
+  }
+  function start(){
     const t0=performance.now();
     hero.classList.add('hero--intro');
     // Two frames: the starting layout is painted before anything moves.

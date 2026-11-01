@@ -545,7 +545,11 @@ const scrollTip = foodExplorer.querySelector("#scroll-tip");
 const scrollText = foodExplorer.querySelector("#scroll-text");
 const footerCount = foodExplorer.querySelector("#total-food-count");
 
-const normalized = s => String(s).normalize("NFKC").toLocaleLowerCase();
+// v30.9.238: Japanese and Chinese forms of the same character match each other
+// (黄魚 finds 黃魚, 牛肉麺 finds 牛肉麵): both the dish texts and what is typed are
+// folded to one form. One character for one, so highlighting stays aligned.
+const JA_TO_TW = {"黄":"黃","麺":"麵","醤":"醬","鶏":"雞","裏":"裡","鹵":"滷","団":"團","焼":"燒","鉄":"鐵","塩":"鹽","葱":"蔥","亀":"龜","豊":"豐","広":"廣","竜":"龍","気":"氣","楽":"樂","薬":"藥","来":"來","売":"賣","湾":"灣","浜":"濱","区":"區","発":"發","辺":"邊","渋":"澀","恵":"惠","雑":"雜","蔵":"藏","麦":"麥","黒":"黑","国":"國","価":"價","円":"圓","図":"圖","歩":"步","対":"對","単":"單","当":"當","学":"學","体":"體","点":"點","炉":"爐","滝":"瀧","斎":"齋","粛":"肅","将":"將","総":"總","声":"聲","権":"權","鉱":"礦","譲":"讓","釈":"釋","涙":"淚","戦":"戰","剤":"劑","済":"濟","様":"樣","晩":"晚","縄":"繩","経":"經","継":"繼","続":"續","読":"讀","拝":"拜"};
+const normalized = s => String(s).normalize("NFKC").toLocaleLowerCase().replace(/[^\u0000-\u2fff]/g, ch => JA_TO_TW[ch] || ch);
 
 // Synonym groups are loaded from synonyms.json, then normalized for searching.
 function variantsFor(term) {
@@ -1378,7 +1382,7 @@ loadData();
     // v30.9.210: icons and subtitles are looked up by each topic's title, so
     // adding or reordering a topic can no longer shift them onto the wrong card.
     const topics={
-      '宿泊先のアメニティ事情':['🧳','アメニティは持参前に確認'],
+      '宿泊先のアメニティ事情':['🧳','歯ブラシなどは客室にありません'],
       'トイレの紙事情':['🚻','場所によって利用ルールが異なる'],
       '水道水':['🚰','飲む前にチェック'],
       'コンセント・電圧':['🔌','変換プラグ不要・電圧は110V'],
@@ -2233,7 +2237,7 @@ function stop(label,name,code,cls=''){
  return `<div class="timeline-stop ${cls}"><span class="timeline-status ${cls==='transfer'?'timeline-status--transfer':''}">${label}</span><span class="node" aria-hidden="true"></span><div class="stop-body">${stationContent(name)}${code?`<span class="code code--${codeColor}">${code}</span>`:''}</div></div>`;
 }
 function leg(line,number,direction,color,note=''){
- return `<div class="timeline-leg" style="--travel-color:${color}"><div class="leg-content"><div class="leg-meta"><span class="line-name">${line}</span><span class="separator">·</span><span class="station-count">${number}駅</span></div><div class="direction">${direction}</div>${note?`<div class="direction-note">${note}</div>`:''}</div></div>`;
+ return `<div class="timeline-leg" style="--travel-color:${color}"><div class="leg-content"><div class="leg-meta"><span class="line-name">${line}</span><span class="separator">・</span><span class="station-count">${number}駅</span></div><div class="direction">${direction}</div>${note?`<div class="direction-note">${note}</div>`:''}</div></div>`;
 }
 function facts(time,fare,transfers){el('facts').innerHTML=[['所要時間',time],['運賃',fare],['乗り換え',transfers]].map(([k,v])=>`<div class="fact"><span class="fact-label">${k}</span><strong class="fact-value">${v}</strong></div>`).join('');}
 
@@ -2297,13 +2301,13 @@ function groundUpdate(airport,toCity){
  if(bus){
    groundMode('国光客運｜路線バス','🚌');
    lines.innerHTML=stop('出発',toCity?airportLabel:'台北駅周辺','', 'start')+
-      groundLeg('国光客運 1819／1819B',toCity?'台北車站周邊へ':'桃園國際機場へ','#AEB4BC',toCity?'台北轉運站 方面の路線。乗り場と運行方向を確認':'乗り場・運行便を事前に確認')+
+      groundLeg('国光客運 1819／1819B',toCity?'台北駅周辺へ':'桃園国際空港へ','#AEB4BC',toCity?'台北轉運站 方面の路線。乗り場と運行方向を確認':'乗り場・運行便を事前に確認')+
       stop('到着',toCity?'台北駅周辺':airportLabel,'','end');
    if(toCity){
      // Route names already appear in the timeline. Keep the time/fare once,
      // in the same facts row used by the reverse direction and other modes.
      facts('約55〜75分','NT$133〜164','なし');
-     el('footnote').textContent='時間・料金は旧ガイド掲載の参考値です。運行路線、停留所、料金は出発前に国光客運の最新案内をご確認ください。';
+     el('footnote').textContent='時間・料金は目安です。運行路線、停留所、料金は出発前に国光客運の最新案内をご確認ください。';
    }else{
      facts('要確認','要確認','なし');
      el('footnote').textContent='空港方面の乗り場、便名、時刻と料金は事前に運行会社で確認してください。';
@@ -2314,7 +2318,7 @@ function groundUpdate(airport,toCity){
      groundLeg('タクシー',to+'まで','#D9B65F','空港の正規タクシー乗り場を利用。道路状況によって時間が変わります')+
      stop('到着',to,'','end');
    facts(song?'約20分':'約35分','メーター制','なし');
-   el('footnote').textContent='所要時間は従来のガイドに掲載した目安です。渋滞・深夜料金・乗降場所によって料金と時間が変動します。';
+   el('footnote').textContent='所要時間・料金は目安です。渋滞・深夜料金・乗降場所によって料金と時間が変動します。';
  }
 }
 function update(){
@@ -4504,4 +4508,27 @@ update();
       }, 300);
     });
   });
+})();
+
+/* v30.9.237 — home-screen app: there is no reload button, so when it is
+   brought back after 10 minutes or more away, the page reloads and starts
+   from the top (the intro plays again). Only in standalone (home-screen)
+   mode; an ordinary browser tab is left as it is. */
+(() => {
+  const standalone = window.navigator.standalone === true ||
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  if (!standalone) return;
+  const AWAY = 10 * 60 * 1000, KEY = 'tabi-hidden-at';
+  const mark = () => { try { localStorage.setItem(KEY, String(Date.now())); } catch (_) {} };
+  const check = () => {
+    if (document.visibilityState !== 'visible') return;
+    let at = 0;
+    try { at = Number(localStorage.getItem(KEY)) || 0; localStorage.removeItem(KEY); } catch (_) {}
+    if (!at || Date.now() - at < AWAY) return;
+    try { sessionStorage.setItem('tabi-fresh-start', '1'); } catch (_) {}
+    window.location.replace(window.location.pathname + window.location.search);
+  };
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') mark(); else check(); });
+  window.addEventListener('pagehide', mark);
+  window.addEventListener('pageshow', event => { if (event.persisted) check(); });
 })();

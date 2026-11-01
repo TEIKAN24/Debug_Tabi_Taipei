@@ -1880,9 +1880,10 @@ html[data-theme="light"] #food-recommend-section .recommend-native-empty small{c
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 #food-recommend-section button.is-dish{
-  text-decoration-line:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-underline-offset:2.5px;
-  text-decoration-color:color-mix(in srgb,currentColor 60%,transparent);
+  text-decoration-line:underline;text-decoration-style:solid;text-decoration-thickness:1px;text-underline-offset:2.5px;
+  text-decoration-color:#BDBDBD; /* v30.9.237: a light grey solid line invites the tap */
 }
+html[data-theme="light"] #food-recommend-section button.is-dish{text-decoration-color:#AEB5B9;}
 #food-recommend-section button.is-dish:active{opacity:.7;}
 #food-recommend-section button.is-dish:focus-visible{outline:2px solid currentColor;outline-offset:2px;}
 /* 🥢 before まずはこの3軒！ */

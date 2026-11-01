@@ -48,10 +48,6 @@
                 {
                   "text": "旧公共浴場",
                   "tone": "auto"
-                },
-                {
-                  "text": "工事のため2027年10月まで休館",
-                  "tone": "red"
                 }
               ],
               "links": [],
@@ -215,7 +211,7 @@
               "links": [
                 {
                   "type": "other",
-                  "label": "無料内部見学可能",
+                  "label": "内部見学無料",
                   "url": "https://tpac.org.taipei/tour-publicloop"
                 }
               ],
@@ -415,7 +411,7 @@
               "links": [
                 {
                   "type": "official",
-                  "label": "参観可能日時",
+                  "label": "見学可能日",
                   "url": "https://english.president.gov.tw/Page/124"
                 }
               ],
@@ -453,7 +449,7 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "平日中心の開館",
+                  "text": "主に平日開館",
                   "tone": "auto"
                 },
                 {
@@ -494,7 +490,7 @@
               "links": [
                 {
                   "type": "official",
-                  "label": "参観可能日時",
+                  "label": "見学可能日",
                   "url": "https://subsite.mofa.gov.tw/entgh/cp.aspx?n=6411"
                 }
               ],
@@ -758,8 +754,8 @@
                   "tone": "auto"
                 },
                 {
-                  "text": "おすすめ",
-                  "tone": "gold"
+                  "text": "人気",
+                  "tone": "auto"
                 }
               ],
               "links": [],
@@ -786,10 +782,6 @@
                 {
                   "text": "台北101撮影スポット",
                   "tone": "auto"
-                },
-                {
-                  "text": "おすすめ",
-                  "tone": "gold"
                 }
               ],
               "links": [],
@@ -818,7 +810,7 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "夕陽と橋のシルエット",
+                  "text": "夕日と橋のシルエット",
                   "tone": "auto"
                 }
               ],
