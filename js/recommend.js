@@ -550,7 +550,7 @@
   // v30.9.210: one badge order on both faces, left to right:
   // grey dish names → other grey labels → green (ベジ) → red → gold (rightmost).
   // Within each group the editor's order is kept.
-  const DISH_TAG=/麺|麵|餃|小籠包|包子|氷|豆花|鍋|粉圓|愛玉|仙草|麻糬|ドーナツ|プリン|ケーキ|ロール|スムージー|ジュース|お茶|茶|珈琲|コーヒー|トースト|おにぎり|煮込み|ジェラート|チョコ|お菓子|点心|金萱|魯肉飯|滷肉飯|揚げ物|目玉焼き/;
+  const DISH_TAG=/麺|麵|餃|小籠包|包子|氷|豆花|鍋|粉圓|愛玉|仙草|麻糬|ドーナツ|プリン|ケーキ|ロール|スムージー|ジュース|お茶|茶|珈琲|コーヒー|トースト|おにぎり|煮込み|ジェラート|チョコ|お菓子|点心|金萱|魯肉飯|滷肉飯|揚げ物|目玉焼き|溫體牛/;
   const NOT_DISH_TAG=/人気|あり|必見|シェフ|バー|カフェ|限定|系/;
   const isDishTag=text=>DISH_TAG.test(text)&&!NOT_DISH_TAG.test(text);
   const BADGE_RANK={dish:0,neutral:1,veg:2,caution:3,featured:4};
@@ -560,6 +560,7 @@
   // once the dictionary is loaded (window.tabiFoodDish).
   const TAG_DISH={
     // same dish under another name
+    '台南溫體牛':'溫體牛',
     '牛肉麺':'牛肉麵',
     '水餃子':'水餃',
     '焼き餃子':'煎餃',
