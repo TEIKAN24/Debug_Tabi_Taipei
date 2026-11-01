@@ -374,7 +374,10 @@
   const KIND_TAGS={火鍋:'鍋',鍋:'鍋',台湾料理:'台湾料理',創作台湾料理:'台湾料理','熱炒・海鮮':'熱炒',熱炒:'熱炒',台湾式居酒屋:'熱炒',
     朝食:'モーニング',モーニング:'モーニング',小吃:'小吃','屋台料理・軽食':'小吃',
     広東料理:'各国・創作料理',四川料理:'各国・創作料理',雲南料理:'各国・創作料理',江浙料理:'各国・創作料理',中華料理:'各国・創作料理',
-    インド料理:'各国・創作料理',メキシコ料理:'各国・創作料理',創作料理:'各国・創作料理',関東煮:'各国・創作料理'};
+    インド料理:'各国・創作料理',メキシコ料理:'各国・創作料理',創作料理:'各国・創作料理',関東煮:'各国・創作料理',
+    // v30.9.240: the same case-by-case kinds, so the 料理種類 filter finds them too.
+    お茶:'カフェ',ジュース:'ドリンク',ベーカリー:'スイーツ',鶏肉料理:'ごはん系',定食:'ごはん系',
+    ガチョウ肉料理:'台湾料理',清粥小菜:'台湾料理',沙茶羊肉専門:'台湾料理',おでん:'小吃'};
   function withKindTags(r){
     const tags=Array.isArray(r.industries)?[...r.industries]:[];
     const extra=KIND_TAGS[r.displayType];
@@ -1701,9 +1704,16 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   const directoryTabs=document.getElementById('food-directory-tabs');
   const directoryPanel=document.getElementById('food-directory-panel');
   let directoryChoice='breakfast';
+  // v30.9.240: kinds outside the standard list, placed case by case (they used
+  // to fall into 各国・創作料理). The card keeps showing the kind as written.
+  const DIRECTORY_BY_KIND={お茶:'cafe',ジュース:'drink',ベーカリー:'sweet',鶏肉料理:'rice',定食:'rice',
+    ガチョウ肉料理:'taiwan',清粥小菜:'taiwan',沙茶羊肉専門:'taiwan',おでん:'snack'};
+  const DIRECTORY_BY_NAME={'港宏燒臘':'rice'};
   function directoryKey(venue){
     const kind=String(venue.displayType||'');
     const broad=venue.category||'';
+    if(DIRECTORY_BY_NAME[venue.name])return DIRECTORY_BY_NAME[venue.name];
+    if(DIRECTORY_BY_KIND[kind])return DIRECTORY_BY_KIND[kind];
     if(broad==='breakfast'||/^(モーニング|朝食)$/.test(kind))return 'breakfast';
     if(broad==='drink'||kind==='ドリンク')return 'drink';
     if(broad==='cafe'||/^(カフェ|喫茶|カフェ・喫茶)$/.test(kind))return 'cafe';
