@@ -3912,11 +3912,14 @@ update();
     <div class="walk-inline-top">
       <button class="walk-inline-back" type="button" aria-label="エリア一覧に戻る"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <div class="walk-inline-copy"><h4 class="walk-inline-heading"></h4><p class="walk-inline-description"></p></div>
+      <a class="walk-inline-go" target="_blank" rel="noopener noreferrer">出発！</a>
     </div><div class="walk-inline-host"></div>
   </div>`;
   const host=detail.querySelector('.walk-inline-host');
   const title=detail.querySelector('.walk-inline-heading');
   const desc=detail.querySelector('.walk-inline-description');
+  // v30.9.243: 出発！ — transit directions in Google Maps to the area shown.
+  const go=detail.querySelector('.walk-inline-go');
   const buttons=new Array(tabs.length);
   let active=-1,focusOrigin=null;
   const remembered=new Map();
@@ -3947,6 +3950,9 @@ update();
     active=index;
     title.textContent=label(index);
     desc.textContent=panels[index].querySelector('.area-intro-description')?.textContent.trim()||'';
+    const destination=tabs[index].dataset.walkDestination||label(index);
+    go.href='https://www.google.com/maps/dir/?api=1&travelmode=transit&destination='+encodeURIComponent(destination);
+    go.setAttribute('aria-label',label(index)+'への行き方をGoogleマップで開く');
     paintTone(root,index);
     const clone=panels[index].cloneNode(true);
     clone.hidden=false;clone.removeAttribute('id');clone.removeAttribute('aria-labelledby');

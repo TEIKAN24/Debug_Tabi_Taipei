@@ -57,7 +57,9 @@
       'aria-controls': panelId, 'aria-selected': String(a === 0), class: 'tab-pill', id: `pill-${panelId}`,
       role: 'tab', tabindex: a === 0 ? 0 : -1, type: 'button',
       'data-walk-sub': String(area.subtitle || ''), 'data-walk-tone': rgbTriple(area.tone),
-      'data-walk-tone-light': rgbTriple(area.toneLight)
+      'data-walk-tone-light': rgbTriple(area.toneLight),
+      // v30.9.243: where 出発！ leads in Google Maps (the area name if not set).
+      'data-walk-destination': String(area.destination || '').trim() || title
     }, title));
     const panel = node('div', {'aria-labelledby': `pill-${panelId}`, class: 'tab-panel area-panel', hidden: a !== 0, id: panelId, role: 'tabpanel'});
     const intro = node('div', {class: 'area-intro'});

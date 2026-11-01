@@ -5687,3 +5687,18 @@ html body #guide .venue-secondary-links a:not(#_):hover{opacity:1;}
   text-underline-offset:4px!important;text-decoration-color:#BDBDBD!important;
 }
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty{text-decoration-color:#AEB5B9!important;}
+
+/* v30.9.243 — City Walk area: 出発！ at the top right of the area header
+   (Google Maps transit directions), in the colours of さっそく出発！. */
+#guide .walk-inline-detail .walk-inline-top{align-items:flex-start;}
+#guide .walk-inline-detail .walk-inline-copy{flex:1 1 auto;min-width:0;}
+#guide .walk-inline-detail a.walk-inline-go{
+  flex:none;align-self:flex-start;margin:2px 0 0 10px;display:inline-flex;align-items:center;justify-content:center;
+  min-height:26px;padding:0 13px;border-radius:6px;
+  background:#F2F2F2!important;color:#111111!important;-webkit-text-fill-color:#111111;
+  font-size:13px;font-weight:800;letter-spacing:.04em;line-height:1;text-decoration:none!important;white-space:nowrap;
+  opacity:1!important;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+#guide .walk-inline-detail a.walk-inline-go:active{opacity:.75!important;}
+#guide .walk-inline-detail a.walk-inline-go:focus-visible{outline:2px solid #CCCCCC;outline-offset:3px;}
+html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go{background:#222222!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF;}

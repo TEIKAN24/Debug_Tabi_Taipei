@@ -8,6 +8,7 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-80f6-b7fc-e721a3bd0561",
       "title": "赤峰街・中山駅",
+      "destination": "台北 赤峰街",
       "subtitle": "古着・雑貨・カフェ",
       "description": "雑貨や古着、カフェ巡りを楽しむ街。",
       "tone": "#CE7A7A",
@@ -475,6 +476,7 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-80d8-8e85-c416590bb08c",
       "title": "永康街・東門駅",
+      "destination": "台北 永康街",
       "subtitle": "グルメ・雑貨",
       "description": "グルメと雑貨をのんびり楽しめるエリア。",
       "tone": "#F6CF46",
@@ -683,6 +685,7 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-8051-85d2-cacdb8bfc380",
       "title": "西門町",
+      "destination": "台北 西門町",
       "subtitle": "ストリート・若者文化",
       "description": "台湾の若者文化とトレンドが集まる街。",
       "tone": "#E285E0",
@@ -959,6 +962,7 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-8061-bcf4-f2ea3e8ea786",
       "title": "信義区・台北101",
+      "destination": "台北101",
       "subtitle": "デパート・夜景",
       "description": "百貨店が集まる、台北のショッピングの中心地。",
       "tone": "#A4C8DD",
@@ -1294,6 +1298,7 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-80ad-8016-e0f3faa7f9fe",
       "title": "迪化街・大稻埕",
+      "destination": "台北 迪化街",
       "subtitle": "レトロ・台湾雑貨",
       "description": "レトロな街並みと個性的なお店が魅力。",
       "tone": "#F0A174",
@@ -1576,6 +1581,7 @@ window.TABI_AREAS={
     {
       "id": "3f76bda0-4caa-80e3-b405-d7e284f677ba",
       "title": "台北駅",
+      "destination": "台北車站",
       "subtitle": "地下街・おみやげ",
       "description": "交通の中心地で、地下街や買い物を楽しめるエリア。",
       "tone": "#2054D3",
@@ -1764,6 +1770,7 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-8000-a208-c92f37d1e895",
       "title": "公館",
+      "destination": "捷運公館站",
       "subtitle": "学生街・ローカル",
       "description": "学生街の活気とローカルグルメが魅力。",
       "tone": "#628936",
@@ -2021,6 +2028,7 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-80c7-b409-fcc625e8fa47",
       "title": "東区",
+      "destination": "捷運忠孝復興站",
       "subtitle": "ファッション・カフェ",
       "description": "セレクトショップやカフェが点在するおしゃれな街。",
       "tone": "#DE6E4B",
@@ -2208,6 +2216,7 @@ window.TABI_AREAS={
     {
       "id": "areas-mvtohz8c-1t82d",
       "title": "民生社區・富錦街",
+      "destination": "台北 富錦街",
       "subtitle": "街歩き・カフェ・雑貨",
       "description": "木漏れ日が心地よい、台北のおしゃれな住宅街。",
       "tone": "#D6DCD0",
@@ -2369,6 +2378,7 @@ window.TABI_AREAS={
     {
       "id": "areas-mvtomaeb-jm2lt",
       "title": "淡水老街・重建街",
+      "destination": "淡水老街",
       "subtitle": "歴史・夕日",
       "description": "古い街並みと、美しい夕日が楽しめる港町。",
       "tone": "#A8717C",
