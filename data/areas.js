@@ -1583,7 +1583,7 @@ window.TABI_AREAS={
       "title": "台北駅",
       "destination": "台北車站",
       "subtitle": "地下街・おみやげ",
-      "description": "交通の中心地で、地下街や買い物を楽しめるエリア。",
+      "description": "地下街や買い物を楽しめるエリア。",
       "tone": "#2054D3",
       "toneLight": "",
       "categories": [
