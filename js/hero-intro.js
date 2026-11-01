@@ -1,4 +1,4 @@
-/* v30.9.213 / v30.9.225 — Top page intro.
+/* v30.9.213 / v30.9.254 — Top page intro.
    The wordmark settles (TAIPEI CITY GUIDE fades out, TABI / TAIPEI shrinks and
    the guide label slides out to its right), the golden horizon sinks, and a
    greeting for the current time of day fades in line by line.
@@ -210,6 +210,13 @@
     {pool:'awake',     start:1230, end:1440, parts:1}   // 01:30–04:59
   ];
   const STORE_KEY='tabi-hero-greeting-v5';
+  /* v30.9.254 — the journey starts on RESET (YYYY-MM-DD, from 05:00 that day).
+     Before it only the time greetings appear (with the special minutes and the
+     tap replies): no はじめまして, no visit counts, trip days, habits or
+     once-only messages, and none of them is counted. On that day every
+     visitor's record starts afresh, so はじめまして greets them once more.
+     To start everyone over again later, change the date. */
+  const RESET='2026-11-17';
   const NO_REPEAT_DAYS=3;     // a greeting is not shown again on the next two days
   const DAY_TURN_HOUR=5;      // 00:00–04:59 still belongs to the previous day
   const SWITCH_JITTER=5;      // minutes a switch may move, either way
@@ -309,6 +316,14 @@
   const {slot,part}=slotFor(now);
   const store=readStore();
   const today=dayNumber(now);
+  const resetDay=(()=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(RESET);
+    return m?Math.floor(Date.UTC(+m[1],+m[2]-1,+m[3])/86400000):-Infinity;})();
+  const started=today>=resetDay;
+  // A record from before the start (or from an earlier RESET) is cleared.
+  if(store){
+    const tag=(started?'':'before ')+RESET;
+    if(store.reset!==tag){for(const key of Object.keys(store))delete store[key];store.reset=tag;}
+  }
   const clock=now.getHours()*60+now.getMinutes();
   const sinceTurn=(clock-DAY_TURN_HOUR*60+1440)%1440;  // minutes after 05:00
   const entries=GREETINGS[slot.pool].map(entryOf);
@@ -352,6 +367,8 @@
     const at=now.getTime();
     const minute=SPECIAL.minute[now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')];
     if(!store)return {lines:minute||entries[choose(slot,part,entries,now,null)].lines};
+    // Before the journey starts: the time greetings only, nothing counted.
+    if(!started)return {lines:minute||entries[choose(slot,part,entries,now,store)].lines};
     const info=bookkeeping();
     const first=store.first&&typeof store.first==='object'?store.first:null;
     if(!first){
@@ -446,7 +463,7 @@
         lastReply=reply;swapTo(reply,1200);
       },230);
     });
-    if(!store)return;
+    if(!store||!started)return;   // once-only messages wait for the journey
     // Back at the top after a long scroll (once a day), and light mode at night
     // (the first time ever; shown when the greeting is next in view).
     let inView=true,wentFar=false,pendingBright=false;
