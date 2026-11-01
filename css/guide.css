@@ -5729,36 +5729,65 @@ html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go{background:
   }
 }
 
-/* =================== v30.9.247 — DAY TRIPS: BOOKMARKS AND SCENIC BANNER ===================
+/* =================== v30.9.247 — DAY TRIPS: BOOKMARKS, SCENE BANNER, SCENE MOTION ===================
    Closed: the four square destination cards are unchanged. Open (mobile, the
-   compact toolbar): they become bookmark tabs on top of the panel — the chosen
-   one white, text only and a little larger. The panel opens with a banner:
-   the place's scene fading out on every side, its emoji and line on top, and
-   出発！ at the top right (same look as the City Walk button). */
+   compact toolbar): the cards shrink into a row; the chosen one becomes a
+   bookmark joined to the panel — white, text only and a little larger, its
+   lower edge fading into the page with curved corners flowing into the
+   panel's top line. The others stay ordinary rounded buttons above it.
+   The panel opens with a banner: the place's scene (layers animated once by
+   js/daytrip-scenes.js) fading out on every side, its emoji and line on top. */
+#guide .sights-day-trips{--dt-page:#0D0D0D;--dt-tab:#F5F5F5;}
+html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#202F36;}
 @media(max-width:600px){
-  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-buttons{gap:6px;position:relative;z-index:2;margin-bottom:-1px!important;}
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-buttons{gap:6px;align-items:start;position:relative;z-index:2;margin-bottom:0!important;}
   #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button{
-    height:40px!important;min-height:40px!important;border-radius:11px 11px 0 0!important;border-bottom-color:transparent!important;
+    height:39px!important;min-height:39px!important;border-radius:10px!important;margin-bottom:6px;overflow:visible!important;
   }
   #guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon{transition-property:top,left,width,height,font-size,opacity!important;}
+  /* the bookmark */
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]{
+    height:46px!important;min-height:46px!important;margin-bottom:-1px;z-index:3;
+    border-radius:11px 11px 0 0!important;border-color:transparent!important;
+    background:linear-gradient(to bottom,var(--dt-tab) 0,var(--dt-tab) calc(100% - 15px),var(--dt-page) 100%) border-box no-repeat!important;
+  }
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]::before,
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]::after{
+    content:"";position:absolute;bottom:0;width:10px;height:10px;pointer-events:none;
+    background:linear-gradient(to bottom,color-mix(in srgb,var(--dt-tab) 34%,var(--dt-page)),var(--dt-page));
+  }
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]::before{
+    left:-10px;-webkit-mask-image:radial-gradient(circle at 0 0,transparent 9.5px,#000 10px);mask-image:radial-gradient(circle at 0 0,transparent 9.5px,#000 10px);
+  }
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]::after{
+    right:-10px;-webkit-mask-image:radial-gradient(circle at 100% 0,transparent 9.5px,#000 10px);mask-image:radial-gradient(circle at 100% 0,transparent 9.5px,#000 10px);
+  }
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]:first-child::before,
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]:last-child::after{content:none;}
   #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"] > .daytrip-destination-button-icon{opacity:0;}
   #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"] > .daytrip-destination-button-name{
-    left:50%;font-size:13px!important;font-weight:800!important;letter-spacing:.02em;
+    top:42%!important;left:50%;font-size:13px!important;font-weight:800!important;letter-spacing:.02em;
   }
-  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-panel{margin-top:0!important;border-top-left-radius:0!important;border-top-right-radius:0!important;}
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-panel{margin-top:0!important;border-top-left-radius:13px!important;border-top-right-radius:13px!important;}
+  #guide .sights-day-trips.daytrip-mode-compact:has(.daytrip-destination-button:first-child[aria-expanded="true"]) .daytrip-destination-panel{border-top-left-radius:0!important;}
+  #guide .sights-day-trips.daytrip-mode-compact:has(.daytrip-destination-button:last-child[aria-expanded="true"]) .daytrip-destination-panel{border-top-right-radius:0!important;}
 }
+/* the banner */
 #guide .sights-day-trips .daytrip-destination-panel-heading.daytrip-banner{
-  position:relative!important;display:block!important;aspect-ratio:504.43/91.25;
+  position:relative!important;display:block!important;aspect-ratio:2019/366;
   padding:0!important;margin:10px 0 0!important;gap:0!important;
 }
-#guide .sights-day-trips .daytrip-banner::before{
-  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background:center/cover no-repeat;
+#guide .sights-day-trips .daytrip-banner::before,
+#guide .sights-day-trips .daytrip-banner .daytrip-scene{
   -webkit-mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 22%,#000 72%,transparent 100%);
   -webkit-mask-composite:source-in;
           mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 22%,#000 72%,transparent 100%);
           mask-composite:intersect;
 }
+#guide .sights-day-trips .daytrip-banner::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:center/cover no-repeat;transition:opacity .2s ease;
+}
+#guide .sights-day-trips .daytrip-banner.has-scene::before{opacity:0;}
 #guide .sights-day-trips .daytrip-banner--jiufen::before{background-image:url("../assets/daytrips/jiufen.webp");}
 #guide .sights-day-trips .daytrip-banner--shifen::before{background-image:url("../assets/daytrips/shifen.webp");}
 #guide .sights-day-trips .daytrip-banner--keelung::before{background-image:url("../assets/daytrips/keelung.webp");}
@@ -5767,21 +5796,58 @@ html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go{background:
   position:absolute!important;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
 }
 #guide .sights-day-trips .daytrip-banner .daytrip-destination-panel-desc{
-  position:absolute;z-index:1;left:10px;right:64px;top:8px;margin:0!important;
+  position:absolute;z-index:1;left:4px;right:8px;top:8px;margin:0!important;
   display:flex;align-items:center;gap:6px;min-width:0;
   color:#FFFFFF!important;font-size:12px!important;font-weight:700;line-height:1.3!important;letter-spacing:.02em;
-  /* a soft, barely-there shadow keeps the line legible over the brighter scenes */
   text-shadow:0 1px 2px rgba(0,0,0,.45),0 0 8px rgba(0,0,0,.25);
 }
 #guide .sights-day-trips .daytrip-banner .daytrip-banner-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 #guide .sights-day-trips .daytrip-banner .daytrip-banner-icon{flex:none;display:inline-flex;align-items:center;font-size:14px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35));}
-#guide .sights-day-trips .daytrip-banner .daytrip-banner-icon img{display:block;width:16px;height:16px;object-fit:contain;}
-#guide .sights-day-trips .daytrip-banner a.daytrip-depart-now{
-  position:absolute;z-index:1;top:7px;right:8px;
-  min-height:18px!important;padding:0 8px!important;border:0!important;border-radius:4px!important;
-  background:#F2F2F2!important;color:#111111!important;-webkit-text-fill-color:#111111;
-  font:800 10px/1 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif!important;letter-spacing:.04em!important;
+#guide .sights-day-trips .daytrip-banner .daytrip-banner-icon img{display:block;width:15px;height:15px;object-fit:contain;}
+/* the Yehliu icon has wide empty sides: crop them so the gap matches the emoji */
+#guide .sights-day-trips .daytrip-banner .daytrip-banner-icon img.yehliu-icon{width:9px;height:14px;object-fit:cover;}
+
+/* scene layers (built by js/daytrip-scenes.js) */
+#guide .sights-day-trips .daytrip-scene{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+#guide .sights-day-trips .daytrip-scene > .daytrip-layer{position:absolute;display:block;max-width:none;margin:0;pointer-events:none;will-change:auto;}
+/* Each motion: a few swings or bobs that shrink and slow, then rest (~1.8 s). */
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer{
+  animation-duration:1.8s;animation-fill-mode:both;animation-delay:calc(var(--delay,0ms) + 150ms);
+  animation-timing-function:cubic-bezier(.45,.05,.4,1);
 }
-#guide .sights-day-trips .daytrip-banner a.daytrip-depart-now:hover{background:#FFFFFF!important;}
-#guide .sights-day-trips .daytrip-banner a.daytrip-depart-now:active{opacity:.75;}
-html[data-theme="light"] #guide .sights-day-trips .daytrip-banner a.daytrip-depart-now{background:#222222!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--swing{animation-name:dt-swing;transform-origin:50% 0;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--sway-far{animation-name:dt-sway;--px:1.3px;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--glow{animation-name:dt-glow;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--float{animation-name:dt-float;transform-origin:50% 50%;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--float-far{animation-name:dt-float-far;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--shimmer{animation-name:dt-shimmer;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--bob{animation-name:dt-bob;transform-origin:50% 85%;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--breeze{animation-name:dt-breeze;animation-timing-function:cubic-bezier(.2,.7,.25,1);}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--ripple{animation-name:dt-sway;--px:2.2px;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--wave-far{animation-name:dt-sway;--px:1.4px;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--wave{animation-name:dt-sway;--px:2.6px;}
+@keyframes dt-swing{
+  0%{transform:rotate(0)}12%{transform:rotate(calc(11deg * var(--a,1)))}28%{transform:rotate(calc(-7.4deg * var(--a,1)))}
+  46%{transform:rotate(calc(4.4deg * var(--a,1)))}64%{transform:rotate(calc(-2.3deg * var(--a,1)))}82%{transform:rotate(calc(.8deg * var(--a,1)))}100%{transform:rotate(0)}
+}
+@keyframes dt-sway{
+  0%{transform:translateX(0)}12%{transform:translateX(var(--px))}28%{transform:translateX(calc(var(--px) * -.7))}
+  46%{transform:translateX(calc(var(--px) * .42))}64%{transform:translateX(calc(var(--px) * -.22))}82%{transform:translateX(calc(var(--px) * .08))}100%{transform:translateX(0)}
+}
+@keyframes dt-glow{0%{opacity:.55}15%{opacity:1}30%{opacity:.74}48%{opacity:.95}66%{opacity:.86}84%{opacity:.98}100%{opacity:1}}
+@keyframes dt-float{
+  0%{transform:translateY(5px) rotate(0);opacity:.75}16%{transform:translateY(-2px) rotate(calc(6deg * var(--a,1)));opacity:1}
+  34%{transform:translateY(1.2px) rotate(calc(-4deg * var(--a,1)))}54%{transform:translateY(-.6px) rotate(calc(2.2deg * var(--a,1)))}
+  76%{transform:translateY(.25px) rotate(calc(-.9deg * var(--a,1)))}100%{transform:translateY(0) rotate(0);opacity:1}
+}
+@keyframes dt-float-far{0%{transform:translateY(3px)}18%{transform:translateY(-1px)}38%{transform:translateY(.5px)}60%{transform:translateY(-.2px)}100%{transform:translateY(0)}}
+@keyframes dt-shimmer{0%{filter:brightness(1)}15%{filter:brightness(1.3)}32%{filter:brightness(.93)}52%{filter:brightness(1.12)}72%{filter:brightness(.98)}100%{filter:brightness(1)}}
+@keyframes dt-bob{
+  0%{transform:translateY(0) rotate(0)}14%{transform:translateY(-2px) rotate(calc(-4.5deg * var(--a,1)))}
+  32%{transform:translateY(1.3px) rotate(calc(3deg * var(--a,1)))}52%{transform:translateY(-.7px) rotate(calc(-1.6deg * var(--a,1)))}
+  72%{transform:translateY(.3px) rotate(calc(.7deg * var(--a,1)))}88%{transform:translateY(-.1px) rotate(calc(-.2deg * var(--a,1)))}100%{transform:translateY(0) rotate(0)}
+}
+@keyframes dt-breeze{0%{transform:translateX(-10px);opacity:0}55%{opacity:1}100%{transform:translateX(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){
+  #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer{animation:none!important;}
+}
