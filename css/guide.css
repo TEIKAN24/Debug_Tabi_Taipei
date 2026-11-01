@@ -5728,3 +5728,60 @@ html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go{background:
     font-size:clamp(9.5px,2.9vw,11px);letter-spacing:-.025em;
   }
 }
+
+/* =================== v30.9.247 — DAY TRIPS: BOOKMARKS AND SCENIC BANNER ===================
+   Closed: the four square destination cards are unchanged. Open (mobile, the
+   compact toolbar): they become bookmark tabs on top of the panel — the chosen
+   one white, text only and a little larger. The panel opens with a banner:
+   the place's scene fading out on every side, its emoji and line on top, and
+   出発！ at the top right (same look as the City Walk button). */
+@media(max-width:600px){
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-buttons{gap:6px;position:relative;z-index:2;margin-bottom:-1px!important;}
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button{
+    height:40px!important;min-height:40px!important;border-radius:11px 11px 0 0!important;border-bottom-color:transparent!important;
+  }
+  #guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon{transition-property:top,left,width,height,font-size,opacity!important;}
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"] > .daytrip-destination-button-icon{opacity:0;}
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"] > .daytrip-destination-button-name{
+    left:50%;font-size:13px!important;font-weight:800!important;letter-spacing:.02em;
+  }
+  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-panel{margin-top:0!important;border-top-left-radius:0!important;border-top-right-radius:0!important;}
+}
+#guide .sights-day-trips .daytrip-destination-panel-heading.daytrip-banner{
+  position:relative!important;display:block!important;aspect-ratio:504.43/91.25;
+  padding:0!important;margin:10px 0 0!important;gap:0!important;
+}
+#guide .sights-day-trips .daytrip-banner::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:center/cover no-repeat;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 22%,#000 72%,transparent 100%);
+  -webkit-mask-composite:source-in;
+          mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 22%,#000 72%,transparent 100%);
+          mask-composite:intersect;
+}
+#guide .sights-day-trips .daytrip-banner--jiufen::before{background-image:url("../assets/daytrips/jiufen.webp");}
+#guide .sights-day-trips .daytrip-banner--shifen::before{background-image:url("../assets/daytrips/shifen.webp");}
+#guide .sights-day-trips .daytrip-banner--keelung::before{background-image:url("../assets/daytrips/keelung.webp");}
+#guide .sights-day-trips .daytrip-banner--yehliu::before{background-image:url("../assets/daytrips/yehliu.webp");}
+#guide .sights-day-trips .daytrip-banner .daytrip-destination-panel-title{
+  position:absolute!important;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
+}
+#guide .sights-day-trips .daytrip-banner .daytrip-destination-panel-desc{
+  position:absolute;z-index:1;left:10px;right:64px;top:8px;margin:0!important;
+  display:flex;align-items:center;gap:6px;min-width:0;
+  color:#FFFFFF!important;font-size:12px!important;font-weight:700;line-height:1.3!important;letter-spacing:.02em;
+  /* a soft, barely-there shadow keeps the line legible over the brighter scenes */
+  text-shadow:0 1px 2px rgba(0,0,0,.45),0 0 8px rgba(0,0,0,.25);
+}
+#guide .sights-day-trips .daytrip-banner .daytrip-banner-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#guide .sights-day-trips .daytrip-banner .daytrip-banner-icon{flex:none;display:inline-flex;align-items:center;font-size:14px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35));}
+#guide .sights-day-trips .daytrip-banner .daytrip-banner-icon img{display:block;width:16px;height:16px;object-fit:contain;}
+#guide .sights-day-trips .daytrip-banner a.daytrip-depart-now{
+  position:absolute;z-index:1;top:7px;right:8px;
+  min-height:18px!important;padding:0 8px!important;border:0!important;border-radius:4px!important;
+  background:#F2F2F2!important;color:#111111!important;-webkit-text-fill-color:#111111;
+  font:800 10px/1 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif!important;letter-spacing:.04em!important;
+}
+#guide .sights-day-trips .daytrip-banner a.daytrip-depart-now:hover{background:#FFFFFF!important;}
+#guide .sights-day-trips .daytrip-banner a.daytrip-depart-now:active{opacity:.75;}
+html[data-theme="light"] #guide .sights-day-trips .daytrip-banner a.daytrip-depart-now{background:#222222!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF;}
