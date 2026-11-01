@@ -5693,8 +5693,9 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-s
 #guide .walk-inline-detail .walk-inline-top{align-items:flex-start;}
 #guide .walk-inline-detail .walk-inline-copy{flex:1 1 auto;min-width:0;}
 #guide .walk-inline-detail a.walk-inline-go{
-  flex:none;align-self:flex-start;margin:2px 0 0 10px;display:inline-flex;align-items:center;justify-content:center;
-  min-height:26px;padding:0 13px;border-radius:6px;
+  flex:none;align-self:flex-start;margin:2px 0 0 10px;display:inline-flex;align-items:center;justify-content:center;text-align:center;
+  /* v30.9.244: inner space above/below text -10% (6.5px→5.85px), horizontal -15% (13px→11.05px). */
+  min-height:24.7px;padding:0 11.05px;border-radius:6px;
   background:#F2F2F2!important;color:#111111!important;-webkit-text-fill-color:#111111;
   font-size:13px;font-weight:800;letter-spacing:.04em;line-height:1;text-decoration:none!important;white-space:nowrap;
   opacity:1!important;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
