@@ -5862,7 +5862,7 @@ html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#20
   #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer{animation:none!important;}
 }
 
-/* v30.9.256–258 — 夜市マップ: the night markets on a 北北基桃 map (js/night-markets.js).
+/* v30.9.256–259 — 夜市マップ: the night markets on a 北北基桃 map (js/night-markets.js).
    City and district lines with the rest of Taiwan fading out, MRT lines and
    stations, name pills on leader lines, numbers for off-view markets in the
    outer band, the visitor as a breathing ◎ with ripples. The details open in
@@ -5917,8 +5917,10 @@ html[data-theme="light"] #guide #night-markets-section{
 #guide #night-markets-section .nm-map.is-deep .nm-metro-line{stroke-width:3.6;}
 #guide #night-markets-section .nm-rail{stroke-width:3;}
 #guide #night-markets-section .nm-rail-outside{opacity:.35;}
-#guide #night-markets-section :is(.nm-station-major,.nm-station-major-halo){opacity:var(--nm-major-alpha,0);}
-#guide #night-markets-section :is(.nm-station-minor,.nm-station-minor-halo){opacity:var(--nm-minor-alpha,0);}
+/* Station dots by tier: several systems / 台鉄・高鉄 → transfers & markets' stations → all. */
+#guide #night-markets-section :is(.nm-tier-a,.nm-tier-a-halo){opacity:var(--nm-a-alpha,0);}
+#guide #night-markets-section :is(.nm-tier-b,.nm-tier-b-halo){opacity:var(--nm-b-alpha,0);}
+#guide #night-markets-section :is(.nm-tier-c,.nm-tier-c-halo){opacity:var(--nm-c-alpha,0);}
 #guide #night-markets-section .nm-station-halo{stroke:var(--nm-ground);stroke-width:6.4;}
 #guide #night-markets-section .nm-station{stroke:var(--nm-station);stroke-width:3.4;}
 #guide #night-markets-section .nm-transfer-halo{stroke:var(--nm-ground);stroke-width:9;}
@@ -5930,42 +5932,73 @@ html[data-theme="light"] #guide #night-markets-section{
 #guide #night-markets-section .nm-border-names text{fill:var(--nm-name-border);font-weight:600;letter-spacing:.14em;}
 #guide #night-markets-section .nm-city-names{opacity:var(--nm-city-name-alpha,0);}
 #guide #night-markets-section .nm-city-names text{fill:var(--nm-name-city);font-weight:700;letter-spacing:.16em;transition:opacity .25s ease;}
+#guide #night-markets-section .nm-city-names text.is-neighbor{fill:var(--nm-name-district);font-weight:600;}
 
-/* Stations within 2 km: a marker on the line (the operator's logo; a white oval
-   where lines meet) and the name under it, with the logos in a row at an oval.
-   Logo files in assets/rail-logos/ replace the short names (js sets --nm-logo-*). */
+/* Station names (within 2.5 km, by priority and a budget per area) beside a marker:
+   a white circle where systems meet (an oval set across side-by-side lines) with the
+   logos in a row under the name; at the closest zoom other named stations show their
+   operator's logo. Logos: assets/rail-logos/*.svg (js sets --nm-logo-*). */
 #guide #night-markets-section .nm-map-stations{position:absolute;inset:0;pointer-events:none;}
-#guide #night-markets-section :is(.nm-st,.nm-st-mark){position:absolute;left:0;top:0;display:none;will-change:transform;}
+#guide #night-markets-section :is(.nm-st,.nm-st-mark){
+  position:absolute;left:0;top:0;opacity:0;visibility:hidden;will-change:transform;
+  transition:opacity .25s ease,visibility 0s .25s;
+}
+#guide #night-markets-section :is(.nm-st,.nm-st-mark).is-on{opacity:1;visibility:visible;transition:opacity .25s ease;}
 #guide #night-markets-section .nm-st{
-  flex-direction:column;align-items:center;gap:3px;white-space:nowrap;
+  display:flex;flex-direction:column;align-items:center;gap:3px;white-space:nowrap;
   font-family:inherit;font-size:11px;font-weight:600;line-height:1.2;letter-spacing:.03em;color:var(--nm-name-station);
   text-shadow:0 0 2px var(--nm-ground),0 0 2px var(--nm-ground),0 0 3px var(--nm-ground);
 }
 #guide #night-markets-section .nm-st.is-important{color:var(--nm-name-station-strong);font-weight:700;font-size:11.5px;}
-#guide #night-markets-section .nm-st:is(.is-on,.is-measuring){display:flex;}
-#guide #night-markets-section .nm-st.is-measuring{visibility:hidden;}
-#guide #night-markets-section .nm-st-mark.is-on{display:grid;}
-#guide #night-markets-section .nm-st-mark:not(.is-on){display:none!important;}
 #guide #night-markets-section .nm-st-ops{display:flex;gap:3px;}
 #guide #night-markets-section .nm-op{
-  display:grid;place-items:center;width:15px;height:15px;box-sizing:border-box;border-radius:3.5px;
-  background:#FFFFFF center/78% no-repeat;box-shadow:0 0 0 1px rgba(0,0,0,.18);text-shadow:none;
+  display:grid;place-items:center;width:16px;height:16px;padding:1.5px;box-sizing:border-box;border-radius:3.5px;
+  background:#FFFFFF no-repeat center/contain;background-origin:content-box;box-shadow:0 0 0 1px rgba(0,0,0,.18);text-shadow:none;
 }
-#guide #night-markets-section .nm-op b{font-size:6.5px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--nm-op);}
-#guide #night-markets-section .nm-st-mark.nm-op{width:18px;height:18px;border-radius:4px;box-shadow:0 0 0 1.5px var(--nm-ground);}
-#guide #night-markets-section .nm-st-mark.nm-op b{font-size:7.5px;}
-#guide #night-markets-section .nm-st-mark.is-hub{width:12px;height:19px;border-radius:7px;background:#FFFFFF;box-shadow:0 0 0 2.5px var(--nm-ground);}
-html[data-theme="light"] #guide #night-markets-section .nm-st-mark.is-hub{box-shadow:0 0 0 1.5px #222222,0 0 0 3.5px var(--nm-ground);}
+#guide #night-markets-section .nm-op b{font-size:6.5px;font-weight:800;line-height:1;letter-spacing:-.02em;color:#2A2A2A;}
+#guide #night-markets-section .nm-st-mark{display:none;}
+#guide #night-markets-section .nm-st-mark:is(.is-circle,.is-oval,.is-tile){display:block;}
+#guide #night-markets-section .nm-st-mark > .nm-op{display:none;}
+#guide #night-markets-section .nm-st-mark.is-tile > .nm-op{display:grid;width:18px;height:18px;border-radius:4px;box-shadow:0 0 0 1.5px var(--nm-ground);}
+#guide #night-markets-section .nm-st-mark.is-circle{width:11px;height:11px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 2px #2A2A2A,0 0 0 3.5px var(--nm-ground);}
+#guide #night-markets-section .nm-st-mark.is-oval{width:12px;height:22px;border-radius:7px;background:#FFFFFF;box-shadow:0 0 0 2px #2A2A2A,0 0 0 3.5px var(--nm-ground);}
 #guide #night-markets-section .nm-stage.has-logo-trtc .nm-op-trtc{background-image:var(--nm-logo-trtc);}
 #guide #night-markets-section .nm-stage.has-logo-ntmc .nm-op-ntmc{background-image:var(--nm-logo-ntmc);}
 #guide #night-markets-section .nm-stage.has-logo-tymc .nm-op-tymc{background-image:var(--nm-logo-tymc);}
 #guide #night-markets-section .nm-stage.has-logo-tra .nm-op-tra{background-image:var(--nm-logo-tra);}
 #guide #night-markets-section .nm-stage.has-logo-thsr .nm-op-thsr{background-image:var(--nm-logo-thsr);}
-#guide #night-markets-section .nm-stage:is(.has-logo-trtc) .nm-op-trtc b,
-#guide #night-markets-section .nm-stage:is(.has-logo-ntmc) .nm-op-ntmc b,
-#guide #night-markets-section .nm-stage:is(.has-logo-tymc) .nm-op-tymc b,
-#guide #night-markets-section .nm-stage:is(.has-logo-tra) .nm-op-tra b,
-#guide #night-markets-section .nm-stage:is(.has-logo-thsr) .nm-op-thsr b{display:none;}
+#guide #night-markets-section .nm-stage.has-logo-trtc .nm-op-trtc b,
+#guide #night-markets-section .nm-stage.has-logo-ntmc .nm-op-ntmc b,
+#guide #night-markets-section .nm-stage.has-logo-tymc .nm-op-tymc b,
+#guide #night-markets-section .nm-stage.has-logo-tra .nm-op-tra b,
+#guide #night-markets-section .nm-stage.has-logo-thsr .nm-op-thsr b{display:none;}
+
+/* ⌖ back to the visitor (28 px, touch area 40 px) and its one-line note. */
+#guide #night-markets-section .nm-locate{
+  position:absolute;right:10px;bottom:10px;z-index:3;display:grid;place-items:center;width:28px;height:28px;margin:0;padding:0;
+  border:0!important;border-radius:8px;background:var(--nm-pin-bg)!important;color:var(--nm-pin-ink)!important;
+  box-shadow:var(--nm-pin-shadow);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .2s ease,filter .15s ease;
+}
+#guide #night-markets-section .nm-locate::before{content:"";position:absolute;inset:-6px;}
+#guide #night-markets-section .nm-locate:active{filter:brightness(.86);}
+#guide #night-markets-section .nm-locate:focus-visible{outline:2px solid #CCCCCC;outline-offset:2px;}
+#guide #night-markets-section .nm-locate svg{display:block;overflow:visible;}
+#guide #night-markets-section .nm-locate-ring{fill:none;stroke:currentColor;stroke-width:2;}
+#guide #night-markets-section .nm-locate-dot{fill:none;stroke:none;transition:fill .2s ease;}
+#guide #night-markets-section .nm-locate-ticks{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}
+#guide #night-markets-section .nm-locate.is-here .nm-locate-dot{fill:currentColor;}
+#guide #night-markets-section .nm-locate.is-off{opacity:.5;}
+#guide #night-markets-section .nm-locate.is-busy svg{animation:nm-locate-busy .9s ease-in-out infinite;}
+@keyframes nm-locate-busy{50%{opacity:.35;}}
+#guide #night-markets-section .nm-toast{
+  position:absolute;right:46px;bottom:12px;z-index:3;margin:0!important;padding:4px 10px;border-radius:12px;
+  background:var(--nm-pin-bg);color:var(--nm-pin-ink)!important;font-size:11px!important;font-weight:700;line-height:1.4;white-space:nowrap;
+  box-shadow:var(--nm-pin-shadow);opacity:0;transform:translateX(6px);transition:opacity .2s ease,transform .2s ease;pointer-events:none;
+}
+#guide #night-markets-section .nm-toast.is-on{opacity:1;transform:none;}
+/* A pill joining a number: the number pops. */
+#guide #night-markets-section .nm-edge.is-pop .nm-edge-count{display:inline-block;animation:nm-pop .32s ease-out;}
+@keyframes nm-pop{40%{transform:scale(1.35);}}
 
 /* Leaders and pills (10% smaller than v30.9.255) */
 #guide #night-markets-section .nm-leader{opacity:0;transition:opacity .2s ease;}

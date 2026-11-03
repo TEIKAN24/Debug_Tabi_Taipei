@@ -134,18 +134,22 @@ const districts = geoms.filter(inSet).map(g => {
 const NEIGHBOUR_JA = {J: '新竹県', G: '宜蘭県'};
 const countyRings = Object.fromEntries([...SET, ...Object.keys(NEIGHBOUR_JA)].map(id => [id, ringsOf(merge(topo, geoms.filter(g => county(g) === id)))]));
 
-// City names when zoomed out: candidate anchors, first = preferred; each is checked to be inside its city.
+// City names when zoomed out: candidate anchors, first = preferred; anchors outside
+// their county are dropped (logged). 宜蘭県・新竹県 are neighbours, drawn fainter.
 const ANCHORS = {
   A: [[25.128, 121.538], [25.088, 121.592], [24.995, 121.575], [25.040, 121.560]],
   F: [[25.040, 121.432], [25.238, 121.598], [25.050, 121.705], [24.930, 121.520], [25.170, 121.450]],
   C: [[25.118, 121.715], [25.140, 121.745]],
-  H: [[24.960, 121.215], [25.020, 121.335]]
+  H: [[24.960, 121.215], [25.020, 121.335]],
+  G: [[24.870, 121.810], [24.900, 121.860], [24.820, 121.700], [24.960, 121.900]],
+  J: [[24.800, 121.170], [24.860, 121.050], [24.760, 121.250]]
 };
 const cities = Object.entries(ANCHORS).map(([id, list]) => {
-  const anchors = list.map(([lat, lng]) => P([lng, lat]).map(Math.round));
-  anchors.forEach(([x, y], i) => { if (!inRings(x, y, countyRings[id])) throw Error(`anchor ${i} of ${COUNTY_JA[id]} is outside the city`); });
-  return {id, name: COUNTY_JA[id], anchors};
-});
+  const anchors = list.map(([lat, lng]) => P([lng, lat]).map(Math.round)).filter(([x, y], i) => {
+    const ok = inRings(x, y, countyRings[id]); if (!ok) console.error('anchor', i, 'of', id, 'is outside its county: dropped'); return ok;
+  });
+  return {id, name: COUNTY_JA[id] || NEIGHBOUR_JA[id], anchors, ...(SET.has(id) ? {} : {neighbor: true})};
+}).filter(c => c.anchors.length);
 
 // Points along the city borders, every ~2.5 km: on the line, with the line's angle
 // (kept between −90° and 90° so the text is never upside down) and the city on each

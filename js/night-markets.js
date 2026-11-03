@@ -1,25 +1,25 @@
-/* v30.9.258 — 夜市マップ from data/night-markets.js (window.TABI_NIGHT_MARKETS).
+/* v30.9.259 — 夜市マップ from data/night-markets.js (window.TABI_NIGHT_MARKETS).
    The box opens on an overview of 台北市区＋北海岸 and glides to the visitor's
    position (or 台北駅 when it is unknown / outside 北北基桃), every time it opens.
-   Base map: data/night-market-map.js (内政部 lines; the rest of Taiwan fades out);
-   Rail layer: data/night-market-metro.js — MRT, light rail, 台鉄, 高鉄
-   (© OpenStreetMap contributors, ODbL).
-   Both load on first open. One finger drags, two fingers pinch; the view stays
-   in 北北基桃.
-   Zoomed out: city lines and names, markets as numbers. Zoomed in: districts,
-   small city names written along the city borders, and a name pill per market
-   on a leader line pointing away from the centre of the screen. Stations by
-   radius in view: over 4.5 km lines only; 3.5–4.5 km dots of the main
-   stations (the others fade in); 2–3.5 km dots of all; within 2 km the main
-   stations with the operator logo (an oval where lines meet, logos in a row) and
-   their name, placed off the lines; at the closest every station is named.
-   Logos are read from assets/rail-logos/ (see LOGOS); until a file is there the
-   operator's short name is shown instead. A pill keeps its place while it can, otherwise it bends or
-   lengthens its leader and slides there; only when nothing fits do markets
-   merge into a number. The outer band of the map is kept for the numbers of
-   off-view markets, so they never cover a pill.
-   Tapping a market opens its details in the same box, which keeps the length of
-   the former tabs (pill strip + longest market); ‹ returns to the map.
+   Base map: data/night-market-map.js (内政部 lines; the rest of Taiwan fades out).
+   Rail layer: data/night-market-metro.js — MRT, light rail, 台鉄, 高鉄 on their exact
+   tracks, one line per route (© OpenStreetMap contributors, ODbL). Both load on
+   first open. One finger drags, two fingers pinch; the view stays between 桃園駅,
+   九份 and 三峽老街 (north as far as the map goes).
+   Markets: zoomed out, numbers. Zoomed in, a name pill per market whose leader
+   points away from the centre of the screen, long near the centre and shorter
+   outwards; near the edge the pill sits on its dot, shrinks as it is squeezed
+   and, small enough, joins the number at the edge (and comes back out of it).
+   This follows every frame of a drag. Off-view markets are counted at the edge,
+   grouped by direction (within ~70°).
+   Stations (radius in view): main stations (several systems, 台鉄, 高鉄) dot from
+   4.5 km, transfers and the markets' stations from 3.5 km, all from 2.5 km; names
+   within 2.5 km, by priority and a label budget per screen area. Several systems
+   meet: a white circle (an oval across side-by-side lines) and the logos under the
+   name. At the closest zoom the other named stations show their operator's logo.
+   City names along the borders within 1.5 km. Logos: assets/rail-logos/*.svg.
+   Tapping a market opens its details in the same box (as long as the former tabs);
+   ‹ returns. ⌖ (bottom right) goes back to the visitor's position.
    Data schema (also used by editor/directory.html, tab 🏮 夜市):
    {schemaVersion:1, type:'night-markets', markets:[{
      id, name, lead ('\n' = line break),
@@ -34,38 +34,31 @@
   const section = document.getElementById('night-markets-section');
   if (!host || !section) return;
   const doc = window.TABI_NIGHT_MARKETS;
-  const VERSION = '30.9.258';
+  const VERSION = '30.9.259';
   const MAP_SRC = 'data/night-market-map.js?v=' + VERSION;
   const METRO_SRC = 'data/night-market-metro.js?v=' + VERSION;
   const OVERVIEW = [25.105, 121.556];      // 台北市区＋北海岸
   const FALLBACK = [25.0478, 121.5170];    // 台北駅
+  const LIMIT_SOUTH = [24.9345, 121.3690]; // 三峽老街: the view centre goes no further south
+  const LIMIT_EAST = [25.1092, 121.8448];  // 九份
+  const LIMIT_WEST = [24.9891, 121.3137];  // 桃園駅
   const DEBUG = new URLSearchParams(location.search).get('debugLocation') === '1';
   // Sizes in screen px.
-  const DISTRICT_FONT = 10.5, BORDER_FONT = 8.5, CITY_FONT = 13;
-  const LABEL_H = 28.2, CLUSTER_H = 23.5, GAP = 7;
+  const DISTRICT_FONT = 10.5, BORDER_FONT = 9, CITY_FONT = 13;
+  const LABEL_H = 28.2, CLUSTER_H = 23.5, GAP = 6;
   const BAND = 42;      // outer band kept for the off-view numbers: no pill enters it
-  const DOT_EDGE = 36;  // a market dot closer than this to the edge counts as off view
-  const SLIDE_MS = 320;
-  // View widths in km.
+  const DOT_EDGE = 18;  // a market dot closer than this to the edge counts as off view
+  // View widths in km (= 2 × the radius in view).
   const FAR_KM = 17;        // wider: markets as numbers only
-  // Stations, by view width (= 2 × the radius in view).
-  const DOTS_KM = 9;        // narrower: dots of the main stations (others fade in down to 7)
-  const MINOR_KM = 7;       // narrower: dots of every station
-  const NAMES_KM = 4;       // narrower: main stations with logo and name
-  const ALL_NAMES_KM = 2.8; // narrower: every station with logo and name
+  const A_DOTS_KM = 9;      // main stations (several systems, 台鉄・高鉄): dots
+  const B_DOTS_KM = 7;      // transfers and the markets' stations: dots
+  const C_DOTS_KM = 5;      // every station: dots; station names from here on
+  const LOGO_KM = 2.6;      // the closest zoom: named stations show their logo
+  const BORDER_KM = 3;      // city names along the borders
   const CLOSEST_KM = 2;     // the closest zoom: about 1 km around the centre
-  // Operator logos: put the files in assets/rail-logos/ (svg or png). Until then the
-  // short name is shown in the operator's colour.
+  const LABEL_AREA = 120 * 120; // one station name per this many px² of map
   const LOGO_DIR = 'assets/rail-logos/';
-  const OPERATORS = {
-    trtc: {short: '北捷', color: '#0070BD', lines: ['BR', 'R', 'G', 'O', 'BL']},
-    ntmc: {short: '新北', color: '#00A39A', lines: ['Y', 'V', 'K', 'LB']},
-    tymc: {short: '機捷', color: '#8246AF', lines: ['A']},
-    tra: {short: '台鉄', color: '#1F3C88', lines: ['TRA']},
-    thsr: {short: '高鉄', color: '#E8762C', lines: ['THSR']}
-  };
-  const OPERATOR_OF = {};
-  for (const [op, o] of Object.entries(OPERATORS)) o.lines.forEach(id => { OPERATOR_OF[id] = op; });
+  const OPERATORS = {trtc: '北捷', ntmc: '新北', tymc: '機捷', tra: '台鉄', thsr: '高鉄'};
   const SVGNS = 'http://www.w3.org/2000/svg';
   const reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : {matches: false};
 
@@ -96,7 +89,8 @@
   const markets = doc.markets.filter(m => m && str(m.name)).map((m, i) => {
     const lat = Number(m.location?.lat), lng = Number(m.location?.lng);
     const placed = Number.isFinite(lat) && Number.isFinite(lng) && lat > 24 && lat < 26 && lng > 120.5 && lng < 122.5;
-    return {id: idOf(m.id, i), name: str(m.name), data: m, lat, lng, placed, order: i, x: 0, y: 0, w: 0};
+    const code = m.access?.type === 'mrt' ? str(m.access.code).toUpperCase() : '';
+    return {id: idOf(m.id, i), name: str(m.name), data: m, lat, lng, placed, order: i, x: 0, y: 0, w: 0, code};
   });
 
   // ---- Details ----------------------------------------------------------------
@@ -164,6 +158,7 @@
   }
 
   // ---- Markup -----------------------------------------------------------------
+  // ---- Markup -----------------------------------------------------------------
   const stage = node('div', {class: 'nm-stage', 'data-view': 'map'});
   const mapEl = node('div', {class: 'nm-map', role: 'region', tabindex: '0',
     'aria-label': '夜市マップ。ドラッグで移動、ピンチで拡大・縮小。キーボードでは矢印キーで移動、＋と−で拡大・縮小'});
@@ -185,9 +180,16 @@
   const stationsLayer = node('div', {class: 'nm-map-stations', 'aria-hidden': 'true'});
   const pinsLayer = node('div', {class: 'nm-map-pins'});
   const edgesLayer = node('div', {class: 'nm-map-edges'});
+  // ⌖ back to the visitor's position (28 px, with a larger touch area).
+  const locateBtn = node('button', {type: 'button', class: 'nm-locate', 'aria-label': '現在地に戻る'});
+  const locateIcon = svg('svg', {viewBox: '0 0 20 20', width: 16, height: 16, 'aria-hidden': 'true', focusable: 'false'});
+  locateIcon.append(svg('circle', {cx: 10, cy: 10, r: 5.2, class: 'nm-locate-ring'}), svg('circle', {cx: 10, cy: 10, r: 2.4, class: 'nm-locate-dot'}),
+    svg('path', {d: 'M10 1.5v3.3M10 15.2v3.3M1.5 10h3.3M15.2 10h3.3', class: 'nm-locate-ticks'}));
+  locateBtn.append(locateIcon);
+  const toast = node('p', {class: 'nm-toast', role: 'status'});
   const status = node('p', {class: 'nm-sr', 'aria-live': 'polite'});
-  // Leaders are drawn above the pills and stop at their edge: an even line, never shaded.
-  mapEl.append(base, stationsLayer, me, pinsLayer, leaders, edgesLayer);
+  // Leaders above the pills, ending at their edge: an even line, never shaded.
+  mapEl.append(base, stationsLayer, me, pinsLayer, leaders, edgesLayer, locateBtn, toast);
 
   const detail = node('section', {class: 'nm-detail', 'aria-labelledby': 'nm-detail-title', 'aria-hidden': 'true'});
   detail.inert = true;
@@ -227,23 +229,22 @@
     }
     return clusterPool[i];
   }
-  // Off-view numbers, one per direction (E, SE, S, SW, W, NW, N, NE) with a thin chevron.
-  const SECTOR_JA = ['東', '南東', '南', '南西', '西', '北西', '北', '北東'];
-  const edgeChips = SECTOR_JA.map((_, i) => {
+  // Off-view numbers with a thin chevron on the side / corner of their direction.
+  const edgeChips = Array.from({length: 8}, () => {
     const b = node('button', {type: 'button', class: 'nm-edge', tabindex: '-1'});
     const count = node('span', {class: 'nm-edge-count'});
     const arrow = svg('svg', {class: 'nm-edge-arrow', viewBox: '0 0 12 12', width: 12, height: 12, 'aria-hidden': 'true', focusable: 'false'});
     arrow.append(svg('path', {d: 'M4.3 2.4L8 6l-3.7 3.6', fill: 'none', stroke: 'currentColor', 'stroke-width': 1.7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'}));
-    arrow.style.transform = `rotate(${i * 45}deg)`;
     b.append(count, arrow);
-    b._count = count; b._arrow = arrow;
+    b._count = count; b._arrow = arrow; b._n = 0;
     b.addEventListener('click', () => { if (b._members) fitMembers(b._members); });
     edgesLayer.append(b);
     return b;
   });
+  const DIR_JA = ['東', '南東', '南', '南西', '西', '北西', '北', '北東'];
 
   // ---- Map data ---------------------------------------------------------------
-  let map = null, metro = null, mapPromise = null, regionRings = [];
+  let map = null, metro = null, mapPromise = null, regionRings = [], limits = null;
   let project = () => [0, 0];
   const loaded = {};
   function loadScript(src, key) {
@@ -262,7 +263,7 @@
     if (!mapPromise) {
       mapPromise = Promise.all([
         loadScript(MAP_SRC, 'TABI_NIGHT_MARKET_MAP'),
-        loadScript(METRO_SRC, 'TABI_NIGHT_MARKET_METRO').catch(() => null) // the map works without the MRT layer
+        loadScript(METRO_SRC, 'TABI_NIGHT_MARKET_METRO').catch(() => null) // the map works without the rail layer
       ]).catch(e => { mapPromise = null; throw e; });
     }
     return mapPromise;
@@ -276,19 +277,24 @@
     map = data;
     const {lng0, lat0, kx, ky} = data.projection;
     project = (lat, lng) => [(lng - lng0) * kx, -(lat - lat0) * ky];
+    limits = {south: project(...LIMIT_SOUTH)[1], east: project(...LIMIT_EAST)[0], west: project(...LIMIT_WEST)[0]};
     (data.neighborPaths || []).forEach((d, i) => neighborLines[i]?.setAttribute('d', d));
     districtLines.setAttribute('d', data.districtPath);
     cityLines.setAttribute('d', data.cityPath);
     map.districts.forEach(d => { d.el = textEl(districtNames, d.x, d.y, d.name); d.len = [...d.name].length; });
-    map.cities.forEach(c => { c.el = textEl(cityNames, 0, 0, c.name); c.el.style.opacity = 0; });
+    map.cities.forEach(c => { c.el = textEl(cityNames, 0, 0, c.name, c.neighbor ? 'is-neighbor' : ''); c.el.style.opacity = 0; });
     map.borderPool = Array.from({length: 6}, () => { const el = textEl(borderNames, 0, 0, ''); el.style.display = 'none'; return el; });
     regionRings = (data.regionRings || []).map(flat => { const r = []; for (let i = 0; i < flat.length; i += 2) r.push([flat[i], flat[i + 1]]); return r; });
     markets.forEach(m => { if (m.placed) [m.x, m.y] = project(m.lat, m.lng); });
     if (metroData && metroData.type === 'night-market-metro') setupRail(metroData);
   }
-  // Important stations: transfers, 台鉄・高鉄, and the nearest station of every market.
-  const marketCodes = new Set(markets.map(m => m.data.access?.type === 'mrt' ? str(m.data.access.code).toUpperCase() : '').filter(Boolean));
+  const marketCodes = new Set(markets.map(m => m.code).filter(Boolean));
   const LINE_COLOR = {};
+  function opTile(op, extra) {
+    const tile = node('span', {class: 'nm-op nm-op-' + op + (extra ? ' ' + extra : '')});
+    tile.append(node('b', {}, OPERATORS[op] || ''));
+    return tile;
+  }
   function setupRail(data) {
     metro = data;
     const lineGroup = [];
@@ -300,32 +306,29 @@
     });
     metroLines.append(...lineGroup);
     metro.stations.forEach(st => {
-      st.important = !!st.transfer || st.lines.some(id => id === 'TRA' || id === 'THSR') || (st.codes || []).some(c => marketCodes.has(c.code.toUpperCase()));
-      st.ops = [...new Set(st.lines.map(id => OPERATOR_OF[id]).filter(Boolean))];
-      st.hub = st.lines.length > 1;
-      // Marker on the line: an oval where lines meet, else the operator's logo.
-      st.mark = st.hub ? node('div', {class: 'nm-st-mark is-hub'}) : opTile(st.ops[0], 'nm-st-mark');
-      // Label: the name, with the logos in a row under it at a hub.
-      st.el = node('div', {class: 'nm-st' + (st.important ? ' is-important' : '')});
+      st.ops = st.ops || [];
+      st.multi = st.ops.length >= 2;                 // several systems meet: circle / oval + logos
+      st.railway = st.lines.some(id => id === 'TRA' || id === 'THSR');
+      st.marketStation = (st.codes || []).some(c => marketCodes.has(String(c.code).toUpperCase()));
+      st.tier = st.multi || st.railway ? 0 : (st.transfer || st.marketStation) ? 1 : 2;
+      st.mark = node('div', {class: 'nm-st-mark'});
+      if (st.oval !== undefined) st.mark.style.setProperty('--nm-oval', st.oval + 'deg');
+      st.mark.append(opTile(st.ops[0] || 'trtc'));
+      st.el = node('div', {class: 'nm-st' + (st.tier < 2 ? ' is-important' : '')});
       st.el.append(node('span', {class: 'nm-st-name'}, st.name));
-      if (st.hub) { const row = node('span', {class: 'nm-st-ops'}); st.ops.forEach(op => row.append(opTile(op))); st.el.append(row); }
+      if (st.multi) { const row = node('span', {class: 'nm-st-ops'}); st.ops.forEach(op => row.append(opTile(op))); st.el.append(row); }
       stationsLayer.append(st.mark, st.el);
-      st.w = 0; st.place = null;
+      st.w = 0; st.place = null; st.mode = '';
     });
     const dots = (list, cls) => {
       const d = list.map(st => `M${st.x} ${st.y}h0`).join('');
       if (d) stationDots.append(svg('path', {d, class: cls + '-halo'}), svg('path', {d, class: cls}));
     };
-    dots(metro.stations.filter(st => !st.important), 'nm-station nm-station-minor');
-    dots(metro.stations.filter(st => st.important && !st.transfer), 'nm-station nm-station-major');
-    dots(metro.stations.filter(st => st.transfer), 'nm-transfer nm-station-major');
+    dots(metro.stations.filter(st => st.tier === 2), 'nm-station nm-tier-c');
+    dots(metro.stations.filter(st => st.tier === 1 && !st.transfer), 'nm-station nm-tier-b');
+    dots(metro.stations.filter(st => st.tier === 1 && st.transfer), 'nm-transfer nm-tier-b');
+    dots(metro.stations.filter(st => st.tier === 0), 'nm-transfer nm-tier-a');
     loadLogos();
-  }
-  function opTile(op, extra) {
-    const o = OPERATORS[op] || {short: '', color: '#8C8C8C'};
-    const tile = node('span', {class: 'nm-op nm-op-' + op + (extra ? ' ' + extra : ''), style: '--nm-op:' + o.color});
-    tile.append(node('b', {}, o.short));
-    return tile;
   }
   // A logo file that loads replaces the short name everywhere (one CSS variable per operator).
   function loadLogos() {
@@ -344,7 +347,7 @@
   const GRID = 60, segGrid = new Map();
   function indexSegments(path) {
     for (const part of path.split('M')) {
-      const n = part.match(/-?\d+/g); if (!n || n.length < 4) continue;
+      const n = part.match(/-?\d+(?:\.\d+)?/g); if (!n || n.length < 4) continue;
       let x = +n[0], y = +n[1];
       for (let i = 2; i + 1 < n.length; i += 2) {
         const x2 = x + +n[i], y2 = y + +n[i + 1], seg = [x, y, x2, y2];
@@ -381,16 +384,16 @@
   // World units are 10 m; view.s = screen px per unit; (cx, cy) = world point at the centre.
   const view = {cx: 0, cy: 0, s: 0.1};
   let W = 0, H = 0, sMin = 0.1, sMax = 1, sFocus = 0.4;
-  let lastScale = NaN, layout = [], frame = 0, userPos = null, textRects = [];
+  let lastScale = NaN, frame = 0, userPos = null, located = false, textRects = [], groups = [], pillBoxes = [];
   function measure() {
     const r = mapEl.getBoundingClientRect();
     if (r.width < 40 || r.height < 40) return false;
     if (Math.abs(r.width - W) < 0.5 && Math.abs(r.height - H) < 0.5) return true;
     W = r.width; H = r.height;
     for (const el of [base, leaders]) { el.setAttribute('width', W); el.setAttribute('height', H); }
-    sMin = Math.max(W / 3000, H / 4000);           // at most ~30 km × 40 km in view
+    sMin = Math.max(W / 3000, H / 4000);               // at most ~30 km × 40 km in view
     sMax = Math.max(sMin * 2, W / (CLOSEST_KM * 100)); // about 1 km around the centre
-    sFocus = clamp(W / 900, sMin, sMax);           // the focused view, ~9 km across
+    sFocus = clamp(W / 900, sMin, sMax);               // the focused view, ~9 km across
     lastScale = NaN; clampView();
     return true;
   }
@@ -399,13 +402,15 @@
     view.s = clamp(view.s, sMin, sMax);
     const [x0, y0, x1, y1] = map.bounds;
     const mx = Math.min(W / view.s * 0.3, (x1 - x0) / 2), my = Math.min(H / view.s * 0.3, (y1 - y0) / 2);
-    view.cx = clamp(view.cx, x0 + mx, x1 - mx);
-    view.cy = clamp(view.cy, y0 + my, y1 - my);
+    const range = (lo, hi) => lo <= hi ? [lo, hi] : [(lo + hi) / 2, (lo + hi) / 2];
+    const [xl, xh] = range(Math.max(x0 + mx, limits.west), Math.min(x1 - mx, limits.east));
+    const [yl, yh] = range(y0 + my, Math.min(y1 - my, limits.south));
+    view.cx = clamp(view.cx, xl, xh);
+    view.cy = clamp(view.cy, yl, yh);
   }
   const kmAcross = s => W / s / 100;
   function requestRender() { if (!frame) frame = requestAnimationFrame(render); }
-  // After a pan comes to rest, lay the pills out again for what is now on screen
-  // (they slide to their new places); while panning they only get pushed or mirrored.
+  // After a pan comes to rest the station names are chosen again for what is on screen.
   let settleTimer = 0;
   function settle() { clearTimeout(settleTimer); settleTimer = setTimeout(() => { lastScale = NaN; requestRender(); }, 140); }
   function render() {
@@ -413,72 +418,321 @@
     if (!map || !W) return;
     const s = view.s, tx = W / 2 - view.cx * s, ty = H / 2 - view.cy * s;
     world.setAttribute('transform', `matrix(${s} 0 0 ${s} ${tx.toFixed(2)} ${ty.toFixed(2)})`);
-    if (s !== lastScale) { lastScale = s; onScale(s); }
-    if (placeOverlay(tx, ty)) frame = requestAnimationFrame(render); // pills still sliding
+    const rescaled = s !== lastScale;
+    if (rescaled) { lastScale = s; onScale(s); }
+    const moving = placeOverlay(tx, ty);
+    if (rescaled) placeTexts(s, tx, ty);
+    placeStations(tx, ty);
+    placeCityNames(tx, ty);
+    placeBorderNames(tx, ty);
+    placeMe(tx, ty);
+    if (moving) frame = requestAnimationFrame(render); // pills still catching up
   }
 
   // Zoom-dependent layers.
   function onScale(s) {
     const km = kmAcross(s);
     const d = clamp((21 - km) / 6, 0, 1);
+    const fade = (from, to) => clamp((from - km) / (from - to), 0, 1).toFixed(3);
     mapEl.style.setProperty('--nm-district-alpha', d.toFixed(3));
     mapEl.style.setProperty('--nm-city-name-alpha', (1 - d).toFixed(3));
     mapEl.style.setProperty('--nm-metro-alpha', (0.24 + 0.34 * d).toFixed(3));
     mapEl.style.setProperty('--nm-far', (1 - d).toFixed(3));
-    // Dots: main stations from 9 km across, the others fade in by 7 km; where a logo
-    // marker takes over (main by 4 km, all by 2.8 km) the dot fades out.
-    mapEl.style.setProperty('--nm-major-alpha', (clamp((DOTS_KM - km) / 0.8, 0, 1) * clamp((km - NAMES_KM + 0.4) / 0.4, 0, 1)).toFixed(3));
-    mapEl.style.setProperty('--nm-minor-alpha', (clamp((DOTS_KM - km) / (DOTS_KM - MINOR_KM), 0, 1) * clamp((km - ALL_NAMES_KM + 0.4) / 0.4, 0, 1)).toFixed(3));
-    mapEl.classList.toggle('is-deep', km <= NAMES_KM);
+    mapEl.style.setProperty('--nm-a-alpha', fade(A_DOTS_KM, A_DOTS_KM - 0.8));
+    mapEl.style.setProperty('--nm-b-alpha', fade(B_DOTS_KM, B_DOTS_KM - 0.8));
+    mapEl.style.setProperty('--nm-c-alpha', fade(C_DOTS_KM, C_DOTS_KM - 0.8));
+    mapEl.classList.toggle('is-deep', km <= LOGO_KM);
     districtNames.setAttribute('font-size', (DISTRICT_FONT / s).toFixed(2));
     borderNames.setAttribute('font-size', (BORDER_FONT / s).toFixed(2));
     cityNames.setAttribute('font-size', (CITY_FONT / s).toFixed(2));
-    layout = layoutMarkets(s, true, true);
-    placeTexts(s, d);
+    groups = groupMarkets(s);
   }
   const overlaps = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
   const box = (x, y, w, h, pad = 0) => ({x0: x - w / 2 - pad, x1: x + w / 2 + pad, y0: y - h / 2 - pad, y1: y + h / 2 + pad});
-  // Station and district names, in scaled world coordinates (independent of panning).
-  // Priority: market pills > station names > district names.
-  function placeTexts(s, districtAlpha) {
-    const taken = [];
-    for (const it of layout) {
-      if (it.members.length > 1 || it.count) taken.push(box(it.x, it.y, 34, CLUSTER_H, 2));
-      else taken.push(box(it.x + it.ox, it.y + it.oy, labelWidth(it.members[0]), LABEL_H, 2));
+  const shift = (r, dx, dy) => ({x0: r.x0 + dx, x1: r.x1 + dx, y0: r.y0 + dy, y1: r.y1 + dy});
+  function segmentHits(x0, y0, x1, y1, r) { // Liang–Barsky
+    let t0 = 0, t1 = 1; const dx = x1 - x0, dy = y1 - y0;
+    for (const [p, q] of [[-dx, x0 - r.x0], [dx, r.x1 - x0], [-dy, y0 - r.y0], [dy, r.y1 - y0]]) {
+      if (p === 0) { if (q < 0) return false; continue; }
+      const t = q / p;
+      if (p < 0) { if (t > t1) return false; if (t > t0) t0 = t; } else { if (t < t0) return false; if (t < t1) t1 = t; }
     }
-    const km = kmAcross(s);
+    return true;
+  }
+  function segmentsCross(a, b) {
+    const d = (p, q, r) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
+    const p1 = [a[0], a[1]], p2 = [a[2], a[3]], p3 = [b[0], b[1]], p4 = [b[2], b[3]];
+    return d(p1, p2, p3) * d(p1, p2, p4) < 0 && d(p3, p4, p1) * d(p3, p4, p2) < 0;
+  }
+  const locateBox = () => box(W - 24, H - 24, 44, 44); // the ⌖ button and a margin
+
+  // ---- Markets: groups per zoom ----------------------------------------------------
+  // Zoomed out every market or group is a number; zoomed in, markets closer than a
+  // pill's height share a number. Markets that were together stay so a little longer.
+  let prevGroup = new Map();
+  function groupMarkets(s, simulate) {
+    let items = markets.filter(m => m.placed).map(m => ({members: [m], x: m.x * s, y: m.y * s}));
+    const far = kmAcross(s) > FAR_KM, limit = far ? 46 : 24;
+    const together = (a, b) => a.members.some(m => b.members.some(n => prevGroup.get(m.id) && prevGroup.get(m.id) === prevGroup.get(n.id)));
+    for (let joined = true; joined;) {
+      joined = false;
+      for (let i = 0; i < items.length && !joined; i++) for (let j = i + 1; j < items.length; j++) {
+        if (Math.hypot(items[i].x - items[j].x, items[i].y - items[j].y) < limit * (together(items[i], items[j]) ? 1.3 : 1)) {
+          items = items.filter((_, k) => k !== i && k !== j).concat(mergeItems(items[i], items[j], s)); joined = true; break;
+        }
+      }
+    }
+    if (far) items.forEach(it => { it.count = true; });
+    if (!simulate) {
+      prevGroup = new Map();
+      items.forEach(it => { const key = it.members.length > 1 ? it.members.map(m => m.id).sort().join('|') : ''; it.members.forEach(m => prevGroup.set(m.id, key)); });
+    }
+    return items;
+  }
+  function mergeItems(a, b, s) {
+    const members = a.members.concat(b.members);
+    return {members, x: members.reduce((t, m) => t + m.x, 0) / members.length * s, y: members.reduce((t, m) => t + m.y, 0) / members.length * s};
+  }
+  function labelWidth(m) {
+    if (!m.w) m.w = Math.ceil(m.pin.offsetWidth) || Math.round(m.name.length * 13.5 + 27);
+    return m.w;
+  }
+
+  // ---- Markets on screen, every frame -------------------------------------------------
+  // A pill's leader points away from the centre of the screen: long near the centre
+  // (at most ~70 px), shorter outwards, none near the edge, where the pill sits on its
+  // dot and shrinks as it is squeezed; at 60 % it joins the number at the edge.
+  const TURNS = [0, 15, -15, 30, -30, 45, -45, 60, -60, 90, -90];
+  const STRETCH = [1, 0.6, 0.3, 1.25];
+  let failGroups = [];
+  function placeOverlay(tx, ty) {
+    const s = view.s, cx = W / 2, cy = H / 2;
+    const off = [], shown = new Map(), clusters = [];
+    pillBoxes = [];
+    const area = {x0: BAND, x1: W - BAND, y0: BAND, y1: H - BAND};
+    const fixed = [locateBox()];
+    if (userPos) fixed.push(box(userPos[0] * s + tx, userPos[1] * s + ty, 30, 30));
+    const offList = it => { for (const m of it.members) off.push({m, sx: m.x * s + tx, sy: m.y * s + ty}); };
+    let items = groups.map(it => ({...it, x: it.x + tx, y: it.y + ty}));
+    // Markets that could not be placed apart last frame stay one number while still close.
+    for (const ids of failGroups) {
+      const parts = items.filter(it => it.members.length === 1 && !it.count && ids.has(it.members[0].id));
+      if (parts.length < 2 || parts.some(a => parts.some(b => Math.hypot(a.x - b.x, a.y - b.y) > 70))) continue;
+      items = items.filter(it => !parts.includes(it));
+      let g = parts[0]; for (const p of parts.slice(1)) g = mergeScreen(g, p);
+      items.push(g);
+    }
+    const newFails = [];
+    const Lmax = Math.min(70, 0.18 * Math.min(W, H)), R = Math.hypot(W / 2 - BAND, H / 2 - BAND);
+    let result = null;
+    for (let guard = 0; guard < 40 && !result; guard++) {
+      const placed = fixed.slice(), leadersSoFar = [], picks = new Map();
+      clusters.length = 0;
+      for (const it of items) if (it.members.length > 1 || it.count) {
+        if (it.x < BAND || it.x > W - BAND || it.y < BAND || it.y > H - BAND) continue;
+        const r = box(it.x, it.y, 22 + String(it.members.length).length * 8, CLUSTER_H, 3);
+        placed.push(r); clusters.push(it);
+      }
+      const singles = items.filter(it => it.members.length === 1 && !it.count)
+        .sort((a, b) => Math.hypot(a.x - cx, a.y - cy) - Math.hypot(b.x - cx, b.y - cy));
+      const dots = singles.map(it => ({it, r: box(it.x, it.y, 10, 10)}));
+      let failed = null;
+      for (const it of singles) {
+        const m = it.members[0], sx = it.x, sy = it.y;
+        if (sx < DOT_EDGE || sx > W - DOT_EDGE || sy < DOT_EDGE || sy > H - DOT_EDGE) continue;
+        const e = Math.min(sx - area.x0, area.x1 - sx, sy - area.y0, area.y1 - sy);
+        if (m.absorbed ? e < 6 : e < 0) { m.absorbed = true; continue; }
+        m.absorbed = false;
+        const sc = 0.6 + 0.4 * clamp(e / 36, 0, 1);
+        const w = labelWidth(m) * sc, h = LABEL_H * sc;
+        const dist = Math.hypot(sx - cx, sy - cy);
+        const want = dist < 24 ? -90 : Math.atan2(sy - cy, sx - cx) * 180 / Math.PI;
+        const L = Math.min(Lmax * Math.pow(1 - clamp(dist / R, 0, 1), 0.7), Lmax * clamp((e - 30) / 60, 0, 1));
+        const k = clamp((e - 6) / 34, 0, 1); // 0: the pill sits on its dot
+        let pick = null;
+        search: for (const turn of TURNS) for (const f of STRETCH) {
+          const len = Math.min(L * f, Lmax), a = (want + turn) * Math.PI / 180, dx = Math.cos(a), dy = Math.sin(a);
+          const reach = Math.min(Math.abs(dx) > 1e-6 ? (w / 2) / Math.abs(dx) : Infinity, Math.abs(dy) > 1e-6 ? (h / 2) / Math.abs(dy) : Infinity);
+          const lx = clamp(sx + dx * (len + reach * k), area.x0 + w / 2, area.x1 - w / 2);
+          const ly = clamp(sy + dy * (len + reach * k), area.y0 + h / 2, area.y1 - h / 2);
+          const r = box(lx, ly, w, h, GAP * sc), seg = [sx, sy, lx, ly];
+          if (placed.some(p => overlaps(p, r))) continue;
+          if (dots.some(d => d.it !== it && overlaps(d.r, r))) continue;
+          if (placed.some(p => p.label && segmentHits(sx, sy, lx, ly, p))) continue;
+          if (leadersSoFar.some(l => segmentHits(l[0], l[1], l[2], l[3], r) || segmentsCross(l, seg))) continue;
+          pick = {lx, ly, sc, w, h, r}; break search;
+        }
+        if (!pick) { failed = it; break; }
+        pick.r.label = true; placed.push(pick.r);
+        leadersSoFar.push([sx, sy, pick.lx, pick.ly]);
+        picks.set(m, pick);
+      }
+      if (!failed) { result = picks; break; }
+      let best = null, bd = Infinity;
+      for (const other of items) {
+        if (other === failed || other.count) continue;
+        const d = Math.hypot(other.x - failed.x, other.y - failed.y);
+        if (d < bd) { bd = d; best = other; }
+      }
+      if (!best) { result = picks; break; }
+      const merged = mergeScreen(failed, best);
+      newFails.push(new Set(merged.members.map(m => m.id)));
+      items = items.filter(it => it !== failed && it !== best).concat(merged);
+    }
+    failGroups = newFails.filter(ids => items.some(it => it.members.length === ids.size && it.members.every(m => ids.has(m.id))));
+    // Draw: clusters, pills (gliding when their place jumps), leaders.
+    let ci = 0, moving = false;
+    for (const it of clusters) {
+      const b = clusterButton(ci++);
+      b._item = it;
+      b.textContent = String(it.members.length);
+      b.setAttribute('aria-label', it.members.map(m => m.name).join('、') + (it.members.length > 1 ? '（' + it.members.length + '件）' : '') + 'を拡大');
+      b.style.transform = `translate3d(${it.x.toFixed(1)}px,${it.y.toFixed(1)}px,0) translate(-50%,-50%)`;
+      b.classList.add('is-on'); b.tabIndex = 0;
+      pillBoxes.push(box(it.x, it.y, 22 + String(it.members.length).length * 8, CLUSTER_H));
+    }
+    for (let i = ci; i < clusterPool.length; i++) { const b = clusterPool[i]; b.classList.remove('is-on'); b._item = null; b.tabIndex = -1; }
+    for (const it of items) {
+      if (it.members.length > 1 || it.count) { if (!clusters.includes(it)) offList(it); continue; }
+      const m = it.members[0], p = result && result.get(m);
+      if (!p) { offList(it); continue; }
+      const wasOn = m.pin.classList.contains('is-on');
+      if (!wasOn || !m.cur || reduceMotion.matches) m.cur = {x: p.lx, y: p.ly, sc: p.sc};
+      else {
+        const jump = Math.hypot(p.lx - m.cur.x, p.ly - m.cur.y);
+        if (jump > 14 || m.chasing) {
+          m.chasing = jump > 0.8;
+          m.cur = {x: m.cur.x + (p.lx - m.cur.x) * 0.3, y: m.cur.y + (p.ly - m.cur.y) * 0.3, sc: m.cur.sc + (p.sc - m.cur.sc) * 0.3};
+          if (m.chasing) moving = true;
+        } else m.cur = {x: p.lx, y: p.ly, sc: p.sc};
+      }
+      shown.set(m, true);
+      placePin(m, it.x, it.y, m.cur.x, m.cur.y, m.cur.sc);
+      pillBoxes.push(box(m.cur.x, m.cur.y, labelWidth(m) * m.cur.sc, LABEL_H * m.cur.sc));
+    }
+    markets.forEach(m => {
+      const on = shown.has(m);
+      m.pin.classList.toggle('is-on', on);
+      m.pin.tabIndex = on ? 0 : -1;
+      if (!on) { m.leader.classList.remove('is-on'); m.cur = null; m.chasing = false; }
+    });
+    placeEdges(off);
+    return moving;
+  }
+  function mergeScreen(a, b) {
+    const members = a.members.concat(b.members), s = view.s, tx = W / 2 - view.cx * s, ty = H / 2 - view.cy * s;
+    return {members, x: members.reduce((t, m) => t + m.x * s + tx, 0) / members.length, y: members.reduce((t, m) => t + m.y * s + ty, 0) / members.length};
+  }
+  function placePin(m, sx, sy, lx, ly, sc) {
+    m.pin.style.transform = `translate3d(${lx.toFixed(1)}px,${ly.toFixed(1)}px,0) translate(-50%,-50%) scale(${sc.toFixed(3)})`;
+    // The leader ends on the pill's edge; with the pill on its dot there is none.
+    const w = labelWidth(m) * sc, h = LABEL_H * sc, dx = sx - lx, dy = sy - ly;
+    const k = Math.min(Math.abs(dx) > 1e-6 ? (w / 2) / Math.abs(dx) : Infinity, Math.abs(dy) > 1e-6 ? (h / 2) / Math.abs(dy) : Infinity, 1);
+    const ex = lx + dx * k, ey = ly + dy * k, visible = k < 1 && Math.hypot(sx - ex, sy - ey) > 5;
+    m.leader.classList.toggle('is-on', visible);
+    if (!visible) return;
+    m.line.setAttribute('x1', sx.toFixed(1)); m.line.setAttribute('y1', sy.toFixed(1));
+    m.line.setAttribute('x2', ex.toFixed(1)); m.line.setAttribute('y2', ey.toFixed(1));
+    m.dot.setAttribute('cx', sx.toFixed(1)); m.dot.setAttribute('cy', sy.toFixed(1));
+  }
+  // Numbers in the outer band: off-view markets grouped by direction (within ~70°).
+  function placeEdges(off) {
+    const cx = W / 2, cy = H / 2;
+    const list = off.map(o => ({...o, a: Math.atan2(o.sy - cy, o.sx - cx)})).sort((p, q) => p.a - q.a);
+    const groupsOut = [];
+    if (list.length) {
+      // Start after the widest gap so no group wraps around ±180°.
+      let start = 0, gapMax = -1;
+      for (let i = 0; i < list.length; i++) {
+        const next = list[(i + 1) % list.length], gap = (next.a - list[i].a + 2 * Math.PI) % (2 * Math.PI) || 2 * Math.PI;
+        if (gap > gapMax) { gapMax = gap; start = (i + 1) % list.length; }
+      }
+      const ordered = list.slice(start).concat(list.slice(0, start));
+      let cur = null;
+      for (const o of ordered) {
+        if (cur && ((o.a - cur.first + 2 * Math.PI) % (2 * Math.PI)) <= 70 * Math.PI / 180) cur.items.push(o);
+        else { cur = {first: o.a, items: [o]}; groupsOut.push(cur); }
+      }
+    }
+    const chips = [locateBox()];
+    edgeChips.forEach((chip, i) => {
+      const g = groupsOut[i];
+      if (!g) { chip.classList.remove('is-on'); chip.tabIndex = -1; chip._members = null; chip._n = 0; return; }
+      const mx = g.items.reduce((t, o) => t + Math.cos(o.a), 0), my = g.items.reduce((t, o) => t + Math.sin(o.a), 0);
+      const ang = Math.atan2(my, mx), ux = Math.cos(ang), uy = Math.sin(ang);
+      const n = g.items.length;
+      chip._members = g.items.map(o => o.m);
+      chip._count.textContent = String(n);
+      if (n > chip._n && chip._n > 0) { chip.classList.remove('is-pop'); void chip.offsetWidth; chip.classList.add('is-pop'); }
+      chip._n = n;
+      const cw = chip.offsetWidth || 32, ch = CLUSTER_H;
+      const hx = W / 2 - 8 - cw / 2, hy = H / 2 - 8 - ch / 2;
+      const t = Math.min(Math.abs(ux) > 1e-6 ? hx / Math.abs(ux) : Infinity, Math.abs(uy) > 1e-6 ? hy / Math.abs(uy) : Infinity);
+      let px = cx + ux * t, py = cy + uy * t;
+      const alongY = Math.abs(ux) > 1e-6 && hx / Math.abs(ux) <= t + .5;
+      for (const sh of [0, 30, -30, 60, -60, 90, -90]) {
+        const qx = alongY ? px : clamp(px + sh, 8 + cw / 2, W - 8 - cw / 2), qy = alongY ? clamp(py + sh, 8 + ch / 2, H - 8 - ch / 2) : py;
+        const r = box(qx, qy, cw + 12, ch + 12);
+        if (!chips.some(c => overlaps(c, r)) || sh === -90) { px = qx; py = qy; chips.push(r); break; }
+      }
+      // The chevron sits on the side / corner of the direction (8 directions).
+      const dir = (Math.round(ang / (Math.PI / 4)) + 8) % 8;
+      const dx = Math.round(Math.cos(dir * Math.PI / 4)), dy = Math.round(Math.sin(dir * Math.PI / 4));
+      chip._arrow.style.left = `calc(50% + ${dx * (cw / 2 + 5)}px)`;
+      chip._arrow.style.top = `calc(50% + ${dy * (ch / 2 + 5)}px)`;
+      chip._arrow.style.transform = `rotate(${dir * 45}deg)`;
+      chip.setAttribute('aria-label', DIR_JA[dir] + '方向の画面外の夜市 ' + n + '件（' + chip._members.map(m => m.name).join('、') + '）へ移動');
+      chip.style.transform = `translate3d(${px.toFixed(1)}px,${py.toFixed(1)}px,0) translate(-50%,-50%)`;
+      chip.classList.add('is-on'); chip.tabIndex = 0;
+      pillBoxes.push(box(px, py, cw, ch));
+    });
+  }
+
+  // ---- Stations and district names (per zoom, and when a pan comes to rest) ----------
+  // Station names within 2.5 km: priority (several systems / 台鉄・高鉄, then transfers
+  // and stations of markets on screen, then the rest), nearer the centre first, and a
+  // budget of one name per LABEL_AREA. Names sit off the lines.
+  function placeTexts(s, tx, ty) {
+    const km = kmAcross(s), districtAlpha = clamp((21 - km) / 6, 0, 1);
+    const taken = pillBoxes.map(r => shift(r, -tx, -ty)); // scaled world coordinates
+    taken.push(shift(locateBox(), -tx, -ty));
     const named = [];
     if (metro) {
-      const list = km <= ALL_NAMES_KM ? metro.stations : km <= NAMES_KM ? metro.stations.filter(st => st.important) : [];
-      // Measure the labels once.
-      const unmeasured = list.filter(st => !st.w);
-      if (unmeasured.length) {
-        unmeasured.forEach(st => st.el.classList.add('is-measuring'));
-        unmeasured.forEach(st => { st.w = st.el.offsetWidth || 60; st.h = st.el.offsetHeight || 16; });
-        unmeasured.forEach(st => st.el.classList.remove('is-measuring'));
-      }
-      const order = list.slice().sort((a, b) => (b.hub ? 2 : b.important ? 1 : 0) - (a.hub ? 2 : a.important ? 1 : 0));
-      const marks = list.map(st => box(st.x * s, st.y * s, st.hub ? 16 : 20, st.hub ? 22 : 20));
-      named.push(...marks);
+      const deep = km <= LOGO_KM;
+      const onScreen = new Set(markets.filter(m => m.pin.classList.contains('is-on')).map(m => m.code));
+      const prio = st => st.tier === 0 || (st.codes || []).some(c => onScreen.has(String(c.code).toUpperCase())) ? 0 : st.tier;
+      const cxw = view.cx * s, cyw = view.cy * s;
+      const list = km > C_DOTS_KM ? [] : metro.stations.filter(st => {
+        const x = st.x * s - cxw, y = st.y * s - cyw;
+        return Math.abs(x) < W / 2 - 16 && Math.abs(y) < H / 2 - 16;
+      }).sort((a, b) => (prio(a) - prio(b)) || (Math.hypot(a.x * s - cxw, a.y * s - cyw) - Math.hypot(b.x * s - cxw, b.y * s - cyw)));
+      const budget = Math.max(4, Math.round(W * H / LABEL_AREA));
       const keep = new Set();
-      for (const st of order) {
-        const w = st.w, h = st.h, x = st.x * s, y = st.y * s, gap = st.hub ? 13 : 12;
-        // Under the marker first (the design), then above, beside, diagonal.
+      for (const st of list) {
+        if (keep.size >= budget) break;
+        // The marker: several systems → circle (oval across side-by-side lines); otherwise
+        // the operator's logo at the closest zoom, a circle at a transfer, else the dot.
+        const mode = st.multi ? (st.oval !== undefined ? 'oval' : 'circle') : deep ? 'tile' : st.transfer ? 'circle' : '';
+        if (st.mode !== mode) { st.mode = mode; st.mark.className = 'nm-st-mark' + (mode ? ' is-' + mode : ''); st.markOn = false; }
+        if (!st.w) { st.w = st.el.offsetWidth || 60; st.h = st.el.offsetHeight || 16; }
+        const x = st.x * s, y = st.y * s, w = st.w, h = st.h;
+        const mw = mode === 'tile' ? 18 : mode === 'oval' ? 22 : mode === 'circle' ? 12 : 8, gap = mw / 2 + 4;
+        const markBox = box(x, y, mw, mw);
+        if (taken.some(t => overlaps(t, markBox))) continue;
         const spots = [[0, gap + h / 2], [0, -gap - h / 2], [gap + w / 2, 0], [-gap - w / 2, 0],
-          [gap + w / 2 - 4, gap + h / 2 - 4], [-gap - w / 2 + 4, gap + h / 2 - 4], [gap + w / 2 - 4, -gap - h / 2 + 4], [-gap - w / 2 + 4, -gap - h / 2 + 4]];
+          [gap + w / 2 - 3, gap + h / 2 - 3], [-gap - w / 2 + 3, gap + h / 2 - 3], [gap + w / 2 - 3, -gap - h / 2 + 3], [-gap - w / 2 + 3, -gap - h / 2 + 3]];
         let best = null, bestCost = Infinity;
         spots.forEach(([ox, oy], i) => {
           const r = box(x + ox, y + oy, w, h);
           if (taken.some(t => overlaps(t, r)) || named.some(t => overlaps(t, r))) return;
-          // Off the lines: each crossing costs more than any other choice.
           const cost = lineCrossings({x0: r.x0 / s, x1: r.x1 / s, y0: r.y0 / s, y1: r.y1 / s}) * 10 + i;
           if (cost < bestCost) { bestCost = cost; best = {ox, oy, r}; }
         });
         if (!best) continue;
-        named.push(best.r); keep.add(st);
+        named.push(best.r, markBox); keep.add(st);
         st.place = {ox: best.ox, oy: best.oy};
       }
-      metro.stations.forEach(st => { st.marked = list.includes(st); if (!keep.has(st)) st.place = null; });
+      metro.stations.forEach(st => { if (!keep.has(st)) st.place = null; });
     }
     const districts = [], pxPerKm = s * 100;
     for (const d of map.districts) {
@@ -493,302 +747,49 @@
     }
     textRects = named.concat(districts);
   }
-
-  // ---- Pills: flexible leaders, sticky places, merging as the last resort -------
-  function labelWidth(m) {
-    if (!m.w) m.w = Math.ceil(m.pin.offsetWidth) || Math.round(m.name.length * 13.5 + 29);
-    return m.w;
-  }
-  // Leaders spread from the centre of the screen: each points away from it, in 15°
-  // steps; short, close to that direction and unchanged is best, and no leader
-  // crosses the centre.
-  const DIRS = Array.from({length: 24}, (_, i) => { const a = (i * 15 - 90) * Math.PI / 180; return {a: i * 15 - 90, dx: Math.cos(a), dy: Math.sin(a)}; });
-  const LENGTHS = [46, 62, 82, 106];
-  const angleGap = (a, b) => Math.abs(((a - b) % 360 + 540) % 360 - 180);
-  function segmentHits(x0, y0, x1, y1, r) { // Liang–Barsky
-    let t0 = 0, t1 = 1; const dx = x1 - x0, dy = y1 - y0;
-    for (const [p, q] of [[-dx, x0 - r.x0], [dx, r.x1 - x0], [-dy, y0 - r.y0], [dy, r.y1 - y0]]) {
-      if (p === 0) { if (q < 0) return false; continue; }
-      const t = q / p;
-      if (p < 0) { if (t > t1) return false; if (t > t0) t0 = t; } else { if (t < t0) return false; if (t < t1) t1 = t; }
-    }
-    return true;
-  }
-  function segmentNear(x0, y0, x1, y1, p, r) {
-    const dx = x1 - x0, dy = y1 - y0, t = clamp(((p[0] - x0) * dx + (p[1] - y0) * dy) / (dx * dx + dy * dy || 1), 0, 1);
-    return Math.hypot(x0 + dx * t - p[0], y0 + dy * t - p[1]) < r;
-  }
-  function segmentsCross(a, b) {
-    const d = (p, q, r) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
-    const p1 = [a[0], a[1]], p2 = [a[2], a[3]], p3 = [b[0], b[1]], p4 = [b[2], b[3]];
-    return d(p1, p2, p3) * d(p1, p2, p4) < 0 && d(p3, p4, p1) * d(p3, p4, p2) < 0;
-  }
-  let prevOffsets = new Map(), prevGroup = new Map();
-  function layoutMarkets(s, commit, inView) {
-    let items = markets.filter(m => m.placed).map(m => ({members: [m], x: m.x * s, y: m.y * s}));
-    const merge = (a, b) => {
-      const members = a.members.concat(b.members);
-      return {members, x: members.reduce((t, m) => t + m.x, 0) / members.length * s, y: members.reduce((t, m) => t + m.y, 0) / members.length * s};
-    };
-    // Markets that were one number stay one a little longer (no flicker at the threshold).
-    const together = (a, b) => a.members.some(m => b.members.some(n => prevGroup.get(m.id) && prevGroup.get(m.id) === prevGroup.get(n.id)));
-    const mergeClose = limit => {
-      for (let joined = true; joined;) {
-        joined = false;
-        for (let i = 0; i < items.length && !joined; i++) for (let j = i + 1; j < items.length; j++) {
-          const lim = limit * (together(items[i], items[j]) ? 1.3 : 1);
-          if (Math.hypot(items[i].x - items[j].x, items[i].y - items[j].y) < lim) {
-            const merged = merge(items[i], items[j]);
-            items = items.filter((_, k) => k !== i && k !== j).concat(merged); joined = true; break;
-          }
-        }
-      }
-    };
-    const finish = list => {
-      if (commit) {
-        prevGroup = new Map(); prevOffsets = new Map();
-        list.forEach(it => {
-          const key = it.members.length > 1 ? it.members.map(m => m.id).sort().join('|') : '';
-          it.members.forEach(m => prevGroup.set(m.id, key));
-          if (it.members.length === 1 && !it.count) prevOffsets.set(it.members[0].id, {ox: it.ox, oy: it.oy});
-        });
-      }
-      return list;
-    };
-    if (kmAcross(s) > FAR_KM) { // city level: every market or group of markets is a number
-      mergeClose(46);
-      items.forEach(it => { it.count = true; });
-      return finish(items);
-    }
-    mergeClose(24);
-    // Where pills may go on screen right now (outside the outer band), in scaled coordinates.
-    const tx = W / 2 - view.cx * s, ty = H / 2 - view.cy * s;
-    const area = inView && W ? {x0: BAND - tx, x1: W - BAND - tx, y0: BAND - ty, y1: H - BAND - ty} : null;
-    const centre = [view.cx * s, view.cy * s];
-    const clusterBox = it => box(it.x, it.y, 22 + String(it.members.length).length * 8, CLUSTER_H, 3);
-    for (let guard = 0; guard < 60; guard++) {
-      const placed = [], leadersSoFar = [];
-      for (const it of items) if (it.members.length > 1) placed.push(clusterBox(it));
-      if (userPos) placed.push(box(userPos[0] * s, userPos[1] * s, 30, 30));
-      const dots = items.filter(it => it.members.length === 1).map(it => ({it, r: box(it.x, it.y, 10, 10)}));
-      // Pills that already had a place go first, so they keep it.
-      const singles = items.filter(it => it.members.length === 1)
-        .sort((a, b) => (prevOffsets.has(b.members[0].id) - prevOffsets.has(a.members[0].id)) || a.members[0].order - b.members[0].order);
-      let failed = null;
-      for (const it of singles) {
-        const m = it.members[0], w = labelWidth(m);
-        const gap = GAP + (prevGroup.get(m.id) ? 6 : 0); // leaving a number needs a bit more room
-        const dotInView = area && it.x > area.x0 - BAND + DOT_EDGE && it.x < area.x1 + BAND - DOT_EDGE && it.y > area.y0 - BAND + DOT_EDGE && it.y < area.y1 + BAND - DOT_EDGE;
-        const fits = (ox, oy) => {
-          const lx = it.x + ox, ly = it.y + oy, r = box(lx, ly, w, LABEL_H, gap), seg = [it.x, it.y, lx, ly];
-          if (dotInView && (lx - w / 2 < area.x0 || lx + w / 2 > area.x1 || ly - LABEL_H / 2 < area.y0 || ly + LABEL_H / 2 > area.y1)) return null;
-          if (placed.some(p => overlaps(p, r))) return null;
-          if (dots.some(d => d.it !== it && overlaps(d.r, r))) return null;
-          if (placed.some(p => p.label && segmentHits(it.x, it.y, lx, ly, p))) return null;
-          if (leadersSoFar.some(l => segmentHits(l[0], l[1], l[2], l[3], r) || segmentsCross(l, seg))) return null;
-          return r;
-        };
-        let spot = null;
-        const prev = prevOffsets.get(m.id);
-        const fromCentre = Math.hypot(it.x - centre[0], it.y - centre[1]);
-        const want = fromCentre < 28 ? -90 : Math.atan2(it.y - centre[1], it.x - centre[0]) * 180 / Math.PI;
-        // Keep the old place unless the market has moved to the other side of the centre.
-        if (prev && angleGap(Math.atan2(prev.oy, prev.ox) * 180 / Math.PI, want) < 75) { const r = fits(prev.ox, prev.oy); if (r) spot = {ox: prev.ox, oy: prev.oy, r}; }
-        if (!spot) {
-          let best = Infinity;
-          for (const len of LENGTHS) for (const d of DIRS) {
-            // The pill's centre sits beyond the leader's end, so the visible line is `len` long.
-            const reach = Math.min(Math.abs(d.dx) > 1e-6 ? (w / 2) / Math.abs(d.dx) : Infinity, Math.abs(d.dy) > 1e-6 ? (LABEL_H / 2) / Math.abs(d.dy) : Infinity);
-            const ox = d.dx * (len + reach), oy = d.dy * (len + reach);
-            const crossesCentre = segmentNear(it.x, it.y, it.x + ox, it.y + oy, centre, 26) || (Math.abs(it.x + ox - centre[0]) < w / 2 && Math.abs(it.y + oy - centre[1]) < LABEL_H / 2);
-            const cost = angleGap(d.a, want) * 0.6 + len * 0.3 + (crossesCentre ? 150 : 0) + (prev ? Math.hypot(ox - prev.ox, oy - prev.oy) * 0.25 : 0);
-            if (cost >= best) continue;
-            const r = fits(ox, oy);
-            if (r) { best = cost; spot = {ox, oy, r}; }
-          }
-        }
-        if (!spot) { failed = it; break; }
-        it.ox = spot.ox; it.oy = spot.oy;
-        spot.r.label = true; placed.push(spot.r);
-        leadersSoFar.push([it.x, it.y, it.x + spot.ox, it.y + spot.oy]);
-      }
-      if (!failed) return finish(items);
-      let best = null, bd = Infinity;
-      for (const other of items) {
-        if (other === failed) continue;
-        const d = Math.hypot(other.x - failed.x, other.y - failed.y);
-        if (d < bd) { bd = d; best = other; }
-      }
-      if (!best) return finish(items);
-      items = items.filter(it => it !== failed && it !== best).concat(merge(failed, best));
-    }
-    return finish(items);
-  }
-
-  const easeOut = t => 1 - Math.pow(1 - t, 3);
-  function slide(m, ox, oy, wasOn, now) { // the pill glides to a new place instead of jumping
-    if (!wasOn || !m.cur || reduceMotion.matches) { m.cur = {ox, oy}; m.tw = null; return false; }
-    if (!m.tw || Math.abs(m.tw.to.ox - ox) > .5 || Math.abs(m.tw.to.oy - oy) > .5) {
-      if (Math.abs(m.cur.ox - ox) <= .5 && Math.abs(m.cur.oy - oy) <= .5) { m.cur = {ox, oy}; m.tw = null; return false; }
-      m.tw = {from: {...m.cur}, to: {ox, oy}, t0: now};
-    }
-    const t = Math.min(1, (now - m.tw.t0) / SLIDE_MS), e = easeOut(t);
-    m.cur = {ox: m.tw.from.ox + (ox - m.tw.from.ox) * e, oy: m.tw.from.oy + (oy - m.tw.from.oy) * e};
-    if (t >= 1) { m.tw = null; return false; }
-    return true;
-  }
-
-  function placeOverlay(tx, ty) {
-    const now = performance.now();
-    const shown = new Set(), off = [], boxes = [], pending = [], dotBoxes = [];
-    const offList = it => { for (const m of it.members) off.push({m, sx: m.x * view.s + tx, sy: m.y * view.s + ty}); };
-    let ci = 0, moving = false;
-    const inside = (x, y, e) => x >= e && x <= W - e && y >= e && y <= H - e;
-    for (const it of layout) {
-      const sx = it.x + tx, sy = it.y + ty;
-      if (it.members.length === 1 && !it.count) {
-        if (!inside(sx, sy, DOT_EDGE)) { offList(it); continue; }
-        const m = it.members[0], w = labelWidth(m);
-        if (slide(m, it.ox, it.oy, m.pin.classList.contains('is-on'), now)) moving = true;
-        // Pills stay out of the outer band; one pushed in that lands on another is counted at the edge.
-        const lx = clamp(sx + m.cur.ox, BAND + w / 2, W - BAND - w / 2), ly = clamp(sy + m.cur.oy, BAND + LABEL_H / 2, H - BAND - LABEL_H / 2);
-        const r = box(lx, ly, w, LABEL_H);
-        dotBoxes.push(box(sx, sy, 14, 14));
-        if (Math.abs(lx - sx - m.cur.ox) > .5 || Math.abs(ly - sy - m.cur.oy) > .5) { pending.push({it, m, w, sx, sy, lx, ly, r}); continue; }
-        boxes.push(r); placePin(m, sx, sy, lx, ly); shown.add(m);
-        continue;
-      }
-      if (!inside(sx, sy, BAND)) { offList(it); continue; }
-      const b = clusterButton(ci++);
-      b._item = it;
-      b.textContent = String(it.members.length);
-      b.setAttribute('aria-label', it.members.map(m => m.name).join('、') + (it.members.length > 1 ? '（' + it.members.length + '件）' : '') + 'を拡大');
-      b.style.transform = `translate3d(${sx.toFixed(1)}px,${sy.toFixed(1)}px,0) translate(-50%,-50%)`;
-      b.classList.add('is-on'); b.tabIndex = 0;
-      boxes.push(box(sx, sy, 22 + String(it.members.length).length * 8, CLUSTER_H));
-    }
-    // Pills pushed back from the outer band: keep the pushed place if it is free,
-    // else mirror the leader to the open side; failing both, count it at the edge.
-    const free = r => !boxes.some(b => overlaps(b, r)) && !dotBoxes.some(d => overlaps(d, r));
-    for (const p of pending) {
-      let spot = free(p.r) ? p : null;
-      if (!spot) for (const [fx, fy] of [[-1, 1], [1, -1], [-1, -1]]) {
-        const lx = p.sx + p.m.cur.ox * fx, ly = p.sy + p.m.cur.oy * fy, r = box(lx, ly, p.w, LABEL_H);
-        if (lx - p.w / 2 < BAND || lx + p.w / 2 > W - BAND || ly - LABEL_H / 2 < BAND || ly + LABEL_H / 2 > H - BAND || !free(r)) continue;
-        spot = {lx, ly, r}; break;
-      }
-      if (!spot) { offList(p.it); continue; }
-      boxes.push(spot.r); placePin(p.m, p.sx, p.sy, spot.lx, spot.ly); shown.add(p.m);
-    }
-    markets.forEach(m => {
-      const on = shown.has(m);
-      m.pin.classList.toggle('is-on', on);
-      m.pin.tabIndex = on ? 0 : -1;
-      m.leader.classList.toggle('is-on', on);
-      if (!on) { m.tw = null; m.cur = null; }
-    });
-    for (let i = ci; i < clusterPool.length; i++) { const b = clusterPool[i]; b.classList.remove('is-on'); b._item = null; b.tabIndex = -1; }
-    placeStations(tx, ty);
-    placeEdges(off, boxes);
-    placeCityNames(tx, ty, boxes);
-    placeBorderNames(tx, ty, boxes);
-    if (userPos) {
-      const ux = userPos[0] * view.s + tx, uy = userPos[1] * view.s + ty;
-      me.style.transform = `translate3d(${ux.toFixed(1)}px,${uy.toFixed(1)}px,0)`;
-      me.classList.toggle('is-on', ux > -40 && ux < W + 40 && uy > -40 && uy < H + 40);
-    } else me.classList.remove('is-on');
-    return moving;
-  }
-  function placePin(m, sx, sy, lx, ly) {
-    m.pin.style.transform = `translate3d(${lx.toFixed(1)}px,${ly.toFixed(1)}px,0) translate(-50%,-50%)`;
-    // The leader ends on the pill's edge.
-    const w = labelWidth(m), dx = sx - lx, dy = sy - ly;
-    const k = Math.min(Math.abs(dx) > 1e-6 ? (w / 2) / Math.abs(dx) : Infinity, Math.abs(dy) > 1e-6 ? (LABEL_H / 2) / Math.abs(dy) : Infinity, 1);
-    const ex = lx + dx * k, ey = ly + dy * k;
-    m.line.setAttribute('x1', sx.toFixed(1)); m.line.setAttribute('y1', sy.toFixed(1));
-    m.line.setAttribute('x2', ex.toFixed(1)); m.line.setAttribute('y2', ey.toFixed(1));
-    m.dot.setAttribute('cx', sx.toFixed(1)); m.dot.setAttribute('cy', sy.toFixed(1));
-  }
-  const shownStations = new Set();
   function placeStations(tx, ty) {
     if (!metro) return;
-    const now = new Set();
     for (const st of metro.stations) {
-      if (!st.marked) continue;
-      const sx = st.x * view.s + tx, sy = st.y * view.s + ty;
-      if (sx < 10 || sx > W - 10 || sy < 10 || sy > H - 10) continue;
-      st.mark.style.transform = `translate3d(${sx.toFixed(1)}px,${sy.toFixed(1)}px,0) translate(-50%,-50%)`;
-      if (st.place) st.el.style.transform = `translate3d(${(sx + st.place.ox).toFixed(1)}px,${(sy + st.place.oy).toFixed(1)}px,0) translate(-50%,-50%)`;
-      st.mark.classList.add('is-on');
-      st.el.classList.toggle('is-on', !!st.place);
-      now.add(st);
-    }
-    for (const st of shownStations) if (!now.has(st)) { st.mark.classList.remove('is-on'); st.el.classList.remove('is-on'); }
-    shownStations.clear(); now.forEach(st => shownStations.add(st));
-  }
-  // Numbers in the outer band, in the direction of the markets they count.
-  function placeEdges(off, boxes) {
-    const groups = SECTOR_JA.map(() => []);
-    const cx = W / 2, cy = H / 2;
-    for (const o of off) groups[(Math.round(Math.atan2(o.sy - cy, o.sx - cx) / (Math.PI / 4)) + 8) % 8].push(o);
-    const chips = [];
-    groups.forEach((g, i) => {
-      const chip = edgeChips[i];
-      if (!g.length) { chip.classList.remove('is-on'); chip.tabIndex = -1; chip._members = null; return; }
-      const mx = g.reduce((t, o) => t + o.sx, 0) / g.length - cx, my = g.reduce((t, o) => t + o.sy, 0) / g.length - cy;
-      const len = Math.hypot(mx, my) || 1, ux = mx / len, uy = my / len;
-      chip._members = g.map(o => o.m);
-      chip._count.textContent = String(g.length);
-      const cw = chip.offsetWidth || 32, ch = CLUSTER_H;
-      const hx = W / 2 - 8 - cw / 2, hy = H / 2 - 8 - ch / 2;
-      const t = Math.min(Math.abs(ux) > 1e-6 ? hx / Math.abs(ux) : Infinity, Math.abs(uy) > 1e-6 ? hy / Math.abs(uy) : Infinity);
-      let px = cx + ux * t, py = cy + uy * t;
-      const alongY = Math.abs(ux) > 1e-6 && hx / Math.abs(ux) <= t + .5;
-      for (const shift of [0, 30, -30, 60, -60]) {
-        const qx = alongY ? px : clamp(px + shift, 8 + cw / 2, W - 8 - cw / 2), qy = alongY ? clamp(py + shift, 8 + ch / 2, H - 8 - ch / 2) : py;
-        const r = box(qx, qy, cw + 14, ch + 14);
-        if (!chips.some(c => overlaps(c, r)) || shift === -60) { px = qx; py = qy; chips.push(r); break; }
+      const on = !!st.place;
+      if (on) {
+        const sx = st.x * view.s + tx, sy = st.y * view.s + ty;
+        st.mark.style.transform = `translate3d(${sx.toFixed(1)}px,${sy.toFixed(1)}px,0) translate(-50%,-50%)` + (st.mode === 'oval' ? ' rotate(var(--nm-oval))' : '');
+        st.el.style.transform = `translate3d(${(sx + st.place.ox).toFixed(1)}px,${(sy + st.place.oy).toFixed(1)}px,0) translate(-50%,-50%)`;
       }
-      // The chevron sits on the side / corner the markets are in.
-      const dx = Math.round(Math.cos(i * Math.PI / 4)), dy = Math.round(Math.sin(i * Math.PI / 4));
-      chip._arrow.style.left = `calc(50% + ${dx * (cw / 2 + 5)}px)`;
-      chip._arrow.style.top = `calc(50% + ${dy * (ch / 2 + 5)}px)`;
-      chip.setAttribute('aria-label', SECTOR_JA[i] + '方向の画面外の夜市 ' + g.length + '件（' + chip._members.map(m => m.name).join('、') + '）へ移動');
-      chip.style.transform = `translate3d(${px.toFixed(1)}px,${py.toFixed(1)}px,0) translate(-50%,-50%)`;
-      chip.classList.add('is-on'); chip.tabIndex = 0;
-    });
-    boxes.push(...chips);
+      if (on !== st.on) { st.on = on; st.el.classList.toggle('is-on', on); }
+      const markOn = on && !!st.mode;
+      if (markOn !== st.markOn) { st.markOn = markOn; st.mark.classList.toggle('is-on', markOn); }
+    }
   }
-  // Zoomed out: one name per city, at the first of its anchors that is in view and free.
-  function placeCityNames(tx, ty, boxes) {
+  // Zoomed out: one name per city (宜蘭県・新竹県 fainter), at the first free anchor in view.
+  function placeCityNames(tx, ty) {
     const alpha = Number(mapEl.style.getPropertyValue('--nm-city-name-alpha')) || 0;
+    const used = pillBoxes.slice();
     for (const c of map.cities) {
       let spot = null;
       if (alpha > 0.02) {
         const w = [...c.name].length * CITY_FONT * 1.3 + 8;
         for (const [x, y] of c.anchors) {
           const sx = x * view.s + tx, sy = y * view.s + ty, r = box(sx, sy, w, CITY_FONT + 8);
-          if (sx < 50 || sx > W - 50 || sy < 40 || sy > H - 40 || boxes.some(b => overlaps(b, r))) continue;
-          spot = [x, y]; boxes.push(r); break;
+          if (sx < 50 || sx > W - 50 || sy < 40 || sy > H - 40 || used.some(b => overlaps(b, r))) continue;
+          spot = [x, y]; used.push(r); break;
         }
       }
       if (spot) { c.el.setAttribute('x', spot[0]); c.el.setAttribute('y', spot[1]); c.el.style.opacity = ''; }
       else c.el.style.opacity = 0;
     }
   }
-  // Zoomed in: the two city names written along a border in view, one on each side
-  // of the line, at the angle of the line; each pair of cities once, up to three.
-  function placeBorderNames(tx, ty, boxes) {
-    const alpha = Number(mapEl.style.getPropertyValue('--nm-district-alpha')) || 0;
-    const rects = textRects.map(r => ({x0: r.x0 + tx, x1: r.x1 + tx, y0: r.y0 + ty, y1: r.y1 + ty}));
+  // Within 1.5 km: the two city names along a border in view, one on each side of the
+  // line at its angle (never upside down); each pair of cities once, up to three.
+  function placeBorderNames(tx, ty) {
     const pool = map.borderPool;
     let used = 0;
-    if (alpha > 0.5) {
-      const pairs = new Set();
+    if (kmAcross(view.s) <= BORDER_KM) {
+      const rects = textRects.map(r => shift(r, tx, ty)), boxes = pillBoxes.slice(), pairs = new Set();
       const cands = map.borderLabels.map(b => ({b, sx: b.x * view.s + tx, sy: b.y * view.s + ty}))
         .filter(c => c.sx > BAND + 30 && c.sx < W - BAND - 30 && c.sy > BAND + 10 && c.sy < H - BAND - 10)
         .sort((a, b) => Math.hypot(a.sx - W / 2, a.sy - H / 2) - Math.hypot(b.sx - W / 2, b.sy - H / 2));
-      const off = BORDER_FONT * 0.95; // px from the line to the middle of the text
+      const off = BORDER_FONT * 0.95;
       for (const c of cands) {
         if (used + 2 > pool.length) break;
         const key = [c.b.p, c.b.m].sort().join('|');
@@ -813,6 +814,15 @@
     }
     for (let i = used; i < pool.length; i++) pool[i].style.display = 'none';
   }
+  function placeMe(tx, ty) {
+    if (userPos) {
+      const ux = userPos[0] * view.s + tx, uy = userPos[1] * view.s + ty;
+      me.style.transform = `translate3d(${ux.toFixed(1)}px,${uy.toFixed(1)}px,0)`;
+      me.classList.toggle('is-on', ux > -40 && ux < W + 40 && uy > -40 && uy < H + 40);
+      locateBtn.classList.toggle('is-here', Math.hypot(ux - W / 2, uy - H / 2) < 12);
+    } else { me.classList.remove('is-on'); locateBtn.classList.remove('is-here'); }
+    locateBtn.classList.toggle('is-off', located && !userPos);
+  }
 
   // ---- Motion -------------------------------------------------------------------
   let anim = 0, inertia = 0, interacted = false;
@@ -828,7 +838,7 @@
     Object.assign(view, {cx: target.cx, cy: target.cy, s: target.s}); clampView();
     const to = {...view};
     Object.assign(view, keep);
-    if (!duration || reduceMotion.matches) { Object.assign(view, to); render(); if (done) done(); return; }
+    if (!duration || reduceMotion.matches) { Object.assign(view, to); render(); settle(); if (done) done(); return; }
     const start = performance.now(), l0 = Math.log(from.s), l1 = Math.log(to.s);
     const zooms = Math.abs(l1 - l0) > 1e-3;
     const step = now => {
@@ -856,13 +866,31 @@
     let s = Math.max(view.s, W / FAR_KM / 100 * 1.15);
     if (ids.size === 1) s = Math.max(view.s, sFocus);
     else {
-      const together = scale => layoutMarkets(scale, false).some(it => it.members.filter(m => ids.has(m.id)).length === ids.size);
+      const together = scale => groupMarkets(scale, true).some(it => it.members.filter(m => ids.has(m.id)).length === ids.size);
+      s = Math.max(s, view.s * 1.6);
       while (s < sMax && together(s)) s = Math.min(sMax, s * 1.25);
     }
     const cx = item.members.reduce((t, m) => t + m.x, 0) / item.members.length;
     const cy = item.members.reduce((t, m) => t + m.y, 0) / item.members.length;
     flyTo({cx, cy, s}, 650);
   }
+  // ⌖: back to the visitor's position (asks again), or 台北駅 with a note.
+  let toastTimer = 0;
+  function showToast(text) {
+    toast.textContent = text; toast.classList.add('is-on');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('is-on'), 2600);
+  }
+  locateBtn.addEventListener('click', e => {
+    e.stopPropagation(); interacted = true;
+    locateBtn.classList.add('is-busy');
+    locate().then(pos => {
+      locateBtn.classList.remove('is-busy');
+      located = true; userPos = pos;
+      const target = pos || project(...FALLBACK);
+      if (!pos) showToast('現在地を取得できません');
+      flyTo({cx: target[0], cy: target[1], s: Math.max(view.s, sFocus)}, 800);
+    });
+  });
 
   // ---- Gestures -------------------------------------------------------------------
   const pointers = new Map();
@@ -980,6 +1008,7 @@
   });
 
   // ---- Details view ---------------------------------------------------------------
+  // ---- Details view ---------------------------------------------------------------
   let returnFocus = null;
   function setView(name) {
     stage.dataset.view = name;
@@ -1038,6 +1067,7 @@
   }
 
   // ---- Opening: overview → visitor (or 台北駅) -----------------------------------
+  // ---- Opening: overview → visitor (or 台北駅) -----------------------------------
   function debugPosition() {
     if (!DEBUG) return null;
     try {
@@ -1080,7 +1110,7 @@
     locate().then(pos => {
       if (token !== introToken) return;
       settled = true; clearTimeout(fallbackTimer);
-      userPos = pos; lastScale = NaN; requestRender();
+      userPos = pos; located = true; lastScale = NaN; requestRender();
       status.textContent = pos ? '現在地の周辺を表示しています。' : '台北駅の周辺を表示しています。';
       if (fellBack) { if (pos) glideTo(pos, 1200); return; }
       const hold = Math.max(0, 600 - (performance.now() - opened));
@@ -1091,7 +1121,7 @@
   document.addEventListener('tabi:debug-location', () => {
     if (!section.open || !map || !W) return;
     locate().then(pos => {
-      userPos = pos; lastScale = NaN;
+      userPos = pos; located = true; lastScale = NaN;
       flyTo({cx: (pos || project(...FALLBACK))[0], cy: (pos || project(...FALLBACK))[1], s: Math.max(view.s, sFocus)}, 900);
     });
   });
