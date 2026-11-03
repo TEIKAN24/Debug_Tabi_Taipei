@@ -8,7 +8,6 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-80f6-b7fc-e721a3bd0561",
       "title": "赤峰街・中山駅",
-      "destination": "台北 赤峰街",
       "subtitle": "古着・雑貨・カフェ",
       "description": "雑貨や古着、カフェ巡りを楽しむ街。",
       "tone": "#CE7A7A",
@@ -476,7 +475,6 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-80d8-8e85-c416590bb08c",
       "title": "永康街・東門駅",
-      "destination": "台北 永康街",
       "subtitle": "グルメ・雑貨",
       "description": "グルメと雑貨をのんびり楽しめるエリア。",
       "tone": "#F6CF46",
@@ -685,7 +683,6 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-8051-85d2-cacdb8bfc380",
       "title": "西門町",
-      "destination": "台北 西門町",
       "subtitle": "ストリート・若者文化",
       "description": "台湾の若者文化とトレンドが集まる街。",
       "tone": "#E285E0",
@@ -962,9 +959,8 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-8061-bcf4-f2ea3e8ea786",
       "title": "信義区・台北101",
-      "destination": "台北101",
       "subtitle": "デパート・夜景",
-      "description": "百貨店が集まる、台北のショッピングの中心地。",
+      "description": "百貨店が集まる、台北のショッピング中心地。",
       "tone": "#A4C8DD",
       "toneLight": "",
       "categories": [
@@ -1126,7 +1122,7 @@ window.TABI_AREAS={
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "スカイレストランあり",
+                  "text": "スカイレストラン有り",
                   "tone": "auto"
                 },
                 {
@@ -1298,7 +1294,6 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-80ad-8016-e0f3faa7f9fe",
       "title": "迪化街・大稻埕",
-      "destination": "台北 迪化街",
       "subtitle": "レトロ・台湾雑貨",
       "description": "レトロな街並みと個性的なお店が魅力。",
       "tone": "#F0A174",
@@ -1581,9 +1576,8 @@ window.TABI_AREAS={
     {
       "id": "3f76bda0-4caa-80e3-b405-d7e284f677ba",
       "title": "台北駅",
-      "destination": "台北車站",
       "subtitle": "地下街・おみやげ",
-      "description": "地下街や買い物を楽しめるエリア。",
+      "description": "交通の中心地で、地下街や買い物を楽しめるエリア。",
       "tone": "#2054D3",
       "toneLight": "",
       "categories": [
@@ -1770,7 +1764,6 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-8000-a208-c92f37d1e895",
       "title": "公館",
-      "destination": "捷運公館站",
       "subtitle": "学生街・ローカル",
       "description": "学生街の活気とローカルグルメが魅力。",
       "tone": "#628936",
@@ -2028,9 +2021,8 @@ window.TABI_AREAS={
     {
       "id": "3f66bda0-4caa-80c7-b409-fcc625e8fa47",
       "title": "東区",
-      "destination": "捷運忠孝復興站",
       "subtitle": "ファッション・カフェ",
-      "description": "セレクトショップやカフェが点在するお洒落な街。",
+      "description": "セレクトショップやカフェが点在するおしゃれな街。",
       "tone": "#DE6E4B",
       "toneLight": "",
       "categories": [
@@ -2216,7 +2208,6 @@ window.TABI_AREAS={
     {
       "id": "areas-mvtohz8c-1t82d",
       "title": "民生社區・富錦街",
-      "destination": "台北 富錦街",
       "subtitle": "街歩き・カフェ・雑貨",
       "description": "木漏れ日が心地よい、台北のおしゃれな住宅街。",
       "tone": "#D6DCD0",
@@ -2245,7 +2236,7 @@ window.TABI_AREAS={
               "mapUrl": "https://www.google.com/maps/place/funfuntown+%E6%94%BE%E6%94%BE%E5%A0%82+%E5%8F%B0%E5%8C%97/@25.0607948,121.5553757,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abd23d3e73e5:0xc736a24155b0b661!8m2!3d25.06079!4d121.557956!16s%2Fg%2F119x13nfn?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
               "tags": [
                 {
-                  "text": "暮らしのデザイン雑貨",
+                  "text": "暮らしデザイン雑貨",
                   "tone": "auto"
                 }
               ],
@@ -2378,7 +2369,6 @@ window.TABI_AREAS={
     {
       "id": "areas-mvtomaeb-jm2lt",
       "title": "淡水老街・重建街",
-      "destination": "淡水老街",
       "subtitle": "歴史・夕日",
       "description": "古い街並みと、美しい夕日が楽しめる港町。",
       "tone": "#A8717C",
@@ -2459,7 +2449,7 @@ window.TABI_AREAS={
               "mapUrl": "https://www.google.com/maps/place/%E6%B7%A1%E6%B0%B4%E7%B4%85%E6%AF%9B%E5%9F%8E/@25.1736937,121.4336047,17z/data=!4m6!3m5!1s0x3442a54fc0269ea9:0xefd8a1452482dedd!8m2!3d25.1754267!4d121.4329366!16s%2Fg%2F11bc586fn6?entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
               "tags": [
                 {
-                  "text": "1629年建造",
+                  "text": "1629 年建造",
                   "tone": "auto"
                 },
                 {
@@ -2523,7 +2513,7 @@ window.TABI_AREAS={
               "mapUrl": "https://www.google.com/maps/place/%E5%89%8D%E6%B8%85%E6%B7%A1%E6%B0%B4%E9%96%A2%E7%A8%8E%E5%8B%99%E5%8F%B8%E5%AE%98%E9%82%B8/@25.1739687,121.4346389,17.56z/data=!4m6!3m5!1s0x3442a5506f0b8d23:0x1ba0193257e91ac7!8m2!3d25.174176!4d121.4362748!16s%2Fg%2F155prj_t?hl=ja&entry=ttu&g_ep=EgoyMDI2MTAyNy4wIKXMDSoASAFQAw%3D%3D",
               "tags": [
                 {
-                  "text": "1860年代",
+                  "text": "1860 年代",
                   "tone": "auto"
                 },
                 {

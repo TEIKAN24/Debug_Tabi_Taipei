@@ -516,7 +516,7 @@ window.TABI_NIGHT_MARKETS={
         "type": "mrt",
         "code": "LB06",
         "color": "#4EB3DC",
-        "station": "三峽",
+        "station": "三峽駅",
         "exit": ""
       },
       "hours": "17:30頃–22:30頃（火・金のみ）",
@@ -544,6 +544,45 @@ window.TABI_NIGHT_MARKETS={
       "location": {
         "lat": 24.9318,
         "lng": 121.3725
+      }
+    },
+    {
+      "id": "night-markets-mw0uatm6-x1gkm",
+      "name": "樂華夜市",
+      "lead": "観光客の姿が少なく、\n地元の生活に密着した夜市。",
+      "access": {
+        "type": "mrt",
+        "code": "O04",
+        "color": "#F8B61C",
+        "station": "頂溪駅",
+        "exit": "1"
+      },
+      "hours": "15:00–24:00（目安）・年中無休",
+      "crowded": "18:00–22:00",
+      "features": [
+        "300軒を超える",
+        "ローカル",
+        "一本道・回りやすい",
+        "アクセス抜群"
+      ],
+      "specialties": [
+        {
+          "label": "芋圓",
+          "query": "芋圓"
+        },
+        {
+          "label": "涼拌青木瓜",
+          "query": "青木瓜"
+        },
+        {
+          "label": "蝦仁焿",
+          "query": "蝦仁焿"
+        }
+      ],
+      "destination": "樂華夜市",
+      "location": {
+        "lat": 25.00838,
+        "lng": 121.51164
       }
     }
   ]

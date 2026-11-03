@@ -126,6 +126,44 @@
           "title": "台湾シャンプー・マッサージ",
           "items": [
             {
+              "id": "experiences-mvwlkc0x-5a4p7",
+              "name": "不老松",
+              "mapUrl": "https://maps.app.goo.gl/LkHA7AEEaC6dQvBCA",
+              "tags": [
+                {
+                  "text": "足つぼ・足湯",
+                  "tone": "auto"
+                },
+                {
+                  "text": "マッサージ",
+                  "tone": "auto"
+                },
+                {
+                  "text": "人気",
+                  "tone": "neutral"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
+              "id": "experiences-mvwlpfiv-zvwha",
+              "name": "表參道足體養生會館",
+              "mapUrl": "https://www.google.com/maps/place/%E8%A1%A8%E5%8F%83%E9%81%93%E8%B6%B3%E9%AB%94%E9%A4%8A%E7%94%9F%E6%9C%83%E9%A4%A8+Taipei+Massage%E3%80%81%E3%82%BF%E3%82%A4%E3%83%9A%E3%82%A4+%E3%83%9E%E3%83%83%E3%82%B5%E3%83%BC%E3%82%B8%E3%80%81%ED%83%80%EC%9D%B4%ED%8E%98%EC%9D%B4+%EB%A7%88%EC%82%AC%EC%A7%80/@25.0545505,121.5389335,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abe0c024393d:0xcfaedf7263860f7f!8m2!3d25.0545505!4d121.5415084!16s%2Fg%2F1pzpzxfsb?entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "足つぼ",
+                  "tone": "auto"
+                },
+                {
+                  "text": "マッサージ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
               "id": "3f76bda0-4caa-8031-aca3-cab46d0128ff",
               "name": "ansleep",
               "className": "venue-list-item",
@@ -163,44 +201,6 @@
               ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/bSLAXd9TyQK27Aqd9"
-            },
-            {
-              "id": "experiences-mvwlkc0x-5a4p7",
-              "name": "不老松",
-              "mapUrl": "https://maps.app.goo.gl/LkHA7AEEaC6dQvBCA",
-              "tags": [
-                {
-                  "text": "足つぼ・足湯",
-                  "tone": "auto"
-                },
-                {
-                  "text": "マッサージ",
-                  "tone": "auto"
-                },
-                {
-                  "text": "人気",
-                  "tone": "gold"
-                }
-              ],
-              "links": [],
-              "className": "venue-list-item"
-            },
-            {
-              "id": "experiences-mvwlpfiv-zvwha",
-              "name": "表參道足體養生會館",
-              "mapUrl": "https://www.google.com/maps/place/%E8%A1%A8%E5%8F%83%E9%81%93%E8%B6%B3%E9%AB%94%E9%A4%8A%E7%94%9F%E6%9C%83%E9%A4%A8+Taipei+Massage%E3%80%81%E3%82%BF%E3%82%A4%E3%83%9A%E3%82%A4+%E3%83%9E%E3%83%83%E3%82%B5%E3%83%BC%E3%82%B8%E3%80%81%ED%83%80%EC%9D%B4%ED%8E%98%EC%9D%B4+%EB%A7%88%EC%82%AC%EC%A7%80/@25.0545505,121.5389335,17z/data=!3m1!4b1!4m6!3m5!1s0x3442abe0c024393d:0xcfaedf7263860f7f!8m2!3d25.0545505!4d121.5415084!16s%2Fg%2F1pzpzxfsb?entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
-              "tags": [
-                {
-                  "text": "足つぼ",
-                  "tone": "auto"
-                },
-                {
-                  "text": "マッサージ",
-                  "tone": "auto"
-                }
-              ],
-              "links": [],
-              "className": "venue-list-item"
             }
           ]
         },
@@ -237,7 +237,7 @@
               "mapUrl": "https://www.google.com/maps/place/%E4%B8%89%E5%8F%A3%E5%8D%8A%E8%8C%B6%E9%A4%A8+Saguhan+Tea+House/@25.0397358,121.5455786,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ab7eb8498c15:0x999cc202e7ed3dec!8m2!3d25.0397358!4d121.5455786!16s%2Fg%2F11sr64tr7x?entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
               "tags": [
                 {
-                  "text": "台湾茶・茶芸教室",
+                  "text": "台湾茶 茶芸教室",
                   "tone": "neutral"
                 },
                 {
@@ -260,7 +260,7 @@
               "mapUrl": "https://www.google.com/maps/place/%E5%AE%89%E9%81%94%E7%AA%AF-%E9%B6%AF%E6%AD%8C%E6%97%97%E8%89%A6%E5%BA%97/@24.9514395,121.3488624,18.81z/data=!4m6!3m5!1s0x34681eac9fd6b29d:0xd7ab78d6b76be852!8m2!3d24.9511618!4d121.3486739!16s%2Fg%2F1tzggcwk?entry=ttu&g_ep=EgoyMDI2MTAyOC4wIKXMDSoASAFQAw%3D%3D",
               "tags": [
                 {
-                  "text": "青磁の手作り体験",
+                  "text": "青磁製品手作り",
                   "tone": "neutral"
                 },
                 {
