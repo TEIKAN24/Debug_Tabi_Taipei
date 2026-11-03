@@ -1335,6 +1335,8 @@
     if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat<24.7||lat>25.4||lng<121.2||lng>122)return false;
     debugPosition={lat,lng,accuracy:10};
     try{sessionStorage.setItem('taipeiDebugLocation',JSON.stringify({lat,lng}));}catch(e){}
+    // v30.9.256: the 夜市マップ follows the same simulated position.
+    document.dispatchEvent(new CustomEvent('tabi:debug-location'));
     geoRun++;state.areaMode='current';state.area='';
     const inside=!!greaterTaipeiRegion(lat,lng,debugPosition.accuracy);
     state.position=inside?{...debugPosition}:null;
@@ -1385,6 +1387,7 @@
     panel.querySelector('#recommend-debug-apply').addEventListener('click',()=>{
       if(select.value==='real'){
         debugPosition=null;try{sessionStorage.removeItem('taipeiDebugLocation');}catch(e){}
+        document.dispatchEvent(new CustomEvent('tabi:debug-location'));
         state.position=null;state.geoRequested=false;state.areaMode='current';requestLocation(true);
         feedback.textContent='已恢復真實 GPS 定位';setPanelOpen(false);return;
       }

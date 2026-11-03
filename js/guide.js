@@ -1989,6 +1989,8 @@ loadData();
     if(target.closest('#guide .sights-day-trips .daytrip-destination-panel'))return true; // Daytrip owns this gesture.
     // v30.9.189: the City Walk box owns its horizontal swipes (category switching).
     if(target.closest('#guide details.walk-grid-ready'))return true;
+    // v30.9.256: the 夜市マップ owns every gesture inside its box (drag, pinch, detail scroll).
+    if(target.closest('#night-markets-section .nm-stage'))return true;
     /* Horizontal scrollers own their own gestures; never swipe the whole page instead. */
     let current=target;
     while(current && current!==document.body){
