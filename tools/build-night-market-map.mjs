@@ -10,7 +10,9 @@
                    by distance (drawn fainter the farther they are)
      districts     district names (Japanese shinjitai) at their pole of inaccessibility
      cities        city names with candidate anchors inside each city (zoomed out)
-     borderLabels  small city names on both sides of the city borders (zoomed in)
+     borderLabels  points along the city borders (also with 新竹県・宜蘭県): position on the
+                   line, angle of the line (never upside down) and the city on each side;
+                   the page writes the two names along the line, one on each side
      regionRings   coarse outline of the four cities (is the visitor on the map?) */
 import fs from 'fs';
 import {mesh, feature, merge} from 'topojson-client';
@@ -129,7 +131,8 @@ const districts = geoms.filter(inSet).map(g => {
   const l = label(feature(topo, g).geometry);
   return {name: JA(g.properties.TOWNNAME), city: county(g), x: l.x, y: l.y, area: l.area};
 }).sort((a, b) => b.area - a.area);
-const countyRings = Object.fromEntries([...SET].map(id => [id, ringsOf(merge(topo, geoms.filter(g => county(g) === id)))]));
+const NEIGHBOUR_JA = {J: '新竹県', G: '宜蘭県'};
+const countyRings = Object.fromEntries([...SET, ...Object.keys(NEIGHBOUR_JA)].map(id => [id, ringsOf(merge(topo, geoms.filter(g => county(g) === id)))]));
 
 // City names when zoomed out: candidate anchors, first = preferred; each is checked to be inside its city.
 const ANCHORS = {
@@ -144,26 +147,32 @@ const cities = Object.entries(ANCHORS).map(([id, list]) => {
   return {id, name: COUNTY_JA[id], anchors};
 });
 
-// Small city names along the city borders (both sides, ~600 m in), every ~2.5 km.
+// Points along the city borders, every ~2.5 km: on the line, with the line's angle
+// (kept between −90° and 90° so the text is never upside down) and the city on each
+// side: p on the side of the normal (−sin a, cos a), m on the other.
+const NAME = id => COUNTY_JA[id] || NEIGHBOUR_JA[id] || null;
 const borderMesh = mesh(topo, topo.objects.towns, (a, b) => a !== b && county(a) !== county(b) && (inSet(a) || inSet(b)));
 const borderLabels = [];
 for (const raw of borderMesh.coordinates) {
   const pts = raw.map(P);
-  let carry = 125; // first label half a step in
+  let carry = 125;
   for (let i = 1; i < pts.length; i++) {
     const [ax, ay] = pts[i - 1], [bx, by] = pts[i], seg = Math.hypot(bx - ax, by - ay);
     if (!seg) continue;
     let t = carry;
     while (t <= seg) {
       const x = ax + (bx - ax) * t / seg, y = ay + (by - ay) * t / seg;
-      const k = Math.max(0, i - 3), m = Math.min(pts.length - 1, i + 2);           // smoothed direction
-      const tx = pts[m][0] - pts[k][0], ty = pts[m][1] - pts[k][1], tl = Math.hypot(tx, ty) || 1;
-      const nx = -ty / tl, ny = tx / tl;
-      for (const side of [1, -1]) {
-        const px = x + nx * 60 * side, py = y + ny * 60 * side;
-        const id = [...SET].find(c => inRings(px, py, countyRings[c]));
-        if (id) borderLabels.push({name: COUNTY_JA[id], x: Math.round(px), y: Math.round(py)});
-      }
+      // Direction over ~±300 m of the line, so a wiggle does not tilt the name.
+      let k = i - 1, m = i;
+      while (k > 0 && Math.hypot(pts[k][0] - x, pts[k][1] - y) < 30) k--;
+      while (m < pts.length - 1 && Math.hypot(pts[m][0] - x, pts[m][1] - y) < 30) m++;
+      let a = Math.atan2(pts[m][1] - pts[k][1], pts[m][0] - pts[k][0]) * 180 / Math.PI;
+      if (a > 90) a -= 180; if (a <= -90) a += 180;
+      const r = a * Math.PI / 180, nx = -Math.sin(r), ny = Math.cos(r);
+      const side = sgn => Object.keys(countyRings).find(c => inRings(x + nx * 40 * sgn, y + ny * 40 * sgn, countyRings[c]));
+      const p = NAME(side(1)), q = NAME(side(-1));
+      if ((p || q) && p !== q && (SET.has(side(1)) || SET.has(side(-1))))
+        borderLabels.push({x: Math.round(x), y: Math.round(y), a: Math.round(a), p, m: q});
       t += 250;
     }
     carry = t - seg;

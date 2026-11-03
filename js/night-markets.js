@@ -1,4 +1,4 @@
-/* v30.9.257 — 夜市マップ from data/night-markets.js (window.TABI_NIGHT_MARKETS).
+/* v30.9.258 — 夜市マップ from data/night-markets.js (window.TABI_NIGHT_MARKETS).
    The box opens on an overview of 台北市区＋北海岸 and glides to the visitor's
    position (or 台北駅 when it is unknown / outside 北北基桃), every time it opens.
    Base map: data/night-market-map.js (内政部 lines; the rest of Taiwan fades out);
@@ -7,11 +7,14 @@
    Both load on first open. One finger drags, two fingers pinch; the view stays
    in 北北基桃.
    Zoomed out: city lines and names, markets as numbers. Zoomed in: districts,
-   the important stations (transfers, railway stations, the markets' nearest
-   stations) as dot + name placed off the lines, small city names along the
-   city borders, and a name pill per market on a leader line that points away
-   from its neighbours. Closest (about 1 km around): every station with its
-   number. A pill keeps its place while it can, otherwise it bends or
+   small city names written along the city borders, and a name pill per market
+   on a leader line pointing away from the centre of the screen. Stations by
+   radius in view: over 4.5 km lines only; 3.5–4.5 km dots of the main
+   stations (the others fade in); 2–3.5 km dots of all; within 2 km the main
+   stations with the operator logo (an oval where lines meet, logos in a row) and
+   their name, placed off the lines; at the closest every station is named.
+   Logos are read from assets/rail-logos/ (see LOGOS); until a file is there the
+   operator's short name is shown instead. A pill keeps its place while it can, otherwise it bends or
    lengthens its leader and slides there; only when nothing fits do markets
    merge into a number. The outer band of the map is kept for the numbers of
    off-view markets, so they never cover a pill.
@@ -31,7 +34,7 @@
   const section = document.getElementById('night-markets-section');
   if (!host || !section) return;
   const doc = window.TABI_NIGHT_MARKETS;
-  const VERSION = '30.9.257';
+  const VERSION = '30.9.258';
   const MAP_SRC = 'data/night-market-map.js?v=' + VERSION;
   const METRO_SRC = 'data/night-market-metro.js?v=' + VERSION;
   const OVERVIEW = [25.105, 121.556];      // 台北市区＋北海岸
@@ -39,15 +42,30 @@
   const DEBUG = new URLSearchParams(location.search).get('debugLocation') === '1';
   // Sizes in screen px.
   const DISTRICT_FONT = 10.5, BORDER_FONT = 8.5, CITY_FONT = 13;
-  const LABEL_H = 29, CLUSTER_H = 24, GAP = 7;
+  const LABEL_H = 28.2, CLUSTER_H = 23.5, GAP = 7;
   const BAND = 42;      // outer band kept for the off-view numbers: no pill enters it
   const DOT_EDGE = 36;  // a market dot closer than this to the edge counts as off view
   const SLIDE_MS = 320;
   // View widths in km.
   const FAR_KM = 17;        // wider: markets as numbers only
-  const IMPORTANT_KM = 13;  // narrower: important stations (dot + name)
-  const CODE_KM = 3.6;      // narrower: every station, with its number
+  // Stations, by view width (= 2 × the radius in view).
+  const DOTS_KM = 9;        // narrower: dots of the main stations (others fade in down to 7)
+  const MINOR_KM = 7;       // narrower: dots of every station
+  const NAMES_KM = 4;       // narrower: main stations with logo and name
+  const ALL_NAMES_KM = 2.8; // narrower: every station with logo and name
   const CLOSEST_KM = 2;     // the closest zoom: about 1 km around the centre
+  // Operator logos: put the files in assets/rail-logos/ (svg or png). Until then the
+  // short name is shown in the operator's colour.
+  const LOGO_DIR = 'assets/rail-logos/';
+  const OPERATORS = {
+    trtc: {short: '北捷', color: '#0070BD', lines: ['BR', 'R', 'G', 'O', 'BL']},
+    ntmc: {short: '新北', color: '#00A39A', lines: ['Y', 'V', 'K', 'LB']},
+    tymc: {short: '機捷', color: '#8246AF', lines: ['A']},
+    tra: {short: '台鉄', color: '#1F3C88', lines: ['TRA']},
+    thsr: {short: '高鉄', color: '#E8762C', lines: ['THSR']}
+  };
+  const OPERATOR_OF = {};
+  for (const [op, o] of Object.entries(OPERATORS)) o.lines.forEach(id => { OPERATOR_OF[id] = op; });
   const SVGNS = 'http://www.w3.org/2000/svg';
   const reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : {matches: false};
 
@@ -263,9 +281,7 @@
     cityLines.setAttribute('d', data.cityPath);
     map.districts.forEach(d => { d.el = textEl(districtNames, d.x, d.y, d.name); d.len = [...d.name].length; });
     map.cities.forEach(c => { c.el = textEl(cityNames, 0, 0, c.name); c.el.style.opacity = 0; });
-    map.borderNames = ['台北市', '新北市', '基隆市', '桃園市'].map(name => {
-      const el = textEl(borderNames, 0, 0, name); el.style.display = 'none'; return {name, el};
-    });
+    map.borderPool = Array.from({length: 6}, () => { const el = textEl(borderNames, 0, 0, ''); el.style.display = 'none'; return el; });
     regionRings = (data.regionRings || []).map(flat => { const r = []; for (let i = 0; i < flat.length; i += 2) r.push([flat[i], flat[i + 1]]); return r; });
     markets.forEach(m => { if (m.placed) [m.x, m.y] = project(m.lat, m.lng); });
     if (metroData && metroData.type === 'night-market-metro') setupRail(metroData);
@@ -285,21 +301,44 @@
     metroLines.append(...lineGroup);
     metro.stations.forEach(st => {
       st.important = !!st.transfer || st.lines.some(id => id === 'TRA' || id === 'THSR') || (st.codes || []).some(c => marketCodes.has(c.code.toUpperCase()));
-      const el = node('div', {class: 'nm-st' + (st.important ? ' is-important' : '')});
-      const codes = node('span', {class: 'nm-st-codes'});
-      (st.codes || []).forEach(c => codes.append(node('span', {class: 'nm-st-code', style: '--nm-st-line:' + (LINE_COLOR[c.line] || '#8C8C8C')}, c.code)));
-      for (const id of ['TRA', 'THSR']) if (st.lines.includes(id)) codes.append(node('span', {class: 'nm-st-code nm-st-rail', style: '--nm-st-line:' + LINE_COLOR[id]}, id === 'TRA' ? '台鉄' : '高鉄'));
-      el.append(codes, node('span', {class: 'nm-st-name'}, st.name));
-      stationsLayer.append(el);
-      st.el = el; st.w = {}; st.place = null;
+      st.ops = [...new Set(st.lines.map(id => OPERATOR_OF[id]).filter(Boolean))];
+      st.hub = st.lines.length > 1;
+      // Marker on the line: an oval where lines meet, else the operator's logo.
+      st.mark = st.hub ? node('div', {class: 'nm-st-mark is-hub'}) : opTile(st.ops[0], 'nm-st-mark');
+      // Label: the name, with the logos in a row under it at a hub.
+      st.el = node('div', {class: 'nm-st' + (st.important ? ' is-important' : '')});
+      st.el.append(node('span', {class: 'nm-st-name'}, st.name));
+      if (st.hub) { const row = node('span', {class: 'nm-st-ops'}); st.ops.forEach(op => row.append(opTile(op))); st.el.append(row); }
+      stationsLayer.append(st.mark, st.el);
+      st.w = 0; st.place = null;
     });
     const dots = (list, cls) => {
       const d = list.map(st => `M${st.x} ${st.y}h0`).join('');
       if (d) stationDots.append(svg('path', {d, class: cls + '-halo'}), svg('path', {d, class: cls}));
     };
     dots(metro.stations.filter(st => !st.important), 'nm-station nm-station-minor');
-    dots(metro.stations.filter(st => st.important && !st.transfer), 'nm-station');
-    dots(metro.stations.filter(st => st.transfer), 'nm-transfer');
+    dots(metro.stations.filter(st => st.important && !st.transfer), 'nm-station nm-station-major');
+    dots(metro.stations.filter(st => st.transfer), 'nm-transfer nm-station-major');
+    loadLogos();
+  }
+  function opTile(op, extra) {
+    const o = OPERATORS[op] || {short: '', color: '#8C8C8C'};
+    const tile = node('span', {class: 'nm-op nm-op-' + op + (extra ? ' ' + extra : ''), style: '--nm-op:' + o.color});
+    tile.append(node('b', {}, o.short));
+    return tile;
+  }
+  // A logo file that loads replaces the short name everywhere (one CSS variable per operator).
+  function loadLogos() {
+    for (const op of Object.keys(OPERATORS)) {
+      const tryExt = exts => {
+        if (!exts.length) return;
+        const img = new Image();
+        img.onload = () => { stage.style.setProperty('--nm-logo-' + op, `url("${img.src}")`); stage.classList.add('has-logo-' + op); };
+        img.onerror = () => tryExt(exts.slice(1));
+        img.src = LOGO_DIR + op + '.' + exts[0] + '?v=' + VERSION;
+      };
+      tryExt(['svg', 'png']);
+    }
   }
   // Line segments in a coarse grid, so station names can be kept off the lines.
   const GRID = 60, segGrid = new Map();
@@ -384,9 +423,13 @@
     const d = clamp((21 - km) / 6, 0, 1);
     mapEl.style.setProperty('--nm-district-alpha', d.toFixed(3));
     mapEl.style.setProperty('--nm-city-name-alpha', (1 - d).toFixed(3));
-    mapEl.style.setProperty('--nm-metro-alpha', (0.32 + 0.26 * d).toFixed(3));
-    mapEl.style.setProperty('--nm-minor-alpha', clamp((CODE_KM + 1.2 - km) / 1.2, 0, 1).toFixed(3));
-    mapEl.classList.toggle('is-deep', km <= CODE_KM);
+    mapEl.style.setProperty('--nm-metro-alpha', (0.24 + 0.34 * d).toFixed(3));
+    mapEl.style.setProperty('--nm-far', (1 - d).toFixed(3));
+    // Dots: main stations from 9 km across, the others fade in by 7 km; where a logo
+    // marker takes over (main by 4 km, all by 2.8 km) the dot fades out.
+    mapEl.style.setProperty('--nm-major-alpha', (clamp((DOTS_KM - km) / 0.8, 0, 1) * clamp((km - NAMES_KM + 0.4) / 0.4, 0, 1)).toFixed(3));
+    mapEl.style.setProperty('--nm-minor-alpha', (clamp((DOTS_KM - km) / (DOTS_KM - MINOR_KM), 0, 1) * clamp((km - ALL_NAMES_KM + 0.4) / 0.4, 0, 1)).toFixed(3));
+    mapEl.classList.toggle('is-deep', km <= NAMES_KM);
     districtNames.setAttribute('font-size', (DISTRICT_FONT / s).toFixed(2));
     borderNames.setAttribute('font-size', (BORDER_FONT / s).toFixed(2));
     cityNames.setAttribute('font-size', (CITY_FONT / s).toFixed(2));
@@ -406,28 +449,28 @@
     const km = kmAcross(s);
     const named = [];
     if (metro) {
-      const deep = km <= CODE_KM, mode = deep ? 'deep' : 'mid';
-      const list = metro.stations.filter(st => deep || (km <= IMPORTANT_KM && districtAlpha > 0 && st.important));
-      // Measure the labels once per mode (the station numbers show only when close).
-      const unmeasured = list.filter(st => !st.w[mode]);
+      const list = km <= ALL_NAMES_KM ? metro.stations : km <= NAMES_KM ? metro.stations.filter(st => st.important) : [];
+      // Measure the labels once.
+      const unmeasured = list.filter(st => !st.w);
       if (unmeasured.length) {
         unmeasured.forEach(st => st.el.classList.add('is-measuring'));
-        unmeasured.forEach(st => { st.w[mode] = st.el.offsetWidth || 60; st.h = st.el.offsetHeight || 16; });
+        unmeasured.forEach(st => { st.w = st.el.offsetWidth || 60; st.h = st.el.offsetHeight || 16; });
         unmeasured.forEach(st => st.el.classList.remove('is-measuring'));
       }
-      const order = list.slice().sort((a, b) => (b.transfer ? 2 : b.important ? 1 : 0) - (a.transfer ? 2 : a.important ? 1 : 0));
-      const dotsTaken = list.map(st => box(st.x * s, st.y * s, 9, 9));
+      const order = list.slice().sort((a, b) => (b.hub ? 2 : b.important ? 1 : 0) - (a.hub ? 2 : a.important ? 1 : 0));
+      const marks = list.map(st => box(st.x * s, st.y * s, st.hub ? 16 : 20, st.hub ? 22 : 20));
+      named.push(...marks);
       const keep = new Set();
       for (const st of order) {
-        const w = st.w[mode], h = st.h, x = st.x * s, y = st.y * s;
-        const spots = [[7 + w / 2, 0], [-7 - w / 2, 0], [0, -6 - h / 2], [0, 6 + h / 2],
-          [5 + w / 2, -5 - h / 2], [5 + w / 2, 5 + h / 2], [-5 - w / 2, -5 - h / 2], [-5 - w / 2, 5 + h / 2]];
+        const w = st.w, h = st.h, x = st.x * s, y = st.y * s, gap = st.hub ? 13 : 12;
+        // Under the marker first (the design), then above, beside, diagonal.
+        const spots = [[0, gap + h / 2], [0, -gap - h / 2], [gap + w / 2, 0], [-gap - w / 2, 0],
+          [gap + w / 2 - 4, gap + h / 2 - 4], [-gap - w / 2 + 4, gap + h / 2 - 4], [gap + w / 2 - 4, -gap - h / 2 + 4], [-gap - w / 2 + 4, -gap - h / 2 + 4]];
         let best = null, bestCost = Infinity;
         spots.forEach(([ox, oy], i) => {
           const r = box(x + ox, y + oy, w, h);
           if (taken.some(t => overlaps(t, r)) || named.some(t => overlaps(t, r))) return;
-          if (dotsTaken.some(d => overlaps(d, r) && Math.abs(d.x0 + 4.5 - x) + Math.abs(d.y0 + 4.5 - y) > 1)) return;
-          // Keep the name off the lines: each crossing line costs more than any other choice.
+          // Off the lines: each crossing costs more than any other choice.
           const cost = lineCrossings({x0: r.x0 / s, x1: r.x1 / s, y0: r.y0 / s, y1: r.y1 / s}) * 10 + i;
           if (cost < bestCost) { bestCost = cost; best = {ox, oy, r}; }
         });
@@ -435,7 +478,7 @@
         named.push(best.r); keep.add(st);
         st.place = {ox: best.ox, oy: best.oy};
       }
-      metro.stations.forEach(st => { if (!keep.has(st)) st.place = null; });
+      metro.stations.forEach(st => { st.marked = list.includes(st); if (!keep.has(st)) st.place = null; });
     }
     const districts = [], pxPerKm = s * 100;
     for (const d of map.districts) {
@@ -456,21 +499,12 @@
     if (!m.w) m.w = Math.ceil(m.pin.offsetWidth) || Math.round(m.name.length * 13.5 + 29);
     return m.w;
   }
-  // Leaders point away from the neighbouring markets (a spreading bunch), in
-  // 15° steps; short, close to that direction and unchanged is best.
+  // Leaders spread from the centre of the screen: each points away from it, in 15°
+  // steps; short, close to that direction and unchanged is best, and no leader
+  // crosses the centre.
   const DIRS = Array.from({length: 24}, (_, i) => { const a = (i * 15 - 90) * Math.PI / 180; return {a: i * 15 - 90, dx: Math.cos(a), dy: Math.sin(a)}; });
   const LENGTHS = [46, 62, 82, 106];
-  const angleGap = (a, b) => { const d = Math.abs(((a - b) % 360 + 540) % 360 - 180); return d; };
-  function preferredAngle(it, items, s) {
-    let sx = 0, sy = 0, wsum = 0;
-    for (const m of markets) {
-      if (!m.placed || m === it.members[0]) continue;
-      const dx = it.x - m.x * s, dy = it.y - m.y * s, d = Math.hypot(dx, dy);
-      if (d < 1 || d > 260) continue;
-      const wgt = 1 / d; sx += dx / d * wgt; sy += dy / d * wgt; wsum += wgt;
-    }
-    return wsum && Math.hypot(sx, sy) > 1e-6 ? Math.atan2(sy, sx) * 180 / Math.PI : -90; // alone: straight up
-  }
+  const angleGap = (a, b) => Math.abs(((a - b) % 360 + 540) % 360 - 180);
   function segmentHits(x0, y0, x1, y1, r) { // Liang–Barsky
     let t0 = 0, t1 = 1; const dx = x1 - x0, dy = y1 - y0;
     for (const [p, q] of [[-dx, x0 - r.x0], [dx, r.x1 - x0], [-dy, y0 - r.y0], [dy, r.y1 - y0]]) {
@@ -479,6 +513,10 @@
       if (p < 0) { if (t > t1) return false; if (t > t0) t0 = t; } else { if (t < t0) return false; if (t < t1) t1 = t; }
     }
     return true;
+  }
+  function segmentNear(x0, y0, x1, y1, p, r) {
+    const dx = x1 - x0, dy = y1 - y0, t = clamp(((p[0] - x0) * dx + (p[1] - y0) * dy) / (dx * dx + dy * dy || 1), 0, 1);
+    return Math.hypot(x0 + dx * t - p[0], y0 + dy * t - p[1]) < r;
   }
   function segmentsCross(a, b) {
     const d = (p, q, r) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
@@ -526,6 +564,7 @@
     // Where pills may go on screen right now (outside the outer band), in scaled coordinates.
     const tx = W / 2 - view.cx * s, ty = H / 2 - view.cy * s;
     const area = inView && W ? {x0: BAND - tx, x1: W - BAND - tx, y0: BAND - ty, y1: H - BAND - ty} : null;
+    const centre = [view.cx * s, view.cy * s];
     const clusterBox = it => box(it.x, it.y, 22 + String(it.members.length).length * 8, CLUSTER_H, 3);
     for (let guard = 0; guard < 60; guard++) {
       const placed = [], leadersSoFar = [];
@@ -551,15 +590,18 @@
         };
         let spot = null;
         const prev = prevOffsets.get(m.id);
-        if (prev) { const r = fits(prev.ox, prev.oy); if (r) spot = {ox: prev.ox, oy: prev.oy, r}; }
+        const fromCentre = Math.hypot(it.x - centre[0], it.y - centre[1]);
+        const want = fromCentre < 28 ? -90 : Math.atan2(it.y - centre[1], it.x - centre[0]) * 180 / Math.PI;
+        // Keep the old place unless the market has moved to the other side of the centre.
+        if (prev && angleGap(Math.atan2(prev.oy, prev.ox) * 180 / Math.PI, want) < 75) { const r = fits(prev.ox, prev.oy); if (r) spot = {ox: prev.ox, oy: prev.oy, r}; }
         if (!spot) {
-          const want = preferredAngle(it, items, s);
           let best = Infinity;
           for (const len of LENGTHS) for (const d of DIRS) {
             // The pill's centre sits beyond the leader's end, so the visible line is `len` long.
             const reach = Math.min(Math.abs(d.dx) > 1e-6 ? (w / 2) / Math.abs(d.dx) : Infinity, Math.abs(d.dy) > 1e-6 ? (LABEL_H / 2) / Math.abs(d.dy) : Infinity);
             const ox = d.dx * (len + reach), oy = d.dy * (len + reach);
-            const cost = angleGap(d.a, want) * 0.6 + len * 0.3 + (prev ? Math.hypot(ox - prev.ox, oy - prev.oy) * 0.5 : 0);
+            const crossesCentre = segmentNear(it.x, it.y, it.x + ox, it.y + oy, centre, 26) || (Math.abs(it.x + ox - centre[0]) < w / 2 && Math.abs(it.y + oy - centre[1]) < LABEL_H / 2);
+            const cost = angleGap(d.a, want) * 0.6 + len * 0.3 + (crossesCentre ? 150 : 0) + (prev ? Math.hypot(ox - prev.ox, oy - prev.oy) * 0.25 : 0);
             if (cost >= best) continue;
             const r = fits(ox, oy);
             if (r) { best = cost; spot = {ox, oy, r}; }
@@ -672,14 +714,16 @@
     if (!metro) return;
     const now = new Set();
     for (const st of metro.stations) {
-      if (!st.place) continue;
+      if (!st.marked) continue;
       const sx = st.x * view.s + tx, sy = st.y * view.s + ty;
-      if (sx < 14 || sx > W - 14 || sy < 14 || sy > H - 14) continue;
-      st.el.style.transform = `translate3d(${(sx + st.place.ox).toFixed(1)}px,${(sy + st.place.oy).toFixed(1)}px,0) translate(-50%,-50%)`;
-      if (!shownStations.has(st)) st.el.classList.add('is-on');
+      if (sx < 10 || sx > W - 10 || sy < 10 || sy > H - 10) continue;
+      st.mark.style.transform = `translate3d(${sx.toFixed(1)}px,${sy.toFixed(1)}px,0) translate(-50%,-50%)`;
+      if (st.place) st.el.style.transform = `translate3d(${(sx + st.place.ox).toFixed(1)}px,${(sy + st.place.oy).toFixed(1)}px,0) translate(-50%,-50%)`;
+      st.mark.classList.add('is-on');
+      st.el.classList.toggle('is-on', !!st.place);
       now.add(st);
     }
-    for (const st of shownStations) if (!now.has(st)) st.el.classList.remove('is-on');
+    for (const st of shownStations) if (!now.has(st)) { st.mark.classList.remove('is-on'); st.el.classList.remove('is-on'); }
     shownStations.clear(); now.forEach(st => shownStations.add(st));
   }
   // Numbers in the outer band, in the direction of the markets they count.
@@ -732,28 +776,42 @@
       else c.el.style.opacity = 0;
     }
   }
-  // Zoomed in: small city names along the city borders in view, each name once.
+  // Zoomed in: the two city names written along a border in view, one on each side
+  // of the line, at the angle of the line; each pair of cities once, up to three.
   function placeBorderNames(tx, ty, boxes) {
     const alpha = Number(mapEl.style.getPropertyValue('--nm-district-alpha')) || 0;
-    const used = new Set();
     const rects = textRects.map(r => ({x0: r.x0 + tx, x1: r.x1 + tx, y0: r.y0 + ty, y1: r.y1 + ty}));
-    const spots = new Map();
+    const pool = map.borderPool;
+    let used = 0;
     if (alpha > 0.5) {
+      const pairs = new Set();
       const cands = map.borderLabels.map(b => ({b, sx: b.x * view.s + tx, sy: b.y * view.s + ty}))
-        .filter(c => c.sx > BAND + 20 && c.sx < W - BAND - 20 && c.sy > BAND && c.sy < H - BAND)
+        .filter(c => c.sx > BAND + 30 && c.sx < W - BAND - 30 && c.sy > BAND + 10 && c.sy < H - BAND - 10)
         .sort((a, b) => Math.hypot(a.sx - W / 2, a.sy - H / 2) - Math.hypot(b.sx - W / 2, b.sy - H / 2));
+      const off = BORDER_FONT * 0.95; // px from the line to the middle of the text
       for (const c of cands) {
-        if (used.has(c.b.name)) continue;
-        const r = box(c.sx, c.sy, [...c.b.name].length * BORDER_FONT * 1.25 + 4, BORDER_FONT + 4);
-        if (boxes.some(b => overlaps(b, r)) || rects.some(b => overlaps(b, r))) continue;
-        used.add(c.b.name); spots.set(c.b.name, c.b); boxes.push(r);
+        if (used + 2 > pool.length) break;
+        const key = [c.b.p, c.b.m].sort().join('|');
+        if (pairs.has(key)) continue;
+        const r = c.b.a * Math.PI / 180, nx = -Math.sin(r), ny = Math.cos(r), cos = Math.abs(Math.cos(r)), sin = Math.abs(Math.sin(r));
+        const sides = [[c.b.p, 1], [c.b.m, -1]].filter(([name]) => name).map(([name, sgn]) => {
+          const px = c.sx + nx * off * sgn, py = c.sy + ny * off * sgn, w = [...name].length * BORDER_FONT * 1.2, h = BORDER_FONT + 2;
+          return {name, sgn, rect: box(px, py, w * cos + h * sin, w * sin + h * cos)};
+        });
+        if (!sides.length || sides.some(sd => boxes.some(b => overlaps(b, sd.rect)) || rects.some(b => overlaps(b, sd.rect)))) continue;
+        pairs.add(key);
+        for (const sd of sides) {
+          const el = pool[used++], d = off / view.s;
+          const x = c.b.x + nx * d * sd.sgn, y = c.b.y + ny * d * sd.sgn;
+          el.textContent = sd.name;
+          el.setAttribute('x', x.toFixed(1)); el.setAttribute('y', y.toFixed(1));
+          el.setAttribute('transform', `rotate(${c.b.a} ${x.toFixed(1)} ${y.toFixed(1)})`);
+          el.style.display = '';
+          boxes.push(sd.rect);
+        }
       }
     }
-    for (const n of map.borderNames) {
-      const b = spots.get(n.name);
-      if (b) { n.el.setAttribute('x', b.x); n.el.setAttribute('y', b.y); n.el.style.display = ''; }
-      else n.el.style.display = 'none';
-    }
+    for (let i = used; i < pool.length; i++) pool[i].style.display = 'none';
   }
 
   // ---- Motion -------------------------------------------------------------------

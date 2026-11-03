@@ -67,6 +67,106 @@ function pathOf(lines, tol = 0.8) {
   }
   return out;
 }
+// ---- One line per route: tracks of the two directions (and parallel railway tracks)
+// are merged, then joined into chains and smoothed (Chaikin) so curves flow.
+const lineLen = p => { let s = 0; for (let i = 1; i < p.length; i++) s += Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]); return s; };
+function densify(pl, step) {
+  const out = [pl[0]];
+  for (let i = 1; i < pl.length; i++) {
+    const [ax, ay] = pl[i - 1], [bx, by] = pl[i], n = Math.max(1, Math.ceil(Math.hypot(bx - ax, by - ay) / step));
+    for (let k = 1; k <= n; k++) out.push([ax + (bx - ax) * k / n, ay + (by - ay) * k / n]);
+  }
+  return out;
+}
+function mergeParallel(polylines, tol) {
+  const CELL = 10, grid = new Map();
+  const cells = (x, y) => [Math.floor(x / CELL), Math.floor(y / CELL)];
+  const addSeg = seg => {
+    const [x0, y0] = cells(Math.min(seg[0], seg[2]) - tol, Math.min(seg[1], seg[3]) - tol), [x1, y1] = cells(Math.max(seg[0], seg[2]) + tol, Math.max(seg[1], seg[3]) + tol);
+    for (let gx = x0; gx <= x1; gx++) for (let gy = y0; gy <= y1; gy++) { const k = gx + ',' + gy; if (!grid.has(k)) grid.set(k, []); grid.get(k).push(seg); }
+  };
+  const near = (x, y) => {
+    const [gx, gy] = cells(x, y);
+    for (const seg of grid.get(gx + ',' + gy) || []) {
+      const dx = seg[2] - seg[0], dy = seg[3] - seg[1];
+      const t = Math.max(0, Math.min(1, ((x - seg[0]) * dx + (y - seg[1]) * dy) / (dx * dx + dy * dy || 1)));
+      if (Math.hypot(seg[0] + dx * t - x, seg[1] + dy * t - y) < tol) return true;
+    }
+    return false;
+  };
+  const kept = [];
+  for (const pl of polylines.map(p => densify(p, 3)).sort((a, b) => lineLen(b) - lineLen(a))) {
+    const far = pl.map(([x, y]) => !near(x, y));
+    let run = null;
+    for (let i = 0; i < pl.length; i++) {
+      if (far[i]) { if (!run) run = i > 0 ? [pl[i - 1]] : []; run.push(pl[i]); }
+      else if (run) { run.push(pl[i]); if (lineLen(run) > 8) kept.push(run); run = null; }
+    }
+    if (run && lineLen(run) > 8) kept.push(run);
+    for (const k of kept.slice(-pl.length)) for (let i = 1; i < k.length; i++) addSeg([k[i - 1][0], k[i - 1][1], k[i][0], k[i][1]]);
+  }
+  return kept;
+}
+function chain(polylines) {
+  let list = polylines.map(p => p.slice());
+  // Join touching ends first, then bridge the small gaps the merge leaves (≤ 250 m).
+  for (const limit of [2, 25]) {
+    for (let changed = true; changed;) {
+      changed = false;
+      const grid = new Map(), cell = (x, y) => [Math.floor(x / limit), Math.floor(y / limit)];
+      list.forEach((pl, i) => [[pl[0], false], [pl.at(-1), true]].forEach(([e, atEnd]) => {
+        const [gx, gy] = cell(e[0], e[1]), k = gx + ',' + gy; if (!grid.has(k)) grid.set(k, []); grid.get(k).push([i, atEnd]);
+      }));
+      const used = new Set(), out = [];
+      for (let i = 0; i < list.length; i++) {
+        if (used.has(i)) continue;
+        used.add(i); let a = list[i];
+        for (let side = 0; side < 2; side++) {
+          for (let grown = true; grown;) {
+            grown = false;
+            const e = a.at(-1), [gx, gy] = cell(e[0], e[1]);
+            search: for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (const [j, atEnd] of grid.get((gx + dx) + ',' + (gy + dy)) || []) {
+              if (used.has(j)) continue;
+              const other = list[j], pt = atEnd ? other.at(-1) : other[0];
+              if (Math.hypot(pt[0] - e[0], pt[1] - e[1]) >= limit) continue;
+              a = a.concat((atEnd ? other.slice().reverse() : other).slice(1)); used.add(j); grown = changed = true; break search;
+            }
+          }
+          a = a.slice().reverse();
+        }
+        out.push(a);
+      }
+      list = out;
+    }
+  }
+  // A loose end close to the middle of another chain of the line is tied to it.
+  const ties = [];
+  for (const pl of list) for (const end of [pl[0], pl.at(-1)]) {
+    let best = null;
+    for (const other of list) {
+      if (other === pl) continue;
+      const on = nearestOn([other], end[0], end[1]);
+      if (on.d > 0.5 && on.d < 15 && (!best || on.d < best.d)) best = on;
+    }
+    if (best) ties.push([[end[0], end[1]], [best.x, best.y]]);
+  }
+  return list.concat(ties);
+}
+function chaikin(pl, rounds) {
+  let pts = pl;
+  for (let r = 0; r < rounds; r++) {
+    if (pts.length < 3) return pts;
+    const out = [pts[0]];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const [ax, ay] = pts[i], [bx, by] = pts[i + 1];
+      out.push([ax * .75 + bx * .25, ay * .75 + by * .25], [ax * .25 + bx * .75, ay * .25 + by * .75]);
+    }
+    out.push(pts.at(-1));
+    pts = out;
+  }
+  return pts;
+}
+const smoothLine = (polylines, tol) => chain(mergeParallel(polylines, tol)).map(pl => chaikin(dp(pl, 1.2), 2));
 function nearestOn(polylines, x, y) {
   let best = {d: Infinity, x, y};
   for (const pts of polylines) for (let i = 1; i < pts.length; i++) {
@@ -158,15 +258,16 @@ const lines = ORDER.map(id => {
   }
   // A station drawn a little off its line (e.g. the airport line's 台北 platform west of the
   // shared 台北駅 dot) gets a short connector, so the line visibly reaches the dot.
+  const rail = id === 'TRA' || id === 'THSR';
+  if (polylines.length && !approximate) polylines = smoothLine(polylines, rail ? 6 : 5);
   if (polylines.length && !approximate) {
     for (const st of stations.filter(s => s.lines.includes(id))) {
       const on = nearestOn(polylines, st.x, st.y);
       if (on.d > 8 && on.d < 60) polylines.push([[on.x, on.y], [st.x, st.y]]);
     }
   }
-  const rail = id === 'TRA' || id === 'THSR';
-  return {id, name: LINES[id]?.name || id, color: LINES[id]?.color || '#8C8C8C', path: pathOf(polylines, rail ? 1.5 : 0.8),
-    ...(rail ? {rail: true, outside: pathOf(railOutside[id], 3)} : {}), ...(approximate ? {approximate: true} : {})};
+  return {id, name: LINES[id]?.name || id, color: LINES[id]?.color || '#8C8C8C', path: pathOf(polylines, 0.5),
+    ...(rail ? {rail: true, outside: pathOf(mergeParallel(railOutside[id], 8), 3)} : {}), ...(approximate ? {approximate: true} : {})};
 }).filter(l => l.path);
 
 const out = {schemaVersion: 2, type: 'night-market-metro',
