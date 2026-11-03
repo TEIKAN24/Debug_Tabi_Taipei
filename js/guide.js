@@ -1327,6 +1327,107 @@ async function loadData() {
       throw new Error("synonyms.json の groups を確認してください。");
     }
     foods = [...loadedFoods, ...loadedMarket];
+    // 食べ物辞典：餛飩湯圓（元の foods.csv が本 ZIP に含まれないため、追加分のみ補完）
+    // 将来 foods.csv に同じ料理が追加された場合は二重表示しません。
+    if (!foods.some(food => String(food.name || "").split(/[／/]/).some(name => normalized(name.trim()) === normalized("餛飩湯圓")))) {
+      foods.push({
+        category: "",
+        name: "餛飩湯圓",
+        description: "ワンタンと白玉団子の塩味スープ",
+        detail: "豚肉入りワンタンともち米の小さな団子を、あっさりした塩味のスープに合わせます。つるりとしたワンタンの皮と、もちもちした団子が楽しめます。",
+        tags: ["🥣", "🍲", "スープ", "湯品", "塩味", "しょっぱい", "ワンタン", "わんたん", "餛飩", "雲吞", "馄饨汤圆", "湯圓", "汤圆", "もち米", "団子", "白玉", "もちもち", "鹹湯圓"],
+        spice: ""
+      });
+    }
+    // 食べ物辞典：沙威瑪（台湾屋台のシャワルマ）。CSV 側に追加された場合は重複を避けます。
+    if (!foods.some(food => String(food.name || "").split(/[／/]/).some(name => normalized(name.trim()) === normalized("沙威瑪")))) {
+      foods.push({
+        category: "",
+        name: "沙威瑪",
+        description: "台湾風シャワルマサンド",
+        detail: "中東のシャワルマが台湾の夜市で独自に進化した軽食。スパイスで味付けした鶏肉を縦型の回転串で焼き、薄く削いでキャベツなどの野菜と細長いパンに挟みます。甘めのマヨネーズやケチャップで味付けするのが台湾流。",
+        tags: ["🥪", "🍗", "鶏肉", "肉料理", "サンドイッチ", "パン", "屋台", "台湾屋台", "沙威玛", "シャーウェイマー", "シャーウェイマ", "シャワルマ", "シャウルマ", "シャワルマサンド", "台湾風シャワルマ", "チキンサンド", "キャベツ", "マヨネーズ", "Shawarma"],
+        spice: ""
+      });
+    }
+    // 食べ物辞典：五花肉飯・五花肉。foods.csv 側に登録されたら二重表示を防止します。
+    if (!foods.some(food => String(food.name || "").split(/[／/]/).some(name => normalized(name.trim()) === normalized("五花肉飯")))) {
+      foods.push({
+        category: "",
+        name: "五花肉飯",
+        description: "豚バラ肉のせご飯",
+        detail: "豚バラ肉を甘辛く煮たり焼いたりして、ご飯にのせた料理。脂身の甘みと肉のうま味が特徴で、味付けや切り方は店によって異なります。",
+        tags: ["🍚", "🥩", "🐷", "ご飯", "肉料理", "豚肉", "豚バラ肉", "豚バラご飯", "豚バラ丼", "五花肉饭", "豬五花飯", "猪五花饭"],
+        spice: ""
+      });
+    }
+    if (!foods.some(food => String(food.name || "").split(/[／/]/).some(name => normalized(name.trim()) === normalized("五花肉")))) {
+      foods.push({
+        category: "",
+        name: "五花肉",
+        description: "豚バラ肉",
+        detail: "赤身と脂身が層になった豚のお腹の肉。煮込みや焼き物、鍋料理などに使われ、脂の甘みとコクが特徴です。料理名ではなく、肉の部位を指す場合もあります。",
+        tags: ["🥩", "🐷", "肉料理", "豚肉", "豚バラ", "豚バラ肉", "三枚肉", "五花肉片", "五花肉", "猪五花", "pork belly"],
+        spice: ""
+      });
+    }
+    // 食べ物辞典：鹹光餅・紅心粉圓・黑麻麵。CSV に登録された場合は重複しません。
+    for (const entry of [
+      {
+        category: "",
+        name: "鹹光餅",
+        description: "穴あきの塩味焼きパン",
+        detail: "中央に穴を開けた小麦粉の生地を香ばしく焼いた、福建由来の伝統的な塩味パン。基隆などでも親しまれ、素朴な小麦の風味としっかりした歯ごたえが特徴。卵や肉を挟んで食べることもあります。",
+        tags: ["🥯", "🍞", "パン", "焼きパン", "小麦", "塩味", "伝統菓子", "基隆", "鹹餅", "光餅", "繼光餅", "继光饼", "咸光饼", "塩味パン", "穴あきパン"],
+        spice: ""
+      },
+      {
+        category: "",
+        name: "紅心粉圓",
+        description: "赤い芯のあるもちもち粉圓",
+        detail: "小粒の粉圓の中心が赤みを帯びて見える、昔ながらの台湾の甘味。サツマイモでんぷんなどで作られ、つるっとした表面ともちもちした食感が特徴。シロップやかき氷、豆花に合わせます。色や材料は店によって異なります。",
+        tags: ["🍡", "🍧", "🍮", "スイーツ", "デザート", "粉圓", "タピオカ", "タピオカ団子", "紅心", "红心粉圆", "甘味", "もちもち", "でんぷん", "地瓜粉", "かき氷", "豆花"],
+        spice: ""
+      },
+      {
+        category: "",
+        name: "黑麻麵",
+        description: "黒ごまだれの混ぜ麺",
+        detail: "ゆでた麺に黒ごまの濃厚なたれを絡める汁なし麺。香ばしくまろやかなごまの風味と、とろりとした口当たりが特徴。店によってキュウリなどの具が添えられます。",
+        tags: ["🍜", "🥢", "麺類", "汁なし麺", "混ぜ麺", "黒ごま", "黒ゴマ", "黒芝麻", "黑芝麻", "黒ごま麺", "黒ごまだれ", "黑麻面", "黑芝麻麵", "芝麻醬", "ごまだれ"],
+        spice: ""
+      }
+    ]) {
+      if (!foods.some(food => String(food.name || "").split(/[／/]/).some(name => normalized(name.trim()) === normalized(entry.name)))) {
+        foods.push(entry);
+      }
+    }
+    // 豆乾＝豆干。既存の「豆干」を別項目にせず、両表記で検索できるようにします。
+    const driedTofu = foods.find(food => String(food.name || "").split(/[／/]/).some(name => ["豆干", "豆乾"].includes(name.trim())));
+    if (driedTofu) {
+      if (driedTofu.name === "豆干") driedTofu.name = "豆乾／豆干";
+      driedTofu.tags = [...new Set([...(driedTofu.tags || []), "豆乾", "豆干", "豆腐干", "干し豆腐", "押し豆腐", "乾燥豆腐", "ドウガン"])];
+    } else {
+      foods.push({
+        category: "",
+        name: "豆乾／豆干",
+        description: "水分を抜いた固めの豆腐",
+        detail: "豆腐を圧搾して水分を減らした、大豆の風味が濃い食品。弾力のあるしっかりした歯ごたえで、煮物や炒め物、麺店の小皿料理などに使われます。",
+        tags: ["🥢", "小菜", "大豆", "豆腐", "干し豆腐", "押し豆腐", "豆乾", "豆干", "豆腐干", "ドウガン"],
+        spice: ""
+      });
+    }
+    // 食べ物辞典：旗魚串。CSV に同名の料理が追加された場合は重複表示しません。
+    if (!foods.some(food => String(food.name || "").split(/[／/]/).some(name => normalized(name.trim()) === normalized("旗魚串")))) {
+      foods.push({
+        category: "",
+        name: "旗魚串",
+        description: "カジキのすり身揚げ串",
+        detail: "カジキのすり身でゆで卵を包み、串状に成形して揚げる台湾の屋台料理。外は香ばしく、中は弾力のある食感で、魚のうま味が楽しめます。甘辛いソースや胡椒塩を添える店もあります。",
+        tags: ["🍢", "🐟", "海鮮", "シーフード", "魚料理", "揚げ物", "魚のすり身", "カジキ", "カジキすり身揚げ", "魚漿", "旗魚黑輪", "旗鱼串", "旗鱼黑轮", "ゆで卵", "夜市", "串揚げ"],
+        spice: ""
+      });
+    }
     foods.forEach(searchTextOf); // prepare the search text once
     // v30.9.218: a restaurant badge whose text is a dish name (or one of its
     // ／ names) opens that dish; recommend.js asks through this lookup.
