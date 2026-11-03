@@ -146,14 +146,13 @@ function addDistinct(kept, polylines, tol, minLen) {
     const finish = () => {
       if (!run) return;
       const clean = run.filter((p, i) => p[2] || i === 0 || i === run.length - 1).map(p => [p[0], p[1]]);
-      // Tie the ends exactly onto the kept line. A short piece with one tied end is a
-      // spur (siding, platform track) and is dropped; one bridging a gap is kept.
-      let tied = 0;
+      // Tie the ends exactly onto the kept line (short spurs are pruned at the end,
+      // once every piece is in, so a piece bridging to a later one is not lost).
       for (const at of [0, clean.length - 1]) {
         const on = kept.length ? nearestOn(kept, clean[at][0], clean[at][1]) : {d: Infinity};
-        if (on.d < tol * 1.5) { tied++; if (at === 0) clean.unshift([on.x, on.y]); else clean.push([on.x, on.y]); }
+        if (on.d < tol * 1.5) { if (at === 0) clean.unshift([on.x, on.y]); else clean.push([on.x, on.y]); }
       }
-      if (lineLen(clean) >= minLen || tied !== 1) kept.push(clean);
+      if (clean.length > 1) kept.push(clean);
       run = null;
     };
     for (let i = 0; i < pts.length; i++) {
@@ -161,6 +160,49 @@ function addDistinct(kept, polylines, tol, minLen) {
       else if (run) { run.push(pts[i]); finish(); }
     }
     finish();
+  }
+  return pruneSpurs(kept, tol, minLen);
+}
+// Drop short pieces with a loose end (sidings, platform tracks), repeatedly; pieces
+// joined at both ends stay, whatever their length.
+function pruneSpurs(list, tol, minLen) {
+  for (let changed = true; changed;) {
+    changed = false;
+    for (let i = 0; i < list.length; i++) {
+      const pl = list[i];
+      if (lineLen(pl) >= minLen) continue;
+      const others = list.filter((_, j) => j !== i);
+      const loose = [pl[0], pl.at(-1)].some(e => !others.length || nearestOn(others, e[0], e[1]).d > tol * 1.5);
+      if (loose) { list.splice(i, 1); changed = true; break; }
+    }
+  }
+  return list;
+}
+
+// 台鉄・高鉄 come as loose ways (no routes): every way is drawn whole, exactly where it is,
+// except a way that runs alongside an already kept one over its whole length (the second
+// track of a double track) — so nothing is cut and nothing breaks.
+function dropTwinTracks(ways, tol) {
+  const CELL = 8, grid = new Map(), kept = [];
+  const add = pl => { for (let i = 1; i < pl.length; i++) {
+    const seg = [pl[i - 1][0], pl[i - 1][1], pl[i][0], pl[i][1]];
+    for (let gx = Math.floor((Math.min(seg[0], seg[2]) - tol) / CELL); gx <= Math.floor((Math.max(seg[0], seg[2]) + tol) / CELL); gx++)
+      for (let gy = Math.floor((Math.min(seg[1], seg[3]) - tol) / CELL); gy <= Math.floor((Math.max(seg[1], seg[3]) + tol) / CELL); gy++) {
+        const k = gx + ',' + gy; if (!grid.has(k)) grid.set(k, []); grid.get(k).push(seg);
+      }
+  } };
+  const near = (x, y) => (grid.get(Math.floor(x / CELL) + ',' + Math.floor(y / CELL)) || []).some(seg => {
+    const dx = seg[2] - seg[0], dy = seg[3] - seg[1], t = Math.max(0, Math.min(1, ((x - seg[0]) * dx + (y - seg[1]) * dy) / (dx * dx + dy * dy || 1)));
+    return Math.hypot(seg[0] + dx * t - x, seg[1] + dy * t - y) < tol;
+  });
+  for (const pl of ways.slice().sort((a, b) => lineLen(b) - lineLen(a))) {
+    const pts = []; // every ~3 units along the way
+    for (let i = 0; i < pl.length; i++) {
+      if (i) { const [ax, ay] = pl[i - 1], [bx, by] = pl[i], n = Math.ceil(Math.hypot(bx - ax, by - ay) / 3); for (let k = 1; k < n; k++) pts.push([ax + (bx - ax) * k / n, ay + (by - ay) * k / n]); }
+      pts.push(pl[i]);
+    }
+    if (kept.length && pts.every(([x, y]) => near(x, y))) continue;
+    kept.push(pl); add(pl);
   }
   return kept;
 }
@@ -198,7 +240,7 @@ for (const w of rail.elements.filter(e => e.type === 'way' && e.tags?.railway ==
 }
 const railOutside = {};
 for (const id of ['TRA', 'THSR']) {
-  const single = addDistinct([], chainUnordered(railWays[id]), 12, 60); // station tracks and sidings drop out
+  const single = dropTwinTracks(railWays[id], 4);
   const inside = [], outside = [];
   for (const pl of single) { // split at the edge of 北北基桃: outside drawn faint
     let run = [pl[0]], inn = inRegion(...pl[0]);
@@ -247,6 +289,7 @@ for (const [line, name, lat, lng] of RAIL_STATIONS) {
 const ja = name => (/(車站|站)$/.test(name) ? name.replace(/(車站|站)$/, '') : name) + '駅';
 
 // ---- Lines ------------------------------------------------------------------------------
+const geometry = {};
 const lines = ORDER.map(id => {
   let polylines = tracks[id] || [], approximate = false;
   if (!polylines.length) {
@@ -261,25 +304,37 @@ const lines = ORDER.map(id => {
     if (on.d > 8 && on.d < 60) polylines = polylines.concat([[[on.x, on.y], [st.x, st.y]]]);
   }
   const isRail = id === 'TRA' || id === 'THSR';
+  geometry[id] = polylines;
   return {id, name: LINES[id]?.name || id, color: LINES[id]?.color || '#8C8C8C', path: pathOf(polylines, 0.5),
     ...(isRail ? {rail: true, outside: pathOf(railOutside[id] || [], 3)} : {}), ...(approximate ? {approximate: true} : {})};
 }).filter(l => l.path);
 
-// Station shapes: where several lines run side by side (台鉄/高鉄 with MRT, 3+ lines) an oval
-// set across the lines; the angle is the direction of the railway at the station.
+// Station shapes. Where the lines of a station do not meet in one point (台鉄・高鉄 next
+// to the MRT at 台北, 板橋, 南港; 鶯歌 …) the marker is an oval laid across them: its centre
+// halfway between the outermost lines, its length (span, map units) reaching both,
+// its angle the direction of the lines there. Otherwise a circle.
+function shape(st) {
+  if (st.lines.length < 2) return {};
+  const ref = st.lines.find(l => l === 'TRA' || l === 'THSR') || st.lines[0];
+  const along = nearestOn(geometry[ref] || [], st.x, st.y);
+  const a = (along.a * Math.PI) / 180, nx = -Math.sin(a), ny = Math.cos(a);
+  const offsets = st.lines.map(l => { const on = nearestOn(geometry[l] || [], st.x, st.y); return on.d < 60 ? (on.x - st.x) * nx + (on.y - st.y) * ny : 0; });
+  const lo = Math.min(0, ...offsets), hi = Math.max(0, ...offsets), span = hi - lo;
+  const oval = span > 4 || (st.lines.length >= 3 && st.lines.some(l => l === 'TRA' || l === 'THSR'));
+  if (!oval) return {};
+  let deg = along.a; if (deg > 90) deg -= 180; if (deg <= -90) deg += 180;
+  const mid = (lo + hi) / 2;
+  return {x: st.x + nx * mid, y: st.y + ny * mid, oval: Math.round(deg), span: Math.round(span * 10) / 10};
+}
 const out = {schemaVersion: 3, type: 'night-market-metro',
   source: 'Track shapes © OpenStreetMap contributors (ODbL 1.0), overpass exports ' +
     [osm.osm3s?.timestamp_osm_base, rail.osm3s?.timestamp_osm_base].filter(Boolean).join(' / ') + '; stations: food/mrt_stations.json',
   license: 'ODbL 1.0 — https://opendatacommons.org/licenses/odbl/1-0/',
   lines,
   stations: stations.map(s => {
-    const ops = [...new Set(s.lines.map(l => OPERATOR[l]).filter(Boolean))];
-    const along = s.lines.find(l => l === 'TRA' || l === 'THSR') || s.lines[0];
-    const oval = s.lines.length >= 3 && s.lines.some(l => l === 'TRA' || l === 'THSR');
-    let a = oval ? nearestOn(tracks[along] || [], s.x, s.y).a : 0;
-    if (a > 90) a -= 180; if (a <= -90) a += 180;
-    return {name: ja(s.key), x: Math.round(s.x), y: Math.round(s.y), lines: s.lines, ops, codes: s.codes,
-      ...(s.lines.length > 1 ? {transfer: true} : {}), ...(oval ? {oval: Math.round(a)} : {})};
+    const ops = [...new Set(s.lines.map(l => OPERATOR[l]).filter(Boolean))], sh = shape(s);
+    return {name: ja(s.key), x: Math.round(sh.x ?? s.x), y: Math.round(sh.y ?? s.y), lines: s.lines, ops, codes: s.codes,
+      ...(s.lines.length > 1 ? {transfer: true} : {}), ...(sh.oval !== undefined ? {oval: sh.oval, span: sh.span} : {})};
   })};
 const header = '/* TAIPEI CITY GUIDE — 夜市マップ rail layer (MRT, light rail, 台鉄, 高鉄).\n' +
   '   Generated by tools/build-night-market-metro.mjs, do not edit by hand.\n' +
@@ -288,4 +343,4 @@ const header = '/* TAIPEI CITY GUIDE — 夜市マップ rail layer (MRT, light 
   '   Same projection as data/night-market-map.js. Loaded on demand by js/night-markets.js. */\n';
 fs.writeFileSync('night-market-metro.js', header + 'window.TABI_NIGHT_MARKET_METRO=' + JSON.stringify(out) + ';\n');
 console.error('lines', lines.map(l => l.id + (l.approximate ? '*' : '') + ':' + l.path.length).join(' '),
-  '| stations', out.stations.length, '| ovals', out.stations.filter(s => s.oval !== undefined).map(s => s.name + '@' + s.oval).join(' '));
+  '| stations', out.stations.length, '| ovals', out.stations.filter(s => s.oval !== undefined).map(s => s.name + '@' + s.oval + '/' + s.span).join(' '));

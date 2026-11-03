@@ -1,4 +1,4 @@
-/* v30.9.259 — 夜市マップ from data/night-markets.js (window.TABI_NIGHT_MARKETS).
+/* v30.9.260 — 夜市マップ from data/night-markets.js (window.TABI_NIGHT_MARKETS).
    The box opens on an overview of 台北市区＋北海岸 and glides to the visitor's
    position (or 台北駅 when it is unknown / outside 北北基桃), every time it opens.
    Base map: data/night-market-map.js (内政部 lines; the rest of Taiwan fades out).
@@ -34,7 +34,7 @@
   const section = document.getElementById('night-markets-section');
   if (!host || !section) return;
   const doc = window.TABI_NIGHT_MARKETS;
-  const VERSION = '30.9.259';
+  const VERSION = '30.9.260';
   const MAP_SRC = 'data/night-market-map.js?v=' + VERSION;
   const METRO_SRC = 'data/night-market-metro.js?v=' + VERSION;
   const OVERVIEW = [25.105, 121.556];      // 台北市区＋北海岸
@@ -716,11 +716,18 @@
         if (st.mode !== mode) { st.mode = mode; st.mark.className = 'nm-st-mark' + (mode ? ' is-' + mode : ''); st.markOn = false; }
         if (!st.w) { st.w = st.el.offsetWidth || 60; st.h = st.el.offsetHeight || 16; }
         const x = st.x * s, y = st.y * s, w = st.w, h = st.h;
-        const mw = mode === 'tile' ? 18 : mode === 'oval' ? 22 : mode === 'circle' ? 12 : 8, gap = mw / 2 + 4;
-        const markBox = box(x, y, mw, mw);
+        // An oval reaches across every line of the station (span), at least 22 px long.
+        let mw = mode === 'tile' ? 18 : mode === 'circle' ? 12 : 8, mh = mw;
+        if (mode === 'oval') {
+          const len = Math.max(22, (st.span || 0) * s + 12), a = (st.oval || 0) * Math.PI / 180;
+          st.mark.style.height = len.toFixed(1) + 'px';
+          mw = Math.abs(Math.cos(a)) * 12 + Math.abs(Math.sin(a)) * len; mh = Math.abs(Math.sin(a)) * 12 + Math.abs(Math.cos(a)) * len;
+        }
+        const gapX = mw / 2 + 4, gapY = mh / 2 + 4, gap = Math.max(gapX, gapY);
+        const markBox = box(x, y, mw, mh);
         if (taken.some(t => overlaps(t, markBox))) continue;
-        const spots = [[0, gap + h / 2], [0, -gap - h / 2], [gap + w / 2, 0], [-gap - w / 2, 0],
-          [gap + w / 2 - 3, gap + h / 2 - 3], [-gap - w / 2 + 3, gap + h / 2 - 3], [gap + w / 2 - 3, -gap - h / 2 + 3], [-gap - w / 2 + 3, -gap - h / 2 + 3]];
+        const spots = [[0, gapY + h / 2], [0, -gapY - h / 2], [gapX + w / 2, 0], [-gapX - w / 2, 0],
+          [gapX + w / 2 - 3, gapY + h / 2 - 3], [-gapX - w / 2 + 3, gapY + h / 2 - 3], [gapX + w / 2 - 3, -gapY - h / 2 + 3], [-gapX - w / 2 + 3, -gapY - h / 2 + 3]];
         let best = null, bestCost = Infinity;
         spots.forEach(([ox, oy], i) => {
           const r = box(x + ox, y + oy, w, h);

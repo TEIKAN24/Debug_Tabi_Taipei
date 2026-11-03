@@ -5961,7 +5961,7 @@ html[data-theme="light"] #guide #night-markets-section{
 #guide #night-markets-section .nm-st-mark > .nm-op{display:none;}
 #guide #night-markets-section .nm-st-mark.is-tile > .nm-op{display:grid;width:18px;height:18px;border-radius:4px;box-shadow:0 0 0 1.5px var(--nm-ground);}
 #guide #night-markets-section .nm-st-mark.is-circle{width:11px;height:11px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 2px #2A2A2A,0 0 0 3.5px var(--nm-ground);}
-#guide #night-markets-section .nm-st-mark.is-oval{width:12px;height:22px;border-radius:7px;background:#FFFFFF;box-shadow:0 0 0 2px #2A2A2A,0 0 0 3.5px var(--nm-ground);}
+#guide #night-markets-section .nm-st-mark.is-oval{width:12px;height:22px;border-radius:6px;background:#FFFFFF;box-shadow:0 0 0 2px #2A2A2A,0 0 0 3.5px var(--nm-ground);}
 #guide #night-markets-section .nm-stage.has-logo-trtc .nm-op-trtc{background-image:var(--nm-logo-trtc);}
 #guide #night-markets-section .nm-stage.has-logo-ntmc .nm-op-ntmc{background-image:var(--nm-logo-ntmc);}
 #guide #night-markets-section .nm-stage.has-logo-tymc .nm-op-tymc{background-image:var(--nm-logo-tymc);}
