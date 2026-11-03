@@ -1,14 +1,17 @@
-/* v30.9.256 — 夜市マップ from data/night-markets.js (window.TABI_NIGHT_MARKETS).
+/* v30.9.257 — 夜市マップ from data/night-markets.js (window.TABI_NIGHT_MARKETS).
    The box opens on an overview of 台北市区＋北海岸 and glides to the visitor's
    position (or 台北駅 when it is unknown / outside 北北基桃), every time it opens.
    Base map: data/night-market-map.js (内政部 lines; the rest of Taiwan fades out);
-   MRT layer: data/night-market-metro.js (© OpenStreetMap contributors, ODbL).
+   Rail layer: data/night-market-metro.js — MRT, light rail, 台鉄, 高鉄
+   (© OpenStreetMap contributors, ODbL).
    Both load on first open. One finger drags, two fingers pinch; the view stays
    in 北北基桃.
    Zoomed out: city lines and names, markets as numbers. Zoomed in: districts,
-   MRT stations (transfer stations named first, every station at the closest
-   zoom), small city names along the city borders, and a name pill per market
-   on a leader line. A pill keeps its place while it can, otherwise it bends or
+   the important stations (transfers, railway stations, the markets' nearest
+   stations) as dot + name placed off the lines, small city names along the
+   city borders, and a name pill per market on a leader line that points away
+   from its neighbours. Closest (about 1 km around): every station with its
+   number. A pill keeps its place while it can, otherwise it bends or
    lengthens its leader and slides there; only when nothing fits do markets
    merge into a number. The outer band of the map is kept for the numbers of
    off-view markets, so they never cover a pill.
@@ -28,22 +31,23 @@
   const section = document.getElementById('night-markets-section');
   if (!host || !section) return;
   const doc = window.TABI_NIGHT_MARKETS;
-  const VERSION = '30.9.256';
+  const VERSION = '30.9.257';
   const MAP_SRC = 'data/night-market-map.js?v=' + VERSION;
   const METRO_SRC = 'data/night-market-metro.js?v=' + VERSION;
   const OVERVIEW = [25.105, 121.556];      // 台北市区＋北海岸
   const FALLBACK = [25.0478, 121.5170];    // 台北駅
   const DEBUG = new URLSearchParams(location.search).get('debugLocation') === '1';
   // Sizes in screen px.
-  const DISTRICT_FONT = 10.5, STATION_FONT = 9.5, BORDER_FONT = 8.5, CITY_FONT = 13;
+  const DISTRICT_FONT = 10.5, BORDER_FONT = 8.5, CITY_FONT = 13;
   const LABEL_H = 29, CLUSTER_H = 24, GAP = 7;
   const BAND = 42;      // outer band kept for the off-view numbers: no pill enters it
   const DOT_EDGE = 36;  // a market dot closer than this to the edge counts as off view
   const SLIDE_MS = 320;
   // View widths in km.
   const FAR_KM = 17;        // wider: markets as numbers only
-  const TRANSFER_KM = 13;   // narrower: names of transfer stations
-  const ALL_KM = 7.5;       // narrower: names of every station
+  const IMPORTANT_KM = 13;  // narrower: important stations (dot + name)
+  const CODE_KM = 3.6;      // narrower: every station, with its number
+  const CLOSEST_KM = 2;     // the closest zoom: about 1 km around the centre
   const SVGNS = 'http://www.w3.org/2000/svg';
   const reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : {matches: false};
 
@@ -153,18 +157,19 @@
   const metroLines = svg('g', {class: 'nm-metro-lines'});
   const stationDots = svg('g', {class: 'nm-station-dots'});
   const districtNames = svg('g', {class: 'nm-district-names'});
-  const stationNames = svg('g', {class: 'nm-station-names'});
   const borderNames = svg('g', {class: 'nm-border-names'});
   const cityNames = svg('g', {class: 'nm-city-names'});
-  world.append(...neighborLines, districtLines, cityLines, metroLines, stationDots, districtNames, stationNames, borderNames, cityNames);
+  world.append(...neighborLines, districtLines, cityLines, metroLines, stationDots, districtNames, borderNames, cityNames);
   base.append(world);
   const leaders = svg('svg', {class: 'nm-map-leaders', 'aria-hidden': 'true', focusable: 'false'});
   const me = node('div', {class: 'nm-me', 'aria-hidden': 'true'});
   me.append(node('span', {class: 'nm-me-wave'}), node('span', {class: 'nm-me-wave nm-me-wave--late'}), node('span', {class: 'nm-me-core'}));
+  const stationsLayer = node('div', {class: 'nm-map-stations', 'aria-hidden': 'true'});
   const pinsLayer = node('div', {class: 'nm-map-pins'});
   const edgesLayer = node('div', {class: 'nm-map-edges'});
   const status = node('p', {class: 'nm-sr', 'aria-live': 'polite'});
-  mapEl.append(base, leaders, me, pinsLayer, edgesLayer);
+  // Leaders are drawn above the pills and stop at their edge: an even line, never shaded.
+  mapEl.append(base, stationsLayer, me, pinsLayer, leaders, edgesLayer);
 
   const detail = node('section', {class: 'nm-detail', 'aria-labelledby': 'nm-detail-title', 'aria-hidden': 'true'});
   detail.inert = true;
@@ -263,17 +268,64 @@
     });
     regionRings = (data.regionRings || []).map(flat => { const r = []; for (let i = 0; i < flat.length; i += 2) r.push([flat[i], flat[i + 1]]); return r; });
     markets.forEach(m => { if (m.placed) [m.x, m.y] = project(m.lat, m.lng); });
-    if (metroData && metroData.type === 'night-market-metro') {
-      metro = metroData;
-      metro.lines.forEach(l => metroLines.append(svg('path', {d: l.path, stroke: l.color, class: 'nm-metro-line' + (l.approximate ? ' is-approximate' : '')})));
-      const dots = (list, cls) => {
-        const d = list.map(s => `M${s.x} ${s.y}h0`).join('');
-        if (d) stationDots.append(svg('path', {d, class: cls + '-halo'}), svg('path', {d, class: cls}));
-      };
-      dots(metro.stations.filter(s => !s.transfer), 'nm-station');
-      dots(metro.stations.filter(s => s.transfer), 'nm-transfer');
-      metro.stations.forEach(s => { s.el = textEl(stationNames, s.x, s.y, s.name); s.len = [...s.name].length; s.el.style.display = 'none'; });
+    if (metroData && metroData.type === 'night-market-metro') setupRail(metroData);
+  }
+  // Important stations: transfers, 台鉄・高鉄, and the nearest station of every market.
+  const marketCodes = new Set(markets.map(m => m.data.access?.type === 'mrt' ? str(m.data.access.code).toUpperCase() : '').filter(Boolean));
+  const LINE_COLOR = {};
+  function setupRail(data) {
+    metro = data;
+    const lineGroup = [];
+    metro.lines.forEach(l => {
+      LINE_COLOR[l.id] = l.color;
+      if (l.outside) metroLines.append(svg('path', {d: l.outside, stroke: l.color, class: 'nm-metro-line nm-rail nm-rail-outside'}));
+      lineGroup.push(svg('path', {d: l.path, stroke: l.color, class: 'nm-metro-line' + (l.rail ? ' nm-rail' : '')}));
+      indexSegments(l.path);
+    });
+    metroLines.append(...lineGroup);
+    metro.stations.forEach(st => {
+      st.important = !!st.transfer || st.lines.some(id => id === 'TRA' || id === 'THSR') || (st.codes || []).some(c => marketCodes.has(c.code.toUpperCase()));
+      const el = node('div', {class: 'nm-st' + (st.important ? ' is-important' : '')});
+      const codes = node('span', {class: 'nm-st-codes'});
+      (st.codes || []).forEach(c => codes.append(node('span', {class: 'nm-st-code', style: '--nm-st-line:' + (LINE_COLOR[c.line] || '#8C8C8C')}, c.code)));
+      for (const id of ['TRA', 'THSR']) if (st.lines.includes(id)) codes.append(node('span', {class: 'nm-st-code nm-st-rail', style: '--nm-st-line:' + LINE_COLOR[id]}, id === 'TRA' ? '台鉄' : '高鉄'));
+      el.append(codes, node('span', {class: 'nm-st-name'}, st.name));
+      stationsLayer.append(el);
+      st.el = el; st.w = {}; st.place = null;
+    });
+    const dots = (list, cls) => {
+      const d = list.map(st => `M${st.x} ${st.y}h0`).join('');
+      if (d) stationDots.append(svg('path', {d, class: cls + '-halo'}), svg('path', {d, class: cls}));
+    };
+    dots(metro.stations.filter(st => !st.important), 'nm-station nm-station-minor');
+    dots(metro.stations.filter(st => st.important && !st.transfer), 'nm-station');
+    dots(metro.stations.filter(st => st.transfer), 'nm-transfer');
+  }
+  // Line segments in a coarse grid, so station names can be kept off the lines.
+  const GRID = 60, segGrid = new Map();
+  function indexSegments(path) {
+    for (const part of path.split('M')) {
+      const n = part.match(/-?\d+/g); if (!n || n.length < 4) continue;
+      let x = +n[0], y = +n[1];
+      for (let i = 2; i + 1 < n.length; i += 2) {
+        const x2 = x + +n[i], y2 = y + +n[i + 1], seg = [x, y, x2, y2];
+        for (let gx = Math.floor(Math.min(x, x2) / GRID); gx <= Math.floor(Math.max(x, x2) / GRID); gx++)
+          for (let gy = Math.floor(Math.min(y, y2) / GRID); gy <= Math.floor(Math.max(y, y2) / GRID); gy++) {
+            const k = gx + ',' + gy; if (!segGrid.has(k)) segGrid.set(k, []); segGrid.get(k).push(seg);
+          }
+        x = x2; y = y2;
+      }
     }
+  }
+  function lineCrossings(r) { // r in world units
+    let n = 0; const seen = new Set();
+    for (let gx = Math.floor(r.x0 / GRID); gx <= Math.floor(r.x1 / GRID); gx++)
+      for (let gy = Math.floor(r.y0 / GRID); gy <= Math.floor(r.y1 / GRID); gy++)
+        for (const seg of segGrid.get(gx + ',' + gy) || []) {
+          if (seen.has(seg)) continue; seen.add(seg);
+          if (segmentHits(seg[0], seg[1], seg[2], seg[3], r)) n++;
+        }
+    return n;
   }
   function inRegion(x, y) {
     let inside = false;
@@ -298,7 +350,7 @@
     W = r.width; H = r.height;
     for (const el of [base, leaders]) { el.setAttribute('width', W); el.setAttribute('height', H); }
     sMin = Math.max(W / 3000, H / 4000);           // at most ~30 km × 40 km in view
-    sMax = Math.max(sMin * 2, W / 550);            // at least ~5.5 km across
+    sMax = Math.max(sMin * 2, W / (CLOSEST_KM * 100)); // about 1 km around the centre
     sFocus = clamp(W / 900, sMin, sMax);           // the focused view, ~9 km across
     lastScale = NaN; clampView();
     return true;
@@ -313,6 +365,10 @@
   }
   const kmAcross = s => W / s / 100;
   function requestRender() { if (!frame) frame = requestAnimationFrame(render); }
+  // After a pan comes to rest, lay the pills out again for what is now on screen
+  // (they slide to their new places); while panning they only get pushed or mirrored.
+  let settleTimer = 0;
+  function settle() { clearTimeout(settleTimer); settleTimer = setTimeout(() => { lastScale = NaN; requestRender(); }, 140); }
   function render() {
     if (frame) { cancelAnimationFrame(frame); frame = 0; }
     if (!map || !W) return;
@@ -328,12 +384,13 @@
     const d = clamp((21 - km) / 6, 0, 1);
     mapEl.style.setProperty('--nm-district-alpha', d.toFixed(3));
     mapEl.style.setProperty('--nm-city-name-alpha', (1 - d).toFixed(3));
-    mapEl.style.setProperty('--nm-metro-alpha', (0.32 + 0.23 * d).toFixed(3));
+    mapEl.style.setProperty('--nm-metro-alpha', (0.32 + 0.26 * d).toFixed(3));
+    mapEl.style.setProperty('--nm-minor-alpha', clamp((CODE_KM + 1.2 - km) / 1.2, 0, 1).toFixed(3));
+    mapEl.classList.toggle('is-deep', km <= CODE_KM);
     districtNames.setAttribute('font-size', (DISTRICT_FONT / s).toFixed(2));
-    stationNames.setAttribute('font-size', (STATION_FONT / s).toFixed(2));
     borderNames.setAttribute('font-size', (BORDER_FONT / s).toFixed(2));
     cityNames.setAttribute('font-size', (CITY_FONT / s).toFixed(2));
-    layout = layoutMarkets(s, true);
+    layout = layoutMarkets(s, true, true);
     placeTexts(s, d);
   }
   const overlaps = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
@@ -349,23 +406,36 @@
     const km = kmAcross(s);
     const named = [];
     if (metro) {
-      const showAll = km <= ALL_KM, showTransfer = km <= TRANSFER_KM && districtAlpha > 0;
-      const order = metro.stations.slice().sort((a, b) => (b.transfer ? 1 : 0) - (a.transfer ? 1 : 0));
-      for (const st of order) {
-        let side = 0;
-        if (showAll || (showTransfer && st.transfer)) {
-          const w = st.len * STATION_FONT * 1.04 + 2, h = STATION_FONT + 4, x = st.x * s, y = st.y * s;
-          for (const dir of [1, -1]) {
-            const r = {x0: dir > 0 ? x + 6 : x - 6 - w, x1: dir > 0 ? x + 6 + w : x - 6, y0: y - h / 2, y1: y + h / 2};
-            if (!taken.some(t => overlaps(t, r)) && !named.some(t => overlaps(t, r))) { named.push(r); side = dir; break; }
-          }
-        }
-        if (side !== st.side) {
-          st.side = side;
-          st.el.style.display = side ? '' : 'none';
-          if (side) { st.el.setAttribute('text-anchor', side > 0 ? 'start' : 'end'); st.el.setAttribute('dx', side > 0 ? '0.68em' : '-0.68em'); }
-        }
+      const deep = km <= CODE_KM, mode = deep ? 'deep' : 'mid';
+      const list = metro.stations.filter(st => deep || (km <= IMPORTANT_KM && districtAlpha > 0 && st.important));
+      // Measure the labels once per mode (the station numbers show only when close).
+      const unmeasured = list.filter(st => !st.w[mode]);
+      if (unmeasured.length) {
+        unmeasured.forEach(st => st.el.classList.add('is-measuring'));
+        unmeasured.forEach(st => { st.w[mode] = st.el.offsetWidth || 60; st.h = st.el.offsetHeight || 16; });
+        unmeasured.forEach(st => st.el.classList.remove('is-measuring'));
       }
+      const order = list.slice().sort((a, b) => (b.transfer ? 2 : b.important ? 1 : 0) - (a.transfer ? 2 : a.important ? 1 : 0));
+      const dotsTaken = list.map(st => box(st.x * s, st.y * s, 9, 9));
+      const keep = new Set();
+      for (const st of order) {
+        const w = st.w[mode], h = st.h, x = st.x * s, y = st.y * s;
+        const spots = [[7 + w / 2, 0], [-7 - w / 2, 0], [0, -6 - h / 2], [0, 6 + h / 2],
+          [5 + w / 2, -5 - h / 2], [5 + w / 2, 5 + h / 2], [-5 - w / 2, -5 - h / 2], [-5 - w / 2, 5 + h / 2]];
+        let best = null, bestCost = Infinity;
+        spots.forEach(([ox, oy], i) => {
+          const r = box(x + ox, y + oy, w, h);
+          if (taken.some(t => overlaps(t, r)) || named.some(t => overlaps(t, r))) return;
+          if (dotsTaken.some(d => overlaps(d, r) && Math.abs(d.x0 + 4.5 - x) + Math.abs(d.y0 + 4.5 - y) > 1)) return;
+          // Keep the name off the lines: each crossing line costs more than any other choice.
+          const cost = lineCrossings({x0: r.x0 / s, x1: r.x1 / s, y0: r.y0 / s, y1: r.y1 / s}) * 10 + i;
+          if (cost < bestCost) { bestCost = cost; best = {ox, oy, r}; }
+        });
+        if (!best) continue;
+        named.push(best.r); keep.add(st);
+        st.place = {ox: best.ox, oy: best.oy};
+      }
+      metro.stations.forEach(st => { if (!keep.has(st)) st.place = null; });
     }
     const districts = [], pxPerKm = s * 100;
     for (const d of map.districts) {
@@ -386,13 +456,20 @@
     if (!m.w) m.w = Math.ceil(m.pin.offsetWidth) || Math.round(m.name.length * 13.5 + 29);
     return m.w;
   }
-  // Leader directions: up first (the design), angle from vertical, then down.
-  const ANGLES = [30, -30, 15, -15, 45, -45, 0, 60, -60];
-  const LENGTHS = [52, 68, 86, 108];
-  const CANDIDATES = [];
-  for (const sy of [-1, 1]) for (const len of LENGTHS) for (const a of ANGLES) {
-    const r = a * Math.PI / 180;
-    CANDIDATES.push({ox: Math.sin(r) * len, oy: sy * Math.cos(r) * len, cost: len * 0.5 + Math.abs(Math.abs(a) - 30) * 0.35 + (sy > 0 ? 34 : 0)});
+  // Leaders point away from the neighbouring markets (a spreading bunch), in
+  // 15° steps; short, close to that direction and unchanged is best.
+  const DIRS = Array.from({length: 24}, (_, i) => { const a = (i * 15 - 90) * Math.PI / 180; return {a: i * 15 - 90, dx: Math.cos(a), dy: Math.sin(a)}; });
+  const LENGTHS = [46, 62, 82, 106];
+  const angleGap = (a, b) => { const d = Math.abs(((a - b) % 360 + 540) % 360 - 180); return d; };
+  function preferredAngle(it, items, s) {
+    let sx = 0, sy = 0, wsum = 0;
+    for (const m of markets) {
+      if (!m.placed || m === it.members[0]) continue;
+      const dx = it.x - m.x * s, dy = it.y - m.y * s, d = Math.hypot(dx, dy);
+      if (d < 1 || d > 260) continue;
+      const wgt = 1 / d; sx += dx / d * wgt; sy += dy / d * wgt; wsum += wgt;
+    }
+    return wsum && Math.hypot(sx, sy) > 1e-6 ? Math.atan2(sy, sx) * 180 / Math.PI : -90; // alone: straight up
   }
   function segmentHits(x0, y0, x1, y1, r) { // Liang–Barsky
     let t0 = 0, t1 = 1; const dx = x1 - x0, dy = y1 - y0;
@@ -409,7 +486,7 @@
     return d(p1, p2, p3) * d(p1, p2, p4) < 0 && d(p3, p4, p1) * d(p3, p4, p2) < 0;
   }
   let prevOffsets = new Map(), prevGroup = new Map();
-  function layoutMarkets(s, commit) {
+  function layoutMarkets(s, commit, inView) {
     let items = markets.filter(m => m.placed).map(m => ({members: [m], x: m.x * s, y: m.y * s}));
     const merge = (a, b) => {
       const members = a.members.concat(b.members);
@@ -446,6 +523,9 @@
       return finish(items);
     }
     mergeClose(24);
+    // Where pills may go on screen right now (outside the outer band), in scaled coordinates.
+    const tx = W / 2 - view.cx * s, ty = H / 2 - view.cy * s;
+    const area = inView && W ? {x0: BAND - tx, x1: W - BAND - tx, y0: BAND - ty, y1: H - BAND - ty} : null;
     const clusterBox = it => box(it.x, it.y, 22 + String(it.members.length).length * 8, CLUSTER_H, 3);
     for (let guard = 0; guard < 60; guard++) {
       const placed = [], leadersSoFar = [];
@@ -459,8 +539,10 @@
       for (const it of singles) {
         const m = it.members[0], w = labelWidth(m);
         const gap = GAP + (prevGroup.get(m.id) ? 6 : 0); // leaving a number needs a bit more room
+        const dotInView = area && it.x > area.x0 - BAND + DOT_EDGE && it.x < area.x1 + BAND - DOT_EDGE && it.y > area.y0 - BAND + DOT_EDGE && it.y < area.y1 + BAND - DOT_EDGE;
         const fits = (ox, oy) => {
           const lx = it.x + ox, ly = it.y + oy, r = box(lx, ly, w, LABEL_H, gap), seg = [it.x, it.y, lx, ly];
+          if (dotInView && (lx - w / 2 < area.x0 || lx + w / 2 > area.x1 || ly - LABEL_H / 2 < area.y0 || ly + LABEL_H / 2 > area.y1)) return null;
           if (placed.some(p => overlaps(p, r))) return null;
           if (dots.some(d => d.it !== it && overlaps(d.r, r))) return null;
           if (placed.some(p => p.label && segmentHits(it.x, it.y, lx, ly, p))) return null;
@@ -471,12 +553,16 @@
         const prev = prevOffsets.get(m.id);
         if (prev) { const r = fits(prev.ox, prev.oy); if (r) spot = {ox: prev.ox, oy: prev.oy, r}; }
         if (!spot) {
+          const want = preferredAngle(it, items, s);
           let best = Infinity;
-          for (const c of CANDIDATES) {
-            const cost = c.cost + (prev ? Math.hypot(c.ox - prev.ox, c.oy - prev.oy) * 0.8 : 0);
+          for (const len of LENGTHS) for (const d of DIRS) {
+            // The pill's centre sits beyond the leader's end, so the visible line is `len` long.
+            const reach = Math.min(Math.abs(d.dx) > 1e-6 ? (w / 2) / Math.abs(d.dx) : Infinity, Math.abs(d.dy) > 1e-6 ? (LABEL_H / 2) / Math.abs(d.dy) : Infinity);
+            const ox = d.dx * (len + reach), oy = d.dy * (len + reach);
+            const cost = angleGap(d.a, want) * 0.6 + len * 0.3 + (prev ? Math.hypot(ox - prev.ox, oy - prev.oy) * 0.5 : 0);
             if (cost >= best) continue;
-            const r = fits(c.ox, c.oy);
-            if (r) { best = cost; spot = {ox: c.ox, oy: c.oy, r}; }
+            const r = fits(ox, oy);
+            if (r) { best = cost; spot = {ox, oy, r}; }
           }
         }
         if (!spot) { failed = it; break; }
@@ -512,7 +598,7 @@
 
   function placeOverlay(tx, ty) {
     const now = performance.now();
-    const shown = new Set(), off = [], boxes = [], pending = [];
+    const shown = new Set(), off = [], boxes = [], pending = [], dotBoxes = [];
     const offList = it => { for (const m of it.members) off.push({m, sx: m.x * view.s + tx, sy: m.y * view.s + ty}); };
     let ci = 0, moving = false;
     const inside = (x, y, e) => x >= e && x <= W - e && y >= e && y <= H - e;
@@ -525,7 +611,8 @@
         // Pills stay out of the outer band; one pushed in that lands on another is counted at the edge.
         const lx = clamp(sx + m.cur.ox, BAND + w / 2, W - BAND - w / 2), ly = clamp(sy + m.cur.oy, BAND + LABEL_H / 2, H - BAND - LABEL_H / 2);
         const r = box(lx, ly, w, LABEL_H);
-        if (Math.abs(lx - sx - m.cur.ox) > .5 || Math.abs(ly - sy - m.cur.oy) > .5) { pending.push({m, sx, sy, lx, ly, r}); continue; }
+        dotBoxes.push(box(sx, sy, 14, 14));
+        if (Math.abs(lx - sx - m.cur.ox) > .5 || Math.abs(ly - sy - m.cur.oy) > .5) { pending.push({it, m, w, sx, sy, lx, ly, r}); continue; }
         boxes.push(r); placePin(m, sx, sy, lx, ly); shown.add(m);
         continue;
       }
@@ -538,9 +625,18 @@
       b.classList.add('is-on'); b.tabIndex = 0;
       boxes.push(box(sx, sy, 22 + String(it.members.length).length * 8, CLUSTER_H));
     }
+    // Pills pushed back from the outer band: keep the pushed place if it is free,
+    // else mirror the leader to the open side; failing both, count it at the edge.
+    const free = r => !boxes.some(b => overlaps(b, r)) && !dotBoxes.some(d => overlaps(d, r));
     for (const p of pending) {
-      if (boxes.some(b => overlaps(b, p.r))) { off.push({m: p.m, sx: p.sx, sy: p.sy}); continue; }
-      boxes.push(p.r); placePin(p.m, p.sx, p.sy, p.lx, p.ly); shown.add(p.m);
+      let spot = free(p.r) ? p : null;
+      if (!spot) for (const [fx, fy] of [[-1, 1], [1, -1], [-1, -1]]) {
+        const lx = p.sx + p.m.cur.ox * fx, ly = p.sy + p.m.cur.oy * fy, r = box(lx, ly, p.w, LABEL_H);
+        if (lx - p.w / 2 < BAND || lx + p.w / 2 > W - BAND || ly - LABEL_H / 2 < BAND || ly + LABEL_H / 2 > H - BAND || !free(r)) continue;
+        spot = {lx, ly, r}; break;
+      }
+      if (!spot) { offList(p.it); continue; }
+      boxes.push(spot.r); placePin(p.m, p.sx, p.sy, spot.lx, spot.ly); shown.add(p.m);
     }
     markets.forEach(m => {
       const on = shown.has(m);
@@ -550,6 +646,7 @@
       if (!on) { m.tw = null; m.cur = null; }
     });
     for (let i = ci; i < clusterPool.length; i++) { const b = clusterPool[i]; b.classList.remove('is-on'); b._item = null; b.tabIndex = -1; }
+    placeStations(tx, ty);
     placeEdges(off, boxes);
     placeCityNames(tx, ty, boxes);
     placeBorderNames(tx, ty, boxes);
@@ -562,9 +659,28 @@
   }
   function placePin(m, sx, sy, lx, ly) {
     m.pin.style.transform = `translate3d(${lx.toFixed(1)}px,${ly.toFixed(1)}px,0) translate(-50%,-50%)`;
+    // The leader ends on the pill's edge.
+    const w = labelWidth(m), dx = sx - lx, dy = sy - ly;
+    const k = Math.min(Math.abs(dx) > 1e-6 ? (w / 2) / Math.abs(dx) : Infinity, Math.abs(dy) > 1e-6 ? (LABEL_H / 2) / Math.abs(dy) : Infinity, 1);
+    const ex = lx + dx * k, ey = ly + dy * k;
     m.line.setAttribute('x1', sx.toFixed(1)); m.line.setAttribute('y1', sy.toFixed(1));
-    m.line.setAttribute('x2', lx.toFixed(1)); m.line.setAttribute('y2', ly.toFixed(1));
+    m.line.setAttribute('x2', ex.toFixed(1)); m.line.setAttribute('y2', ey.toFixed(1));
     m.dot.setAttribute('cx', sx.toFixed(1)); m.dot.setAttribute('cy', sy.toFixed(1));
+  }
+  const shownStations = new Set();
+  function placeStations(tx, ty) {
+    if (!metro) return;
+    const now = new Set();
+    for (const st of metro.stations) {
+      if (!st.place) continue;
+      const sx = st.x * view.s + tx, sy = st.y * view.s + ty;
+      if (sx < 14 || sx > W - 14 || sy < 14 || sy > H - 14) continue;
+      st.el.style.transform = `translate3d(${(sx + st.place.ox).toFixed(1)}px,${(sy + st.place.oy).toFixed(1)}px,0) translate(-50%,-50%)`;
+      if (!shownStations.has(st)) st.el.classList.add('is-on');
+      now.add(st);
+    }
+    for (const st of shownStations) if (!now.has(st)) st.el.classList.remove('is-on');
+    shownStations.clear(); now.forEach(st => shownStations.add(st));
   }
   // Numbers in the outer band, in the direction of the markets they count.
   function placeEdges(off, boxes) {
@@ -665,7 +781,7 @@
       view.cx = from.cx + (to.cx - from.cx) * f; view.cy = from.cy + (to.cy - from.cy) * f;
       render();
       if (t < 1) anim = requestAnimationFrame(step);
-      else { anim = 0; if (done) done(); }
+      else { anim = 0; settle(); if (done) done(); }
     };
     anim = requestAnimationFrame(step);
   }
@@ -741,7 +857,7 @@
     pointers.delete(e.pointerId);
     if (gesture?.type === 'pinch') {
       if (pointers.size === 1) beginPan([...pointers.values()][0], true);
-      else if (!pointers.size) { gesture = null; dragEnd = performance.now(); mapEl.classList.remove('is-dragging'); }
+      else if (!pointers.size) { gesture = null; dragEnd = performance.now(); mapEl.classList.remove('is-dragging'); settle(); }
       return;
     }
     if (pointers.size) return;
@@ -756,11 +872,11 @@
       } else lastTap = onMap ? {t: now, x: p.x, y: p.y} : null;
       return;
     }
-    if (e.type !== 'pointerup' || reduceMotion.matches) return;
+    if (e.type !== 'pointerup' || reduceMotion.matches) { settle(); return; }
     const a = g.samples[0], b = g.samples[g.samples.length - 1], dt = b.t - a.t;
-    if (dt <= 0 || performance.now() - b.t > 90) return;
+    if (dt <= 0 || performance.now() - b.t > 90) { settle(); return; }
     let vx = (b.x - a.x) / dt, vy = (b.y - a.y) / dt, last = performance.now();
-    if (Math.hypot(vx, vy) < 0.2) return;
+    if (Math.hypot(vx, vy) < 0.2) { settle(); return; }
     const glide = now => {
       const step = Math.min(40, now - last); last = now;
       const cx = view.cx, cy = view.cy;
@@ -770,6 +886,7 @@
       render();
       const k = Math.pow(0.94, step / 16); vx *= k; vy *= k;
       inertia = Math.hypot(vx, vy) > 0.015 ? requestAnimationFrame(glide) : 0;
+      if (!inertia) settle();
     };
     inertia = requestAnimationFrame(glide);
   }
@@ -785,7 +902,7 @@
     if (!e.ctrlKey) return;
     e.preventDefault(); stopMotion(); interacted = true;
     const p = local(e), t = zoomTarget(p.x, p.y, clamp(view.s * Math.exp(-e.deltaY * 0.01), sMin, sMax));
-    Object.assign(view, t); clampView(); requestRender();
+    Object.assign(view, t); clampView(); requestRender(); settle();
   }, {passive: false});
   mapEl.addEventListener('dblclick', e => {
     if (e.target instanceof Element && e.target.closest('button')) return;
@@ -817,7 +934,13 @@
     stopMotion();
     returnFocus = from;
     title.textContent = m.name;
-    body.replaceChildren(node('div', {class: 'nm-glow', 'aria-hidden': 'true'}), ...detailContent(m.data));
+    // Spare height is shared evenly between the groups: info · 特徴 · 名物 · さっそく出発！
+    const parts = detailContent(m.data), spaced = [];
+    parts.forEach(el => {
+      if (el.matches('.nm-feature-label, .nm-go')) spaced.push(node('div', {class: 'nm-gap', 'aria-hidden': 'true'}));
+      spaced.push(el);
+    });
+    body.replaceChildren(node('div', {class: 'nm-glow', 'aria-hidden': 'true'}), ...spaced);
     body.scrollTop = 0;
     setView('detail');
     requestAnimationFrame(() => back.focus({preventScroll: true}));
