@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.261.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.262.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -100,8 +100,20 @@
   scroller.append(track); stage.append(cardLayer, scroller);
   const dots = el('div', 'ec-dots'); dots.setAttribute('aria-hidden', 'true');
   const summary = el('div', 'ec-summary'); summary.setAttribute('aria-live', 'polite');
+  // The list scrolls inside a box of fixed height (the section keeps its size whatever
+  // the month holds); the bottom fades while more rows are below, like the other lists.
+  const listBox = el('div', 'ec-list-box');
+  const listScroll = el('div', 'ec-list-scroll'); listScroll.tabIndex = 0; listScroll.setAttribute('role', 'region');
   const list = el('ul', 'ec-list');
-  root.replaceChildren(stage, dots, summary, list);
+  listScroll.append(list); listBox.append(listScroll);
+  root.replaceChildren(stage, dots, summary, listBox);
+  function updateFade() {
+    const canScroll = listScroll.scrollHeight > listScroll.clientHeight + 5;
+    listScroll.classList.toggle('can-scroll', canScroll);
+    listScroll.dataset.end = canScroll && listScroll.scrollTop + listScroll.clientHeight >= listScroll.scrollHeight - 8 ? 'true' : 'false';
+  }
+  listScroll.addEventListener('scroll', updateFade, {passive: true});
+  new ResizeObserver(updateFade).observe(listScroll);
 
   let cards = [], snaps = [];
   function buildCard(mo) {
@@ -244,6 +256,9 @@
     const mo = months[idx];
     [...dots.children].forEach((d, i) => d.classList.toggle('is-active', i === idx));
     renderSummary(mo); renderList(mo);
+    listScroll.scrollTop = 0;                // a new month starts at its first event
+    listScroll.setAttribute('aria-label', mo.y + '年' + mo.m + '月のイベント一覧');
+    updateFade();
     scroller.setAttribute('aria-label', mo.y + '年' + mo.m + '月・' + mo.rows.length + '件。左右キーで月を移動、Enterで' + (root.classList.contains('is-heat') ? '棒グラフ' : 'カレンダー') + '表示に切り替え');
   }
 
@@ -324,7 +339,7 @@
     if (!measure()) { C = 0; return; }
     if (before !== C || !before) jumpTo(current);
   }).observe(stage);
-  section?.addEventListener('toggle', () => { if (section.open && measure()) jumpTo(current); });
+  section?.addEventListener('toggle', () => { if (section.open && measure()) jumpTo(current); if (section.open) updateFade(); });
 
   // Coming back to the page on another day (the home-screen app stays open): refresh the statuses.
   document.addEventListener('visibilitychange', () => {

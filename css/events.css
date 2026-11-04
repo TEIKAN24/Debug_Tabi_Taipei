@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03), v30.9.261. Built by js/events.js. */
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03), v30.9.262. Built by js/events.js. */
 #guide .ec{
   --ec-ink:#EDEDED;--ec-sub:#8A8A8A;--ec-line:#2A2A2A;--ec-card:#121212;--ec-lo:#363636;--ec-hi:#F2F2F2;
   --ec-bar:#F2F2F2;--ec-mini:#9A9A9A;--ec-mini-strong:#C4C4C4;--ec-mini-bar:#5A5A5A;
@@ -85,16 +85,27 @@ html[data-theme="light"] #guide .ec{
 #guide .ec-stat strong{display:block;font-size:22px;font-weight:450;line-height:1.25}
 
 /* ---- event list ---- */
+/* Fixed-height scrolling box (same feel as the other directory lists: thin bar,
+   no scroll chaining, bottom fade until the end is reached). Few events = blank space below. */
+#guide .ec-list-box{position:relative;--ec-list-h:clamp(260px,calc(100vh - 400px),440px)}
+@supports(height:100svh){#guide .ec-list-box{--ec-list-h:clamp(260px,calc(100svh - 400px),440px)}}
+#guide .ec-list-scroll{position:relative;z-index:1;height:var(--ec-list-h);overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior-y:contain;overflow-anchor:none;-webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;scrollbar-color:#646464 transparent;outline:0}
+#guide .ec-list-scroll.can-scroll:not([data-end="true"]){
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%);
+          mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)}
+#guide .ec-list-scroll:focus-visible{box-shadow:inset 0 0 0 2px var(--ec-sub);border-radius:8px}
 #guide ul.ec-list{position:relative;list-style:none;margin:0;padding:0 6px}
-#guide ul.ec-list::before{content:"";position:absolute;left:0;right:0;top:0;height:56px;pointer-events:none;z-index:0;
+#guide .ec-list-box::before{content:"";position:absolute;left:0;right:0;top:0;height:56px;pointer-events:none;z-index:0;
   background:linear-gradient(to bottom,rgba(var(--venue-tone,138,158,122),calc(.92 * var(--venue-glow,1))) 0,
     rgba(var(--venue-tone,138,158,122),calc(.5 * var(--venue-glow,1))) 22%,
     rgba(var(--venue-tone,138,158,122),calc(.18 * var(--venue-glow,1))) 52%,rgba(var(--venue-tone,138,158,122),0) 100%);
   -webkit-mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
           mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
   filter:blur(2px);opacity:0;transform-origin:50% 0}
-html[data-theme="light"] #guide ul.ec-list{--venue-glow:.55}
-#guide details.venue-glow-in ul.ec-list::before{animation:venue-glow-in .7s cubic-bezier(.2,.7,.3,1) both}
+html[data-theme="light"] #guide .ec-list-box{--venue-glow:.55}
+#guide details.venue-glow-in .ec-list-box::before{animation:venue-glow-in .7s cubic-bezier(.2,.7,.3,1) both}
 #guide ul.ec-list > li.ec-row{position:relative;z-index:1;display:grid;grid-template-columns:66px 44px minmax(0,1fr) 26px;
   column-gap:8px;align-items:center;margin:0;padding:13px 0;border-bottom:1px solid var(--ec-line);list-style:none}
 #guide ul.ec-list > li.ec-row::before,#guide ul.ec-list > li.ec-row::marker{content:none}
@@ -128,7 +139,7 @@ html[data-theme="light"] #guide ul.ec-list{--venue-glow:.55}
   #guide .ec a.ec-map{grid-column:3;grid-row:1 / span 2}
 }
 @media(prefers-reduced-motion:reduce){
-  #guide details.venue-glow-in ul.ec-list::before{animation:none;opacity:1}
+  #guide details.venue-glow-in .ec-list-box::before{animation:none;opacity:1}
   #guide .ec.is-switching .ec-card,#guide .ec.is-switching .ec-stage,#guide .ec-dots,#guide .ec-dots i{transition:none}
 }
 /* The page-wide light-mode link colour (blue, !important) must not reach the calendar rows. */
