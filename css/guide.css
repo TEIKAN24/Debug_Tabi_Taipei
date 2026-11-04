@@ -3313,170 +3313,170 @@ body.food-swipe-dragging .food-drawer-backdrop {transition:none!important;}
    Keep transport colors, photography, tags/illustrations and all layout/motion. */
 html[data-theme="light"]{
  color-scheme:light;
- --bg:#F7F8F7;--paper:#FFFFFF;--ink:#20292C;--muted:#697579;
- --line:#DDE2E3;--accent:#155F92;--shadow:none;
- --text-heading:#172329;--text-body:#263136;--text-secondary:#626E73;
- --text-caption:#5E6B72;--link:#135E96;--link-hover:#09446E;
- --mono-main:#172329;--mono-body:#263136;--mono-sub:#657076;
- --mono-muted:#79848A;--mono-line:#D6DCDF;
- --outline-white:#CBD2D6;--outline-divider:#E1E5E7;
- --outline-strong:#26353B;
- --daytrip-panel-bg:#F7F8F7;
+ --bg:#F8F8F7;--paper:#FCFCFB;--ink:#2B2B2B;--muted:#707070;
+ --line:#E1E1E0;--accent:#155F92;--shadow:none;
+ --text-heading:#2B2B2B;--text-body:#2F2F2F;--text-secondary:#6C6C6C;
+ --text-caption:#696969;--link:#135E96;--link-hover:#09446E;
+ --mono-main:#2B2B2B;--mono-body:#2F2F2F;--mono-sub:#6E6E6E;
+ --mono-muted:#707070;--mono-line:#DBDBDA;
+ --outline-white:#D1D1D0;--outline-divider:#E4E4E3;
+ --outline-strong:#333333;
+ --daytrip-panel-bg:#F8F8F7;
 }
 html[data-theme="light"], html[data-theme="light"] body{
- background:#F7F8F7!important;color:#263136!important;
+ background:#F8F8F7!important;color:#2F2F2F!important;
 }
 html[data-theme="light"] body,html[data-theme="light"] #guide{
- scrollbar-color:#BAC5C9 #F0F3F3;
+ scrollbar-color:#C3C3C2 #F2F2F1;
 }
-html[data-theme="light"] :is(.hero h1,.hero h1 span,.hero .welcome,.site-content h2,.site-content h3,.site-content h4):not(:where(#taipei-recommender *)),html[data-theme="light"] #guide :is(.airport-access-subheading,.travel-topic-title,.venue-name-line,.destination-title,.daytrip-destination-panel-title,.rail-title){color:#172329!important;}
+html[data-theme="light"] :is(.hero h1,.hero h1 span,.hero .welcome,.site-content h2,.site-content h3,.site-content h4):not(:where(#taipei-recommender *)),html[data-theme="light"] #guide :is(.airport-access-subheading,.travel-topic-title,.venue-name-line,.destination-title,.daytrip-destination-panel-title,.rail-title){color:#2B2B2B!important;}
 html[data-theme="light"] :is(.hero .tagline,.below-nav,footer),
-html[data-theme="light"] #guide :is(.section-note,.destination-lead,.destination-pr,.destination-guide-label,.venue-extra-note,.area-intro-description,.metro-transfer-note,.airport-fare-time,.airport-fare-label,.daytrip-destination-panel-desc){color:#66737A!important;}
+html[data-theme="light"] #guide :is(.section-note,.destination-lead,.destination-pr,.destination-guide-label,.venue-extra-note,.area-intro-description,.metro-transfer-note,.airport-fare-time,.airport-fare-label,.daytrip-destination-panel-desc){color:#707070!important;}
 html[data-theme="light"] #guide :is(p,li,td,th,summary):not(#food-explorer *):not(.travel-caution *):not(.travel-twac *):not(:where(#taipei-recommender *)){
- color:#2E393E;
+ color:#373737;
 }
 html[data-theme="light"] #guide a:not(#food-explorer a):not(.travel-twac a):not(.venue-tag):not(:where(#taipei-recommender *)){
  color:#155F92!important;text-decoration-color:rgba(21,95,146,.34)!important;
 }
 html[data-theme="light"] #guide a:not(#food-explorer a):not(.travel-twac a):hover{color:#084772!important;}
 html[data-theme="light"] #guide :is(.divider,hr),
-html[data-theme="light"] footer{border-color:#DDE2E3!important;}
-html[data-theme="light"] #guide .sights-day-trips{border-top-color:#DDE2E3!important;}
+html[data-theme="light"] footer{border-color:#E1E1E0!important;}
+html[data-theme="light"] #guide .sights-day-trips{border-top-color:#E1E1E0!important;}
 /* Pastel gradients of the six entry bubbles remain, now on white paper. */
 html[data-theme="light"] .quick-nav > .nav-button:nth-child(n){
- background:linear-gradient(180deg,rgba(var(--nav-rgb),.23) 0%,rgba(var(--nav-rgb),.085) 46%,rgba(var(--nav-rgb),0) 95%),#FFFFFF!important;
- border:1px solid #D7DDE0!important;border-top:2px solid var(--nav-accent)!important;
- box-shadow:0 2px 12px rgba(32,45,54,.035)!important;
+ background:linear-gradient(180deg,rgba(var(--nav-rgb),.23) 0%,rgba(var(--nav-rgb),.085) 46%,rgba(var(--nav-rgb),0) 95%),#FCFCFB!important;
+ border:1px solid #DCDCDB!important;border-top:2px solid var(--nav-accent)!important;
+ box-shadow:0 2px 12px rgba(43,43,43,.035)!important;
 }
 html[data-theme="light"] .quick-nav > .nav-button:nth-child(n):hover{
- background:linear-gradient(180deg,rgba(var(--nav-rgb),.29) 0%,rgba(var(--nav-rgb),.12) 55%,rgba(var(--nav-rgb),0) 95%),#FFFFFF!important;
- border-color:#BFC9CE!important;border-top-color:var(--nav-accent)!important;
+ background:linear-gradient(180deg,rgba(var(--nav-rgb),.29) 0%,rgba(var(--nav-rgb),.12) 55%,rgba(var(--nav-rgb),0) 95%),#FCFCFB!important;
+ border-color:#C7C7C6!important;border-top-color:var(--nav-accent)!important;
 }
-html[data-theme="light"] .quick-nav :is(.nav-title){color:#213038!important;}
-html[data-theme="light"] .quick-nav :is(.nav-subtitle,.nav-arrow){color:#66737A!important;}
+html[data-theme="light"] .quick-nav :is(.nav-title){color:#2E2E2E!important;}
+html[data-theme="light"] .quick-nav :is(.nav-subtitle,.nav-arrow){color:#707070!important;}
 /* Outline accordions and the area / venue directories: white page, cool gray rules. */
 html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac):not(:where(#taipei-recommender *)),
 html[data-theme="light"] #guide .destination-card,
 html[data-theme="light"] #guide .area-directory-section .tab-panel > .area-category-list,
 html[data-theme="light"] #guide :is(.airport-mode-card,.airport-direction-button,.airport-check-tools,.airport-check-links a,.destination-info-group){
- background:transparent!important;background-image:none!important;border-color:#CDD5D9!important;box-shadow:none!important;
+ background:transparent!important;background-image:none!important;border-color:#D4D4D3!important;box-shadow:none!important;
 }
 html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac) > summary:not(:where(#taipei-recommender *)),
 html[data-theme="light"] #guide details:not(.travel-caution):not(.travel-twac)[open] > summary,
 html[data-theme="light"] #guide :is(.destination-info-group,.venue-row,.destination-card .tab-panel,.venue-list-item),
-html[data-theme="light"] #guide .area-directory-section :is(.area-category-list,.area-directory-group){border-color:#DDE2E3!important;}
-html[data-theme="light"] #guide :is(.travel-key-title,.travel-topic-title,.area-intro-title,.venue-name,.venue-main-link){color:#213038!important;}
-html[data-theme="light"] #guide :is(.travel-key-subtitle,.travel-topic-desc,.venue-row-index,.destination-guide-label,.destination-pr,.venue-extra-note,.area-intro-description){color:#66737A!important;}
+html[data-theme="light"] #guide .area-directory-section :is(.area-category-list,.area-directory-group){border-color:#E1E1E0!important;}
+html[data-theme="light"] #guide :is(.travel-key-title,.travel-topic-title,.area-intro-title,.venue-name,.venue-main-link){color:#2E2E2E!important;}
+html[data-theme="light"] #guide :is(.travel-key-subtitle,.travel-topic-desc,.venue-row-index,.destination-guide-label,.destination-pr,.venue-extra-note,.area-intro-description){color:#717171!important;}
 /* Accessibility: dark-selected pill on white, unchanged selected/inactive geometry. */
 html[data-theme="light"] #guide :is(.tab-pill,.destination-card .tab-pill)[aria-selected="false"]{
- color:#526168!important;border-color:#C5CED2!important;background:transparent!important;
+ color:#5F5F5F!important;border-color:#CCCCCB!important;background:transparent!important;
 }
 html[data-theme="light"] #guide :is(.tab-pill,.destination-card .tab-pill)[aria-selected="true"],
 html[data-theme="light"] #guide :is(.tab-pill,.destination-card .tab-pill)[aria-selected="true"]:hover{
- background:#202F36!important;border-color:#202F36!important;color:#FFFFFF!important;
+ background:#2D2D2D!important;border-color:#2D2D2D!important;color:#FCFCFB!important;
 }
 html[data-theme="light"] #guide :is(.tab-pill,.destination-card .tab-pill)[aria-selected="true"] :is(strong,b,small,em,span){
- color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+ color:#FCFCFB!important;-webkit-text-fill-color:#FCFCFB!important;
 }
 html[data-theme="light"] #guide .tab-pill:focus-visible,
 html[data-theme="light"] #guide .daytrip-destination-button:focus-visible{outline-color:#12639B!important;}
 html[data-theme="light"] #guide .daytrip-destination-button{
- background:#FFFFFF!important;border-color:#CAD3D7!important;color:#314149!important;
+ background:#FCFCFB!important;border-color:#D1D1D0!important;color:#3F3F3F!important;
 }
-html[data-theme="light"] #guide .daytrip-destination-button:hover{border-color:#72838C!important;color:#172A32!important;}
+html[data-theme="light"] #guide .daytrip-destination-button:hover{border-color:#808080!important;color:#2B2B2B!important;}
 html[data-theme="light"] #guide .daytrip-destination-button[aria-expanded="true"]{
- background:#202F36!important;border-color:#202F36!important;color:#FFFFFF!important;
+ background:#2D2D2D!important;border-color:#2D2D2D!important;color:#FCFCFB!important;
 }
-html[data-theme="light"] #guide .daytrip-destination-button[aria-expanded="true"] .daytrip-destination-button-name{color:#FFFFFF!important;}
+html[data-theme="light"] #guide .daytrip-destination-button[aria-expanded="true"] .daytrip-destination-button-name{color:#FCFCFB!important;}
 html[data-theme="light"] #guide .sights-day-trips .daytrip-destination-panel,
 html[data-theme="light"] #guide .sights-day-trips .daytrip-destination-panel-heading{
- border-color:#D6DEE0!important;
+ border-color:#DCDCDB!important;
 }
 /* Bus/train/taxi timeline: leave their route-line hues intact. */
-html[data-theme="light"] #guide :is(.rail-title,.daytrip-canonical-head-name,.daytrip-bus-head-name,.airsel-route-title,.airsel-station-label,.stop-name,.airsel-station-zh,.airsel-station-ja,.line-name,.direction,.fact-value,.daytrip-canonical-facts strong){color:#26353B!important;}
-html[data-theme="light"] #guide :is(.timeline-status,.station-count,.fact-label,.airsel-route-subtitle,.stop-description,.leg-note,.footnote,.daytrip-note,.station-label,.airsel-station-ja,.leg-meta .separator){color:#5E6B72!important;}
-html[data-theme="light"] #guide :is(.timeline-stop .node,.daytrip-timeline-node){border-color:#35454D;}
-html[data-theme="light"] #guide .timeline-stop.start .node{background:#F7F8F7!important;}
-html[data-theme="light"] #guide .timeline-stop.end .node{background:#35454D!important;}
+html[data-theme="light"] #guide :is(.rail-title,.daytrip-canonical-head-name,.daytrip-bus-head-name,.airsel-route-title,.airsel-station-label,.stop-name,.airsel-station-zh,.airsel-station-ja,.line-name,.direction,.fact-value,.daytrip-canonical-facts strong){color:#333333!important;}
+html[data-theme="light"] #guide :is(.timeline-status,.station-count,.fact-label,.airsel-route-subtitle,.stop-description,.leg-note,.footnote,.daytrip-note,.station-label,.airsel-station-ja,.leg-meta .separator){color:#696969!important;}
+html[data-theme="light"] #guide :is(.timeline-stop .node,.daytrip-timeline-node){border-color:#434343;}
+html[data-theme="light"] #guide .timeline-stop.start .node{background:#F8F8F7!important;}
+html[data-theme="light"] #guide .timeline-stop.end .node{background:#434343!important;}
 html[data-theme="light"] #guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark > .daytrip-tra-official-logo{
  filter:grayscale(1) brightness(0)!important;-webkit-filter:grayscale(1) brightness(0)!important;
 }
-html[data-theme="light"] #guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark > .daytrip-tra-fallback{color:#293B42!important;}
+html[data-theme="light"] #guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark > .daytrip-tra-fallback{color:#383838!important;}
 html[data-theme="light"] #guide .sights-day-trips .airport-route-selector :is(.airsel-ground-choice,.daytrip-bus-route-choice),
 html[data-theme="light"] #guide #airport-route-selector .airsel-ground-choice{
- color:#405158!important;border-color:#CAD3D7!important;background:transparent!important;
+ color:#4E4E4E!important;border-color:#D1D1D0!important;background:transparent!important;
 }
 html[data-theme="light"] #guide :is(.airsel-ground-choice,.daytrip-bus-route-choice)[aria-pressed="true"]{
- color:#FFFFFF!important;background:#202F36!important;border-color:#202F36!important;
+ color:#FCFCFB!important;background:#2D2D2D!important;border-color:#2D2D2D!important;
 }
-html[data-theme="light"] #guide :is(.airsel-ground-choice,.daytrip-bus-route-choice)[aria-pressed="true"] :is(strong,span){color:#FFFFFF!important;}
+html[data-theme="light"] #guide :is(.airsel-ground-choice,.daytrip-bus-route-choice)[aria-pressed="true"] :is(strong,span){color:#FCFCFB!important;}
 html[data-theme="light"] #guide :is(.facts .fact,.daytrip-facts .daytrip-fact,.daytrip-canonical-facts .fact){
- background:#FFFFFF!important;border-color:#D8E0E3!important;
+ background:#FCFCFB!important;border-color:#DFDFDE!important;
 }
-html[data-theme="light"] #guide .facts :is(.fact-label,.fact-value){color:#34464D!important;}
+html[data-theme="light"] #guide .facts :is(.fact-label,.fact-value){color:#434343!important;}
 /* Airport input bubbles / interchange button: preserve all positions and motion. */
 html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields{
- background:linear-gradient(155deg,#FFFFFF,#F3F6F6 76%)!important;border-color:#D0D8DC!important;
+ background:linear-gradient(155deg,#FCFCFB,#F5F5F4 76%)!important;border-color:#D7D7D6!important;
 }
-html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields::before{background:#91A0A7!important;}
-html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .selrow--origin::after{background:#D7DFE1!important;}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields::before{background:#9D9D9D!important;}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .selrow--origin::after{background:#DDDDDC!important;}
 html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-value,
 html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-value option{
- color:#1E3038!important;background:#FFFFFF!important;
+ color:#2D2D2D!important;background:#FCFCFB!important;
 }
-html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-label{color:#5E6B72!important;}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .sel-label{color:#696969!important;}
 html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .swap{
- background:#FFFFFF!important;border-color:#B9C6CC!important;color:#253C47!important;
- box-shadow:0 0 0 5px #F8FAFA!important;
+ background:#FCFCFB!important;border-color:#C4C4C3!important;color:#393939!important;
+ box-shadow:0 0 0 5px #FAFAF9!important;
 }
-html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .swap:hover{background:#EEF3F5!important;}
-html[data-theme="light"] #guide #airport-route-selector :is(.airsel-ground-details,.route-panel,.airsel-results-inner,.airsel-switcher){border-color:#DAE0E3!important;}
-html[data-theme="light"] #guide :is(.airsel-company-mark,.daytrip-company-mark,.airsel-transport-icon,.rail-title svg,.daytrip-mode-icon){color:#293E48!important;}
+html[data-theme="light"] #guide .airport-route-selector .airsel-route-fields .swap:hover{background:#F2F2F1!important;}
+html[data-theme="light"] #guide #airport-route-selector :is(.airsel-ground-details,.route-panel,.airsel-results-inner,.airsel-switcher){border-color:#DFDFDE!important;}
+html[data-theme="light"] #guide :is(.airsel-company-mark,.daytrip-company-mark,.airsel-transport-icon,.rail-title svg,.daytrip-mode-icon){color:#3B3B3B!important;}
 /* Results disclosure and service label were hardcoded white in the dark edition. */
 html[data-theme="light"] #guide #airport-route-selector .airsel-route-disclosure{
- color:#314249!important;border-top-color:#D4DCDF!important;background:transparent!important;
+ color:#3F3F3F!important;border-top-color:#DBDBDA!important;background:transparent!important;
 }
 html[data-theme="light"] #guide #airport-route-selector .airsel-disclosure-copy strong,
 html[data-theme="light"] #guide #airport-route-selector #airsel-rail-head-name{
- color:#263941!important;-webkit-text-fill-color:#263941!important;
+ color:#363636!important;-webkit-text-fill-color:#363636!important;
 }
-html[data-theme="light"] #guide #airport-route-selector .airsel-disclosure-chevron{color:#50636C!important;}
-html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback{color:#293F48!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-disclosure-chevron{color:#606060!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback{color:#3C3C3C!important;}
 /* Sub-route choices: keep contrast in both pressed and ordinary states.
    Airport/nearby 965/1062, 788/827/taxi and 1815/790 share this element. */
 html[data-theme="light"] #guide .airport-route-selector button.airsel-ground-choice,
 html[data-theme="light"] #guide .sights-day-trips button.daytrip-bus-route-choice{
-  background:#FFFFFF!important;color:#43535B!important;border-color:#CCD5D9!important;
+  background:#FCFCFB!important;color:#515151!important;border-color:#D3D3D2!important;
 }
 html[data-theme="light"] #guide .airport-route-selector .airsel-ground-choice :is(strong,span),
 html[data-theme="light"] #guide .sights-day-trips .airsel-ground-choice :is(strong,span){
-  color:#43535B!important;-webkit-text-fill-color:#43535B!important;
+  color:#515151!important;-webkit-text-fill-color:#515151!important;
 }
 html[data-theme="light"] #guide .sights-day-trips button.airsel-ground-choice[aria-pressed="true"],
 html[data-theme="light"] #guide .airport-route-selector button.airsel-ground-choice[aria-pressed="true"]{
-  background:#E6EFF2!important;color:#243D48!important;border-color:#91A8B2!important;
+  background:#EDEDEC!important;color:#3A3A3A!important;border-color:#A4A4A4!important;
 }
 html[data-theme="light"] #guide .sights-day-trips button.airsel-ground-choice[aria-pressed="true"] :is(strong,span),
 html[data-theme="light"] #guide .airport-route-selector button.airsel-ground-choice[aria-pressed="true"] :is(strong,span){
-  color:#243D48!important;-webkit-text-fill-color:#243D48!important;
+  color:#3A3A3A!important;-webkit-text-fill-color:#3A3A3A!important;
 }
 html[data-theme="light"] #guide .airport-route-selector .airsel-transport-tab[aria-selected="false"]{
- color:#526269!important;border-color:#C8D2D7!important;background:transparent!important;
+ color:#5F5F5F!important;border-color:#D0D0CF!important;background:transparent!important;
 }
 html[data-theme="light"] #guide .airport-route-selector .airsel-transport-tab[aria-selected="true"]{
- color:#FFFFFF!important;border-color:#202F36!important;background:#202F36!important;
+ color:#FCFCFB!important;border-color:#2D2D2D!important;background:#2D2D2D!important;
 }
 /* Keep role of pass, TWAC, caution, venue highlight and blue action links. */
 html[data-theme="light"] #guide details.travel-caution{background:#FFF8E8!important;border-color:#E8D5A7!important;}
 html[data-theme="light"] #guide details.travel-twac{background:#ECF7F1!important;border-color:#BBD8C7!important;}
 html[data-theme="light"] #guide .travel-caution .travel-key-icon{background:#FCEBCB!important;}
 html[data-theme="light"] #guide .travel-twac .travel-key-icon{background:#DBEEE2!important;}
-html[data-theme="light"] #guide :is(.travel-caution,.travel-twac) :is(summary,strong,p,small,span){color:#334447!important;}
-html[data-theme="light"] #guide details.travel-passes{border-color:#CDD5D9!important;background:transparent!important;}
-html[data-theme="light"] #guide .travel-passes > summary .travel-key-icon{background:#EEF2F2!important;}
-html[data-theme="light"] #guide .travel-passes :is(.travel-key-title,.pass-simple-heading h4){color:#243138!important;}
-html[data-theme="light"] #guide .travel-passes :is(.travel-key-subtitle,.pass-simple-item p){color:#5E6B72!important;}
-html[data-theme="light"] #guide .travel-passes .pass-simple-item{border-color:#DDE2E3!important;}
+html[data-theme="light"] #guide :is(.travel-caution,.travel-twac) :is(summary,strong,p,small,span){color:#414141!important;}
+html[data-theme="light"] #guide details.travel-passes{border-color:#D4D4D3!important;background:transparent!important;}
+html[data-theme="light"] #guide .travel-passes > summary .travel-key-icon{background:#F1F1F0!important;}
+html[data-theme="light"] #guide .travel-passes :is(.travel-key-title,.pass-simple-heading h4){color:#2F2F2F!important;}
+html[data-theme="light"] #guide .travel-passes :is(.travel-key-subtitle,.pass-simple-item p){color:#696969!important;}
+html[data-theme="light"] #guide .travel-passes .pass-simple-item{border-color:#E1E1E0!important;}
 html[data-theme="light"] #guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now,
 html[data-theme="light"] #guide a.external-action-link,
 html[data-theme="light"] #guide .venue-secondary-links a{
@@ -3490,16 +3490,16 @@ html[data-theme="light"] #guide .venue-directory-section .venue-tag--tone-gold{
 }
 html[data-theme="light"] #guide .venue-directory-section .venue-tag--caution,
 html[data-theme="light"] #guide .venue-directory-section .venue-tag--tone-red{color:#A94338!important;border-color:#DBB7B3!important;background:#FFF1EF!important;}
-html[data-theme="light"] #guide .venue-directory-section .venue-tag:not(.venue-tag--featured):not(.venue-tag--caution):not(.venue-tag--tone-gold):not(.venue-tag--tone-red){color:#52636C!important;border-color:#CCD6DA!important;}
+html[data-theme="light"] #guide .venue-directory-section .venue-tag:not(.venue-tag--featured):not(.venue-tag--caution):not(.venue-tag--tone-gold):not(.venue-tag--tone-red){color:#606060!important;border-color:#D4D4D3!important;}
 /* Food dictionary drawer follows theme; original green selection remains green. */
 html[data-theme="light"] #guide #food-search.food-drawer{
- background:#F7F8F7!important;color:#25343A!important;border-left-color:#CBD5D9!important;
+ background:#F8F8F7!important;color:#323232!important;border-left-color:#D3D3D2!important;
 }
 html[data-theme="light"] #guide #food-search #food-explorer,
 html[data-theme="light"] #guide #food-explorer{
  color-scheme:light;
- --page:#F7F8F7;--surface:#FFFFFF;--text:#27363C;
- --muted:#65757A;--border:#DCE3E2;--soft:#F1F5F3;
+ --page:#F8F8F7;--surface:#FCFCFB;--text:#343434;
+ --muted:#707070;--border:#E1E1E0;--soft:#F1F5F3;
  --accent:#186C53;--accent-faint:#E4F3EC;--focus:#459A7D;
 }
 html[data-theme="light"] #guide #food-explorer mark{background:#CDE8D8!important;color:#16452F!important;}
@@ -3517,7 +3517,7 @@ html[data-theme="light"] #guide #food-explorer :is(.pill.active,.filter.active){
 .theme-preview-toggle:hover{filter:brightness(1.08)}
 .theme-preview-toggle:focus-visible{outline:2px solid #398AC0;outline-offset:2px;}
 html[data-theme="light"] .theme-preview-toggle{
- background:#FFFFFF;color:#253B44;border-color:#C3CED3;
+ background:#FCFCFB;color:#383838;border-color:#CCCCCB;
  box-shadow:0 3px 12px rgba(20,40,50,.10);
 }
 body.food-drawer-open .theme-preview-toggle{opacity:0;pointer-events:none;}
@@ -3550,39 +3550,39 @@ html[data-theme="light"] #guide .travel-twac .bulleted-list em mark{
 /* Nearby destination transport tabs: text + underline only, no selected rectangle. */
 html[data-theme="light"] #guide .sights-day-trips .tab-pills.daytrip-transport{
   background:transparent!important;border:0!important;
-  border-bottom:1px solid #8F9DA5!important;box-shadow:none!important;
+  border-bottom:1px solid #9B9B9B!important;box-shadow:none!important;
 }
 html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab,
 html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab[aria-selected="false"]{
-  background:transparent!important;color:#69777F!important;
+  background:transparent!important;color:#707070!important;
   border:0!important;border-radius:0!important;box-shadow:none!important;
 }
 html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab[aria-selected="true"],
 html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab[aria-selected="true"]:hover{
-  background:transparent!important;color:#21343E!important;
+  background:transparent!important;color:#313131!important;
   border:0!important;border-radius:0!important;box-shadow:none!important;
 }
 html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab[aria-selected="true"] :is(span,strong,b,small,em){
-  color:#21343E!important;-webkit-text-fill-color:#21343E!important;
+  color:#313131!important;-webkit-text-fill-color:#313131!important;
 }
 html[data-theme="light"] #guide .sights-day-trips .daytrip-transport > .airsel-transport-ink{
-  background:#21343E!important;
+  background:#313131!important;
 }
 /* Emergency cards: visible outline and readable numbers, labels and action icons. */
-html[data-theme="light"] #guide .emergency-intro{color:#5E6B72!important;}
+html[data-theme="light"] #guide .emergency-intro{color:#696969!important;}
 html[data-theme="light"] #guide a.emergency-contact-card{
-  background:#FFFFFF!important;border:1px solid #C8D3D8!important;
-  color:#263941!important;box-shadow:none!important;
+  background:#FCFCFB!important;border:1px solid #D1D1D0!important;
+  color:#363636!important;box-shadow:none!important;
 }
 html[data-theme="light"] #guide a.emergency-contact-card:hover,
 html[data-theme="light"] #guide a.emergency-contact-card:focus-visible{
-  background:#F1F6F8!important;border-color:#819BA8!important;
+  background:#F5F5F4!important;border-color:#979797!important;
 }
 html[data-theme="light"] #guide a.emergency-contact-card:focus-visible{outline:2px solid #347B9F!important;}
 html[data-theme="light"] #guide .emergency-card-name,
-html[data-theme="light"] #guide .emergency-phone-number{color:#23363D!important;}
+html[data-theme="light"] #guide .emergency-phone-number{color:#333333!important;}
 html[data-theme="light"] #guide .emergency-card-reason,
-html[data-theme="light"] #guide .emergency-support-desc{color:#64777F!important;}
+html[data-theme="light"] #guide .emergency-support-desc{color:#707070!important;}
 html[data-theme="light"] #guide .emergency-card-action{color:#235D79!important;}
 
 /* ================= v30.9.28 Light mode finish =================
@@ -3612,20 +3612,20 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback
 /* Keep the airport mode navigation free of light mode's filled active card;
    the dark typographic highlight and indicator line show the selection. */
 html[data-theme="light"] #guide #airport-route-selector .airsel-transport{
-  background:transparent!important;border-bottom:1px solid #93A1A8!important;
+  background:transparent!important;border-bottom:1px solid #9F9F9F!important;
   box-shadow:none!important;
 }
 html[data-theme="light"] #guide #airport-route-selector .airsel-transport-tab,
 html[data-theme="light"] #guide #airport-route-selector .airsel-transport-tab[aria-selected="false"]{
-  color:#69777F!important;background:transparent!important;
+  color:#707070!important;background:transparent!important;
   border:0!important;box-shadow:none!important;
 }
 html[data-theme="light"] #guide #airport-route-selector .airsel-transport-tab[aria-selected="true"]{
-  color:#21343E!important;background:transparent!important;
+  color:#313131!important;background:transparent!important;
   border:0!important;box-shadow:none!important;
 }
 html[data-theme="light"] #guide #airport-route-selector .airsel-transport-ink{
-  background:#21343E!important;
+  background:#313131!important;
 }
 /* Airport's input block has no enclosing rectangular background in light. */
 html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields{
@@ -3638,17 +3638,17 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields{
 html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields :is(.sel-choice-bubble,.sel-value){
  background:transparent!important;background-image:none!important;box-shadow:none!important;
 }
-html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .sel-choice-bubble{border-color:#BECAD0!important;}
-html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .sel-choice-bubble:focus-within{background:#EDF3F4!important;border-color:#566F7B!important;}
-html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .sel-value{color:#233941!important;-webkit-text-fill-color:#233941!important;}
-html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .selrow.is-empty .sel-value{color:#667981!important;-webkit-text-fill-color:#667981!important;}
-html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .chev{border-color:#536770!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .sel-choice-bubble{border-color:#C8C8C7!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .sel-choice-bubble:focus-within{background:#F2F2F1!important;border-color:#6B6B6B!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .sel-value{color:#363636!important;-webkit-text-fill-color:#363636!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .selrow.is-empty .sel-value{color:#707070!important;-webkit-text-fill-color:#707070!important;}
+html[data-theme="light"] #guide #airport-route-selector .airsel-route-fields .chev{border-color:#646464!important;}
 /* Food & drink / night market nested category headings need dark text on the unfilled card. */
 html[data-theme="light"] #guide .venue-directory-section:not(.area-directory-section) .tab-panel details.nested-accordion > summary,
 html[data-theme="light"] #guide .venue-directory-section:not(.area-directory-section) .tab-panel details.nested-accordion > summary :is(span,strong,b,small,em,h4){
- color:#263941!important;-webkit-text-fill-color:#263941!important;
+ color:#363636!important;-webkit-text-fill-color:#363636!important;
 }
-html[data-theme="light"] #guide .venue-directory-section:not(.area-directory-section) .tab-panel details.nested-accordion > summary :is(.venue-row-index,.night-market-note,.venue-tag){color:#667981!important;}
+html[data-theme="light"] #guide .venue-directory-section:not(.area-directory-section) .tab-panel details.nested-accordion > summary :is(.venue-row-index,.night-market-note,.venue-tag){color:#767676!important;}
 /* Subroute travel costs / time share the upper-right title baseline, rather than being repeated below the map. */
 #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{
  margin-left:auto;align-self:flex-start;flex:0 0 auto;min-width:0;
@@ -3658,19 +3658,19 @@ html[data-theme="light"] #guide .venue-directory-section:not(.area-directory-sec
 }
 #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta[hidden]{display:none!important;}
 #guide .sights-day-trips .route-panel .rail-title :is(.daytrip-bus-head-name,.daytrip-canonical-head-name){min-width:0;flex:1 1 auto;}
-html[data-theme="light"] #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{color:#4E636D!important;}
+html[data-theme="light"] #guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta{color:#606060!important;}
 /* Six primary navigation buttons: keep delicate color wash but remove solid top accent bar. */
 html[data-theme="light"] .quick-nav > .nav-button:nth-child(n),
 html[data-theme="light"] .quick-nav > .nav-button:nth-child(n):hover{
- border-top:1px solid #D7DDE0!important;
+ border-top:1px solid #DCDCDB!important;
 }
 html[data-theme="light"] #guide .sights-day-trips .daytrip-company-mark:not(.daytrip-tra-mark) svg{
-  color:#253940!important;stroke:#253940!important;fill:none!important;opacity:1!important;
+  color:#363636!important;stroke:#363636!important;fill:none!important;opacity:1!important;
 }
 /* Same outline icons are used in Airport Access bus/taxi results. */
 html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback.airsel-ground-icon{
   filter:none!important;-webkit-filter:none!important;
-  color:#253940!important;
+  color:#363636!important;
 }
 #guide #airport-route-selector .airsel-company-fallback.airsel-ground-icon svg{
   display:block;width:20px;height:20px;color:inherit;stroke:currentColor;fill:none;
@@ -3731,17 +3731,17 @@ html[data-theme="light"] #guide #airport-route-selector .airsel-company-fallback
   margin:0!important;padding:0!important;
 }
 html[data-theme="light"] #guide .sights-day-trips .daytrip-fold-section{
-  border-top-color:#D7DFE2!important;
+  border-top-color:#DEDEDD!important;
 }
 html[data-theme="light"] #guide .sights-day-trips .daytrip-inline-accordion > summary{
-  color:#24383F!important;-webkit-text-fill-color:#24383F!important;
+  color:#353535!important;-webkit-text-fill-color:#353535!important;
   background:transparent!important;
 }
 html[data-theme="light"] #guide .sights-day-trips .daytrip-inline-accordion > summary::after{
-  color:#536F7B!important;
+  color:#6B6B6B!important;
 }
 html[data-theme="light"] #guide .sights-day-trips .daytrip-inline-accordion .daytrip-place-list li{
-  border-bottom-color:#E0E5E7!important;
+  border-bottom-color:#E4E4E3!important;
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -3752,7 +3752,7 @@ html[data-theme="light"] #guide .sights-day-trips .daytrip-inline-accordion .day
 /* Preserve a distinct outline for the search, search chips, difficulty/category tabs,
    list separators, and food-result controls without reintroducing heavy cards. */
 html[data-theme="light"] #guide #food-search #food-explorer .search-shell{
-  background:#FFFFFF!important;border:1.5px solid #B6C5C6!important;
+  background:#FCFCFB!important;border:1.5px solid #C2C2C1!important;
   box-shadow:none!important;
 }
 html[data-theme="light"] #guide #food-search #food-explorer .search-shell:focus-within{
@@ -3760,8 +3760,8 @@ html[data-theme="light"] #guide #food-search #food-explorer .search-shell:focus-
   box-shadow:0 0 0 2px rgba(42,141,103,.13)!important;
 }
 html[data-theme="light"] #guide #food-search #food-explorer .quick button{
-  border:1px solid #B9C7C9!important;background:#FBFCFB!important;
-  color:#4A6066!important;
+  border:1px solid #C4C4C3!important;background:#FBFCFB!important;
+  color:#5C5C5C!important;
 }
 html[data-theme="light"] #guide #food-search #food-explorer .quick button:focus-visible{
   border-color:#4D997D!important;
@@ -3769,10 +3769,10 @@ html[data-theme="light"] #guide #food-search #food-explorer .quick button:focus-
 
 
 html[data-theme="light"] #guide #food-search #food-explorer .results-head{
-  border-bottom:1px solid #BDC9CA!important;
+  border-bottom:1px solid #C7C7C6!important;
 }
 html[data-theme="light"] #guide #food-search #food-explorer .result{
-  border-bottom:1px solid #D2DCDD!important;
+  border-bottom:1px solid #DADAD9!important;
 }
 /* On iOS, a dark fixed viewport backdrop can tint both Safari browser bars.
    Keep the off-canvas left page muted *on its own layer* instead, so the
@@ -3788,7 +3788,7 @@ html[data-theme="light"] #guide #food-search #food-explorer .result{
     filter:brightness(.78)!important;
   }
   html[data-theme="light"] body.food-drawer-open #guide #food-search.food-drawer{
-    background:#F7F8F7!important;
+    background:#F8F8F7!important;
   }
 }
 
@@ -3804,7 +3804,7 @@ html[data-theme="light"] #guide .travel-twac .bulleted-list > li {
 html[data-theme="light"] #guide .travel-caution .travel-topic-icon {
   background:#E9EEE9!important;
   border:1px solid #D7E0DB!important;
-  color:#293C3D!important;
+  color:#393939!important;
 }
 /* A fixed/filtered root surface can be sampled by iOS Safari's translucent
    browser chrome, producing gray bands above and below the light dictionary.
@@ -3813,11 +3813,11 @@ html[data-theme="light"] #guide .travel-caution .travel-topic-icon {
 @media (max-width:599px) {
   html[data-theme="light"]:has(body.food-drawer-open),
   html[data-theme="light"]:has(body.food-swipe-active){
-    background:#F7F8F7!important;color-scheme:light!important;
+    background:#F8F8F7!important;color-scheme:light!important;
   }
   html[data-theme="light"] body.food-drawer-open,
   html[data-theme="light"] body.food-swipe-active {
-    background:#F7F8F7!important;color-scheme:light!important;
+    background:#F8F8F7!important;color-scheme:light!important;
   }
   html[data-theme="light"] body.food-drawer-open .food-drawer-backdrop,
   html[data-theme="light"] body.food-swipe-active .food-drawer-backdrop {
@@ -3836,12 +3836,12 @@ html[data-theme="light"] #guide .travel-caution .travel-topic-icon {
   }
   html[data-theme="light"] body.food-drawer-open #guide #food-search.food-drawer,
   html[data-theme="light"] body.food-swipe-active #guide #food-search.food-drawer {
-    background:#F7F8F7!important;
+    background:#F8F8F7!important;
   }
 }
 html[data-theme="light"] #guide .airport-route-selector .timeline-stop.end .node {
-  background:#35454D!important;
-  border-color:#35454D!important;
+  background:#434343!important;
+  border-color:#434343!important;
   box-shadow:none!important;
 }
 
@@ -3865,18 +3865,18 @@ html[data-theme="light"] #guide .airport-route-selector .code.code--purple {
 }
 /* Express / local train menu needs legible charcoal text in light mode. */
 html[data-theme="light"] #guide #airport-route-selector .airsel-train-select {
-  color:#263E49!important;
-  -webkit-text-fill-color:#263E49!important;
-  border-bottom-color:#80939A!important;
+  color:#3B3B3B!important;
+  -webkit-text-fill-color:#3B3B3B!important;
+  border-bottom-color:#909090!important;
 }
 html[data-theme="light"] #guide #airport-route-selector .airsel-train-select option {
-  background:#FFFFFF!important;
-  color:#263E49!important;
-  -webkit-text-fill-color:#263E49!important;
+  background:#FCFCFB!important;
+  color:#3B3B3B!important;
+  -webkit-text-fill-color:#3B3B3B!important;
 }
 html[data-theme="light"] #guide #airport-route-selector .airsel-train-chevron {
-  border-right-color:#3D5660!important;
-  border-bottom-color:#3D5660!important;
+  border-right-color:#525252!important;
+  border-bottom-color:#525252!important;
 }
 /* Brighter, warm-gold recommendation text without losing tiny-label contrast. */
 html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge {
@@ -3923,7 +3923,7 @@ html[data-theme="light"] #guide .airport-route-selector .airsel-recommend-badge 
 
 html[data-theme="light"] .hero.wrapper .theme-preview-toggle:hover{
   background:rgba(255,255,255,.85)!important;
-  border-color:rgba(144,153,160,.42)!important;
+  border-color:rgba(152,152,152,.42)!important;
 }
 @media(max-width:600px){
   .hero.wrapper .theme-preview-toggle{
@@ -3993,12 +3993,12 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:hover{
 
   color:#79848B!important;
 }
-html[data-theme="light"] .hero-brandline{color:#667078;}
+html[data-theme="light"] .hero-brandline{color:#6F6F6F;}
 html[data-theme="light"] .hero-lockup,
 html[data-theme="light"] .hero-lockup-word,
-html[data-theme="light"] .hero-lockup-slash::before{color:#ADADAF; background-color:#ADADAF;}
+html[data-theme="light"] .hero-lockup-slash::before{color:#ADADAD; background-color:#ADADAD;}
 html[data-theme="light"] .hero-lockup-word .ta{color:#84D0B3!important;}
-html[data-theme="light"] .hero .tagline{color:#5E6B72!important;}
+html[data-theme="light"] .hero .tagline{color:#696969!important;}
 @media(max-width:600px){
   .hero-masthead{gap:12px;}
   .hero-brandline{font-size:11px;letter-spacing:.14em;}
@@ -4039,21 +4039,21 @@ html[data-theme="light"] .hero .tagline{color:#5E6B72!important;}
   background:#B1B1B3!important;
 }
 html[data-theme="light"] .hero h1.hero-masthead .hero-brandline{
-  color:#68747B!important;
-  -webkit-text-fill-color:#68747B!important;
+  color:#707070!important;
+  -webkit-text-fill-color:#707070!important;
   background:transparent!important;
 }
 html[data-theme="light"] .hero h1.hero-masthead .hero-lockup,
 html[data-theme="light"] .hero h1.hero-masthead .hero-lockup-word{
-  color:#9C9EA2!important;
-  -webkit-text-fill-color:#9C9EA2!important;
+  color:#9E9E9E!important;
+  -webkit-text-fill-color:#9E9E9E!important;
   background:transparent!important;
 }
 html[data-theme="light"] .hero h1.hero-masthead .hero-lockup-word .ta{
   color:#5CBF97!important;
   -webkit-text-fill-color:#5CBF97!important;
 }
-html[data-theme="light"] .hero h1.hero-masthead .hero-lockup-slash::before{background:#9C9EA2!important;}
+html[data-theme="light"] .hero h1.hero-masthead .hero-lockup-slash::before{background:#9E9E9E!important;}
 body.food-drawer-open .hero.wrapper .theme-preview-toggle{
   opacity:0!important;
   pointer-events:none!important;
@@ -4114,13 +4114,13 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
 
 /* ========== v30.9.43 — transfer badges and double-ring interchange nodes ========== */
 #guide{--transfer-ring:#F2F2F2;--transfer-surface:#0D0D0D;}
-html[data-theme="light"] #guide{--transfer-ring:#3D474D;--transfer-surface:#F7F8F7;}
+html[data-theme="light"] #guide{--transfer-ring:#454545;--transfer-surface:#F8F8F7;}
 /* Light transport route transfer badges: dark graphite with white text. */
 html[data-theme="light"] #guide .airport-route-selector .timeline-status--transfer{
-  background:#3D4348!important;
-  color:#FFFFFF!important;
-  -webkit-text-fill-color:#FFFFFF!important;
-  border-color:#3D4348!important;
+  background:#424242!important;
+  color:#FCFCFB!important;
+  -webkit-text-fill-color:#FCFCFB!important;
+  border-color:#424242!important;
   box-shadow:none!important;
 }
 /* Common concentric markers for interchange stations in both themes. */
@@ -4189,7 +4189,7 @@ html[data-theme="light"] #guide .airport-route-selector .timeline-status--transf
 .hero.wrapper .theme-preview-toggle:focus-visible{opacity:.83!important;}
 html[data-theme="light"] .hero.wrapper .theme-preview-toggle{
   background:transparent!important;border-color:transparent!important;
-  color:#77838A!important;
+  color:#707070!important;
 }
 /* Display original full-color transit operator artwork in light mode only. */
 html[data-theme="light"] #guide #airport-route-selector .airsel-company-mark img[data-ready="true"]{
@@ -4365,7 +4365,7 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:focus-visible{
   visibility:hidden;
 }
 html[data-theme="light"] #guide .venue-directory-section .tab-panel > .guided-fixed-heading > button{
-  color:#27363C!important;background:#F7F8F7!important;border-color:#D7DFE1!important;
+  color:#343434!important;background:#F8F8F7!important;border-color:#DDDDDC!important;
 }
 /* Keep the faded fourth row below the fixed heading, never fade the heading. */
 #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{
@@ -4425,7 +4425,7 @@ html[data-theme="light"] #guide .venue-directory-section .tab-panel > .guided-fi
 }
 html[data-theme="light"] .hero.wrapper .theme-preview-toggle,
 html[data-theme="light"] .hero.wrapper .theme-preview-toggle:is(:hover,:active,:focus,:focus-visible){
-  color:#77838A!important;
+  color:#707070!important;
 }
 .hero.wrapper .theme-preview-toggle svg,
 .hero.wrapper .theme-preview-toggle:is(:hover,:active,:focus,:focus-visible) svg{
@@ -4529,7 +4529,7 @@ body.food-swipe-active > footer{
 html:has(body.food-swipe-active),
 body.food-swipe-active {background:#0d0d0d!important;}
 html[data-theme="light"]:has(body.food-swipe-active),
-html[data-theme="light"] body.food-swipe-active {background:#f7f8f7!important;}
+html[data-theme="light"] body.food-swipe-active {background:#F8F8F7!important;}
 #guide #food-search.food-drawer::before,
 #guide #food-search.food-drawer::after {
   content:""!important;
@@ -4549,10 +4549,10 @@ html[data-theme="light"] body.food-swipe-active {background:#f7f8f7!important;}
   background:linear-gradient(to top,#0D0D0D 0%,transparent 100%)!important;
 }
 html[data-theme="light"] #guide #food-search.food-drawer::before {
-  background:linear-gradient(to bottom,#F7F8F7 0%,transparent 100%)!important;
+  background:linear-gradient(to bottom,#F8F8F7 0%,transparent 100%)!important;
 }
 html[data-theme="light"] #guide #food-search.food-drawer::after {
-  background:linear-gradient(to top,#F7F8F7 0%,transparent 100%)!important;
+  background:linear-gradient(to top,#F8F8F7 0%,transparent 100%)!important;
 }
 /* v30.9.208: --drawer-chrome-edge is now set once per theme (bottom of this
    file). Switching an inherited custom property on <html> whenever a drawer
@@ -4562,7 +4562,7 @@ html:has(body.food-swipe-active) {
   color-scheme:dark;
 }
 html[data-theme="light"]:has(body.food-swipe-active) {
-  background-color:#F7F8F7!important;
+  background-color:#F8F8F7!important;
   color-scheme:light;
 }
 body.food-swipe-active {
@@ -4623,7 +4623,7 @@ body.food-swipe-active #guide #food-search.food-drawer {
 #guide .venue-directory-section .tab-panel .teaser-scroll-body > details[open] > summary{
   position:sticky;top:0;z-index:3;background:#0D0D0D!important;
 }
-html[data-theme="light"] #guide .venue-directory-section .tab-panel .teaser-scroll-body > details[open] > summary{background:#F7F8F7!important;}
+html[data-theme="light"] #guide .venue-directory-section .tab-panel .teaser-scroll-body > details[open] > summary{background:#F8F8F7!important;}
 #guide hr.chapter-divider{margin:40px 0 28px!important;}
 #guide .chapter-eyebrow{
   margin:0 0 6px!important;padding:0!important;
@@ -4642,8 +4642,8 @@ html[data-theme="light"] #guide .venue-directory-section .tab-panel .teaser-scro
 #guide .sights-day-trips > h3{
   margin:30px 0 10px!important;font-size:16px!important;line-height:1.35!important;font-weight:780!important;letter-spacing:-.01em!important;
 }
-html[data-theme="light"] #guide .chapter-eyebrow{color:#5E6B72!important;}
-html[data-theme="light"] #guide .chapter-lead{color:#5E6B72!important;}
+html[data-theme="light"] #guide .chapter-eyebrow{color:#696969!important;}
+html[data-theme="light"] #guide .chapter-lead{color:#696969!important;}
 #guide #night-markets-section #night-markets-tabs .night-market-panel{padding:22px 4px 6px!important;max-height:none!important;overflow:visible!important;}
 #guide #night-markets-section #night-markets-tabs .nm-title{margin:0!important;font-size:20px!important;font-weight:800!important;line-height:1.3!important;letter-spacing:.02em;color:#F2F2F2!important;}
 #guide #night-markets-section #night-markets-tabs .nm-lead{margin:14px 0 0!important;font-size:13px!important;line-height:1.75!important;color:#8E8E8E!important;}
@@ -4663,13 +4663,13 @@ html[data-theme="light"] #guide .chapter-lead{color:#5E6B72!important;}
 #guide #night-markets-section #night-markets-tabs .nm-go{display:flex;align-items:center;justify-content:center;margin:44px 0 6px;min-height:56px;border-radius:18px;
   background:#F3F3F3!important;color:#151515!important;font-size:16px;font-weight:800;letter-spacing:.06em;text-decoration:none!important;-webkit-tap-highlight-color:transparent;}
 #guide #night-markets-section #night-markets-tabs .nm-go:focus-visible{outline:2px solid #CCCCCC;outline-offset:3px;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-title{color:#202020!important;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-lead{color:#5E6B72!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-title{color:#2B2B2B!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-lead{color:#696969!important;}
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-info dt,
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-feature-label{color:#3C3C3C!important;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-info dd{color:#202020!important;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-features li{background:#ECECEC!important;color:#4A4A4A!important;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-go{background:#222222!important;color:#FFFFFF!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-info dd{color:#2B2B2B!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-features li{background:#ECECEB!important;color:#4A4A4A!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-go{background:#2B2B2B!important;color:#FCFCFB!important;}
 #guide #night-markets-section #night-markets-tabs .nm-foods{margin:28px 0 0!important;}
 #guide #night-markets-section #night-markets-tabs .nm-foods-heading{
   display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
@@ -4691,10 +4691,10 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-g
 #guide #night-markets-section #night-markets-tabs .nm-food-ja{font-size:12px!important;line-height:1.65!important;color:#BDBDBD!important;overflow-wrap:anywhere;min-width:0;}
 #guide #night-markets-section #night-markets-tabs .nm-foods + .nm-go{margin-top:30px!important;}
 html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-foods-heading{color:#3C3C3C!important;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-foods-subtitle{color:#6C777C!important;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-foods-list>li{background:#F0F0F0!important;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-food-zh{color:#242424!important;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-food-ja{color:#5B6064!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-foods-subtitle{color:#707070!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-foods-list>li{background:#F0F0EF!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-food-zh{color:#2B2B2B!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-food-ja{color:#5F5F5F!important;}
 #guide #night-markets-section #night-markets-tabs .nm-specialty-label{margin:18px 0 8px!important;}
 #guide #night-markets-section #night-markets-tabs .nm-specialties{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0!important;padding:0!important;list-style:none!important;}
 #guide #night-markets-section #night-markets-tabs .nm-specialties>li{
@@ -4704,7 +4704,7 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-f
 }
 #guide #night-markets-section #night-markets-tabs .nm-specialties>li::before,#guide #night-markets-section #night-markets-tabs .nm-specialties>li::marker{content:none!important;}
 #guide #night-markets-section #night-markets-tabs .nm-specialties + .nm-go{margin-top:14px!important;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialties>li{background:#E9E9E9!important;color:#2A2A2A!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialties>li{background:#E9E9E8!important;color:#2B2B2B!important;}
 #guide #night-markets-section #night-markets-tabs .nm-specialties>li{display:block!important;min-height:0!important;padding:0!important;background:none!important;}
 #guide #night-markets-section #night-markets-tabs .nm-specialty{
   display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;margin:0;padding:6px 3px;box-sizing:border-box;
@@ -4715,9 +4715,9 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-s
 #guide #night-markets-section #night-markets-tabs .nm-specialty:active{background:#4A4A4A;}
 #guide #night-markets-section #night-markets-tabs .nm-specialty:focus-visible{outline:2px solid #CCCCCC;outline-offset:2px;}
 @media (hover:hover){#guide #night-markets-section #night-markets-tabs .nm-specialty:hover{background:#444444;}}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty{background:#E9E9E9;color:#2A2A2A;}
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty:active{background:#DCDCDC;}
-@media (hover:hover){html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty:hover{background:#E0E0E0;}}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty{background:#E9E9E8;color:#2B2B2B;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty:active{background:#DCDCDB;}
+@media (hover:hover){html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty:hover{background:#E0E0DF;}}
 body #guide #food-search.food-drawer.is-floating{
   inset:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px)) auto!important;
   width:min(calc(100vw - 24px),440px)!important;max-width:none!important;height:auto!important;
@@ -4795,29 +4795,29 @@ body #guide #food-search.food-drawer.is-floating .result{background:transparent!
 body #guide #food-search.food-drawer.is-floating .result .dish{font-size:16px!important;font-weight:700!important;color:#F2F2F2!important;}
 body #guide #food-search.food-drawer.is-floating .result .desc{font-size:13px!important;color:#A3A3A3!important;}
 body #guide #food-search.food-drawer.is-floating .result-meta .tag{background:none!important;border:0!important;padding:0!important;font-size:11px!important;color:#A3A3A3!important;box-shadow:none!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating{background:#F7F8F7!important;border-color:#DADADA!important;box-shadow:0 28px 70px rgba(0,0,0,.25)!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-title{color:#1E1E1E!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .intro{color:#5E6B72!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .search-shell{background:#FFFFFF!important;border-color:#CFCFCF!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating{background:#F8F8F7!important;border-color:#DADAD9!important;box-shadow:0 28px 70px rgba(0,0,0,.25)!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-title{color:#2B2B2B!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .intro{color:#696969!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .search-shell{background:#FCFCFB!important;border-color:#CFCFCE!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .search-shell svg{color:#444;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating #search{color:#1E1E1E!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .clear{background:#E2E2E2!important;color:#333!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-tools-toggle{border-color:#C8C8C8;color:#333;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-tools-panel{background:#FFFFFF;border-color:#D6D6D6;box-shadow:0 18px 40px rgba(0,0,0,.16);}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-tools-label{color:#5E6B72!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating #food-explorer .quick button{background:#F4F4F4!important;border-color:#D4D4D4!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating #food-explorer .quick button[aria-pressed="true"]{border-color:#222!important;background:#E8E8E8!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-char{background:#F4F4F4;border-color:#D4D4D4;color:#222;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-char[aria-pressed="true"]{background:#222;border-color:#222;color:#FFF;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating #search{color:#2B2B2B!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .clear{background:#E2E2E1!important;color:#333!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-tools-toggle{border-color:#C8C8C7;color:#333;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-tools-panel{background:#FCFCFB;border-color:#D6D6D5;box-shadow:0 18px 40px rgba(0,0,0,.16);}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-tools-label{color:#696969!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating #food-explorer .quick button{background:#F4F4F3!important;border-color:#D4D4D3!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating #food-explorer .quick button[aria-pressed="true"]{border-color:#2B2B2B!important;background:#E8E8E7!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-char{background:#F4F4F3;border-color:#D4D4D3;color:#2B2B2B;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-char[aria-pressed="true"]{background:#2B2B2B;border-color:#2B2B2B;color:#FCFCFB;}
 
 
 
 
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .results-head h3,html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result-count{color:#222!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .results-head h3,html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result-count{color:#2B2B2B!important;}
 html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .food-list::before{background:linear-gradient(to bottom,rgba(201,160,80,.30),rgba(201,160,80,.10) 50%,rgba(201,160,80,0) 92%);}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result{border-bottom-color:#DDDDDD!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result .dish{color:#1E1E1E!important;}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result .desc,html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result-meta .tag{color:#5E6B72!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result{border-bottom-color:#DDDDDC!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result .dish{color:#2B2B2B!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result .desc,html[data-theme="light"] body #guide #food-search.food-drawer.is-floating .result-meta .tag{color:#696969!important;}
 body #guide #food-search.food-drawer.is-floating{
   inset:auto 12px auto auto!important;
   height:min(490px,calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
@@ -4827,7 +4827,7 @@ body #guide #food-search.food-drawer.is-floating{
 @media(min-width:600px){body #guide #food-search.food-drawer.is-floating{
   right:16px!important;height:min(600px,calc(100dvh - 32px))!important;top:max(16px,calc(50dvh - 300px))!important;
 }}
-html[data-theme="light"] body #guide #food-search.food-drawer.is-floating{background:rgba(247,248,247,.95)!important;}
+html[data-theme="light"] body #guide #food-search.food-drawer.is-floating{background:rgba(248,248,248,.95)!important;}
 body #guide #food-search.food-drawer.is-floating .food-list::before{
   -webkit-mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent);
   mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent);
@@ -5016,7 +5016,7 @@ body.food-drawer-open .food-theme-dock .theme-preview-toggle{pointer-events:auto
 }
 .food-theme-dock .theme-dot{width:15px;height:15px;border-radius:50%;background:#EDEDED;flex:none;}
 html[data-theme="light"] .food-theme-dock .theme-preview-toggle{
-  background:rgba(255,255,255,.85)!important;border-color:rgba(0,0,0,.08)!important;color:#1E1E1E!important;
+  background:rgba(255,255,255,.85)!important;border-color:rgba(0,0,0,.08)!important;color:#2B2B2B!important;
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,.12)!important;
 }
 /* more room between 03 SIGHTS and 04 CITY WALK */
@@ -5092,8 +5092,8 @@ html[data-theme="light"] .food-edge-hint{background:linear-gradient(to left,rgba
   mask-image:linear-gradient(to bottom,#000 calc(100% - 64px),transparent);
 }
 #guide .area-cat-pane ol{margin-top:0!important;}
-html[data-theme="light"] #guide .area-cat{border-color:#CFCFCF;color:#3A3A3A;}
-html[data-theme="light"] #guide .area-cat[aria-selected="true"]{background:#222222;border-color:#222222;color:#FFFFFF;}
+html[data-theme="light"] #guide .area-cat{border-color:#CFCFCE;color:#3A3A3A;}
+html[data-theme="light"] #guide .area-cat[aria-selected="true"]{background:#2B2B2B;border-color:#2B2B2B;color:#FCFCFB;}
 /* Bubble panels slide sideways: clip them while they move. */
 #guide .tab-panels.is-sliding{overflow:hidden;}
 #guide .tab-panels > .tab-panel{will-change:auto;}
@@ -5113,10 +5113,10 @@ html[data-theme="light"] #guide .area-cat[aria-selected="true"]{background:#2222
 #guide .emergency-line-note{font-size:10.5px;color:#9A9A9A;}
 #guide .emergency-line-number{display:inline-flex;align-items:center;gap:8px;flex:none;font-size:16px;font-weight:800;color:#F7F7F7;letter-spacing:.01em;}
 #guide .emergency-compact .emergency-official-links{grid-column:1 / -1;margin:2px 0 0!important;font-size:11.5px!important;}
-html[data-theme="light"] #guide .emergency-tile,html[data-theme="light"] #guide .emergency-line{background:#FFFFFF;border-color:#DCE1E2;}
+html[data-theme="light"] #guide .emergency-tile,html[data-theme="light"] #guide .emergency-line{background:#FCFCFB;border-color:#E0E0DF;}
 html[data-theme="light"] #guide .emergency-tile-name,html[data-theme="light"] #guide .emergency-line-name,
-html[data-theme="light"] #guide .emergency-tile-number,html[data-theme="light"] #guide .emergency-line-number{color:#1E1E1E;}
-html[data-theme="light"] #guide .emergency-tile-note,html[data-theme="light"] #guide .emergency-line-note{color:#5E6B72;}
+html[data-theme="light"] #guide .emergency-tile-number,html[data-theme="light"] #guide .emergency-line-number{color:#2B2B2B;}
+html[data-theme="light"] #guide .emergency-tile-note,html[data-theme="light"] #guide .emergency-line-note{color:#696969;}
 html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="light"] #guide .emergency-line-number svg{color:#555;}
 
 /* v30.9.178: two new chapter separators, using existing chapter-glow styling and colors. */
@@ -5288,20 +5288,20 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 #guide .walk-inline-detail .area-cat-pane a{color:var(--ink)}
 
 /* Light theme */
-html[data-theme="light"] #guide .walk-area-card{background:#FFFFFF;border-color:#DDE2E3;color:#213038}
-html[data-theme="light"] #guide .walk-area-card:hover{border-color:#B9C2C4}
-html[data-theme="light"] #guide .walk-area-card:active{background:#F4F5F5}
-html[data-theme="light"] #guide .walk-area-card-sub{color:#66737A}
-html[data-theme="light"] #guide .walk-inline-detail{color:#213038}
-html[data-theme="light"] #guide .walk-inline-back{color:#213038}
+html[data-theme="light"] #guide .walk-area-card{background:#FCFCFB;border-color:#E1E1E0;color:#2E2E2E}
+html[data-theme="light"] #guide .walk-area-card:hover{border-color:#C0C0BF}
+html[data-theme="light"] #guide .walk-area-card:active{background:#F5F5F4}
+html[data-theme="light"] #guide .walk-area-card-sub{color:#707070}
+html[data-theme="light"] #guide .walk-inline-detail{color:#2E2E2E}
+html[data-theme="light"] #guide .walk-inline-back{color:#2E2E2E}
 html[data-theme="light"] #guide .walk-inline-back:hover{background:rgba(0,0,0,.05)}
-html[data-theme="light"] #guide .walk-inline-heading{color:#213038}
-html[data-theme="light"] #guide .walk-inline-description{color:#66737A}
+html[data-theme="light"] #guide .walk-inline-heading{color:#2E2E2E}
+html[data-theme="light"] #guide .walk-inline-description{color:#707070}
 html[data-theme="light"] #guide .walk-inline-detail .area-cat-panes{--walk-glow:.55}
-html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane li.venue-row{border-bottom-color:#E3E7E8!important}
+html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane li.venue-row{border-bottom-color:#E6E6E5!important}
 html[data-theme="light"] #guide #walk-inline-detail.walk-inline-detail .area-cat-pane a.venue-main-link,
-html[data-theme="light"] #guide #walk-inline-detail.walk-inline-detail .area-cat-pane a.venue-main-link:visited{color:#213038!important}
-html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane .venue-row-index{color:#8A969C!important}
+html[data-theme="light"] #guide #walk-inline-detail.walk-inline-detail .area-cat-pane a.venue-main-link:visited{color:#2E2E2E!important}
+html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane .venue-row-index{color:#949494!important}
 
 @keyframes walk-detail-reveal{from{opacity:.55;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 @keyframes walk-glow-in{from{opacity:0;transform:scaleX(.6)}to{opacity:1;transform:scaleX(1)}}
@@ -5341,7 +5341,7 @@ html[data-theme="light"] #guide .walk-inline-detail .area-cat-pane .venue-row-in
 }
 #food-explorer .empty .food-suggest-word:active{transform:scale(.97)}
 #food-explorer .empty .food-suggest-word:focus-visible{outline:2px solid var(--accent,#C9A86A);outline-offset:2px}
-html[data-theme="light"] #food-explorer .empty .food-suggest-word{color:#213038;background:#fff;border-color:#D5DBDD}
+html[data-theme="light"] #food-explorer .empty .food-suggest-word{color:#2E2E2E;background:#FCFCFB;border-color:#DADAD9}
 
 
 /* v30.9.203 — concise Japanese label and stable mobile card switching. */
@@ -5383,7 +5383,7 @@ html:root body > footer{
 }
 /* Constant per theme (see the note at the drawer edge bridge). */
 html{--drawer-chrome-edge:#0D0D0D;}
-html[data-theme="light"]{--drawer-chrome-edge:#F7F8F7;}
+html[data-theme="light"]{--drawer-chrome-edge:#F8F8F7;}
 /* Rows of the dictionary are added as this marker nears the end of the list. */
 #food-explorer #results .food-more-sentinel{display:block;height:1px;margin:0;padding:0;pointer-events:none;}
 /* The expanded description already breaks after 16 characters (in JS);
@@ -5426,8 +5426,8 @@ html[data-theme="light"] #guide details.area-directory-section{--walk-tone:var(-
 }
 html[data-theme="light"] #top{
   --horizon-rgb:196,146,58;--horizon-alpha:.32;
-  --greet-ink:#22292D;--stack-ink:#68747B;
-  --welcome-ink:#4A5156;--tagline-ink:#88939A;
+  --greet-ink:#2B2B2B;--stack-ink:#727272;
+  --welcome-ink:#505050;--tagline-ink:#919191;
 }
 #top .hero-stage{position:relative;padding-bottom:74px;}
 #top .hero-masthead{position:relative;z-index:1;margin:0!important;}
@@ -5645,10 +5645,10 @@ html[data-theme="light"] #guide details:is(.venue-tone-sights,.venue-tone-experi
 :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-tag{
   font-size:10px!important;line-height:1.3!important;padding:3px 6px!important;border-radius:5px!important;white-space:nowrap;
 }
-html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) li.venue-row{border-bottom-color:#E3E7E8!important;}
-html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-row-index{color:#8A969C!important;}
+html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) li.venue-row{border-bottom-color:#E6E6E5!important;}
+html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) .venue-row-index{color:#949494!important;}
 html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) a.venue-main-link:not(#_):not(#__),
-html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) a.venue-main-link:not(#_):not(#__):visited{color:#213038!important;}
+html[data-theme="light"] :is(#guide details.venue-tone-sights .tab-panel,#guide details.venue-tone-experience .tab-panel,#guide .walk-inline-detail .area-cat-pane) a.venue-main-link:not(#_):not(#__):visited{color:#2E2E2E!important;}
 
 /* v30.9.231 / v30.9.234 — 公式／予約… link buttons, page-wide, light and dark:
    70% opacity, softer. */
@@ -5686,7 +5686,7 @@ html body #guide .venue-secondary-links a:not(#_):hover{opacity:1;}
   text-decoration-line:underline!important;text-decoration-style:solid!important;text-decoration-thickness:1px!important;
   text-underline-offset:4px!important;text-decoration-color:#BDBDBD!important;
 }
-html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty{text-decoration-color:#AEB5B9!important;}
+html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-specialty{text-decoration-color:#B4B4B4!important;}
 
 /* v30.9.243 — City Walk area: 出発！ at the top right of the area header
    (Google Maps transit directions), in the colours of さっそく出発！. */
@@ -5702,7 +5702,7 @@ html[data-theme="light"] #guide #night-markets-section #night-markets-tabs .nm-s
 }
 #guide .walk-inline-detail a.walk-inline-go:active{opacity:.75!important;}
 #guide .walk-inline-detail a.walk-inline-go:focus-visible{outline:2px solid #CCCCCC;outline-offset:3px;}
-html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go{background:#222222!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF;}
+html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go{background:#2B2B2B!important;color:#FCFCFB!important;-webkit-text-fill-color:#FCFCFB;}
 
 /* v30.9.246 — City Walk: restore 40px header height for 台北駅 and 東区
    while retaining a full-width single-line subtitle and the v30.9.245 button offset. */
@@ -5737,7 +5737,7 @@ html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go{background:
    The panel opens with a banner: the place's scene (layers animated once by
    js/daytrip-scenes.js) fading out on every side, its emoji and line on top. */
 #guide .sights-day-trips{--dt-page:#0D0D0D;--dt-tab:#F5F5F5;}
-html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#202F36;}
+html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F8F8F7;--dt-tab:#2D2D2D;}
 @media(max-width:600px){
   #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-buttons{gap:6px;align-items:start;position:relative;z-index:2;margin-bottom:0!important;}
   #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button{
@@ -5877,10 +5877,10 @@ html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#20
   --nm-me-rgb:242,242,242;--nm-glow:142,131,162;--nm-glow-strength:1;
 }
 html[data-theme="light"] #guide #night-markets-section{
-  --nm-line-district:rgba(24,34,40,.2);--nm-line-city:rgba(24,34,40,.45);--nm-line-neighbor:rgba(24,34,40,.4);
-  --nm-name-district:#B4BABD;--nm-name-city:#87918F;--nm-name-station:#7D878B;--nm-name-station-strong:#4F585C;--nm-st-ink:#222222;--nm-name-border:#C2C7CA;
-  --nm-pin-bg:#222222;--nm-pin-ink:#FFFFFF;--nm-pin-shadow:0 2px 10px rgba(20,28,32,.22);
-  --nm-leader:#3A3A3A;--nm-ground:#F8F8F8;--nm-station:#6E777B;
+  --nm-line-district:rgba(33,33,33,.2);--nm-line-city:rgba(33,33,33,.45);--nm-line-neighbor:rgba(33,33,33,.4);
+  --nm-name-district:#B9B9B9;--nm-name-city:#8F8F8F;--nm-name-station:#858585;--nm-name-station-strong:#565656;--nm-st-ink:#2B2B2B;--nm-name-border:#C6C6C5;
+  --nm-pin-bg:#2B2B2B;--nm-pin-ink:#FCFCFB;--nm-pin-shadow:0 2px 10px rgba(27,27,27,.22);
+  --nm-leader:#3A3A3A;--nm-ground:#F8F8F7;--nm-station:#757575;
   --nm-me-rgb:34,34,34;--nm-glow-strength:.55;
 }
 #guide #night-markets-section > .indented{margin:0!important;padding:0!important;}
@@ -6059,7 +6059,7 @@ html[data-theme="light"] #guide #night-markets-section{
   background:transparent!important;box-shadow:none!important;color:#F2F2F2;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 #guide #night-markets-section .nm-back:active{background:rgba(255,255,255,.08)!important;}
-html[data-theme="light"] #guide #night-markets-section .nm-back{color:#202020;}
+html[data-theme="light"] #guide #night-markets-section .nm-back{color:#2B2B2B;}
 html[data-theme="light"] #guide #night-markets-section .nm-back:active{background:rgba(0,0,0,.06)!important;}
 #guide #night-markets-section #night-markets-tabs .nm-detail .nm-title{margin:0!important;font-size:21px!important;font-weight:700!important;letter-spacing:.06em;}
 #guide #night-markets-section .nm-detail-body{

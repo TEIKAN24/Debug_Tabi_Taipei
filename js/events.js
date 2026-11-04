@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.264.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.265.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -7,7 +7,8 @@
    top and drives the drawing, so swiping keeps the phone's own momentum; the cards
    underneath are placed from its scroll position every frame.
    Week bars grow from the bottom whenever a month settles in the centre.
-   Heatmap: long-press (0.35 s) and drag to pick a day; release to show that day's events.
+   Long-press (0.35 s; on the bars too, which switches to the heatmap) and drag to pick a
+   day; release to show that day's events. Double-tap the centred card: back to this month.
    Status (開催中／開催予定／開催終了) is judged against today in Taipei.
    Events without announced dates (tbd) are listed in their expected months as 日程未定
    and are not counted anywhere.
@@ -174,7 +175,9 @@
       if (mo.first + i === today) cell.classList.add('is-today');
       grid.append(cell);
     });
-    heat.append(hhead, grid, el('span', 'ec-pick-box'), el('span', 'ec-pick-date'));
+    grid.append(el('span', 'ec-pick-box'));                 // sits in the picked cell's grid area
+    grid.style.setProperty('--ec-gap-extra', '0px');
+    heat.append(hhead, grid, el('span', 'ec-pick-date'));
     full.append(bars, heat);
     // Mini (side) face
     const mini = el('div', 'ec-mini');
@@ -272,7 +275,8 @@
 
   /* ---------- geometry ---------- */
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const GAP = 10, PICK_SCALE = 1.06;
+  const GAP = 10, PICK_SCALE = 1.06, PICK_TALL = 1.05, SIDE_DROP = 7;
+  const PADV = 16;                           // room above/below the cards so the grown card is never clipped
   let C = 0, Wf = 0, Wm = 0, S = 1, fullH = [], miniH = 0, stageH = 0, current = -1, frame = 0;
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
@@ -292,7 +296,11 @@
     fullH = cards.map(c => c.firstChild.offsetHeight);
     miniH = Math.max(...cards.map(c => c.lastChild.offsetHeight));
     stageH = Math.max(...fullH) + 4;
-    stage.style.height = stageH + 'px';
+    stage.style.height = (stageH + PADV * 2) + 'px';
+    // While picking, the card grows 5% taller by opening the gaps between its weeks,
+    // so the date and the bottom row move outward instead of being stretched.
+    cards.forEach((c, i) => c.querySelector('.ec-grid')?.style.setProperty('--ec-gap-extra',
+      (fullH[i] * (PICK_TALL - 1) / Math.max(1, months[i].weeks.length - 1)).toFixed(2) + 'px'));
     if (selDay !== null) placeBox(selDay);
     return true;
   }
@@ -309,14 +317,14 @@
     for (let i = k + 1; i < n; i++) centre[i] = centre[i - 1] + w[i - 1] / 2 + GAP + w[i] / 2;
     for (let i = k - 1; i >= 0; i--) centre[i] = centre[i + 1] - w[i + 1] / 2 - GAP - w[i] / 2;
     // While a day is being picked the wide card grows a little and its neighbours step aside.
-    const push = picking ? Wf * (PICK_SCALE - 1) / 2 + 8 : 0;
+    const push = picking ? Wf * (PICK_SCALE - 1) / 2 + 8 : 0;   // neighbours also drop SIDE_DROP and dim
     cards.forEach((card, i) => {
       const d = Math.min(1, Math.abs(i - p));
       const shift = picking && i !== current ? Math.sign(i - current) * push : 0;
       const left = centre[i] - w[i] / 2 + shift;
       if (left > C + 20 || left + w[i] < -20) { card.style.visibility = 'hidden'; return; }
-      const h = lerp(fullH[i], miniH, d);
-      const top = (stageH - h) / 2;
+      const h = lerp(fullH[i], miniH, d) * (picking && i === current ? PICK_TALL : 1);
+      const top = PADV + (stageH - h) / 2 + (picking && i !== current ? SIDE_DROP : 0);
       card.style.visibility = '';
       card.style.width = w[i] + 'px';
       card.style.height = h + 'px';
@@ -350,7 +358,7 @@
   function labelScroller() {
     const mo = months[current];
     scroller.setAttribute('aria-label', mo.y + '年' + mo.m + '月・' + mo.rows.length + '件。左右キーで月を移動、Enterで' +
-      (isHeat() ? '棒グラフ表示に切り替え。下キーで日付を選択' : 'カレンダー表示に切り替え'));
+      (isHeat() ? '棒グラフ表示に切り替え' : 'カレンダー表示に切り替え') + '。下キーで日付を選択、Homeで今月へ');
   }
 
   /* ---------- week bars grow from the bottom ---------- */
@@ -408,19 +416,27 @@
   let picking = false, pickBy = '', pickDay = null, pending = null, suppressClick = false;
   const LONG_PRESS = 350, SLOP = 8;
   const cellsOf = idx => [...cards[idx].querySelectorAll('.ec-grid i[data-day]')];
-  function placeBox(day) {
-    const card = cards[current];
-    const cell = card?.querySelector(`.ec-grid i[data-day="${day}"]`);
-    if (!cell) return;
-    const box = card.querySelector('.ec-pick-box');
-    box.style.transform = `translate(${cell.offsetLeft - 3}px,${cell.offsetTop - 3}px)`;
-    box.style.width = (cell.offsetWidth + 6) + 'px';
-    box.style.height = (cell.offsetHeight + 6) + 'px';
+  // The frame is an absolutely placed child of the grid with the picked cell's grid area
+  // as its box, so it always lines up with the cell (also while the gaps open or close).
+  function placeBox(day, glide) {
+    const card = cards[current], mo = months[current];
+    const box = card?.querySelector('.ec-pick-box');
+    if (!box || day < mo.first || day > mo.last) return;
+    const n = mo.lead + (day - mo.first);
+    const before = glide && box.getClientRects().length ? box.getBoundingClientRect() : null;
+    const row = Math.floor(n / 7) + 1, col = n % 7 + 1;
+    box.style.gridArea = row + ' / ' + col + ' / ' + (row + 1) + ' / ' + (col + 1);   // end lines too (abs-pos)
+    if (before && !reduce.matches) {
+      const after = box.getBoundingClientRect(), k = after.width / (box.offsetWidth || 1) || 1;
+      const dx = (before.left - after.left) / k, dy = (before.top - after.top) / k;
+      if (dx || dy) box.animate([{transform: `translate(${dx}px,${dy}px)`}, {transform: 'none'}], {duration: 90, easing: 'ease-out'});
+    }
   }
   function setPickDay(day) {
     if (day === pickDay) return;
+    const glide = pickDay !== null;
     pickDay = day;
-    placeBox(day);
+    placeBox(day, glide);
     const d = ymd(day);
     cards[current].querySelector('.ec-pick-date').textContent = d.d + '日(' + WEEK[d.w] + ')';
     announce.textContent = dayLabel(day);
@@ -475,12 +491,13 @@
   });
 
   scroller.addEventListener('pointerdown', ev => {
-    if (picking || pending || !isHeat() || (ev.pointerType === 'mouse' && ev.button !== 0)) return;
+    if (picking || pending || (ev.pointerType === 'mouse' && ev.button !== 0)) return;
     if (cardHit(ev.clientX, ev.clientY) !== current || !settled()) return;
     const id = ev.pointerId, x = ev.clientX, y = ev.clientY;
     pending = {id, x, y, timer: setTimeout(() => {
       pending = null;
       try { scroller.setPointerCapture(id); } catch (_) {}
+      if (!isHeat()) toggleFace();               // long-press on the bars: straight to picking
       beginPick('pointer', dayAt(x, y));
     }, LONG_PRESS)};
   });
@@ -500,15 +517,28 @@
   scroller.addEventListener('pointercancel', release(false));
   // Once picking, the finger must not scroll the months or the page.
   scroller.addEventListener('touchmove', ev => { if (picking || pending) { if (picking) ev.preventDefault(); } }, {passive: false});
-  scroller.addEventListener('contextmenu', ev => { if (isHeat()) ev.preventDefault(); });
+  scroller.addEventListener('contextmenu', ev => ev.preventDefault());
 
   // Taps land on the transparent scroller: find the card under the finger.
+  // A tap on the centred card waits 250 ms: a second tap in that time means
+  // "back to this month" (today's cell) instead of switching bars ⇄ heatmap.
+  let tapTimer = 0;
+  const todayIndex = () => months.findIndex(mo => today >= mo.first && today <= mo.last);
+  function backToToday() {
+    const i = todayIndex();
+    if (i < 0) return;
+    if (i !== current) goTo(i);
+    else if (!reduce.matches) cards[i]?.querySelector(isHeat() ? '.ec-grid .is-today' : '.ec-bars')
+      ?.animate([{transform: 'scale(1)'}, {transform: 'scale(1.12)'}, {transform: 'scale(1)'}], {duration: 360, easing: 'ease-out'});
+  }
   scroller.addEventListener('click', ev => {
     if (suppressClick) { suppressClick = false; return; }
     const hit = cardHit(ev.clientX, ev.clientY);
     if (hit < 0) return;
-    if (hit === current && settled()) toggleFace();
-    else goTo(hit);
+    if (hit === current && settled()) {
+      if (tapTimer) { clearTimeout(tapTimer); tapTimer = 0; backToToday(); return; }
+      tapTimer = setTimeout(() => { tapTimer = 0; toggleFace(); }, 250);
+    } else goTo(hit);
   });
   scroller.addEventListener('keydown', ev => {
     const k = ev.key;
@@ -521,9 +551,11 @@
     }
     if (picking) return;
     if (k === 'ArrowLeft' || k === 'ArrowRight') { ev.preventDefault(); goTo(current + (k === 'ArrowRight' ? 1 : -1)); }
+    else if (k === 'Home') { ev.preventDefault(); backToToday(); }
     else if (k === 'Enter' || k === ' ') { ev.preventDefault(); toggleFace(); }
-    else if ((k === 'ArrowDown' || k === 'ArrowUp') && isHeat() && settled()) {
+    else if ((k === 'ArrowDown' || k === 'ArrowUp') && settled()) {
       ev.preventDefault();
+      if (!isHeat()) toggleFace();
       const mo = months[current];
       beginPick('key', selDay ?? (today >= mo.first && today <= mo.last ? today : mo.first));
     } else if (k === 'Escape' && selDay !== null) { ev.preventDefault(); clearDay(); }
@@ -551,6 +583,7 @@
 
   // Width changes (the section opening from display:none, rotation): keep the month.
   new ResizeObserver(() => {
+    if (picking) return;
     const before = C;
     if (!measure()) { C = 0; return; }
     if (before !== C || !before) jumpTo(current);
