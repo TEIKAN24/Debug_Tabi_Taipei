@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.262.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.263.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -6,7 +6,11 @@
    neighbours shrink to mini cards. A transparent native scroller (scroll-snap) sits on
    top and drives the drawing, so swiping keeps the phone's own momentum; the cards
    underneath are placed from its scroll position every frame.
+   Week bars grow from the bottom whenever a month settles in the centre.
+   Heatmap: long-press (0.35 s) and drag to pick a day; release to show that day's events.
    Status (開催中／開催予定／開催終了) is judged against today in Taipei.
+   Events without announced dates (tbd) are listed in their expected months as 日程未定
+   and are not counted anywhere.
    Debug: ?ec-today=2026-12-08 pretends today is that date. */
 (() => {
   'use strict';
@@ -17,9 +21,12 @@
   /* ---------- dates (whole days, counted from 1970-01-01 UTC) ---------- */
   const DAY = 864e5;
   const ISO = /^(\d{4})-(\d{2})-(\d{2})$/;
+  const YM = /^(\d{4})-(\d{2})$/;
+  const WEEK = ['日', '月', '火', '水', '木', '金', '土'];
   const dayOf = (y, m, d) => Math.round(Date.UTC(y, m - 1, d) / DAY);
   const parseDay = s => { const m = ISO.exec(String(s || '')); return m ? dayOf(+m[1], +m[2], +m[3]) : null; };
-  const ymd = n => { const d = new Date(n * DAY); return {y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, d: d.getUTCDate()}; };
+  const parseMonth = s => { const m = YM.exec(String(s || '')); return m ? +m[1] * 12 + (+m[2] - 1) : null; };
+  const ymd = n => { const d = new Date(n * DAY); return {y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, d: d.getUTCDate(), w: d.getUTCDay()}; };
   function taipeiToday() {
     const forced = parseDay(new URLSearchParams(location.search).get('ec-today'));
     if (forced !== null) return forced;
@@ -35,40 +42,51 @@
   function readEvents() {
     const list = Array.isArray(window.TABI_EVENTS?.events) ? window.TABI_EVENTS.events : [];
     return list.map(e => {
-      let start = parseDay(e?.start), end = parseDay(e?.end);
-      if (!e || typeof e.name !== 'string' || !e.name.trim() || start === null) return null;
+      if (!e || typeof e.name !== 'string' || !e.name.trim()) return null;
+      const city = String(e.city || '').trim(), venue = String(e.venue || '').trim();
+      const base = {name: e.name.trim(), city, category: String(e.category || '').trim(), venue, url: safeUrl(e.url),
+        mapUrl: safeUrl(e.mapUrl) || (venue ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent((city + ' ' + venue).trim()) : '')};
+      let start = parseDay(e.start), end = parseDay(e.end);
+      if (e.tbd || start === null) {
+        // Dates not announced: keep the expected months only.
+        let from = parseMonth(e.expectedFrom), to = parseMonth(e.expectedTo);
+        if (from === null) return null;
+        if (to === null || to < from) to = from;
+        return {...base, tbd: true, from, to};
+      }
       if (end === null) end = start;
       if (end < start) [start, end] = [end, start];
-      const city = String(e.city || '').trim(), venue = String(e.venue || '').trim();
-      const mapUrl = safeUrl(e.mapUrl) || (venue ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent((city + ' ' + venue).trim()) : '');
-      return {name: e.name.trim(), city, category: String(e.category || '').trim(), venue, start, end, url: safeUrl(e.url), mapUrl};
+      return {...base, tbd: false, start, end};
     }).filter(Boolean);
   }
 
   let today, events, months, maxWeek;
+  const statusOf = e => e.end < today ? 'ended' : e.start > today ? 'upcoming' : 'ongoing';
+  const ORDER = {ongoing: 0, upcoming: 0, ended: 1};
+  const byStatus = (p, q) => ORDER[p.status] - ORDER[q.status] || p.start - q.start || p.end - q.end || p.name.localeCompare(q.name, 'ja');
   function buildMonths() {
     today = taipeiToday();
     events = readEvents();
     const t = ymd(today);
     let y = t.m === 1 ? t.y - 1 : t.y, m = t.m === 1 ? 12 : t.m - 1;          // last month
-    const lastEnd = events.reduce((a, e) => Math.max(a, e.end), today);
-    const stop = ymd(lastEnd), stopKey = stop.y * 12 + stop.m;
+    const lastDated = ymd(events.filter(e => !e.tbd).reduce((a, e) => Math.max(a, e.end), today));
+    const stopKey = Math.max(lastDated.y * 12 + lastDated.m - 1, ...events.filter(e => e.tbd).map(e => e.to));
     months = [];
-    while (y * 12 + m <= stopKey && months.length < 36) {
+    while (y * 12 + m - 1 <= stopKey && months.length < 36) {
+      const key = y * 12 + m - 1;
       const first = dayOf(y, m, 1), dim = new Date(Date.UTC(y, m, 0)).getUTCDate(), last = first + dim - 1;
       const lead = new Date(first * DAY).getUTCDay();                           // weeks start on Sunday
-      const inMonth = events.filter(e => e.start <= last && e.end >= first);
+      const inMonth = events.filter(e => !e.tbd && e.start <= last && e.end >= first);
       const days = Array.from({length: dim}, (_, i) => inMonth.reduce((n, e) => n + (e.start <= first + i && e.end >= first + i), 0));
       const weeks = [];
       for (let r = 0; r * 7 - lead < dim; r++) {
         const a = Math.max(first, first + r * 7 - lead), b = Math.min(last, first + r * 7 - lead + 6);
         weeks.push(inMonth.filter(e => e.start <= b && e.end >= a).length);
       }
-      const status = e => e.end < today ? 'ended' : e.start > today ? 'upcoming' : 'ongoing';
-      const order = {ongoing: 0, upcoming: 0, ended: 1};
-      const rows = inMonth.map(e => ({...e, status: status(e)}))
-        .sort((p, q) => order[p.status] - order[q.status] || p.start - q.start || p.end - q.end || p.name.localeCompare(q.name, 'ja'));
-      months.push({y, m, first, last, dim, lead, days, weeks, rows});
+      const rows = inMonth.map(e => ({...e, status: statusOf(e)})).sort(byStatus);
+      const tbd = events.filter(e => e.tbd && e.from <= key && e.to >= key).map(e => ({...e, status: 'tbd'}))
+        .sort((p, q) => p.from - q.from || p.to - q.to || p.name.localeCompare(q.name, 'ja'));
+      months.push({y, m, first, last, dim, lead, days, weeks, rows, tbd});
       if (++m > 12) { m = 1; y++; }
     }
     maxWeek = Math.max(1, ...months.flatMap(x => x.weeks));
@@ -90,23 +108,26 @@
     return days.map(c => c <= 0 ? 0 : hi === lo ? 2 : 1 + Math.round((c - lo) / (hi - lo) * 3));
   };
   const barHeight = v => v <= 0 ? .05 : Math.max(.16, v / maxWeek);
+  const dayLabel = n => { const d = ymd(n); return d.m + '月' + d.d + '日（' + WEEK[d.w] + '）'; };
 
   /* ---------- build ---------- */
   const stage = el('div', 'ec-stage');
   const cardLayer = el('div', 'ec-cards'); cardLayer.setAttribute('aria-hidden', 'true');
+  const pickMonth = el('span', 'ec-pick-month'); pickMonth.setAttribute('aria-hidden', 'true');
   const scroller = el('div', 'ec-scroller'); scroller.tabIndex = 0;
   scroller.setAttribute('role', 'group'); scroller.setAttribute('aria-roledescription', 'カルーセル');
   const track = el('div', 'ec-track');
-  scroller.append(track); stage.append(cardLayer, scroller);
+  scroller.append(track); stage.append(cardLayer, pickMonth, scroller);
   const dots = el('div', 'ec-dots'); dots.setAttribute('aria-hidden', 'true');
   const summary = el('div', 'ec-summary'); summary.setAttribute('aria-live', 'polite');
-  // The list scrolls inside a box of fixed height (the section keeps its size whatever
-  // the month holds); the bottom fades while more rows are below, like the other lists.
+  const announce = el('span', 'ec-sr'); announce.setAttribute('aria-live', 'assertive');
+  // The list scrolls inside a box of fixed height (3.5 rows, the same in Safari and in
+  // the home-screen app); the bottom fades while more rows are below.
   const listBox = el('div', 'ec-list-box');
   const listScroll = el('div', 'ec-list-scroll'); listScroll.tabIndex = 0; listScroll.setAttribute('role', 'region');
   const list = el('ul', 'ec-list');
   listScroll.append(list); listBox.append(listScroll);
-  root.replaceChildren(stage, dots, summary, listBox);
+  root.replaceChildren(stage, dots, summary, listBox, announce);
   function updateFade() {
     const canScroll = listScroll.scrollHeight > listScroll.clientHeight + 5;
     listScroll.classList.toggle('can-scroll', canScroll);
@@ -128,7 +149,10 @@
     title.append(month, count);
     head.append(el('span', 'ec-year', String(mo.y)), title);
     const barRow = el('div', 'ec-bars');
-    mo.weeks.forEach(v => { const b = el('i'); b.style.setProperty('--h', barHeight(v).toFixed(3)); if (!v) b.className = 'is-zero'; barRow.append(b); });
+    mo.weeks.forEach((v, i) => {
+      const b = el('i'); b.style.setProperty('--h', barHeight(v).toFixed(3)); b.style.setProperty('--i', i);
+      if (!v) b.className = 'is-zero'; barRow.append(b);
+    });
     bars.append(head, el('span', 'ec-caption', 'イベント分布'), barRow);
     // Heatmap face
     const heat = el('div', 'ec-face ec-face-heat');
@@ -139,10 +163,11 @@
     const lv = levels(mo.days);
     mo.days.forEach((c, i) => {
       const cell = el('i', 'lv' + lv[i]);
+      cell.dataset.day = mo.first + i;
       if (mo.first + i === today) cell.classList.add('is-today');
       grid.append(cell);
     });
-    heat.append(hhead, grid);
+    heat.append(hhead, grid, el('span', 'ec-pick-box'), el('span', 'ec-pick-date'));
     full.append(bars, heat);
     // Mini (side) face
     const mini = el('div', 'ec-mini');
@@ -155,38 +180,68 @@
     return card;
   }
 
+  /* ---------- summary + list (a month, or one picked day) ---------- */
+  let selDay = null;                         // picked day (day number) in the current month
+  function rowsFor(mo) {
+    if (selDay === null) return {dated: mo.rows, tbd: mo.tbd};
+    return {dated: mo.rows.filter(r => r.start <= selDay && r.end >= selDay), tbd: []};
+  }
   function renderSummary(mo) {
+    const {dated} = rowsFor(mo);
     const n = {ongoing: 0, upcoming: 0, ended: 0};
-    mo.rows.forEach(r => n[r.status]++);
+    dated.forEach(r => n[r.status]++);
     const lead = el('div', 'ec-sum-lead');
-    const big = el('strong', 'ec-sum-total'); big.append(String(mo.rows.length), el('small', '', ' イベント'));
-    lead.append(el('span', 'ec-sum-month', mo.y + '／' + mo.m + '月'), big);
+    const big = el('strong', 'ec-sum-total'); big.append(String(dated.length), el('small', '', ' イベント'));
+    if (selDay === null) lead.append(el('span', 'ec-sum-month', mo.y + '／' + mo.m + '月'), big);
+    else {
+      const chip = el('button', 'ec-day-chip'); chip.type = 'button';
+      const sd = ymd(selDay);
+      chip.append(el('span', '', sd.m + '/' + sd.d + '（' + WEEK[sd.w] + '）'), el('span', 'ec-day-x', '×'));
+      chip.setAttribute('aria-label', dayLabel(selDay) + 'の選択を解除して' + mo.m + '月の一覧に戻る');
+      lead.append(chip, big);
+    }
     const stat = (label, v, cls) => { const s = el('div', 'ec-stat ' + cls); s.append(el('span', '', label), el('strong', '', String(v))); return s; };
     summary.replaceChildren(lead, stat('開催中', n.ongoing, 'is-ongoing'), stat('開催予定', n.upcoming, 'is-upcoming'), stat('開催終了', n.ended, 'is-ended'));
   }
 
-  const STATUS_LABEL = {ongoing: '', upcoming: '開催予定', ended: '開催終了'};
+  const BADGE = {upcoming: '開催予定', ended: '開催終了', ongoing: ''};
+  const pad = n => String(n).padStart(2, '0');
+  function dateCell(r) {
+    const date = el('div', 'ec-date');
+    if (r.tbd) {
+      const a = r.from % 12 + 1, b = r.to % 12 + 1;
+      date.classList.add('is-tbd');
+      date.append(el('span', 'ec-date-m', a === b && r.from === r.to ? a + '月' : a + '月–' + b + '月'), el('span', 'ec-tbd', '日程未定'));
+      date.setAttribute('aria-label', '日程未定（' + (r.from === r.to ? a + '月' : a + '月から' + b + '月') + '予定）');
+      return date;
+    }
+    const s = ymd(r.start), e = ymd(r.end), single = r.end === r.start, sameMonth = s.m === e.m && s.y === e.y;
+    date.append(el('span', 'ec-date-m', s.m + '月'), el('span', 'ec-date-m', single || sameMonth ? '' : e.m + '月'),
+      el('span', 'ec-date-d', pad(s.d)), el('span', 'ec-date-d ec-date-end', single ? '' : pad(e.d)));
+    if (single) date.classList.add('is-single');
+    date.setAttribute('aria-label', s.m + '月' + s.d + '日' + (single ? '' : '〜' + (sameMonth ? '' : (s.y !== e.y ? e.y + '年' : '') + e.m + '月') + e.d + '日'));
+    return date;
+  }
   function renderList(mo) {
     list.replaceChildren();
-    if (!mo.rows.length) { list.append(el('li', 'ec-empty', 'この月のイベント情報はまだありません。')); return; }
-    for (const r of mo.rows) {
+    const {dated, tbd} = rowsFor(mo);
+    if (!dated.length && !tbd.length) {
+      list.append(el('li', 'ec-empty', selDay === null ? 'この月のイベント情報はまだありません。' : 'この日のイベントはありません。'));
+      return;
+    }
+    for (const r of [...dated, ...tbd]) {
       const li = el('li', 'ec-row is-' + r.status);
-      const s = ymd(r.start), e = ymd(r.end);
-      const date = el('div', 'ec-date');
-      const pad = n => String(n).padStart(2, '0');
-      date.append(el('span', 'ec-date-m', s.m + '月'), el('span', 'ec-date-m', r.end === r.start || s.m === e.m && s.y === e.y ? '' : e.m + '月'),
-        el('span', 'ec-date-d', pad(s.d)), el('span', 'ec-date-d ec-date-end', r.end === r.start ? '' : pad(e.d)));
-      if (r.end === r.start) date.classList.add('is-single');
-      date.setAttribute('aria-label', s.m + '月' + s.d + '日' + (r.end === r.start ? '' : '〜' + (s.m === e.m && s.y === e.y ? '' : (s.y !== e.y ? e.y + '年' : '') + e.m + '月') + e.d + '日'));
-      const status = el('span', 'ec-status', STATUS_LABEL[r.status]);
       const body = el('div', 'ec-body');
-      body.append(el('span', 'ec-meta', [r.city, r.category].filter(Boolean).join('・')));
+      const meta = el('div', 'ec-meta');
+      meta.append(el('span', 'ec-meta-text', [r.city, r.category].filter(Boolean).join('・')));
+      if (BADGE[r.status]) meta.append(el('span', 'ec-badge', BADGE[r.status]));
+      body.append(meta);
       if (r.url) {
         const a = el('a', 'ec-name', r.name); a.href = r.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-        a.setAttribute('aria-label', r.name + '（公式サイトを開く）');
+        a.setAttribute('aria-label', r.name + '（公式サイトを開く）'); a.title = r.name;
         body.append(a);
       } else body.append(el('span', 'ec-name', r.name));
-      li.append(date, status, body);
+      li.append(dateCell(r), body);
       if (r.mapUrl) {
         const go = el('a', 'ec-map'); go.href = r.mapUrl; go.target = '_blank'; go.rel = 'noopener noreferrer';
         go.setAttribute('aria-label', (r.venue || r.name) + 'をGoogleマップで開く'); go.title = r.venue || 'Googleマップ';
@@ -195,13 +250,22 @@
       list.append(li);
     }
   }
+  function renderBelow() {
+    const mo = months[current];
+    renderSummary(mo); renderList(mo);
+    listScroll.scrollTop = 0;
+    listScroll.setAttribute('aria-label', selDay === null ? mo.y + '年' + mo.m + '月のイベント一覧' : dayLabel(selDay) + 'のイベント一覧');
+    updateFade();
+  }
+  summary.addEventListener('click', ev => { if (ev.target.closest('.ec-day-chip')) { clearDay(); scroller.focus({preventScroll: true}); } });
 
   /* ---------- geometry ---------- */
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const GAP = 10;
+  const GAP = 10, PICK_SCALE = 1.04;
   let C = 0, Wf = 0, Wm = 0, S = 1, fullH = [], miniH = 0, stageH = 0, current = -1, frame = 0;
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
+  const isHeat = () => root.classList.contains('is-heat');
 
   function measure() {
     C = stage.clientWidth;
@@ -218,6 +282,7 @@
     miniH = Math.max(...cards.map(c => c.lastChild.offsetHeight));
     stageH = Math.max(...fullH) + 4;
     stage.style.height = stageH + 'px';
+    if (selDay !== null) placeBox(selDay);
     return true;
   }
 
@@ -232,40 +297,67 @@
     centre[k] = C / 2 - (k + 1 < n ? f * (w[k] / 2 + GAP + w[k + 1] / 2) : 0);
     for (let i = k + 1; i < n; i++) centre[i] = centre[i - 1] + w[i - 1] / 2 + GAP + w[i] / 2;
     for (let i = k - 1; i >= 0; i--) centre[i] = centre[i + 1] - w[i + 1] / 2 - GAP - w[i] / 2;
+    // While a day is being picked the wide card grows a little and its neighbours step aside.
+    const push = picking ? Wf * (PICK_SCALE - 1) / 2 + 8 : 0;
     cards.forEach((card, i) => {
       const d = Math.min(1, Math.abs(i - p));
-      const left = centre[i] - w[i] / 2;
+      const shift = picking && i !== current ? Math.sign(i - current) * push : 0;
+      const left = centre[i] - w[i] / 2 + shift;
       if (left > C + 20 || left + w[i] < -20) { card.style.visibility = 'hidden'; return; }
       const h = lerp(fullH[i], miniH, d);
+      const top = (stageH - h) / 2;
       card.style.visibility = '';
       card.style.width = w[i] + 'px';
       card.style.height = h + 'px';
-      card.style.transform = `translate3d(${left.toFixed(2)}px,${((stageH - h) / 2).toFixed(2)}px,0)`;
+      card.style.transform = `translate3d(${left.toFixed(2)}px,${top.toFixed(2)}px,0)` + (picking && i === current ? ` scale(${PICK_SCALE})` : '');
       card.style.setProperty('--ec-near', (1 - d).toFixed(3));
       // The two faces never show at once: the wide one is gone before the mini one appears.
       card.firstChild.style.opacity = clamp(1 - d * 2.5, 0, 1).toFixed(3);
       card.lastChild.style.opacity = clamp((d - .45) / .4, 0, 1).toFixed(3);
+      if (i === current) {
+        // Small month reminder outside the card's top-left corner, clear of the finger.
+        const sw = w[i] * (picking ? PICK_SCALE : 1), sh = h * (picking ? PICK_SCALE : 1);
+        pickMonth.style.transform = `translate3d(${(left - (sw - w[i]) / 2 - 8).toFixed(2)}px,${(top - (sh - h) / 2 + 12).toFixed(2)}px,0) translateX(-100%)`;
+      }
     });
     const idx = Math.round(p);
-    if (idx !== current) select(idx);
+    if (idx !== current && !picking) select(idx);
   }
   const schedule = () => { if (!frame) frame = requestAnimationFrame(place); };
 
   function select(idx) {
     current = idx;
+    selDay = null; cards.forEach(c => c.classList.remove('has-sel'));
+    cards.forEach((c, i) => { if (i !== idx) c.classList.remove('is-grown'); });
     const mo = months[idx];
     [...dots.children].forEach((d, i) => d.classList.toggle('is-active', i === idx));
-    renderSummary(mo); renderList(mo);
-    listScroll.scrollTop = 0;                // a new month starts at its first event
-    listScroll.setAttribute('aria-label', mo.y + '年' + mo.m + '月のイベント一覧');
-    updateFade();
-    scroller.setAttribute('aria-label', mo.y + '年' + mo.m + '月・' + mo.rows.length + '件。左右キーで月を移動、Enterで' + (root.classList.contains('is-heat') ? '棒グラフ' : 'カレンダー') + '表示に切り替え');
+    pickMonth.textContent = mo.m + '月';
+    renderBelow();
+    labelScroller();
+  }
+  function labelScroller() {
+    const mo = months[current];
+    scroller.setAttribute('aria-label', mo.y + '年' + mo.m + '月・' + mo.rows.length + '件。左右キーで月を移動、Enterで' +
+      (isHeat() ? '棒グラフ表示に切り替え。下キーで日付を選択' : 'カレンダー表示に切り替え'));
+  }
+
+  /* ---------- week bars grow from the bottom ---------- */
+  function grow(idx) {
+    const card = cards[idx];
+    if (!card) return;
+    cards.forEach((c, i) => { if (i !== idx) c.classList.remove('is-grown'); });
+    card.classList.remove('is-grown');
+    void card.offsetWidth;                   // restart the transition
+    card.classList.add('is-grown');
   }
 
   /* ---------- page dots: only while swiping ---------- */
-  let quiet = false, dotTimer = 0;
+  let quiet = false, dotTimer = 0, settleTimer = 0;
+  const settled = () => Math.abs(scroller.scrollLeft - current * S) < 3;
   scroller.addEventListener('scroll', () => {
     schedule();
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(() => { if (settled() && !cards[current]?.classList.contains('is-grown')) grow(current); }, 120);
     if (quiet) return;
     dots.classList.add('is-visible');
     clearTimeout(dotTimer);
@@ -284,33 +376,145 @@
   }
 
   /* ---------- bars ⇄ heatmap ---------- */
+  function animate(cls, ms) { root.classList.add(cls); clearTimeout(animate[cls]); animate[cls] = setTimeout(() => root.classList.remove(cls), ms); }
   function toggleFace() {
     const card = cards[current];
-    root.classList.add('is-switching');
+    if (isHeat() && selDay !== null) { selDay = null; card.classList.remove('has-sel'); renderBelow(); }
+    animate('is-switching', 320);
     root.classList.toggle('is-heat');
     measure(); place();
-    if (!reduce.matches) {
-      card?.querySelector(root.classList.contains('is-heat') ? '.ec-face-heat' : '.ec-face-bars')
-        ?.animate([{opacity: 0}, {opacity: 1}], {duration: 260, easing: 'ease-out'});
-    }
-    setTimeout(() => root.classList.remove('is-switching'), 320);
-    select(current);
+    if (isHeat()) {
+      if (!reduce.matches) card?.querySelector('.ec-face-heat')?.animate([{opacity: 0}, {opacity: 1}], {duration: 260, easing: 'ease-out'});
+    } else grow(current);
+    labelScroller();
   }
+
+  /* ---------- picking a day on the heatmap ---------- */
+  // Long-press the centred heatmap, then drag across the cells: the cells darken, a frame
+  // follows the finger and the date shows top-left. Releasing confirms; long-pressing the
+  // picked day again, the chip in the summary, or another month clears it.
+  let picking = false, pickBy = '', pickDay = null, pending = null, suppressClick = false;
+  const LONG_PRESS = 350, SLOP = 8;
+  const cellsOf = idx => [...cards[idx].querySelectorAll('.ec-grid i[data-day]')];
+  function placeBox(day) {
+    const card = cards[current];
+    const cell = card?.querySelector(`.ec-grid i[data-day="${day}"]`);
+    if (!cell) return;
+    const box = card.querySelector('.ec-pick-box');
+    box.style.transform = `translate(${cell.offsetLeft - 3}px,${cell.offsetTop - 3}px)`;
+    box.style.width = (cell.offsetWidth + 6) + 'px';
+    box.style.height = (cell.offsetHeight + 6) + 'px';
+  }
+  function setPickDay(day) {
+    if (day === pickDay) return;
+    pickDay = day;
+    placeBox(day);
+    const d = ymd(day);
+    cards[current].querySelector('.ec-pick-date').textContent = d.d + '日(' + WEEK[d.w] + ')';
+    announce.textContent = dayLabel(day);
+  }
+  function dayAt(x, y) {
+    let best = null, dist = Infinity;
+    for (const cell of cellsOf(current)) {
+      const r = cell.getBoundingClientRect();
+      const dx = x < r.left ? r.left - x : x > r.right ? x - r.right : 0;
+      const dy = y < r.top ? r.top - y : y > r.bottom ? y - r.bottom : 0;
+      const dd = dx * dx + dy * dy;
+      if (dd < dist) { dist = dd; best = +cell.dataset.day; if (!dd) break; }
+    }
+    return best;
+  }
+  function beginPick(by, day) {
+    picking = true; pickBy = by; pickDay = null;
+    const card = cards[current];
+    card.classList.add('is-pick');
+    animate('is-switching', 280);
+    root.classList.add('is-picking');
+    setPickDay(day);
+    place();
+  }
+  function endPick(commit) {
+    if (!picking) return;
+    const card = cards[current], day = pickDay;
+    picking = false; pickBy = '';
+    card.classList.remove('is-pick');
+    animate('is-switching', 280);
+    root.classList.remove('is-picking');
+    place();
+    if (commit) {
+      selDay = selDay === day ? null : day;          // long-pressing the picked day again clears it
+      announce.textContent = selDay === null ? months[current].m + '月の一覧' : dayLabel(selDay) + 'を選択';
+      renderBelow();
+    }
+    card.classList.toggle('has-sel', selDay !== null);
+    if (selDay !== null) placeBox(selDay);
+    pickDay = null;
+  }
+  function clearDay() {
+    if (selDay === null) return;
+    selDay = null;
+    cards[current]?.classList.remove('has-sel');
+    renderBelow();
+  }
+  const cardHit = (x, y) => cards.findIndex(card => {
+    if (card.style.visibility === 'hidden') return false;
+    const r = card.getBoundingClientRect();
+    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  });
+
+  scroller.addEventListener('pointerdown', ev => {
+    if (picking || pending || !isHeat() || (ev.pointerType === 'mouse' && ev.button !== 0)) return;
+    if (cardHit(ev.clientX, ev.clientY) !== current || !settled()) return;
+    const id = ev.pointerId, x = ev.clientX, y = ev.clientY;
+    pending = {id, x, y, timer: setTimeout(() => {
+      pending = null;
+      try { scroller.setPointerCapture(id); } catch (_) {}
+      beginPick('pointer', dayAt(x, y));
+    }, LONG_PRESS)};
+  });
+  scroller.addEventListener('pointermove', ev => {
+    if (pending && ev.pointerId === pending.id && Math.hypot(ev.clientX - pending.x, ev.clientY - pending.y) > SLOP) {
+      clearTimeout(pending.timer); pending = null;               // it is a swipe, not a long press
+    } else if (picking && pickBy === 'pointer') setPickDay(dayAt(ev.clientX, ev.clientY));
+  });
+  const release = commit => ev => {
+    if (pending && ev.pointerId === pending.id) { clearTimeout(pending.timer); pending = null; }
+    if (picking && pickBy === 'pointer') {
+      endPick(commit);
+      suppressClick = true; setTimeout(() => { suppressClick = false; }, 400);
+    }
+  };
+  scroller.addEventListener('pointerup', release(true));
+  scroller.addEventListener('pointercancel', release(false));
+  // Once picking, the finger must not scroll the months or the page.
+  scroller.addEventListener('touchmove', ev => { if (picking || pending) { if (picking) ev.preventDefault(); } }, {passive: false});
+  scroller.addEventListener('contextmenu', ev => { if (isHeat()) ev.preventDefault(); });
 
   // Taps land on the transparent scroller: find the card under the finger.
   scroller.addEventListener('click', ev => {
-    const hit = cards.findIndex(card => {
-      if (card.style.visibility === 'hidden') return false;
-      const r = card.getBoundingClientRect();
-      return ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom;
-    });
+    if (suppressClick) { suppressClick = false; return; }
+    const hit = cardHit(ev.clientX, ev.clientY);
     if (hit < 0) return;
-    if (hit === current && Math.abs(scroller.scrollLeft - current * S) < 4) toggleFace();
+    if (hit === current && settled()) toggleFace();
     else goTo(hit);
   });
   scroller.addEventListener('keydown', ev => {
-    if (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') { ev.preventDefault(); goTo(current + (ev.key === 'ArrowRight' ? 1 : -1)); }
-    else if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggleFace(); }
+    const k = ev.key;
+    if (picking && pickBy === 'key') {
+      const mo = months[current], step = {ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7}[k];
+      if (step) { ev.preventDefault(); setPickDay(clamp(pickDay + step, mo.first, mo.last)); }
+      else if (k === 'Enter' || k === ' ') { ev.preventDefault(); endPick(true); }
+      else if (k === 'Escape') { ev.preventDefault(); endPick(false); }
+      return;
+    }
+    if (picking) return;
+    if (k === 'ArrowLeft' || k === 'ArrowRight') { ev.preventDefault(); goTo(current + (k === 'ArrowRight' ? 1 : -1)); }
+    else if (k === 'Enter' || k === ' ') { ev.preventDefault(); toggleFace(); }
+    else if ((k === 'ArrowDown' || k === 'ArrowUp') && isHeat() && settled()) {
+      ev.preventDefault();
+      const mo = months[current];
+      beginPick('key', selDay ?? (today >= mo.first && today <= mo.last ? today : mo.first));
+    } else if (k === 'Escape' && selDay !== null) { ev.preventDefault(); clearDay(); }
   });
 
   /* ---------- (re)build ---------- */
@@ -339,10 +543,19 @@
     if (!measure()) { C = 0; return; }
     if (before !== C || !before) jumpTo(current);
   }).observe(stage);
-  section?.addEventListener('toggle', () => { if (section.open && measure()) jumpTo(current); if (section.open) updateFade(); });
+  section?.addEventListener('toggle', () => {
+    if (!section.open) { cards.forEach(c => c.classList.remove('is-grown')); return; }
+    if (measure()) jumpTo(current);
+    updateFade();
+    setTimeout(() => grow(current), 180);    // let the section start opening first
+  });
 
   // Coming back to the page on another day (the home-screen app stays open): refresh the statuses.
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && taipeiToday() !== today) { build(true); if (measure()) jumpTo(current); }
+    if (document.visibilityState === 'visible' && taipeiToday() !== today) {
+      build(true);
+      if (measure()) jumpTo(current);
+      if (section?.open) grow(current);
+    }
   });
 })();
