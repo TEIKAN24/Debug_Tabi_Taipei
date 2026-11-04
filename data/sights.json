@@ -48,6 +48,10 @@
                 {
                   "text": "旧公共浴場",
                   "tone": "auto"
+                },
+                {
+                  "text": "工事のため2027年10月まで休館",
+                  "tone": "red"
                 }
               ],
               "links": [],
@@ -538,10 +542,6 @@
               "className": "venue-list-item",
               "tags": [
                 {
-                  "text": "人気",
-                  "tone": "auto"
-                },
-                {
                   "text": "ランタン上げ体験",
                   "tone": "auto"
                 }
@@ -563,21 +563,8 @@
               "mapUrl": "https://maps.app.goo.gl/esMANNEu8aWBDrae9"
             },
             {
-              "id": "3f66bda0-4caa-804d-b132-f7176aec72d0",
-              "name": "猫空ロープウェイ",
-              "className": "venue-list-item",
-              "tags": [
-                {
-                  "text": "水晶ゴンドラ",
-                  "tone": "auto"
-                }
-              ],
-              "links": [],
-              "mapUrl": "https://maps.app.goo.gl/6tmfEQD5Hq9X51qF6"
-            },
-            {
               "id": "3f66bda0-4caa-8033-b147-ed124aa1925f",
-              "name": "北投温泉エリア",
+              "name": "北投温泉街エリア",
               "className": "venue-list-item",
               "tags": [
                 {
@@ -591,6 +578,23 @@
               ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/ucMvHc8PVc7vcEBfA"
+            },
+            {
+              "id": "3f66bda0-4caa-804d-b132-f7176aec72d0",
+              "name": "猫空",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "水晶ゴンドラ",
+                  "tone": "auto"
+                },
+                {
+                  "text": "お茶楽しむ",
+                  "tone": "neutral"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://maps.app.goo.gl/6tmfEQD5Hq9X51qF6"
             },
             {
               "id": "3f66bda0-4caa-80a7-b07a-c18a6a9d3f14",
@@ -611,7 +615,7 @@
             },
             {
               "id": "3f66bda0-4caa-806a-bf2d-ceef35162d0b",
-              "name": "野柳地質公園",
+              "name": "野柳",
               "className": "venue-list-item",
               "tags": [
                 {
@@ -621,6 +625,27 @@
               ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/SezQNPeF6oapcS349"
+            },
+            {
+              "id": "sights-mw1qhvs8-vb27z",
+              "name": "鶯歌・三峽老街",
+              "mapUrl": "https://www.google.com/maps/place/%E9%B6%AF%E6%AD%8C%E8%80%81%E8%A1%97/@24.952184,121.3449791,17z/data=!3m1!4b1!4m6!3m5!1s0x34681fc651fce2ab:0xb5a4efde7d66db88!8m2!3d24.952184!4d121.347343!16s%2Fg%2F11q_7t5slr?entry=ttu&g_ep=EgoyMDI2MTEwMS4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "陶芸",
+                  "tone": "auto"
+                },
+                {
+                  "text": "レトロ",
+                  "tone": "auto"
+                },
+                {
+                  "text": "中・和・西洋バロック様式建築の融合",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
             }
           ]
         }
