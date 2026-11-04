@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.263.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.264.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -134,7 +134,14 @@
     listScroll.dataset.end = canScroll && listScroll.scrollTop + listScroll.clientHeight >= listScroll.scrollHeight - 8 ? 'true' : 'false';
   }
   listScroll.addEventListener('scroll', updateFade, {passive: true});
-  new ResizeObserver(updateFade).observe(listScroll);
+  // Two-line names: the date block is centred on the name block; one-line rows stay top-aligned.
+  function markLines() {
+    list.querySelectorAll('.ec-row').forEach(li => {
+      const name = li.querySelector('.ec-name');
+      if (name?.offsetHeight) li.classList.toggle('is-2line', name.offsetHeight > 30);
+    });
+  }
+  new ResizeObserver(() => { markLines(); updateFade(); }).observe(listScroll);
 
   let cards = [], snaps = [];
   function buildCard(mo) {
@@ -192,16 +199,20 @@
     dated.forEach(r => n[r.status]++);
     const lead = el('div', 'ec-sum-lead');
     const big = el('strong', 'ec-sum-total'); big.append(String(dated.length), el('small', '', ' イベント'));
+    const extra = [];
     if (selDay === null) lead.append(el('span', 'ec-sum-month', mo.y + '／' + mo.m + '月'), big);
     else {
-      const chip = el('button', 'ec-day-chip'); chip.type = 'button';
       const sd = ymd(selDay);
-      chip.append(el('span', '', sd.m + '/' + sd.d + '（' + WEEK[sd.w] + '）'), el('span', 'ec-day-x', '×'));
-      chip.setAttribute('aria-label', dayLabel(selDay) + 'の選択を解除して' + mo.m + '月の一覧に戻る');
-      lead.append(chip, big);
+      lead.append(el('span', 'ec-sum-month', sd.m + '/' + sd.d + '（' + WEEK[sd.w] + '）'), big);
+      // Floats in the empty band above the summary (where the page dots appear while
+      // swiping), so showing it moves nothing.
+      const back = el('button', 'ec-day-back'); back.type = 'button';
+      back.append(el('span', 'ec-day-x', '×'), el('span', '', mo.m + '月の一覧へ'));
+      back.setAttribute('aria-label', dayLabel(selDay) + 'の選択を解除して' + mo.m + '月の一覧に戻る');
+      extra.push(back);
     }
     const stat = (label, v, cls) => { const s = el('div', 'ec-stat ' + cls); s.append(el('span', '', label), el('strong', '', String(v))); return s; };
-    summary.replaceChildren(lead, stat('開催中', n.ongoing, 'is-ongoing'), stat('開催予定', n.upcoming, 'is-upcoming'), stat('開催終了', n.ended, 'is-ended'));
+    summary.replaceChildren(lead, stat('開催中', n.ongoing, 'is-ongoing'), stat('開催予定', n.upcoming, 'is-upcoming'), stat('開催終了', n.ended, 'is-ended'), ...extra);
   }
 
   const BADGE = {upcoming: '開催予定', ended: '開催終了', ongoing: ''};
@@ -255,13 +266,13 @@
     renderSummary(mo); renderList(mo);
     listScroll.scrollTop = 0;
     listScroll.setAttribute('aria-label', selDay === null ? mo.y + '年' + mo.m + '月のイベント一覧' : dayLabel(selDay) + 'のイベント一覧');
-    updateFade();
+    markLines(); updateFade();
   }
-  summary.addEventListener('click', ev => { if (ev.target.closest('.ec-day-chip')) { clearDay(); scroller.focus({preventScroll: true}); } });
+  summary.addEventListener('click', ev => { if (ev.target.closest('.ec-day-back')) { clearDay(); scroller.focus({preventScroll: true}); } });
 
   /* ---------- geometry ---------- */
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const GAP = 10, PICK_SCALE = 1.04;
+  const GAP = 10, PICK_SCALE = 1.06;
   let C = 0, Wf = 0, Wm = 0, S = 1, fullH = [], miniH = 0, stageH = 0, current = -1, frame = 0;
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
@@ -317,7 +328,8 @@
       if (i === current) {
         // Small month reminder outside the card's top-left corner, clear of the finger.
         const sw = w[i] * (picking ? PICK_SCALE : 1), sh = h * (picking ? PICK_SCALE : 1);
-        pickMonth.style.transform = `translate3d(${(left - (sw - w[i]) / 2 - 8).toFixed(2)}px,${(top - (sh - h) / 2 + 12).toFixed(2)}px,0) translateX(-100%)`;
+        const s = picking ? PICK_SCALE : 1;
+        pickMonth.style.transform = `translate3d(${(left - (sw - w[i]) / 2 - 8).toFixed(2)}px,${(top - (sh - h) / 2 + 8.5 * s + 1).toFixed(2)}px,0) translateX(-100%)`;
       }
     });
     const idx = Math.round(p);
@@ -544,6 +556,9 @@
     if (before !== C || !before) jumpTo(current);
   }).observe(stage);
   section?.addEventListener('toggle', () => {
+    // Folding the section (or opening it again) drops a picked day.
+    if (picking) endPick(false);
+    clearDay();
     if (!section.open) { cards.forEach(c => c.classList.remove('is-grown')); return; }
     if (measure()) jumpTo(current);
     updateFade();

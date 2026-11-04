@@ -49,8 +49,8 @@
 (() => {
   "use strict";
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  // v30.9.264: the 観光・見どころ tile only scrolls to the chapter (名所・博物館 stays closed).
   const firstLevel={
-    sights:'3f56bda0-4caa-8046-a491-c25321b680c1',
     areas:'3f66bda0-4caa-800d-95db-dea98f822273',
     experiences:'3f76bda0-4caa-80d2-8841-c76e1f8f749a',
     souvenirs:'3f66bda0-4caa-8038-8328-e8b12e95336f'
@@ -82,26 +82,24 @@
     if (!summary) return;
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (!detail.open || summary.getClientRects().length === 0) return;
-      // v30.9.184: rest the opened title within thumb reach, not at the very top.
-      const restTop = Math.round(Math.min(140, Math.max(96, window.innerHeight * .15)));
+      // v30.9.264: every opened menu settles centred on the screen, then 20px higher.
+      // The height is read on each frame (the menu is still growing); a menu taller
+      // than the screen rests its title 16px from the top.
+      const height = () => detail.scrollHeight + (detail.offsetHeight - detail.clientHeight);
+      let fit = () => Math.max(16, Math.round((window.innerHeight - height()) / 2) - 20);
       // v30.9.190: the night-market box should end above the browser's bottom
-      // bar (address bar + safe area). Rise above the usual resting line only
-      // as much as needed for that, never above 16px.
-      if (detail.id === 'night-markets-section' && window.tabiGlideTo) {
+      // bar (address bar + safe area): rise above the centred line only as much as needed.
+      if (detail.id === 'night-markets-section') {
         const probe = document.createElement('div');
         probe.style.cssText = 'position:fixed;left:0;bottom:0;width:0;height:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none';
         document.body.append(probe);
         const inset = probe.getBoundingClientRect().height; probe.remove();
-        const reserve = Math.max(90, inset + 56);
-        const fit = () => {
-          const height = detail.scrollHeight + (detail.offsetHeight - detail.clientHeight);
-          return Math.max(16, Math.min(restTop, window.innerHeight - reserve - height));
-        };
-        window.tabiGlideTo(summary, fit); return;
+        const reserve = Math.max(90, inset + 56), centred = fit;
+        fit = () => Math.max(16, Math.min(centred(), window.innerHeight - reserve - height()));
       }
-      if (window.tabiGlideTo) { window.tabiGlideTo(summary, restTop); return; }
+      if (window.tabiGlideTo) { window.tabiGlideTo(summary, fit); return; }
       window.scrollTo({
-        top: Math.max(0, window.scrollY + summary.getBoundingClientRect().top - restTop),
+        top: Math.max(0, window.scrollY + summary.getBoundingClientRect().top - fit()),
         behavior: reduceMotion.matches ? 'auto' : 'smooth'
       });
     }));
@@ -3683,7 +3681,7 @@ update();
     if(nav){
       const id=nav.dataset.target;
       if(id==='travel')return 'travel';
-      if(id==='sights')return roots.find(root=>root.id==='3f56bda0-4caa-8046-a491-c25321b680c1')||null;
+      if(id==='sights')return 'sights'; // v30.9.264: folds the other chapters, opens nothing
       if(id==='city-walk' || id==='experience-souvenirs')return id;
       if(id==='day-trips')return daytrip;
       return ({food:null,
