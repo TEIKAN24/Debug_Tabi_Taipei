@@ -1,14 +1,14 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03), v30.9.265. Built by js/events.js. */
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03), v30.9.266. Built by js/events.js. */
 #guide .ec{
   --ec-ink:#EDEDED;--ec-sub:#8A8A8A;--ec-line:#2A2A2A;--ec-card:#121212;--ec-lo:#363636;--ec-hi:#E4E4E2;
   --ec-bar:#E4E4E2;--ec-mini:#9A9A9A;--ec-mini-strong:#C4C4C4;--ec-mini-bar:#5A5A5A;
-  --ec-l0:#1F1F1F;--ec-l1:#3A3A3A;--ec-l2:#676767;--ec-l3:#A5A5A5;--ec-l4:#E4E4E2;--ec-red:#E2665E;
+  --ec-l0:#1F1F1F;--ec-l1:#3A3A3A;--ec-l2:#676767;--ec-l3:#A5A5A5;--ec-l4:#E4E4E2;--ec-red:#E2665E;--ec-gold:#E0A93B;
   margin:0 0 0 -10px;padding:6px 0 12px;color:var(--ec-ink);font-variant-numeric:tabular-nums;
 }
 html[data-theme="light"] #guide .ec{
   --ec-ink:#2B2B2B;--ec-sub:#6B6B69;--ec-line:#E4E4E2;--ec-card:#FDFDFC;--ec-lo:#DEDEDC;--ec-hi:#333333;
   --ec-bar:#333333;--ec-mini:#7A7A78;--ec-mini-strong:#4A4A48;--ec-mini-bar:#CFCFCD;
-  --ec-l0:#F1F1F0;--ec-l1:#DADAD8;--ec-l2:#ABABA9;--ec-l3:#6F6F6D;--ec-l4:#333333;--ec-red:#B4443B;
+  --ec-l0:#F1F1F0;--ec-l1:#DADAD8;--ec-l2:#ABABA9;--ec-l3:#6F6F6D;--ec-l4:#333333;--ec-red:#B4443B;--ec-gold:#9A6A12;
 }
 /* Light mode: 開催予定 15% lighter, 日程未定 rows lighter still. */
 html[data-theme="light"] #guide .is-upcoming .ec-badge{color:color-mix(in srgb,var(--ec-ink) 85%,var(--ec-card))}
@@ -202,3 +202,7 @@ html body #guide .ec a.ec-map:not(#_):not(#__):hover{color:var(--ec-ink)!importa
 #guide .ec .ec-day-back:focus-visible{outline:2px solid var(--ec-sub);outline-offset:2px}
 #guide .ec-dots.is-visible ~ .ec-summary .ec-day-back{opacity:0;pointer-events:none}
 #guide .ec-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+
+/* v30.9.266 — 初日／最終日 in gold (month label and digits of that side); the dash stays ink. */
+#guide .ec-date .is-gold{color:var(--ec-gold)}
+#guide .ec-date .ec-date-d.is-gold:not(.ec-date-end)::after{color:var(--ec-ink)}

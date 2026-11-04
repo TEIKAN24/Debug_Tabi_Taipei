@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.265.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.266.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -215,7 +215,12 @@
       extra.push(back);
     }
     const stat = (label, v, cls) => { const s = el('div', 'ec-stat ' + cls); s.append(el('span', '', label), el('strong', '', String(v))); return s; };
-    summary.replaceChildren(lead, stat('開催中', n.ongoing, 'is-ongoing'), stat('開催予定', n.upcoming, 'is-upcoming'), stat('開催終了', n.ended, 'is-ended'), ...extra);
+    // A picked day: everything listed is on that day, so show how many start (初日) and
+    // end (最終日) there, in the two right-hand columns.
+    const stats = selDay === null
+      ? [stat('開催中', n.ongoing, 'is-ongoing'), stat('開催予定', n.upcoming, 'is-upcoming'), stat('開催終了', n.ended, 'is-ended')]
+      : [el('div', 'ec-stat-gap'), stat('初日', dated.filter(r => r.start === selDay).length, 'is-first'), stat('最終日', dated.filter(r => r.end === selDay).length, 'is-last')];
+    summary.replaceChildren(lead, ...stats, ...extra);
   }
 
   const BADGE = {upcoming: '開催予定', ended: '開催終了', ongoing: ''};
@@ -230,10 +235,18 @@
       return date;
     }
     const s = ymd(r.start), e = ymd(r.end), single = r.end === r.start, sameMonth = s.m === e.m && s.y === e.y;
-    date.append(el('span', 'ec-date-m', s.m + '月'), el('span', 'ec-date-m', single || sameMonth ? '' : e.m + '月'),
-      el('span', 'ec-date-d', pad(s.d)), el('span', 'ec-date-d ec-date-end', single ? '' : pad(e.d)));
+    // Gold: the side that falls on the picked day (初日 / 最終日); in the month list, the
+    // end of an event whose last day is today.
+    const goldStart = selDay !== null && r.start === selDay;
+    const goldEnd = selDay !== null ? r.end === selDay : r.end === today;
+    const mStart = el('span', 'ec-date-m', s.m + '月'), mEnd = el('span', 'ec-date-m', single || sameMonth ? '' : e.m + '月');
+    const dStart = el('span', 'ec-date-d', pad(s.d)), dEnd = el('span', 'ec-date-d ec-date-end', single ? '' : pad(e.d));
+    if (goldStart || (single && goldEnd)) { mStart.classList.add('is-gold'); dStart.classList.add('is-gold'); }
+    if (goldEnd && !single) { mEnd.classList.add('is-gold'); dEnd.classList.add('is-gold'); }
+    date.append(mStart, mEnd, dStart, dEnd);
     if (single) date.classList.add('is-single');
-    date.setAttribute('aria-label', s.m + '月' + s.d + '日' + (single ? '' : '〜' + (sameMonth ? '' : (s.y !== e.y ? e.y + '年' : '') + e.m + '月') + e.d + '日'));
+    date.setAttribute('aria-label', s.m + '月' + s.d + '日' + (single ? '' : '〜' + (sameMonth ? '' : (s.y !== e.y ? e.y + '年' : '') + e.m + '月') + e.d + '日') +
+      (goldStart && goldEnd ? '（この日のみ）' : goldStart ? '（初日）' : goldEnd ? (selDay !== null ? '（最終日）' : '（本日最終日）') : ''));
     return date;
   }
   function renderList(mo) {
