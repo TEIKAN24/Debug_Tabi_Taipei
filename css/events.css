@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03), v30.9.269. Built by js/events.js. */
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03), v30.9.270. Built by js/events.js. */
 #guide .ec{
   --ec-ink:#EDEDED;--ec-sub:#8A8A8A;--ec-line:#2A2A2A;--ec-card:#121212;--ec-lo:#363636;--ec-hi:#E4E4E2;
   --ec-bar:#E4E4E2;--ec-mini:#9A9A9A;--ec-mini-strong:#C4C4C4;--ec-mini-bar:#5A5A5A;
@@ -79,7 +79,7 @@ html[data-theme="light"] #guide .is-tbd .ec-meta-text,html[data-theme="light"] #
 #guide .ec-mini-bars i{flex:1;height:calc(var(--h) * 100%);min-height:2px;border-radius:2px;background:var(--ec-mini-bar)}
 
 /* page dots: shown only while the months are moving */
-#guide .ec-dots{display:flex;justify-content:center;align-items:center;gap:5px;height:6px;margin:9px 0 12px;opacity:0;transition:opacity .5s ease}
+#guide .ec-dots{display:flex;justify-content:center;align-items:center;gap:5px;height:6px;margin:9px 0 7px;opacity:0;transition:opacity .5s ease}
 #guide .ec-dots.is-visible{opacity:1;transition-duration:.15s}
 #guide .ec-dots i{width:5px;height:5px;border-radius:3px;background:var(--ec-sub);opacity:.6;transition:width .25s ease,background-color .25s ease}
 #guide .ec-dots i.is-active{width:22px;background:var(--ec-hi);opacity:1}
@@ -87,7 +87,12 @@ html[data-theme="light"] #guide .is-tbd .ec-meta-text,html[data-theme="light"] #
 /* ---- month summary ---- */
 #guide .ec-summary{display:grid;grid-template-columns:minmax(0,1.45fr) repeat(3,minmax(0,1fr));align-items:end;gap:4px;padding:2px 6px 12px}
 #guide .ec-sum-month{display:block;font-size:11px;line-height:18px;color:var(--ec-sub);letter-spacing:.03em}
-#guide .ec-sum-total{display:block;font-size:22px;font-weight:450;line-height:1.25;white-space:nowrap}
+#guide .ec .ec-sum-total{display:inline-flex;align-items:baseline;margin:0;padding:0;border:0;background:none;color:var(--ec-ink);
+  font:inherit;font-size:22px;font-weight:450;line-height:1.25;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#guide .ec .ec-sum-total:focus-visible{outline:2px solid var(--ec-sub);outline-offset:3px;border-radius:6px}
+#guide .ec-tri{align-self:center;width:0;height:0;margin-left:9px;border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:6px solid currentColor;transition:transform .2s ease}
+#guide .ec.is-filter-open .ec-tri{transform:rotate(180deg)}
 #guide .ec-sum-total small{font-size:16px;font-weight:450}
 #guide .ec-stat{text-align:center}
 #guide .ec-stat span{display:block;font-size:10.5px;color:var(--ec-sub);white-space:nowrap}
@@ -193,16 +198,39 @@ html body #guide .ec a.ec-map:not(#_):not(#__):hover{color:var(--ec-ink)!importa
 #guide .ec.is-picking .ec-pick-month{opacity:1}
 /* Neighbouring months step aside and dim by 40% while a day is picked. */
 #guide .ec.is-picking .ec-card:not(.is-pick){opacity:.6}
-/* Picked day: 「× 12月の一覧へ」 floats in the empty band above the summary (no layout shift). */
-#guide .ec-summary{position:relative}
-#guide .ec .ec-day-back{position:absolute;left:4px;top:-23px;display:inline-flex;align-items:center;gap:5px;box-sizing:border-box;height:20px;
-  margin:0;padding:0 9px 0 3px;border:1px solid var(--ec-lo);border-radius:100px;background:var(--ec-card);color:var(--ec-ink);
-  font:inherit;font-size:11px;line-height:18px;cursor:pointer;white-space:nowrap;transition:opacity .15s ease}
-#guide .ec .ec-day-x{display:grid;place-items:center;width:14px;height:14px;border-radius:50%;background:var(--ec-lo);font-size:11px;line-height:1}
-#guide .ec .ec-day-back:focus-visible{outline:2px solid var(--ec-sub);outline-offset:2px}
-#guide .ec-dots.is-visible ~ .ec-summary .ec-day-back{opacity:0;pointer-events:none}
 #guide .ec-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
 /* v30.9.266 — 初日／最終日 in gold (month label and digits of that side); the dash stays ink. */
 #guide .ec-date .is-gold{color:var(--ec-gold)}
 #guide .ec-date .ec-date-d.is-gold:not(.ec-date-end)::after{color:var(--ec-ink)}
+
+/* v30.9.270 — filter: chips of the active conditions (always reserved, 24px) */
+#guide .ec-chips{display:flex;align-items:center;gap:6px;height:24px;margin:0 0 8px;padding:0 6px;overflow:hidden}
+#guide .ec .ec-chip{flex:none;display:inline-flex;align-items:center;gap:5px;box-sizing:border-box;height:22px;max-width:100%;margin:0;
+  padding:0 3px 0 9px;border:1px solid color-mix(in srgb,var(--ec-ink) 38%,var(--ec-card));border-radius:100px;background:transparent;
+  color:var(--ec-ink);font:inherit;font-size:11.5px;line-height:20px;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+/* The genre chip is the one that gives way on narrow screens (…). */
+#guide .ec .ec-chip-genre{flex:0 1 auto;min-width:0}
+#guide .ec-chip-label{overflow:hidden;text-overflow:ellipsis;min-width:0}
+#guide .ec-chip-x{flex:none;display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--ec-lo);font-size:10px;line-height:1}
+#guide .ec .ec-chip:focus-visible{outline:2px solid var(--ec-sub);outline-offset:2px}
+/* Filter panel: floats over the top of the list, nothing moves. */
+#guide .ec-filter-panel{position:absolute;top:0;left:2px;right:2px;z-index:6;box-sizing:border-box;padding:12px 12px 14px;
+  border:1px solid var(--ec-lo);border-radius:14px;background:var(--ec-card);box-shadow:0 14px 30px rgba(0,0,0,.5);
+  animation:ec-panel-in .18s ease-out both}
+html[data-theme="light"] #guide .ec-filter-panel{box-shadow:0 12px 28px rgba(0,0,0,.12)}
+#guide .ec-filter-panel[hidden]{display:none}
+@keyframes ec-panel-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+#guide .ec-filter-group + .ec-filter-group{margin-top:12px}
+#guide .ec-filter-title{display:block;font-size:10.5px;color:var(--ec-sub);letter-spacing:.05em}
+#guide .ec-filter-options{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+#guide .ec .ec-option{height:30px;margin:0;padding:0 12px;border:1px solid var(--ec-lo);border-radius:100px;background:transparent;color:var(--ec-ink);
+  font:inherit;font-size:12.5px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#guide .ec .ec-option[aria-pressed="true"]{background:var(--ec-hi);border-color:var(--ec-hi);color:var(--ec-card)}
+#guide .ec .ec-option:focus-visible{outline:2px solid var(--ec-sub);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#guide .ec-filter-panel{animation:none}#guide .ec-tri{transition:none}}
+#guide .ec .ec-sum-total small{margin-left:.28em}
+@media(max-width:350px){
+  #guide .ec-chips{gap:4px}
+  #guide .ec .ec-chip{font-size:11px;padding:0 2px 0 7px;gap:3px}
+}

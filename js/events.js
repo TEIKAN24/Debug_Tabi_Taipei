@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.269.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.270.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -13,6 +13,9 @@
    Status (開催中／開催予定／開催終了) is judged against today in Taipei.
    Events without announced dates (tbd) are listed in their expected months as 日程未定
    and are not counted anywhere.
+   Filter (v30.9.270): the ▾ next to the count opens エリア (single) + ジャンル (single);
+   everything (cards, bars, heatmap, summary, list) follows it. Active conditions show as
+   chips above the summary; folding the section resets them (back to this month, bars).
    Debug: ?ec-today=2026-12-08 pretends today is that date. */
 (() => {
   'use strict';
@@ -41,12 +44,18 @@
   const safeUrl = raw => { try { const u = new URL(raw); return /^https?:$/.test(u.protocol) ? u.href : ''; } catch (_) { return ''; } };
 
   /* ---------- data ---------- */
+  const CITIES = ['台北市', '新北市'];
+  const GENRES = ['アニメ・IP', 'アート・展示', 'マーケット', 'ポップアップ', '祭り・季節', '音楽・映画'];
+  const filter = {city: '', genre: ''};
+  const filtering = () => Boolean(filter.city || filter.genre);
+  const passes = e => (!filter.city || e.city === filter.city) && (!filter.genre || e.genre === filter.genre);
   function readEvents() {
     const list = Array.isArray(window.TABI_EVENTS?.events) ? window.TABI_EVENTS.events : [];
     return list.map(e => {
       if (!e || typeof e.name !== 'string' || !e.name.trim()) return null;
       const city = String(e.city || '').trim(), venue = String(e.venue || '').trim();
-      const base = {name: e.name.trim(), city, category: String(e.category || '').trim(), venue, url: safeUrl(e.url), top: e.recommend === '高',
+      const base = {name: e.name.trim(), city, category: String(e.category || '').trim(), genre: GENRES.includes(e.genre) ? e.genre : '',
+        venue, url: safeUrl(e.url), top: e.recommend === '高',
         mapUrl: safeUrl(e.mapUrl) || (venue ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent((city + ' ' + venue).trim()) : '')};
       let start = parseDay(e.start), end = parseDay(e.end);
       if (e.tbd || start === null) {
@@ -80,11 +89,13 @@
   const byKey = (p, q) => STATUS_RANK[p.status] - STATUS_RANK[q.status] || p.key[0] - q.key[0] || p.key[1] - q.key[1] || tie(p, q);
   function buildMonths() {
     today = taipeiToday();
-    events = readEvents();
+    const all = readEvents();
+    events = all.filter(passes);
     const t = ymd(today);
     let y = t.m === 1 ? t.y - 1 : t.y, m = t.m === 1 ? 12 : t.m - 1;          // last month
-    const lastDated = ymd(events.filter(e => !e.tbd).reduce((a, e) => Math.max(a, e.end), today));
-    const stopKey = Math.max(lastDated.y * 12 + lastDated.m - 1, ...events.filter(e => e.tbd).map(e => e.to));
+    // The month range comes from all events, so filtering never adds or removes months.
+    const lastDated = ymd(all.filter(e => !e.tbd).reduce((a, e) => Math.max(a, e.end), today));
+    const stopKey = Math.max(lastDated.y * 12 + lastDated.m - 1, ...all.filter(e => e.tbd).map(e => e.to));
     months = [];
     while (y * 12 + m - 1 <= stopKey && months.length < 36) {
       const key = y * 12 + m - 1;
@@ -134,15 +145,18 @@
   const track = el('div', 'ec-track');
   scroller.append(track); stage.append(cardLayer, pickMonth, scroller);
   const dots = el('div', 'ec-dots'); dots.setAttribute('aria-hidden', 'true');
+  const chips = el('div', 'ec-chips'); chips.setAttribute('aria-label', '絞り込み条件');
   const summary = el('div', 'ec-summary'); summary.setAttribute('aria-live', 'polite');
+  const panel = el('div', 'ec-filter-panel'); panel.id = 'ec-filter-panel'; panel.hidden = true;
+  panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', '絞り込み');
   const announce = el('span', 'ec-sr'); announce.setAttribute('aria-live', 'assertive');
   // The list scrolls inside a box of fixed height (3.5 rows, the same in Safari and in
   // the home-screen app); the bottom fades while more rows are below.
   const listBox = el('div', 'ec-list-box');
   const listScroll = el('div', 'ec-list-scroll'); listScroll.tabIndex = 0; listScroll.setAttribute('role', 'region');
   const list = el('ul', 'ec-list');
-  listScroll.append(list); listBox.append(listScroll);
-  root.replaceChildren(stage, dots, summary, listBox, announce);
+  listScroll.append(list); listBox.append(listScroll, panel);
+  root.replaceChildren(stage, dots, chips, summary, listBox, announce);
   function updateFade() {
     const canScroll = listScroll.scrollHeight > listScroll.clientHeight + 5;
     listScroll.classList.toggle('can-scroll', canScroll);
@@ -219,26 +233,111 @@
     const n = {ongoing: 0, upcoming: 0, ended: 0};
     dated.forEach(r => n[r.status]++);
     const lead = el('div', 'ec-sum-lead');
-    const big = el('strong', 'ec-sum-total'); big.append(String(dated.length), el('small', '', ' イベント'));
-    const extra = [];
+    // The count doubles as the ▾ button that opens the filter.
+    const big = el('button', 'ec-sum-total'); big.type = 'button';
+    big.setAttribute('aria-haspopup', 'dialog'); big.setAttribute('aria-controls', panel.id);
+    big.setAttribute('aria-expanded', String(!panel.hidden));
+    big.setAttribute('aria-label', dated.length + 'イベント。絞り込みを' + (panel.hidden ? '開く' : '閉じる'));
+    const tri = el('span', 'ec-tri'); tri.setAttribute('aria-hidden', 'true');
+    big.append(String(dated.length), el('small', '', ' イベント'), tri);
     if (selDay === null) lead.append(el('span', 'ec-sum-month', mo.y + '／' + mo.m + '月'), big);
     else {
       const sd = ymd(selDay);
       lead.append(el('span', 'ec-sum-month', sd.m + '/' + sd.d + '（' + WEEK[sd.w] + '）'), big);
-      // Floats in the empty band above the summary (where the page dots appear while
-      // swiping), so showing it moves nothing.
-      const back = el('button', 'ec-day-back'); back.type = 'button';
-      back.append(el('span', 'ec-day-x', '×'), el('span', '', mo.m + '月の一覧へ'));
-      back.setAttribute('aria-label', dayLabel(selDay) + 'の選択を解除して' + mo.m + '月の一覧に戻る');
-      extra.push(back);
     }
+    renderChips(mo);
     const stat = (label, v, cls) => { const s = el('div', 'ec-stat ' + cls); s.append(el('span', '', label), el('strong', '', String(v))); return s; };
     // A picked day: everything listed is on that day, so show how many start (初日) and
     // end (最終日) there, in the two right-hand columns.
     const stats = selDay === null
       ? [stat('開催中', n.ongoing, 'is-ongoing'), stat('開催予定', n.upcoming, 'is-upcoming'), stat('開催終了', n.ended, 'is-ended')]
       : [el('div', 'ec-stat-gap'), stat('初日', dated.filter(r => r.start === selDay).length, 'is-first'), stat('最終日', dated.filter(r => r.end === selDay).length, 'is-last')];
-    summary.replaceChildren(lead, ...stats, ...extra);
+    summary.replaceChildren(lead, ...stats);
+  }
+
+  // Active conditions: エリア, ジャンル, then the picked day (「11月の一覧へ」). × removes one.
+  function renderChips(mo) {
+    const chip = (label, kind, aria) => {
+      const b = el('button', 'ec-chip ec-chip-' + kind); b.type = 'button'; b.dataset.clear = kind;
+      b.append(el('span', 'ec-chip-label', label), el('span', 'ec-chip-x', '×'));
+      b.setAttribute('aria-label', aria); b.title = label;
+      return b;
+    };
+    const list = [];
+    if (filter.city) list.push(chip(filter.city, 'city', filter.city + 'の絞り込みを解除'));
+    if (filter.genre) list.push(chip(filter.genre, 'genre', filter.genre + 'の絞り込みを解除'));
+    if (selDay !== null) list.push(chip(mo.m + '月の一覧へ', 'day', dayLabel(selDay) + 'の選択を解除して' + mo.m + '月の一覧に戻る'));
+    chips.replaceChildren(...list);
+  }
+  chips.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-clear]');
+    if (!b) return;
+    if (b.dataset.clear === 'day') { clearDay(); scroller.focus({preventScroll: true}); return; }
+    filter[b.dataset.clear] = '';
+    applyFilter();
+  });
+
+  /* ---------- filter panel ---------- */
+  function renderPanel() {
+    const group = (title, key, values) => {
+      const g = el('div', 'ec-filter-group'), id = 'ec-fg-' + key;
+      const h = el('span', 'ec-filter-title', title); h.id = id;
+      const row = el('div', 'ec-filter-options'); row.setAttribute('role', 'group'); row.setAttribute('aria-labelledby', id);
+      values.forEach(v => {
+        const b = el('button', 'ec-option', v); b.type = 'button'; b.dataset.key = key; b.dataset.value = v;
+        b.setAttribute('aria-pressed', String(filter[key] === v));
+        row.append(b);
+      });
+      g.append(h, row); return g;
+    };
+    panel.replaceChildren(group('エリア', 'city', CITIES), group('ジャンル', 'genre', GENRES));
+  }
+  function openPanel(open) {
+    if (open === !panel.hidden) return;
+    panel.hidden = !open;
+    if (open) renderPanel();
+    summary.querySelector('.ec-sum-total')?.setAttribute('aria-expanded', String(open));
+    root.classList.toggle('is-filter-open', open);
+  }
+  summary.addEventListener('click', ev => {
+    if (ev.target.closest('.ec-sum-total')) { openPanel(panel.hidden); }
+  });
+  panel.addEventListener('click', ev => {
+    const b = ev.target.closest('.ec-option');
+    if (!b) return;
+    const {key, value} = b.dataset;
+    filter[key] = filter[key] === value ? '' : value;          // tap the chosen one again to clear
+    applyFilter();
+    renderPanel();
+    // Keyboard users keep their place after the re-render (a tap needs no focus ring).
+    if (ev.detail === 0) panel.querySelector(`.ec-option[data-key="${key}"][data-value="${value}"]`)?.focus({preventScroll: true});
+  });
+  // Outside tap, Escape: close. The tap that closes it does nothing else.
+  let swallow = 0;
+  document.addEventListener('pointerdown', ev => {
+    if (!panel.hidden && !panel.contains(ev.target) && !ev.target.closest?.('.ec-sum-total')) {
+      openPanel(false);
+      swallow = setTimeout(() => { swallow = 0; }, 600);
+    }
+  }, true);
+  document.addEventListener('click', ev => {
+    if (swallow) { clearTimeout(swallow); swallow = 0; ev.preventDefault(); ev.stopPropagation(); }
+  }, true);
+  root.addEventListener('keydown', ev => {
+    if (ev.key === 'Escape' && !panel.hidden) { ev.stopPropagation(); openPanel(false); summary.querySelector('.ec-sum-total')?.focus(); }
+  });
+
+  // Rebuild everything for the new condition, keeping the month, the face and a picked day.
+  function applyFilter() {
+    const keepDay = selDay;
+    rebuilding = true; build(true); rebuilding = false;
+    if (keepDay !== null && keepDay >= months[current].first && keepDay <= months[current].last) {
+      selDay = keepDay;
+      cards[current].classList.add('has-sel');
+      placeBox(selDay);
+      renderBelow();
+    }
+    if (!isHeat()) grow(current);
   }
 
   const BADGE = {upcoming: '開催予定', ended: '開催終了', ongoing: ''};
@@ -271,7 +370,8 @@
     list.replaceChildren();
     const {dated, tbd} = rowsFor(mo);
     if (!dated.length && !tbd.length) {
-      list.append(el('li', 'ec-empty', selDay === null ? 'この月のイベント情報はまだありません。' : 'この日のイベントはありません。'));
+      list.append(el('li', 'ec-empty', filtering() ? '条件に合うイベントはありません。' :
+        selDay === null ? 'この月のイベント情報はまだありません。' : 'この日のイベントはありません。'));
       return;
     }
     for (const r of [...dated, ...tbd]) {
@@ -302,7 +402,6 @@
     listScroll.setAttribute('aria-label', selDay === null ? mo.y + '年' + mo.m + '月のイベント一覧' : dayLabel(selDay) + 'のイベント一覧');
     markLines(); updateFade();
   }
-  summary.addEventListener('click', ev => { if (ev.target.closest('.ec-day-back')) { clearDay(); scroller.focus({preventScroll: true}); } });
 
   /* ---------- geometry ---------- */
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -376,8 +475,10 @@
   }
   const schedule = () => { if (!frame) frame = requestAnimationFrame(place); };
 
+  let rebuilding = false;
   function select(idx) {
     current = idx;
+    if (!rebuilding) openPanel(false);       // a month swipe closes the filter
     selDay = null; cards.forEach(c => c.classList.remove('has-sel'));
     cards.forEach((c, i) => { if (i !== idx) c.classList.remove('is-grown'); });
     const mo = months[idx];
@@ -621,10 +722,17 @@
     if (before !== C || !before) jumpTo(current);
   }).observe(stage);
   section?.addEventListener('toggle', () => {
-    // Folding the section (or opening it again) drops a picked day.
+    // Folding the section resets it: no picked day, no filter, this month, bars.
     if (picking) endPick(false);
-    clearDay();
-    if (!section.open) { cards.forEach(c => c.classList.remove('is-grown')); return; }
+    if (!section.open) {
+      openPanel(false);
+      root.classList.remove('is-heat');
+      if (filtering()) { filter.city = filter.genre = ''; build(false); }
+      else { clearDay(); const i = todayIndex(); if (i >= 0 && i !== current) select(i); }
+      labelScroller();
+      cards.forEach(c => c.classList.remove('is-grown'));
+      return;
+    }
     if (measure()) jumpTo(current);
     updateFade();
     setTimeout(() => grow(current), 180);    // let the section start opening first
