@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.271.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.272.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -120,11 +120,11 @@
 
   /* ---------- DOM helpers ---------- */
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
-  const svgChevron = () => {
+  // Map pin (v30.9.272): the venue opens in Google Maps.
+  const svgPin = () => {
     const ns = 'http://www.w3.org/2000/svg', s = document.createElementNS(ns, 'svg'), p = document.createElementNS(ns, 'path');
-    s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('width', '18'); s.setAttribute('height', '18'); s.setAttribute('aria-hidden', 'true');
-    p.setAttribute('d', 'M9 5l7 7-7 7'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'currentColor');
-    p.setAttribute('stroke-width', '2'); p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round');
+    s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('width', '20'); s.setAttribute('height', '20'); s.setAttribute('aria-hidden', 'true');
+    p.setAttribute('d', 'M12 2a7 7 0 0 0-7 7c0 2.1.8 3.9 1.9 5.6L12 22l5.1-7.4C18.2 12.9 19 11.1 19 9a7 7 0 0 0-7-7Zm0 4.6a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8Z'); p.setAttribute('fill', 'currentColor'); p.setAttribute('fill-rule', 'evenodd');
     s.append(p); return s;
   };
   // Heatmap shades are scaled within the month (busiest days stand out even when long
@@ -391,7 +391,7 @@
       if (r.mapUrl) {
         const go = el('a', 'ec-map'); go.href = r.mapUrl; go.target = '_blank'; go.rel = 'noopener noreferrer';
         go.setAttribute('aria-label', (r.venue || r.name) + 'をGoogleマップで開く'); go.title = r.venue || 'Googleマップ';
-        go.append(svgChevron()); li.append(go);
+        go.append(svgPin()); li.append(go);
       } else li.append(el('span', 'ec-map is-none'));
       list.append(li);
     }
