@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.266.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.268.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -8,7 +8,8 @@
    underneath are placed from its scroll position every frame.
    Week bars grow from the bottom whenever a month settles in the centre.
    Long-press (0.35 s; on the bars too, which switches to the heatmap) and drag to pick a
-   day; release to show that day's events. Double-tap the centred card: back to this month.
+   day; release to show that day's events. Double-tap the centred card: back to this month,
+   shown as bars.
    Status (開催中／開催予定／開催終了) is judged against today in Taipei.
    Events without announced dates (tbd) are listed in their expected months as 日程未定
    and are not counted anywhere.
@@ -45,7 +46,7 @@
     return list.map(e => {
       if (!e || typeof e.name !== 'string' || !e.name.trim()) return null;
       const city = String(e.city || '').trim(), venue = String(e.venue || '').trim();
-      const base = {name: e.name.trim(), city, category: String(e.category || '').trim(), venue, url: safeUrl(e.url),
+      const base = {name: e.name.trim(), city, category: String(e.category || '').trim(), venue, url: safeUrl(e.url), top: e.recommend === '高',
         mapUrl: safeUrl(e.mapUrl) || (venue ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent((city + ' ' + venue).trim()) : '')};
       let start = parseDay(e.start), end = parseDay(e.end);
       if (e.tbd || start === null) {
@@ -63,8 +64,19 @@
 
   let today, events, months, maxWeek;
   const statusOf = e => e.end < today ? 'ended' : e.start > today ? 'upcoming' : 'ongoing';
-  const ORDER = {ongoing: 0, upcoming: 0, ended: 1};
-  const byStatus = (p, q) => ORDER[p.status] - ORDER[q.status] || p.start - q.start || p.end - q.end || p.name.localeCompare(q.name, 'ja');
+  // Month order (v30.9.268): each event's next key date inside the month (from today in
+  // the current month): its start if that falls in the month, otherwise its end. Those
+  // events come first by that date, starts and ends interleaved like a timeline; events
+  // that run through the whole month follow (ending soonest first); ended ones last.
+  // Same day: 推薦「高」 first.
+  function monthKey(e, lo, last) {
+    if (e.end < today) return [3, -e.end];
+    if (e.start >= lo && e.start <= last) return [0, e.start];
+    if (e.end >= lo && e.end <= last) return [0, e.end];
+    return [2, e.end];
+  }
+  const tie = (p, q) => (q.top - p.top) || p.start - q.start || p.end - q.end || p.name.localeCompare(q.name, 'ja');
+  const byKey = (p, q) => p.key[0] - q.key[0] || p.key[1] - q.key[1] || tie(p, q);
   function buildMonths() {
     today = taipeiToday();
     events = readEvents();
@@ -84,7 +96,8 @@
         const a = Math.max(first, first + r * 7 - lead), b = Math.min(last, first + r * 7 - lead + 6);
         weeks.push(inMonth.filter(e => e.start <= b && e.end >= a).length);
       }
-      const rows = inMonth.map(e => ({...e, status: statusOf(e)})).sort(byStatus);
+      const lo = Math.max(today, first);
+      const rows = inMonth.map(e => ({...e, status: statusOf(e), key: monthKey(e, lo, last)})).sort(byKey);
       const tbd = events.filter(e => e.tbd && e.from <= key && e.to >= key).map(e => ({...e, status: 'tbd'}))
         .sort((p, q) => p.from - q.from || p.to - q.to || p.name.localeCompare(q.name, 'ja'));
       months.push({y, m, first, last, dim, lead, days, weeks, rows, tbd});
@@ -194,7 +207,10 @@
   let selDay = null;                         // picked day (day number) in the current month
   function rowsFor(mo) {
     if (selDay === null) return {dated: mo.rows, tbd: mo.tbd};
-    return {dated: mo.rows.filter(r => r.start <= selDay && r.end >= selDay), tbd: []};
+    // A picked day: 最終日 first, then 初日, then the rest ending soonest first.
+    const rank = r => r.end === selDay ? 0 : r.start === selDay ? 1 : 2;
+    return {dated: mo.rows.filter(r => r.start <= selDay && r.end >= selDay)
+      .sort((p, q) => rank(p) - rank(q) || p.end - q.end || tie(p, q)), tbd: []};
   }
   function renderSummary(mo) {
     const {dated} = rowsFor(mo);
@@ -236,8 +252,8 @@
     }
     const s = ymd(r.start), e = ymd(r.end), single = r.end === r.start, sameMonth = s.m === e.m && s.y === e.y;
     // Gold: the side that falls on the picked day (初日 / 最終日); in the month list, the
-    // end of an event whose last day is today.
-    const goldStart = selDay !== null && r.start === selDay;
+    // side that falls on today (本日初日 / 本日最終日).
+    const goldStart = selDay !== null ? r.start === selDay : r.start === today;
     const goldEnd = selDay !== null ? r.end === selDay : r.end === today;
     const mStart = el('span', 'ec-date-m', s.m + '月'), mEnd = el('span', 'ec-date-m', single || sameMonth ? '' : e.m + '月');
     const dStart = el('span', 'ec-date-d', pad(s.d)), dEnd = el('span', 'ec-date-d ec-date-end', single ? '' : pad(e.d));
@@ -246,7 +262,7 @@
     date.append(mStart, mEnd, dStart, dEnd);
     if (single) date.classList.add('is-single');
     date.setAttribute('aria-label', s.m + '月' + s.d + '日' + (single ? '' : '〜' + (sameMonth ? '' : (s.y !== e.y ? e.y + '年' : '') + e.m + '月') + e.d + '日') +
-      (goldStart && goldEnd ? '（この日のみ）' : goldStart ? '（初日）' : goldEnd ? (selDay !== null ? '（最終日）' : '（本日最終日）') : ''));
+      (goldStart && goldEnd ? (selDay !== null ? '（この日のみ）' : '（本日のみ）') : goldStart ? (selDay !== null ? '（初日）' : '（本日初日）') : goldEnd ? (selDay !== null ? '（最終日）' : '（本日最終日）') : ''));
     return date;
   }
   function renderList(mo) {
@@ -540,8 +556,10 @@
   function backToToday() {
     const i = todayIndex();
     if (i < 0) return;
+    const wasHeat = isHeat();
+    if (wasHeat) toggleFace();                // the heatmap (and a picked day) goes back to bars
     if (i !== current) goTo(i);
-    else if (!reduce.matches) cards[i]?.querySelector(isHeat() ? '.ec-grid .is-today' : '.ec-bars')
+    else if (!wasHeat && !reduce.matches) cards[i]?.querySelector('.ec-bars')
       ?.animate([{transform: 'scale(1)'}, {transform: 'scale(1.12)'}, {transform: 'scale(1)'}], {duration: 360, easing: 'ease-out'});
   }
   scroller.addEventListener('click', ev => {
