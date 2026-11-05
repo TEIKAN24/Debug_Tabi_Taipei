@@ -5148,9 +5148,7 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 #guide details.walk-grid-ready[open] > summary > .accordion-category-heading,
 #guide details.night-market-section[open] > summary > .accordion-category-heading,
 #guide details.compact-open-header[open] > summary > .accordion-category-heading{font-size:12px!important;line-height:1.5!important;letter-spacing:.01em}
-#guide details.walk-grid-ready[open] > summary::after,
-#guide details.night-market-section[open] > summary::after,
-#guide details.compact-open-header[open] > summary::after{font-size:15px;right:14px}
+/* v30.9.275: the × keeps the + size and position when these headers compact (it just turns). */
 #guide details.walk-grid-ready > .indented{margin:10px!important;padding:0!important}
 
 /* Area index */
