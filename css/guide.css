@@ -199,6 +199,8 @@ footer {color:var(--text-caption)}
 .site-content details.root-accordion > summary {color:var(--text-heading)}
 .site-content details.nested-accordion > summary {color:#E0E8EC}
 .site-content details summary::after {color:#A9B8C2}
+/* v30.9.276: light mode — the same lightness without the blue tint */
+html[data-theme="light"] .site-content details summary::after{color:#B6B6B5}
 .site-content details:not(:where(#taipei-recommender *)) {background:var(--paper)}
 .site-content details.nested-accordion {background:#242E35}
 .site-content figure figcaption {color:var(--text-caption)}

@@ -231,7 +231,8 @@
   }
   // Off-view numbers with a thin chevron on the side / corner of their direction.
   const edgeChips = Array.from({length: 8}, () => {
-    const b = node('button', {type: 'button', class: 'nm-edge', tabindex: '-1'});
+    // v30.9.276: hidden from screen readers while not shown (no visual change).
+    const b = node('button', {type: 'button', class: 'nm-edge', tabindex: '-1', 'aria-hidden': 'true'});
     const count = node('span', {class: 'nm-edge-count'});
     const arrow = svg('svg', {class: 'nm-edge-arrow', viewBox: '0 0 12 12', width: 12, height: 12, 'aria-hidden': 'true', focusable: 'false'});
     arrow.append(svg('path', {d: 'M4.3 2.4L8 6l-3.7 3.6', fill: 'none', stroke: 'currentColor', 'stroke-width': 1.7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'}));
@@ -657,7 +658,7 @@
     const chips = [locateBox()];
     edgeChips.forEach((chip, i) => {
       const g = groupsOut[i];
-      if (!g) { chip.classList.remove('is-on'); chip.tabIndex = -1; chip._members = null; chip._n = 0; return; }
+      if (!g) { chip.classList.remove('is-on'); chip.tabIndex = -1; chip.setAttribute('aria-hidden', 'true'); chip._members = null; chip._n = 0; return; }
       const mx = g.items.reduce((t, o) => t + Math.cos(o.a), 0), my = g.items.reduce((t, o) => t + Math.sin(o.a), 0);
       const ang = Math.atan2(my, mx), ux = Math.cos(ang), uy = Math.sin(ang);
       const n = g.items.length;
@@ -683,7 +684,7 @@
       chip._arrow.style.transform = `rotate(${dir * 45}deg)`;
       chip.setAttribute('aria-label', DIR_JA[dir] + '方向の画面外の夜市 ' + n + '件（' + chip._members.map(m => m.name).join('、') + '）へ移動');
       chip.style.transform = `translate3d(${px.toFixed(1)}px,${py.toFixed(1)}px,0) translate(-50%,-50%)`;
-      chip.classList.add('is-on'); chip.tabIndex = 0;
+      chip.classList.add('is-on'); chip.tabIndex = 0; chip.removeAttribute('aria-hidden');
       pillBoxes.push(box(px, py, cw, ch));
     });
   }

@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.273.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.276.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -16,6 +16,8 @@
    Filter (v30.9.270): the ▾ next to the count opens エリア (single) + ジャンル (single);
    everything (cards, bars, heatmap, summary, list) follows it. Active conditions show as
    chips above the summary; folding the section resets them (back to this month, bars).
+   Performance (v30.9.276): nothing is built while the section is folded at page load;
+   the calendar is built the moment its title is pressed (or opened any other way).
    Debug: ?ec-today=2026-12-08 pretends today is that date. */
 (() => {
   'use strict';
@@ -32,12 +34,13 @@
   const parseDay = s => { const m = ISO.exec(String(s || '')); return m ? dayOf(+m[1], +m[2], +m[3]) : null; };
   const parseMonth = s => { const m = YM.exec(String(s || '')); return m ? +m[1] * 12 + (+m[2] - 1) : null; };
   const ymd = n => { const d = new Date(n * DAY); return {y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, d: d.getUTCDate(), w: d.getUTCDay()}; };
+  let taipeiFormat = null;                   // created once: building it is slow on phones
   function taipeiToday() {
     const forced = parseDay(new URLSearchParams(location.search).get('ec-today'));
     if (forced !== null) return forced;
     try {
-      const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit'})
-        .formatToParts(new Date()).map(x => [x.type, x.value]));
+      taipeiFormat ??= new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit'});
+      const p = Object.fromEntries(taipeiFormat.formatToParts(new Date()).map(x => [x.type, x.value]));
       return dayOf(+p.year, +p.month, +p.day);
     } catch (_) { return Math.floor((Date.now() + 8 * 36e5) / DAY); }
   }
@@ -120,13 +123,7 @@
 
   /* ---------- DOM helpers ---------- */
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
-  // Map pin (v30.9.272): the venue opens in Google Maps.
-  const svgPin = () => {
-    const ns = 'http://www.w3.org/2000/svg', s = document.createElementNS(ns, 'svg'), p = document.createElementNS(ns, 'path');
-    s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('width', '20'); s.setAttribute('height', '20'); s.setAttribute('aria-hidden', 'true');
-    p.setAttribute('d', 'M12 2a7 7 0 0 0-7 7c0 2.1.8 3.9 1.9 5.6L12 22l5.1-7.4C18.2 12.9 19 11.1 19 9a7 7 0 0 0-7-7Zm0 4.6a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8Z'); p.setAttribute('fill', 'currentColor'); p.setAttribute('fill-rule', 'evenodd');
-    s.append(p); return s;
-  };
+
   // Heatmap shades are scaled within the month (busiest days stand out even when long
   // exhibitions fill every day); bar heights share one scale so months compare.
   const levels = days => {
@@ -157,7 +154,9 @@
   const list = el('ul', 'ec-list');
   listScroll.append(list); listBox.append(listScroll, panel);
   root.replaceChildren(stage, dots, chips, summary, listBox, announce);
+  const shown = () => !section || section.open;   // folded: nothing to measure
   function updateFade() {
+    if (!shown()) return;
     const canScroll = listScroll.scrollHeight > listScroll.clientHeight + 5;
     listScroll.classList.toggle('can-scroll', canScroll);
     listScroll.dataset.end = canScroll && listScroll.scrollTop + listScroll.clientHeight >= listScroll.scrollHeight - 8 ? 'true' : 'false';
@@ -165,6 +164,7 @@
   listScroll.addEventListener('scroll', updateFade, {passive: true});
   // Two-line names: the date block is centred on the name block; one-line rows stay top-aligned.
   function markLines() {
+    if (!shown()) return;
     list.querySelectorAll('.ec-row').forEach(li => {
       const name = li.querySelector('.ec-name');
       if (name?.offsetHeight) li.classList.toggle('is-2line', name.offsetHeight > 30);
@@ -396,19 +396,14 @@
         a.setAttribute('aria-label', r.name + '（公式サイトを開く）'); a.title = r.name;
         body.append(a);
       } else body.append(el('span', 'ec-name', r.name));
-      li.append(dateCell(r), body);
-      if (r.mapUrl) {
-        const go = el('a', 'ec-map'); go.href = r.mapUrl; go.target = '_blank'; go.rel = 'noopener noreferrer';
-        go.setAttribute('aria-label', (r.venue || r.name) + 'をGoogleマップで開く'); go.title = r.venue || 'Googleマップ';
-        go.append(svgPin()); li.append(go);
-      } else li.append(el('span', 'ec-map is-none'));
+      li.append(dateCell(r), body);         // v30.9.276: no map pin (venue positions were not reliable enough)
       list.append(li);
     }
   }
   function renderBelow() {
     const mo = months[current];
     renderSummary(mo); renderList(mo);
-    listScroll.scrollTop = 0;
+    if (shown()) listScroll.scrollTop = 0;    // folded: skip (it would force a full-page layout)
     listScroll.setAttribute('aria-label', selDay === null ? mo.y + '年' + mo.m + '月のイベント一覧' : dayLabel(selDay) + 'のイベント一覧');
     markLines(); updateFade();
   }
@@ -423,6 +418,9 @@
   const isHeat = () => root.classList.contains('is-heat');
 
   function measure() {
+    // Folded: reading sizes would force a layout; C = 0 also tells place() not to
+    // turn a scroll reset of the hidden scroller into a month change.
+    if (!shown()) { C = 0; return false; }
     C = stage.clientWidth;
     if (!C) return false;
     Wf = clamp(Math.round(C * .54), 176, 330);
@@ -722,16 +720,23 @@
     select(start < 0 ? 0 : start);
     if (measure()) jumpTo(current);
   }
-  build(false);
+  // Built on demand: pressing the folded title starts it, so it is ready by the time the
+  // section opens (the open animation reads the height every frame anyway).
+  let built = false;
+  function ensureBuilt() { if (!built) { built = true; build(false); } }
+  if (section && !section.open) {
+    section.querySelector(':scope > summary')?.addEventListener('pointerdown', ensureBuilt, {once: true, passive: true});
+  } else ensureBuilt();
 
   // Width changes (the section opening from display:none, rotation): keep the month.
   new ResizeObserver(() => {
-    if (picking) return;
+    if (!built || picking) return;
     const before = C;
     if (!measure()) { C = 0; return; }
     if (before !== C || !before) jumpTo(current);
   }).observe(stage);
   section?.addEventListener('toggle', () => {
+    if (section.open) ensureBuilt(); else if (!built) return;
     // Folding the section resets it: no picked day, no filter, this month, bars.
     if (picking) endPick(false);
     if (!section.open) {
@@ -750,7 +755,7 @@
 
   // Coming back to the page on another day (the home-screen app stays open): refresh the statuses.
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && taipeiToday() !== today) {
+    if (built && document.visibilityState === 'visible' && taipeiToday() !== today) {
       build(true);
       if (measure()) jumpTo(current);
       if (section?.open) grow(current);

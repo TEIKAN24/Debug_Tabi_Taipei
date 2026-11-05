@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03), v30.9.273. Built by js/events.js. */
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03), v30.9.276. Built by js/events.js. */
 #guide .ec{
   --ec-ink:#EDEDED;--ec-sub:#8A8A8A;--ec-line:#2A2A2A;--ec-card:#121212;--ec-lo:#363636;--ec-hi:#E4E4E2;
   --ec-bar:#E4E4E2;--ec-mini:#9A9A9A;--ec-mini-strong:#C4C4C4;--ec-mini-bar:#5A5A5A;
@@ -125,7 +125,7 @@ html[data-theme="light"] #guide .is-tbd .ec-meta-text,html[data-theme="light"] #
   filter:blur(2px);opacity:0;transform-origin:50% 0}
 html[data-theme="light"] #guide .ec-list-box{--venue-glow:.55}
 #guide details.venue-glow-in .ec-list-box::before{animation:venue-glow-in .7s cubic-bezier(.2,.7,.3,1) both}
-#guide ul.ec-list > li.ec-row{position:relative;z-index:1;display:grid;grid-template-columns:66px minmax(0,1fr) 26px;
+#guide ul.ec-list > li.ec-row{position:relative;z-index:1;display:grid;grid-template-columns:66px minmax(0,1fr);
   column-gap:10px;align-items:start;box-sizing:border-box;margin:0;padding:12px 0;
   border-bottom:1px solid var(--ec-line);list-style:none}
 #guide ul.ec-list > li.ec-row::before,#guide ul.ec-list > li.ec-row::marker{content:none}
@@ -152,14 +152,12 @@ html[data-theme="light"] #guide .ec-list-box{--venue-glow:.55}
 #guide .is-ended .ec-date,#guide .is-ended .ec-meta-text,#guide .is-ended .ec-name{opacity:.42}
 #guide .is-ended .ec-badge{opacity:.8}
 #guide .is-tbd .ec-name{opacity:.8}
-#guide .ec a.ec-map{display:grid;place-items:center;align-self:center;width:32px;height:44px;margin-right:-6px;color:var(--ec-sub);border-radius:8px;text-decoration:none}
-#guide .ec a.ec-map:hover{color:var(--ec-ink)}
-#guide .ec a.ec-name:focus-visible,#guide .ec a.ec-map:focus-visible{outline:2px solid var(--ec-sub);outline-offset:2px;border-radius:4px}
+#guide .ec a.ec-name:focus-visible{outline:2px solid var(--ec-sub);outline-offset:2px;border-radius:4px}
 #guide ul.ec-list > li.ec-empty{position:relative;z-index:1;list-style:none;margin:0;padding:22px 2px;font-size:13px;color:var(--ec-sub)}
 #guide ul.ec-list > li.ec-empty::before{content:none}
 
 @media(max-width:350px){
-  #guide ul.ec-list > li.ec-row{grid-template-columns:56px minmax(0,1fr) 24px;column-gap:8px}
+  #guide ul.ec-list > li.ec-row{grid-template-columns:56px minmax(0,1fr);column-gap:8px}
   #guide .ec-date-d{font-size:16px}
   #guide .ec-sum-total,#guide .ec-stat strong{font-size:19px}
   #guide .ec-sum-total small{font-size:13px}
@@ -174,8 +172,6 @@ html[data-theme="light"] #guide .ec-list-box{--venue-glow:.55}
 /* The page-wide light-mode link colour (blue, !important) must not reach the calendar rows. */
 html body #guide .ec a.ec-name:not(#_):not(#__),html body #guide .ec a.ec-name:not(#_):not(#__):visited,
 html body #guide .ec a.ec-name:not(#_):not(#__):hover{color:var(--ec-ink)!important;text-decoration-color:currentColor!important}
-html body #guide .ec a.ec-map:not(#_):not(#__),html body #guide .ec a.ec-map:not(#_):not(#__):visited{color:var(--ec-sub)!important}
-html body #guide .ec a.ec-map:not(#_):not(#__):hover{color:var(--ec-ink)!important}
 
 /* ---- picking a day on the heatmap (long-press + drag) ---- */
 #guide .ec.is-switching .ec-pick-month{transition:transform .28s cubic-bezier(.22,1,.36,1),opacity .2s ease}
