@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.268.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.269.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -64,10 +64,10 @@
 
   let today, events, months, maxWeek;
   const statusOf = e => e.end < today ? 'ended' : e.start > today ? 'upcoming' : 'ongoing';
-  // Month order (v30.9.268): each event's next key date inside the month (from today in
-  // the current month): its start if that falls in the month, otherwise its end. Those
-  // events come first by that date, starts and ends interleaved like a timeline; events
-  // that run through the whole month follow (ending soonest first); ended ones last.
+  // Month order (v30.9.269): 開催中 first, then 開催予定, then 開催終了 (日程未定 after all).
+  // Inside 開催中 / 開催予定: each event's next key date inside the month (from today in the
+  // current month), its start if that falls in the month, otherwise its end; events that
+  // run through the whole month follow, ending soonest first. 開催終了: latest end first.
   // Same day: 推薦「高」 first.
   function monthKey(e, lo, last) {
     if (e.end < today) return [3, -e.end];
@@ -76,7 +76,8 @@
     return [2, e.end];
   }
   const tie = (p, q) => (q.top - p.top) || p.start - q.start || p.end - q.end || p.name.localeCompare(q.name, 'ja');
-  const byKey = (p, q) => p.key[0] - q.key[0] || p.key[1] - q.key[1] || tie(p, q);
+  const STATUS_RANK = {ongoing: 0, upcoming: 1, ended: 2};
+  const byKey = (p, q) => STATUS_RANK[p.status] - STATUS_RANK[q.status] || p.key[0] - q.key[0] || p.key[1] - q.key[1] || tie(p, q);
   function buildMonths() {
     today = taipeiToday();
     events = readEvents();
@@ -207,10 +208,11 @@
   let selDay = null;                         // picked day (day number) in the current month
   function rowsFor(mo) {
     if (selDay === null) return {dated: mo.rows, tbd: mo.tbd};
-    // A picked day: 最終日 first, then 初日, then the rest ending soonest first.
+    // A picked day: 開催中 and 開催予定 mixed, by date (最終日 first, then 初日, then the
+    // rest ending soonest first); 開催終了 after them.
     const rank = r => r.end === selDay ? 0 : r.start === selDay ? 1 : 2;
     return {dated: mo.rows.filter(r => r.start <= selDay && r.end >= selDay)
-      .sort((p, q) => rank(p) - rank(q) || p.end - q.end || tie(p, q)), tbd: []};
+      .sort((p, q) => (p.status === 'ended') - (q.status === 'ended') || rank(p) - rank(q) || p.end - q.end || tie(p, q)), tbd: []};
   }
   function renderSummary(mo) {
     const {dated} = rowsFor(mo);
@@ -559,8 +561,7 @@
     const wasHeat = isHeat();
     if (wasHeat) toggleFace();                // the heatmap (and a picked day) goes back to bars
     if (i !== current) goTo(i);
-    else if (!wasHeat && !reduce.matches) cards[i]?.querySelector('.ec-bars')
-      ?.animate([{transform: 'scale(1)'}, {transform: 'scale(1.12)'}, {transform: 'scale(1)'}], {duration: 360, easing: 'ease-out'});
+    else if (!wasHeat) grow(i);               // already here: the bars rise again
   }
   scroller.addEventListener('click', ev => {
     if (suppressClick) { suppressClick = false; return; }
