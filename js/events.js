@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.270.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.271.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -239,7 +239,8 @@
     big.setAttribute('aria-expanded', String(!panel.hidden));
     big.setAttribute('aria-label', dated.length + 'イベント。絞り込みを' + (panel.hidden ? '開く' : '閉じる'));
     const tri = el('span', 'ec-tri'); tri.setAttribute('aria-hidden', 'true');
-    big.append(String(dated.length), el('small', '', ' イベント'), tri);
+    const unit = el('small', '', 'イベント'); unit.append(tri);   // ▾ centred on 「イベント」
+    big.append(String(dated.length), unit);
     if (selDay === null) lead.append(el('span', 'ec-sum-month', mo.y + '／' + mo.m + '月'), big);
     else {
       const sd = ymd(selDay);
