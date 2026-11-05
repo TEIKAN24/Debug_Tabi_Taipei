@@ -273,6 +273,19 @@
               "className": "venue-list-item"
             },
             {
+              "id": "souvenirs-mw36qaw2-qw4br",
+              "name": "Risograph Museum",
+              "mapUrl": "https://www.google.com/maps/place/Risograph+Museum/@25.0512958,121.5126786,17z/data=!4m6!3m5!1s0x3442a9c3a444897b:0x49f3bb9a22571615!8m2!3d25.0512958!4d121.5126786!16s%2Fg%2F11vdlgh77_?entry=ttu&g_ep=EgoyMDI2MTEwMi4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "リソグラフ印刷作品",
+                  "tone": "neutral"
+                }
+              ],
+              "links": [],
+              "className": "venue-list-item"
+            },
+            {
               "id": "souvenirs-mvs05y6g-p3ro1",
               "name": "梁山泊永康捌巷",
               "mapUrl": "https://www.google.com/maps/place/%E6%A2%81%E5%B1%B1%E6%B3%8A%E6%B0%B8%E5%BA%B7%E6%8D%8C%E5%B7%B7%EF%BD%9C%E5%8F%B0%E7%81%A3%E6%96%87%E5%89%B5%E5%B0%8F%E7%99%BE%E8%B2%A8/@25.0322856,121.5295246,17z/data=!4m15!1m8!3m7!1s0x3442a92018ff77d7:0xed6149c7509ec17c!2z5qKB5bGx5rOK5rC45bq35o2M5be3772c5Y-w54Gj5paH5Ym15bCP55m-6LKo!8m2!3d25.032375!4d121.5295403!10e5!16s%2Fg%2F11v0p8hdpz!3m5!1s0x3442a92018ff77d7:0xed6149c7509ec17c!8m2!3d25.032375!4d121.5295403!16s%2Fg%2F11v0p8hdpz?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",

@@ -329,6 +329,25 @@
                 }
               ],
               "mapUrl": "https://maps.app.goo.gl/SsTHG8JKpGs1s2kL8"
+            },
+            {
+              "id": "experiences-mw36i6ju-x42ll",
+              "name": "997studio",
+              "mapUrl": "https://www.google.com/maps/place/997+STUDIO/@25.0367459,121.5567198,17z/data=!3m1!4b1!4m6!3m5!1s0x3442ab7b0a2bc7bf:0xd4f9d521967bc931!8m2!3d25.0367459!4d121.5592947!16s%2Fg%2F11sgczrh3y?entry=ttu&g_ep=EgoyMDI2MTEwMi4wIKXMDSoASAFQAw%3D%3D",
+              "tags": [
+                {
+                  "text": "銀粘土の天然石リング",
+                  "tone": "auto"
+                }
+              ],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://tinybot.cc/997studio/product/gemstone-silver-ring/?date=2026-11-13&time=1000"
+                }
+              ],
+              "className": "venue-list-item"
             }
           ]
         },
