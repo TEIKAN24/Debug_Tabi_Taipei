@@ -37,8 +37,9 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .site-content details.nested-accordion > summary{padding:11px 12px;font-size:13px;font-weight:650}
 .site-content details summary:not(:where(#taipei-recommender *)){display:list-item;cursor:pointer;list-style:none;position:relative;padding:12px 13px;padding-right:35px;font-weight:650;line-height:1.5}
 .site-content details summary::-webkit-details-marker{display:none}
-.site-content details summary::after{content:"+";position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:19px;font-weight:400;transition:transform .15s ease}
-.site-content details[open] > summary::after{content:"−"}
+.site-content details summary::after{content:"+";position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:19px;font-weight:400;line-height:1;transition:transform .22s ease}
+/* v30.9.274: open = the + turns 45° into ×, instead of switching to − */
+.site-content details[open] > summary::after{transform:translateY(-50%) rotate(45deg)}
 .site-content details[open] > summary{border-bottom:1px solid var(--line)}
 .site-content details > :not(summary):not(:where(#taipei-recommender *)){margin-left:14px;margin-right:14px}
 .site-content details > :last-child:not(:where(#taipei-recommender *)){margin-bottom:14px}
@@ -4355,7 +4356,7 @@ html[data-theme="light"] .hero.wrapper .theme-preview-toggle:focus-visible{
   font-size:14px;font-weight:700;
 }
 #guide .venue-directory-section .tab-panel > .guided-fixed-heading > button::after{
-  content:"−";position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  content:"+";position:absolute;right:13px;top:50%;transform:translateY(-50%) rotate(45deg);line-height:1;
   color:var(--muted,#a0a0a0);font-size:18px;font-weight:400;
 }
 #guide .venue-directory-section .tab-panel > .guided-fixed-heading > button:focus-visible{
@@ -5140,7 +5141,7 @@ html[data-theme="light"] #guide .emergency-tile-number svg,html[data-theme="ligh
 #guide details.compact-open-header > summary > .accordion-category-heading{transition:font-size .22s ease}
 #guide details.walk-grid-ready > summary::after,
 #guide details.night-market-section > summary::after,
-#guide details.compact-open-header > summary::after{transition:font-size .22s ease}
+#guide details.compact-open-header > summary::after{transition:font-size .22s ease,transform .22s ease}
 #guide details.walk-grid-ready[open] > summary,
 #guide details.night-market-section[open] > summary,
 #guide details.compact-open-header[open] > summary{padding:8px 14px!important}
