@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.272.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.273.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -256,7 +256,8 @@
     summary.replaceChildren(lead, ...stats);
   }
 
-  // Active conditions: エリア, ジャンル, then the picked day (「11月の一覧へ」). × removes one.
+  // Active conditions: the picked day (「日付指定」), then エリア and ジャンル. × removes one.
+  // The row takes no height until it has a chip; it then opens and pushes the summary down.
   function renderChips(mo) {
     const chip = (label, kind, aria) => {
       const b = el('button', 'ec-chip ec-chip-' + kind); b.type = 'button'; b.dataset.clear = kind;
@@ -265,10 +266,18 @@
       return b;
     };
     const list = [];
+    if (selDay !== null) list.push(chip('日付指定', 'day', dayLabel(selDay) + 'の指定を解除して' + mo.m + '月の一覧に戻る'));
     if (filter.city) list.push(chip(filter.city, 'city', filter.city + 'の絞り込みを解除'));
     if (filter.genre) list.push(chip(filter.genre, 'genre', filter.genre + 'の絞り込みを解除'));
-    if (selDay !== null) list.push(chip(mo.m + '月の一覧へ', 'day', dayLabel(selDay) + 'の選択を解除して' + mo.m + '月の一覧に戻る'));
     chips.replaceChildren(...list);
+    syncChipRow();
+  }
+  // Opening is immediate; closing waits until a swipe has settled (the page dots have
+  // faded), so nothing below moves while the finger is still on the months.
+  function syncChipRow() {
+    const has = chips.childElementCount > 0;
+    if (has) chips.classList.add('is-open');
+    else if (!dots.classList.contains('is-visible')) chips.classList.remove('is-open');
   }
   chips.addEventListener('click', ev => {
     const b = ev.target.closest('[data-clear]');
@@ -514,7 +523,7 @@
     if (quiet) return;
     dots.classList.add('is-visible');
     clearTimeout(dotTimer);
-    dotTimer = setTimeout(() => dots.classList.remove('is-visible'), 650);
+    dotTimer = setTimeout(() => { dots.classList.remove('is-visible'); syncChipRow(); }, 650);
   }, {passive: true});
 
   function jumpTo(idx) {                     // no animation, no dots (opening, resizing)
