@@ -5,7 +5,9 @@
 
 /* Chapter heading in tab mode: lead line hidden, title a little smaller. */
 #guide .chapter-lead.ct-hidden{display:none!important}
-#guide h2.ct-title-small{font-size:var(--ct-title)!important;transition:font-size .25s ease}
+/* v30.9.284: the title resizes on the same clock and curve as the rest (both ways). */
+#guide h2.ct-title{transition:font-size .7s cubic-bezier(.65,0,.35,1)}
+#guide h2.ct-title-small{font-size:var(--ct-title)!important}
 
 /* The tab row */
 #guide .ct-tabs{position:relative;display:flex;gap:4px;margin:14px 0 10px;padding:3px;border:1px solid var(--ct-line,#2E2E2E);border-radius:100px}

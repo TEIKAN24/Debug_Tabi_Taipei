@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.283.
+/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.284.
 
    Folded, a chapter lists its sections as rows (no + sign). Opening any row turns the
    chapter into "tab mode": the rows become one row of tabs side by side, the open
@@ -42,6 +42,47 @@
     // Never from fully transparent: the content stays faintly in view, so nothing flashes.
     inner(ch)?.animate([{opacity: .25, transform: `translate3d(${dir * 26}px,0,0)`}, {opacity: 1, transform: 'none'}], {duration: 580, easing: EASE});
   }
+  // v30.9.284: entering and folding run every part on one clock and one curve (stand-ins,
+  // box, title, lead line), and the block keeps the rows' height at its start/end, so
+  // nothing below jumps and the tabs and the box move together.
+  const SYNC = 700, CURVE = 'cubic-bezier(.65,0,.35,1)';
+  const outerTop = el => el.getBoundingClientRect().top - (parseFloat(getComputedStyle(el).marginTop) || 0);
+  const outerBottom = el => el.getBoundingClientRect().bottom + (parseFloat(getComputedStyle(el).marginBottom) || 0);
+  function rememberRows(ch) {            // the folded layout, relative to the chapter's top line
+    const base = ch.hr.getBoundingClientRect().top;
+    ch.rowOff = ch.roots.map(r => { const b = r.getBoundingClientRect(); return {dy: b.top - base, left: b.left, width: b.width, height: b.height}; });
+    ch.rowsBlock = outerBottom(ch.roots[ch.roots.length - 1]) - outerTop(ch.roots[0]);
+    const sum = ch.roots[0].querySelector(':scope > summary'), h3 = sum?.querySelector('h3') || sum;
+    if (h3) {
+      const rb = ch.roots[0].getBoundingClientRect(), hb = h3.getBoundingClientRect(), hs = getComputedStyle(h3);
+      ch.rowText = {x: hb.left - rb.left, size: hs.fontSize, weight: hs.fontWeight, spacing: hs.letterSpacing};
+    }
+    if (ch.lead) { const ls = getComputedStyle(ch.lead); ch.leadBox = {h: ch.lead.getBoundingClientRect().height, mt: ls.marginTop, mb: ls.marginBottom}; }
+  }
+  const rowTarget = (ch, i) => () => {
+    const base = ch.hr.getBoundingClientRect().top, o = ch.rowOff[i];
+    return {left: o.left, top: base + o.dy, width: o.width, height: o.height};
+  };
+  const tabBlock = ch => outerBottom(ch.roots[ch.current]) - outerTop(ch.bar);
+  function leadMotion(ch, hide) {
+    if (!ch.lead || !ch.leadBox) return;
+    const L = ch.leadBox;
+    const full = {maxHeight: L.h + 'px', opacity: 1, marginTop: L.mt, marginBottom: L.mb};
+    const none = {maxHeight: '0px', opacity: 0, marginTop: '0px', marginBottom: '0px'};
+    ch.lead.getAnimations().forEach(x => x.cancel());
+    ch.lead.classList.remove('ct-hidden'); ch.lead.style.overflow = 'hidden';
+    const a = ch.lead.animate(hide ? [full, none] : [none, full], {duration: SYNC, easing: CURVE, fill: 'forwards'});
+    a.finished.then(() => { if (hide && ch.on) ch.lead.classList.add('ct-hidden'); ch.lead.style.removeProperty('overflow'); a.cancel(); }, () => {});
+  }
+  // While the box opens or shuts, its content keeps its full size and is only clipped:
+  // squeezing it would make maps and lists re-measure every frame (and stutter).
+  function freeze(box) {
+    if (!box) return () => {};
+    const kids = [...box.children], hs = kids.map(k => k.getBoundingClientRect().height);
+    kids.forEach((k, i) => { if (hs[i]) { k.style.setProperty('height', hs[i] + 'px', 'important'); k.style.setProperty('flex', 'none', 'important'); } });
+    box.style.setProperty('overflow', 'hidden', 'important');
+    return () => { kids.forEach(k => { k.style.removeProperty('height'); k.style.removeProperty('flex'); }); box.style.removeProperty('overflow'); };
+  }
   const isMapRoot = r => !!r && (r.id === 'night-markets-section' || r.classList.contains('has-area-map'));
   // The white frame of the chosen tab: slides with a stretch (front edge leads, back follows).
   function placeInd(ch, from) {
@@ -68,25 +109,26 @@
   function morph(ch, fromRects, targets, fromLabels, toLabels, chosen, toTabs, done) {
     const sample = ch.roots[0], cs = getComputedStyle(sample), sum = sample.querySelector(':scope > summary');
     const rowLine = cs.borderTopColor, rowBg = cs.backgroundColor, rowRadius = cs.borderTopLeftRadius;
-    const rowFont = sum ? getComputedStyle(sum.querySelector('h3') || sum).fontSize : '16px';
+    const rt = ch.rowText || {x: 16, size: sum ? getComputedStyle(sum.querySelector('h3') || sum).fontSize : '16px', weight: '700', spacing: 'normal'};
     const hi = getComputedStyle(ch.bar).getPropertyValue('--ct-hi').trim() || '#E4E4E2';
     const ink = getComputedStyle(ch.h2).color;
     const layer = document.createElement('div');
     layer.className = 'ct-morph'; layer.setAttribute('aria-hidden', 'true');
     document.body.append(layer);
-    const DUR = 700, STAGGER = 50, sx = scrollX, sy = scrollY;
+    const DUR = SYNC, STAGGER = 0, sx = scrollX, sy = scrollY;
     const ghosts = fromRects.map((a, i) => {
       const g = document.createElement('div'); g.className = 'ct-ghost';
       const t0 = document.createElement('span'), t1 = document.createElement('span');
       t0.textContent = fromLabels[i]; t1.textContent = toLabels[i];
       const rowText = toTabs ? t0 : t1, tabText = toTabs ? t1 : t0;
-      rowText.className = 'ct-ghost-row'; rowText.style.fontSize = rowFont;
+      rowText.className = 'ct-ghost-row';
+      Object.assign(rowText.style, {left: rt.x + 'px', fontSize: rt.size, fontWeight: rt.weight, letterSpacing: rt.spacing});
       tabText.className = 'ct-ghost-tab';
       tabText.style.color = getComputedStyle(ch.buttons[i]).color;   // chosen tab ink, others grey, as the real tabs
       g.append(t0, t1); g.style.color = ink; layer.append(g);
       const rowBox = {borderRadius: rowRadius, borderColor: rowLine, backgroundColor: rowBg};
       const tabBox = {borderRadius: '100px', borderColor: i === chosen ? hi : 'transparent', backgroundColor: 'transparent'};
-      const delay = i * STAGGER, ease = 'cubic-bezier(.45,0,.25,1)';
+      const delay = i * STAGGER, ease = CURVE;
       g.animate([toTabs ? rowBox : tabBox, toTabs ? tabBox : rowBox], {duration: DUR, delay, easing: ease, fill: 'both'});
       t0.animate([{opacity: 1}, {opacity: 0}], {duration: 420, delay, easing: 'ease-out', fill: 'both'});
       t1.animate([{opacity: 0}, {opacity: 1}], {duration: 460, delay: delay + 280, easing: 'ease-in-out', fill: 'both'});
@@ -171,6 +213,7 @@
     bar.prepend(ind);
     roots[0].before(bar);
     roots.forEach(r => r.classList.add('ct-root'));
+    h2.classList.add('ct-title');
     const ch = {i: ci, h2, hr, lead, roots, bar, buttons, ind, on: false, current: -1, h2Size: 0};
     bar.addEventListener('click', ev => {
       const b = ev.target.closest('.ct-tab');
@@ -225,6 +268,7 @@
     document.querySelectorAll('#guide details.root-accordion[open]').forEach(d => { if (!ch.roots.includes(d)) d.open = false; });
     const was = ch.on;
     const morphing = !was && glide && !reduce.matches;
+    if (!was) rememberRows(ch);
     const fromRects = morphing ? ch.roots.map(r => r.getBoundingClientRect()) : null;
     const fromLabels = morphing ? ch.roots.map(rowLabel) : null;
     if (!ch.on) {
@@ -232,19 +276,24 @@
       if (!ch.h2Size) ch.h2Size = parseFloat(getComputedStyle(ch.h2).fontSize) || 0;
       if (ch.h2Size) ch.h2.style.setProperty('--ct-title', (ch.h2Size * TITLE_SCALE).toFixed(2) + 'px');
       ch.h2.classList.add('ct-title-small');
-      ch.lead?.classList.add('ct-hidden');
+      if (!morphing) ch.lead?.classList.add('ct-hidden');
       ch.bar.hidden = false;
       ch.roots.forEach(r => r.classList.add('ct-on'));
     }
     choose(ch, index);
     if (morphing) {
-      window.tabiTabsBusyUntil = performance.now() + 820;   // maps wait before their opening glide
+      window.tabiTabsBusyUntil = performance.now() + SYNC + 120;   // maps wait before their opening glide
       ch.bar.classList.add('ct-morphing');
+      leadMotion(ch, true);
+      // The tab row + box start exactly as tall as the rows were, then the box grows.
+      const box = inner(ch), full = boxH(ch);
+      const startH = Math.max(0, full - (tabBlock(ch) - ch.rowsBlock));
+      const thaw = freeze(box);
+      const grow = box?.animate([{maxHeight: startH + 'px', opacity: 0}, {maxHeight: full + 'px', opacity: 1}], {duration: SYNC, easing: CURVE, fill: 'backwards'});
+      (grow ? grow.finished : Promise.resolve()).then(thaw, thaw);
+      ch.bar.animate([{borderColor: 'transparent'}, {}], {duration: SYNC, easing: CURVE});
       morph(ch, fromRects, ch.buttons.map(b => () => b.getBoundingClientRect()), fromLabels, ch.buttons.map(b => b.textContent), index, true,
         () => ch.bar.classList.remove('ct-morphing'));
-      if (!reduce.matches) ch.bar.animate([{borderColor: 'transparent'}, {}], {duration: 700, easing: 'ease-out'});
-      const box = inner(ch);
-      box?.animate([{maxHeight: '0px', opacity: 0}, {maxHeight: boxH(ch) + 'px', opacity: 1}], {duration: 660, delay: 100, easing: EASE, fill: 'backwards'});
     } else if (!was && glide) growIn(ch);
     if (glide && ch.hr) {
       const go = () => window.tabiGlideTo ? window.tabiGlideTo(ch.hr, 0)
@@ -271,28 +320,30 @@
 
   function fold(ch, quiet) {
     if (!ch.on || ch.folding) return;
-    if (!quiet && !reduce.matches) {
-      // v30.9.283: stand-ins identical to the tabs take over at once (no fading tab row),
-      // wait while the box shrinks away, then glide down into the rows.
+    if (!quiet && !reduce.matches && ch.rowOff) {
+      // v30.9.284: the stand-ins fly straight to where the rows will be while the box
+      // shrinks to the leftover height, title and lead line on the same clock; the real
+      // rows take over exactly when everything arrives.
       ch.folding = true;
-      const box = inner(ch), h = box ? box.getBoundingClientRect().height : 0;
+      const box = inner(ch), hNow = box ? box.getBoundingClientRect().height : 0;
+      const endH = Math.max(0, hNow - (tabBlock(ch) - ch.rowsBlock));
       const tabRects = ch.buttons.map(b => { const r = b.getBoundingClientRect(); return {left: r.left, top: r.top, width: r.width, height: r.height}; });
       const chosen = ch.current, tabLabels = ch.buttons.map(b => b.textContent);
-      const hold = holdTabs(ch, tabRects, tabLabels, chosen);
-      ch.bar.style.visibility = 'hidden';
-      const a = box?.animate([{maxHeight: h + 'px', opacity: 1}, {maxHeight: '0px', opacity: 0}], {duration: 420, easing: 'cubic-bezier(.4,0,.6,.8)', fill: 'forwards'});
-      (a ? a.finished : Promise.resolve()).catch(() => {}).then(() => {
-        // Pin the box shut before the animation ends, so it can never show for a frame.
-        if (box) { box.style.maxHeight = '0px'; box.style.opacity = '0'; }
+      ch.h2.classList.remove('ct-title-small');
+      leadMotion(ch, false);
+      const thaw = freeze(box);
+      const a = box?.animate([{maxHeight: hNow + 'px', opacity: 1}, {maxHeight: endH + 'px', opacity: 0}], {duration: SYNC, easing: CURVE, fill: 'forwards'});
+      if (ch.h2.getBoundingClientRect().top < 0) window.tabiGlideTo ? window.tabiGlideTo(ch.hr || ch.h2, 0) : ch.h2.scrollIntoView({block: 'start'});
+      morph(ch, tabRects, ch.roots.map((r, i) => rowTarget(ch, i)), tabLabels, ch.roots.map(rowLabel), chosen, false, () => {
+        if (box) { box.style.maxHeight = '0px'; box.style.opacity = '0'; }   // shut before the animation lets go
         a?.cancel();
         ch.folding = false;
-        doFold(ch, false);
-        if (box) { box.style.removeProperty('max-height'); box.style.removeProperty('opacity'); }  // closed now: not drawn
-        ch.roots.forEach(r => { r.style.visibility = 'hidden'; });
-        morph(ch, tabRects, ch.roots.map(r => () => r.getBoundingClientRect()), tabLabels, ch.roots.map(rowLabel), chosen, false,
-          () => { ch.roots.forEach(r => { r.style.visibility = ''; }); ch.bar.style.visibility = ''; });
-        requestAnimationFrame(() => hold.remove());   // the moving stand-ins now cover the same spots
+        doFold(ch, true);
+        thaw();
+        if (box) { box.style.removeProperty('max-height'); box.style.removeProperty('opacity'); }
+        ch.bar.style.visibility = '';
       });
+      ch.bar.style.visibility = 'hidden';   // the stand-ins (created above) cover the tabs from this frame
       return;
     }
     doFold(ch, quiet);
