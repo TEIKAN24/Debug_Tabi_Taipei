@@ -650,6 +650,9 @@ function tabiSpotMap(cfg) {
     m.dot.setAttribute('cx', sx.toFixed(1)); m.dot.setAttribute('cy', sy.toFixed(1));
   }
   // Numbers in the outer band: off-view markets grouped by direction (within ~70°).
+  // v30.9.283: a number chip's width depends only on its digits: measured once, reused,
+  // so a frame never forces the whole page to lay out (that made animations stutter).
+  const edgeWidth = {};
   function placeEdges(off) {
     const cx = W / 2, cy = H / 2;
     const list = off.map(o => ({...o, a: Math.atan2(o.sy - cy, o.sx - cx)})).sort((p, q) => p.a - q.a);
@@ -676,10 +679,13 @@ function tabiSpotMap(cfg) {
       const ang = Math.atan2(my, mx), ux = Math.cos(ang), uy = Math.sin(ang);
       const n = g.items.length;
       chip._members = g.items.map(o => o.m);
-      chip._count.textContent = String(n);
+      const digits = String(n);
+      if (chip._count.textContent !== digits) chip._count.textContent = digits;
       if (n > chip._n && chip._n > 0) { chip.classList.remove('is-pop'); void chip.offsetWidth; chip.classList.add('is-pop'); }
       chip._n = n;
-      const cw = chip.offsetWidth || 32, ch = CLUSTER_H;
+      let cw = edgeWidth[digits.length];
+      if (!cw) { cw = chip.offsetWidth || 32; if (chip.offsetWidth) edgeWidth[digits.length] = cw; }
+      const ch = CLUSTER_H;
       const hx = W / 2 - 8 - cw / 2, hy = H / 2 - 8 - ch / 2;
       const t = Math.min(Math.abs(ux) > 1e-6 ? hx / Math.abs(ux) : Infinity, Math.abs(uy) > 1e-6 ? hy / Math.abs(uy) : Infinity);
       let px = cx + ux * t, py = cy + uy * t;
@@ -695,7 +701,8 @@ function tabiSpotMap(cfg) {
       chip._arrow.style.left = `calc(50% + ${dx * (cw / 2 + 5)}px)`;
       chip._arrow.style.top = `calc(50% + ${dy * (ch / 2 + 5)}px)`;
       chip._arrow.style.transform = `rotate(${dir * 45}deg)`;
-      chip.setAttribute('aria-label', DIR_JA[dir] + '方向の画面外の' + NOUN + ' ' + n + '件（' + chip._members.map(m => m.name).join('、') + '）へ移動');
+      const label = DIR_JA[dir] + '方向の画面外の' + NOUN + ' ' + n + '件（' + chip._members.map(m => m.name).join('、') + '）へ移動';
+      if (chip.getAttribute('aria-label') !== label) chip.setAttribute('aria-label', label);
       chip.style.transform = `translate3d(${px.toFixed(1)}px,${py.toFixed(1)}px,0) translate(-50%,-50%)`;
       chip.classList.add('is-on'); chip.tabIndex = 0; chip.removeAttribute('aria-hidden');
       pillBoxes.push(box(px, py, cw, ch));
@@ -1066,7 +1073,7 @@ function tabiSpotMap(cfg) {
   // pill strip and the longest market panel, measured in their old layout.
   let fittedFor = '';
   function fitHeight() {
-    if (cfg.noFit) return;
+    if (cfg.noFit || (typeof inTab === 'function' && inTab())) return;
     const width = stage.clientWidth;
     if (!width) return;
     const key = String(width);
@@ -1154,7 +1161,10 @@ function tabiSpotMap(cfg) {
       setupMap(data);
       if (!isLive()) return;
       const start = () => { if (!measure()) return false; sizeWaiter = null; intro(); return true; };
-      if (!start()) sizeWaiter = start;
+      // v30.9.283: while a chapter tab is still growing open, wait for it (they would slow each other down).
+      const busy = Math.max(0, (window.tabiTabsBusyUntil || 0) - performance.now());
+      if (busy) setTimeout(() => { if (isLive() && !start()) sizeWaiter = start; }, busy);
+      else if (!start()) sizeWaiter = start;
     }).catch(showFallbackList);
   }
   function onClose() { introToken++; stopMotion(); sizeWaiter = null; }
@@ -1166,6 +1176,8 @@ function tabiSpotMap(cfg) {
     if (measure()) requestRender();
   }).observe(stage);
   window.addEventListener('resize', () => { if (isLive()) fitHeight(); });
+  // In a chapter tab the box sets the height: no need to measure the details (it is costly).
+  const inTab = () => !!stage.closest('details.ct-on');
   // v30.9.278: in a chapter tab the box sets the map's height; re-measure when it changes.
   window.addEventListener('ct-resize', () => { if (isLive()) { measure(); clampView(); requestRender(); } });
   if (document.fonts?.ready) document.fonts.ready.then(() => {
@@ -1222,13 +1234,24 @@ function tabiSpotMap(cfg) {
     const outs = layers().map(el => el.animate([{opacity: 1}, {opacity: 0}], {duration: 340, easing: 'ease-in', fill: 'forwards'}));
     outs[0].finished.catch(() => {}).then(() => { fadeIn(); outs.forEach(a => a.cancel()); });
   }
+  // v30.9.283: chapter tabs announce a switch before showing the new box: the map moves
+  // there in the same frame, so the new box is never empty.
+  let pendingSwitch = null;
+  document.addEventListener('ct-switch', ev => {
+    const to = Object.values(sets).find(S => S.section === ev.detail?.to);
+    const from = Object.values(sets).find(S => S.section === ev.detail?.from);
+    if (!to || !from || liveSet !== from || !from.section.open || !map || !W) return;
+    if (stage.parentElement !== to.host) to.host.replaceChildren(stage);
+    pendingSwitch = to;
+  });
   function bindSet(S) {
     sets[S.name] = S;
     S.section.addEventListener('toggle', () => {
       if (S.section.open) {
         const prev = liveSet;
-        const switching = !!(prev && prev !== S && !prev.section.open && map && W &&
+        const switching = pendingSwitch === S || !!(prev && prev !== S && !prev.section.open && map && W &&
           (!liveClosedAt || performance.now() - liveClosedAt < 600));
+        pendingSwitch = null;
         if (stage.parentElement !== S.host) S.host.replaceChildren(stage);
         liveSet = S; liveClosedAt = 0;
         if (switching) swapTo(S); else { useSet(S); onOpen(); }

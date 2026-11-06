@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.282.
+/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.283.
 
    Folded, a chapter lists its sections as rows (no + sign). Opening any row turns the
    chapter into "tab mode": the rows become one row of tabs side by side, the open
@@ -82,6 +82,7 @@
       const rowText = toTabs ? t0 : t1, tabText = toTabs ? t1 : t0;
       rowText.className = 'ct-ghost-row'; rowText.style.fontSize = rowFont;
       tabText.className = 'ct-ghost-tab';
+      tabText.style.color = getComputedStyle(ch.buttons[i]).color;   // chosen tab ink, others grey, as the real tabs
       g.append(t0, t1); g.style.color = ink; layer.append(g);
       const rowBox = {borderRadius: rowRadius, borderColor: rowLine, backgroundColor: rowBg};
       const tabBox = {borderRadius: '100px', borderColor: i === chosen ? hi : 'transparent', backgroundColor: 'transparent'};
@@ -108,6 +109,21 @@
       done && done(); requestAnimationFrame(() => layer.remove());
     };
     requestAnimationFrame(step);
+  }
+  function holdTabs(ch, rects, labels, chosen) {
+    const hi = getComputedStyle(ch.bar).getPropertyValue('--ct-hi').trim() || '#E4E4E2';
+    const layer = document.createElement('div');
+    layer.className = 'ct-morph'; layer.setAttribute('aria-hidden', 'true');
+    rects.forEach((r, i) => {
+      const g = document.createElement('div'); g.className = 'ct-ghost';
+      const t = document.createElement('span'); t.className = 'ct-ghost-tab'; t.textContent = labels[i];
+      g.append(t);
+      g.style.cssText = `left:${r.left + scrollX}px;top:${r.top + scrollY}px;width:${r.width}px;height:${r.height}px;border-radius:100px;` +
+        `border-color:${i === chosen ? hi : 'transparent'};color:${getComputedStyle(ch.buttons[i]).color}`;
+      layer.append(g);
+    });
+    document.body.append(layer);
+    return layer;
   }
   const rowLabel = r => (r.querySelector(':scope > summary')?.textContent || '').trim().replace(/\s+/g, ' ');
   function rowsIn(ch) {
@@ -222,6 +238,7 @@
     }
     choose(ch, index);
     if (morphing) {
+      window.tabiTabsBusyUntil = performance.now() + 820;   // maps wait before their opening glide
       ch.bar.classList.add('ct-morphing');
       morph(ch, fromRects, ch.buttons.map(b => () => b.getBoundingClientRect()), fromLabels, ch.buttons.map(b => b.textContent), index, true,
         () => ch.bar.classList.remove('ct-morphing'));
@@ -238,6 +255,10 @@
 
   function choose(ch, index, from) {
     const target = ch.roots[index];
+    // v30.9.283: let the map move into the new box now, in this same frame (waiting for
+    // the toggle event left the new box empty for a moment).
+    if (ch.current >= 0 && ch.roots[ch.current] !== target)
+      document.dispatchEvent(new CustomEvent('ct-switch', {detail: {from: ch.roots[ch.current], to: target}}));
     ch.current = index;
     ch.roots.forEach((r, i) => r.classList.toggle('ct-selected', i === index));
     ch.buttons.forEach((b, i) => { b.setAttribute('aria-selected', String(i === index)); b.tabIndex = i === index ? 0 : -1; });
@@ -251,22 +272,26 @@
   function fold(ch, quiet) {
     if (!ch.on || ch.folding) return;
     if (!quiet && !reduce.matches) {
-      // Shrink the box away first, then bring the rows back.
+      // v30.9.283: stand-ins identical to the tabs take over at once (no fading tab row),
+      // wait while the box shrinks away, then glide down into the rows.
       ch.folding = true;
       const box = inner(ch), h = box ? box.getBoundingClientRect().height : 0;
-      const bar = ch.bar.animate([{opacity: 1}, {opacity: 0}], {duration: 320, easing: 'ease-in', fill: 'forwards'});
+      const tabRects = ch.buttons.map(b => { const r = b.getBoundingClientRect(); return {left: r.left, top: r.top, width: r.width, height: r.height}; });
+      const chosen = ch.current, tabLabels = ch.buttons.map(b => b.textContent);
+      const hold = holdTabs(ch, tabRects, tabLabels, chosen);
+      ch.bar.style.visibility = 'hidden';
       const a = box?.animate([{maxHeight: h + 'px', opacity: 1}, {maxHeight: '0px', opacity: 0}], {duration: 420, easing: 'cubic-bezier(.4,0,.6,.8)', fill: 'forwards'});
-      const tabRects = ch.buttons.map(b => b.getBoundingClientRect()), chosen = ch.current;
-      const tabLabels = ch.buttons.map(b => b.textContent);
       (a ? a.finished : Promise.resolve()).catch(() => {}).then(() => {
-        // Stand-ins leave from where the tabs were; the rows appear when they arrive.
-        const at = tabRects.map(r => ({left: r.left, top: r.top, width: r.width, height: r.height}));
+        // Pin the box shut before the animation ends, so it can never show for a frame.
+        if (box) { box.style.maxHeight = '0px'; box.style.opacity = '0'; }
+        a?.cancel();
         ch.folding = false;
         doFold(ch, false);
-        bar.cancel(); a?.cancel();
+        if (box) { box.style.removeProperty('max-height'); box.style.removeProperty('opacity'); }  // closed now: not drawn
         ch.roots.forEach(r => { r.style.visibility = 'hidden'; });
-        morph(ch, at, ch.roots.map(r => () => r.getBoundingClientRect()), tabLabels, ch.roots.map(rowLabel), chosen, false,
-          () => ch.roots.forEach(r => { r.style.visibility = ''; }));
+        morph(ch, tabRects, ch.roots.map(r => () => r.getBoundingClientRect()), tabLabels, ch.roots.map(rowLabel), chosen, false,
+          () => { ch.roots.forEach(r => { r.style.visibility = ''; }); ch.bar.style.visibility = ''; });
+        requestAnimationFrame(() => hold.remove());   // the moving stand-ins now cover the same spots
       });
       return;
     }
