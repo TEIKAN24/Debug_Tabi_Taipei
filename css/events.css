@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03), v30.9.276. Built by js/events.js. */
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03), v30.9.277. Built by js/events.js. */
 #guide .ec{
   --ec-ink:#EDEDED;--ec-sub:#8A8A8A;--ec-line:#2A2A2A;--ec-card:#121212;--ec-lo:#363636;--ec-hi:#E4E4E2;
   --ec-bar:#E4E4E2;--ec-mini:#9A9A9A;--ec-mini-strong:#C4C4C4;--ec-mini-bar:#5A5A5A;
@@ -126,7 +126,7 @@ html[data-theme="light"] #guide .is-tbd .ec-meta-text,html[data-theme="light"] #
 html[data-theme="light"] #guide .ec-list-box{--venue-glow:.55}
 #guide details.venue-glow-in .ec-list-box::before{animation:venue-glow-in .7s cubic-bezier(.2,.7,.3,1) both}
 #guide ul.ec-list > li.ec-row{position:relative;z-index:1;display:grid;grid-template-columns:66px minmax(0,1fr);
-  column-gap:10px;align-items:start;box-sizing:border-box;margin:0;padding:12px 0;
+  column-gap:17px;align-items:start;box-sizing:border-box;margin:0;padding:12px 0;
   border-bottom:1px solid var(--ec-line);list-style:none}
 #guide ul.ec-list > li.ec-row::before,#guide ul.ec-list > li.ec-row::marker{content:none}
 #guide .ec-date{display:grid;grid-template-columns:auto auto;justify-content:start;padding-top:2px;line-height:1.15}
@@ -139,7 +139,8 @@ html[data-theme="light"] #guide .ec-list-box{--venue-glow:.55}
 #guide .ec-date.is-tbd{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
 #guide .ec-tbd{font-size:10px;font-weight:650;line-height:16px;padding:0 6px;border-radius:100px;color:var(--ec-sub);
   border:1px solid var(--ec-lo);white-space:nowrap}
-#guide .ec-body{min-width:0;display:flex;flex-direction:column;gap:3px}
+/* v30.9.277: name + meta 7px further right; a little air on the right of long names */
+#guide .ec-body{min-width:0;display:flex;flex-direction:column;gap:3px;padding-right:16px}
 #guide .ec-meta{display:flex;align-items:center;gap:8px;min-width:0;height:16px}
 #guide .ec-meta-text{font-size:10.5px;line-height:16px;color:var(--ec-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 #guide .ec-badge{flex:none;font-size:9.5px;font-weight:700;line-height:14px;padding:0 6px;border-radius:100px;
@@ -157,7 +158,7 @@ html[data-theme="light"] #guide .ec-list-box{--venue-glow:.55}
 #guide ul.ec-list > li.ec-empty::before{content:none}
 
 @media(max-width:350px){
-  #guide ul.ec-list > li.ec-row{grid-template-columns:56px minmax(0,1fr);column-gap:8px}
+  #guide ul.ec-list > li.ec-row{grid-template-columns:56px minmax(0,1fr);column-gap:15px}
   #guide .ec-date-d{font-size:16px}
   #guide .ec-sum-total,#guide .ec-stat strong{font-size:19px}
   #guide .ec-sum-total small{font-size:13px}
