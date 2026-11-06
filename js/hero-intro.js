@@ -217,6 +217,10 @@
      visitor's record starts afresh, so はじめまして greets them once more.
      To start everyone over again later, change the date. */
   const RESET='2026-11-17';
+  /* v30.9.281: before RESET the greeting is only the plain hello of the time of day,
+     one line: おはよう！ (05:00–10:59), こんにちは！ (11:00–16:59), こんばんは！ (after);
+     no greetings from the pools, special minutes or anything else until that day. */
+  const plainGreeting=pool=>[pool==='dawn'||pool==='morning'?'おはよう！':pool==='noon'||pool==='afternoon'?'こんにちは！':'こんばんは！'];
   const NO_REPEAT_DAYS=3;     // a greeting is not shown again on the next two days
   const DAY_TURN_HOUR=5;      // 00:00–04:59 still belongs to the previous day
   const SWITCH_JITTER=5;      // minutes a switch may move, either way
@@ -364,6 +368,7 @@
   // How long some greetings stay before the time greeting takes over (ms).
   const SHOW_FIRST=30*1000,SHOW_MILESTONE=10*60*1000,SHOW_HALF_HOUR=30*60*1000,SHOW_BACK=10*1000;
   function pickGreeting(){
+    if(!started)return {lines:plainGreeting(slot.pool)};
     const at=now.getTime();
     const minute=SPECIAL.minute[now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')];
     if(!store)return {lines:minute||entries[choose(slot,part,entries,now,null)].lines};
@@ -526,7 +531,7 @@
     const [h,m]=entry.until.split(':').map(Number);
     return new Date(at.getFullYear(),at.getMonth(),at.getDate(),h,m,0,0).getTime();
   }
-  const startMinute=SPECIAL.minute[minuteKey(now)];
+  const startMinute=started?SPECIAL.minute[minuteKey(now)]:undefined;
   let stretchKey=slotFor(now).key;
   // The greeting of this stretch (not a special minute, which only lasts a minute).
   let stretchLines=startMinute&&picked.lines===startMinute?null:baseLines;
@@ -574,12 +579,15 @@
       if(at.getTime()>=stretchUntil)stretchLines=null;
       if(pos.key!==stretchKey||!stretchLines){
         stretchKey=pos.key;
-        const list=GREETINGS[pos.slot.pool].map(entryOf);
-        stretchLines=fill(list[choose(pos.slot,pos.part,list,at,store)].lines,at);
-        stretchUntil=untilOf(pos.slot.pool,stretchLines,at);
-        if(store)writeStore(store);
+        if(!started){stretchLines=plainGreeting(pos.slot.pool);stretchUntil=Infinity;}
+        else{
+          const list=GREETINGS[pos.slot.pool].map(entryOf);
+          stretchLines=fill(list[choose(pos.slot,pos.part,list,at,store)].lines,at);
+          stretchUntil=untilOf(pos.slot.pool,stretchLines,at);
+          if(store)writeStore(store);
+        }
       }
-      const want=SPECIAL.minute[minuteKey(at)]||stretchLines;
+      const want=(started&&SPECIAL.minute[minuteKey(at)])||stretchLines;
       if(!sameLines(want,baseLines)){baseLines=want;swapTo(baseLines,0);}
       if(store&&store.visits&&at.getTime()-(Number(store.visits.last)||0)>5*60000)noteHere();
     }

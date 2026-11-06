@@ -1201,7 +1201,7 @@ function tabiSpotMap(cfg) {
   function refocus() {
     const token = ++introToken;
     interacted = false;
-    const go = pos => { if (token === introToken && !interacted) flyTo({cx: pos[0], cy: pos[1], s: sFocus}, 1500); };
+    const go = pos => { if (token === introToken && !interacted) flyTo({cx: pos[0], cy: pos[1], s: sFocus}, 1900); };
     if (located) { go(userPos || project(...FALLBACK)); return; }
     locate().then(pos => {
       if (token !== introToken) return;
@@ -1215,11 +1215,11 @@ function tabiSpotMap(cfg) {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const fadeIn = () => {
       useSet(S); measure(); clampView(); lastScale = NaN; render();
-      if (!reduceMotion) layers().forEach(el => el.animate([{opacity: 0}, {opacity: 1}], {duration: 260, easing: 'ease-out'}));
-      setTimeout(refocus, reduceMotion ? 0 : 300);
+      if (!reduceMotion) layers().forEach(el => el.animate([{opacity: 0}, {opacity: 1}], {duration: 460, easing: 'ease-out'}));
+      setTimeout(refocus, reduceMotion ? 0 : 520);
     };
     if (reduceMotion) { fadeIn(); return; }
-    const outs = layers().map(el => el.animate([{opacity: 1}, {opacity: 0}], {duration: 200, easing: 'ease-in', fill: 'forwards'}));
+    const outs = layers().map(el => el.animate([{opacity: 1}, {opacity: 0}], {duration: 340, easing: 'ease-in', fill: 'forwards'}));
     outs[0].finished.catch(() => {}).then(() => { fadeIn(); outs.forEach(a => a.cancel()); });
   }
   function bindSet(S) {

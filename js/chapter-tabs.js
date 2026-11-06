@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.280.
+/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.281.
 
    Folded, a chapter lists its sections as rows (no + sign). Opening any row turns the
    chapter into "tab mode": the rows become one row of tabs side by side, the open
@@ -27,18 +27,20 @@
   ];
   const MIN_H = 420, MAX_H = 620, BOTTOM_AIR = 24, TITLE_SCALE = .84;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const EASE = 'cubic-bezier(.22,.8,.3,1)';
+  // v30.9.281: every motion about 1.4–1.5× slower and softer (less flashing).
+  const EASE = 'cubic-bezier(.25,.8,.25,1)';
   const inner = ch => ch.roots[ch.current]?.querySelector(':scope > .indented');
   const boxH = ch => (parseFloat(ch.roots[ch.current]?.style.getPropertyValue('--ct-h')) || 520) - 2;
   function growIn(ch) {
     if (reduce.matches) return;
-    ch.bar.animate([{opacity: 0, transform: 'translateY(-6px)'}, {opacity: 1, transform: 'none'}], {duration: 260, easing: EASE});
+    ch.bar.animate([{opacity: 0, transform: 'translateY(-6px)'}, {opacity: 1, transform: 'none'}], {duration: 380, easing: EASE});
     // max-height animates (the box's height itself is an !important rule, which wins over animations)
-    inner(ch)?.animate([{maxHeight: '0px', opacity: 0}, {maxHeight: boxH(ch) + 'px', opacity: 1}], {duration: 460, easing: EASE});
+    inner(ch)?.animate([{maxHeight: '0px', opacity: 0}, {maxHeight: boxH(ch) + 'px', opacity: 1}], {duration: 660, easing: EASE});
   }
   function slideIn(ch, dir) {
     if (reduce.matches) return;
-    inner(ch)?.animate([{opacity: 0, transform: `translate3d(${dir * 44}px,0,0)`}, {opacity: 1, transform: 'none'}], {duration: 400, easing: EASE});
+    // Never from fully transparent: the content stays faintly in view, so nothing flashes.
+    inner(ch)?.animate([{opacity: .25, transform: `translate3d(${dir * 26}px,0,0)`}, {opacity: 1, transform: 'none'}], {duration: 580, easing: EASE});
   }
   const isMapRoot = r => !!r && (r.id === 'night-markets-section' || r.classList.contains('has-area-map'));
   // The white frame of the chosen tab: slides with a stretch (front edge leads, back follows).
@@ -54,7 +56,7 @@
            {left: x1 - 5 + 'px', width: w1 + 7 + 'px', offset: .74}, {left: x1 + 'px', width: w1 + 'px'}]
         : [{left: from.x + 'px', width: from.w + 'px'}, {left: from.x + from.w - reach * .88 + 'px', width: reach * .88 + 'px', offset: .4},
            {left: x1 - 2 + 'px', width: w1 + 7 + 'px', offset: .74}, {left: x1 + 'px', width: w1 + 'px'}];
-      ch.ind.animate(kf, {duration: 540, easing: 'cubic-bezier(.3,.7,.25,1)'});
+      ch.ind.animate(kf, {duration: 760, easing: 'cubic-bezier(.3,.7,.25,1)'});
     }
     ch.ind.style.left = x1 + 'px'; ch.ind.style.width = w1 + 'px';
   }
@@ -84,13 +86,14 @@
       const A = toTabs ? rowBox : tabBox, B = toTabs ? tabBox : rowBox;
       const at = (r, x) => ({left: r.left + scrollX + 'px', top: r.top + scrollY + 'px', width: r.width + 'px', height: r.height + 'px',
         borderRadius: x.r, borderColor: x.line, backgroundColor: x.bg});
-      const opts = {duration: 480, delay: i * 30, easing: 'cubic-bezier(.3,.75,.25,1)', fill: 'both'};
+      const opts = {duration: 700, delay: i * 50, easing: 'cubic-bezier(.3,.75,.25,1)', fill: 'both'};
       const moves = [g.animate([at(a, A), at(b, B)], opts),
-        t0.animate([{opacity: 1}, {opacity: 0}], {...opts, duration: 260}),
-        t1.animate([{opacity: 0}, {opacity: 1}], {...opts, delay: opts.delay + 180, duration: 300})];
+        t0.animate([{opacity: 1}, {opacity: 0}], {...opts, duration: 420}),
+        t1.animate([{opacity: 0}, {opacity: 1}], {...opts, delay: opts.delay + 280, duration: 460})];
       return Promise.all(moves.map(m => m.finished.catch(() => {})));
     });
-    Promise.all(anims).then(() => { layer.remove(); done && done(); });
+    // Hand over to the real elements first, drop the stand-ins on the next frame.
+    Promise.all(anims).then(() => { done && done(); requestAnimationFrame(() => layer.remove()); });
   }
   const rowLabel = r => (r.querySelector(':scope > summary')?.textContent || '').trim().replace(/\s+/g, ' ');
   function rowsIn(ch) {
@@ -208,9 +211,9 @@
       ch.bar.classList.add('ct-morphing');
       const toRects = ch.buttons.map(b => b.getBoundingClientRect());
       morph(ch, fromRects, toRects, fromLabels, ch.buttons.map(b => b.textContent), index, true, () => ch.bar.classList.remove('ct-morphing'));
-      if (!reduce.matches) ch.bar.animate([{borderColor: 'transparent'}, {}], {duration: 480, easing: 'ease-out'});
+      if (!reduce.matches) ch.bar.animate([{borderColor: 'transparent'}, {}], {duration: 700, easing: 'ease-out'});
       const box = inner(ch);
-      box?.animate([{maxHeight: '0px', opacity: 0}, {maxHeight: boxH(ch) + 'px', opacity: 1}], {duration: 460, delay: 60, easing: EASE, fill: 'backwards'});
+      box?.animate([{maxHeight: '0px', opacity: 0}, {maxHeight: boxH(ch) + 'px', opacity: 1}], {duration: 660, delay: 100, easing: EASE, fill: 'backwards'});
     } else if (!was && glide) growIn(ch);
     if (glide && ch.hr) {
       const go = () => window.tabiGlideTo ? window.tabiGlideTo(ch.hr, 0)
@@ -237,8 +240,8 @@
       // Shrink the box away first, then bring the rows back.
       ch.folding = true;
       const box = inner(ch), h = box ? box.getBoundingClientRect().height : 0;
-      const bar = ch.bar.animate([{opacity: 1}, {opacity: 0}], {duration: 220, easing: 'ease-in', fill: 'forwards'});
-      const a = box?.animate([{maxHeight: h + 'px', opacity: 1}, {maxHeight: '0px', opacity: 0}], {duration: 280, easing: 'cubic-bezier(.4,0,.8,.6)', fill: 'forwards'});
+      const bar = ch.bar.animate([{opacity: 1}, {opacity: 0}], {duration: 320, easing: 'ease-in', fill: 'forwards'});
+      const a = box?.animate([{maxHeight: h + 'px', opacity: 1}, {maxHeight: '0px', opacity: 0}], {duration: 420, easing: 'cubic-bezier(.4,0,.6,.8)', fill: 'forwards'});
       const tabRects = ch.buttons.map(b => b.getBoundingClientRect()), chosen = ch.current;
       const tabLabels = ch.buttons.map(b => b.textContent);
       (a ? a.finished : Promise.resolve()).catch(() => {}).then(() => {
