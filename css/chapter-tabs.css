@@ -8,12 +8,18 @@
 #guide h2.ct-title-small{font-size:var(--ct-title)!important;transition:font-size .25s ease}
 
 /* The tab row */
-#guide .ct-tabs{display:flex;gap:4px;margin:14px 0 10px;padding:3px;border:1px solid var(--ct-line,#2E2E2E);border-radius:100px}
+#guide .ct-tabs{position:relative;display:flex;gap:4px;margin:14px 0 10px;padding:3px;border:1px solid var(--ct-line,#2E2E2E);border-radius:100px}
 #guide .ct-tabs[hidden]{display:none}
 #guide .ct-tab{flex:1 1 auto;min-width:0;height:34px;margin:0;padding:0 8px;border:1px solid transparent;border-radius:100px;background:transparent;
   color:var(--ct-sub,#9A9A9A);font:inherit;font-size:13px;font-weight:650;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .2s ease,border-color .2s ease}
-#guide .ct-tab[aria-selected="true"]{border-color:var(--ct-hi,#E4E4E2);color:var(--ct-ink,#EDEDED)}
+#guide .ct-tab{position:relative;z-index:1}
+#guide .ct-tab[aria-selected="true"]{color:var(--ct-ink,#EDEDED)}
+/* v30.9.280: the white frame is one element that slides between tabs (js: placeInd). */
+#guide .ct-ind{position:absolute;top:3px;bottom:3px;left:0;width:0;box-sizing:border-box;border:1px solid var(--ct-hi,#E4E4E2);
+  border-radius:100px;pointer-events:none;z-index:0}
+/* While the rows glide into place, the real tabs wait underneath. */
+#guide .ct-tabs.ct-morphing .ct-tab,#guide .ct-tabs.ct-morphing .ct-ind{visibility:hidden}
 #guide .ct-tab:focus-visible{outline:2px solid var(--ct-sub,#9A9A9A);outline-offset:2px}
 html[data-theme="light"] #guide .ct-tabs{--ct-line:#E1E1E0;--ct-sub:#6B6B69;--ct-hi:#333333;--ct-ink:#2B2B2B}
 @media(max-width:350px){#guide .ct-tab{font-size:12px;padding:0 5px}}
@@ -46,3 +52,17 @@ html[data-theme="light"] #guide .ct-tabs{--ct-line:#E1E1E0;--ct-sub:#6B6B69;--ct
 #guide details.ct-on.ct-selected > .indented > .walk-area-map,
 #guide details.ct-on.ct-selected #walk-area-map{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
 #guide details.ct-on.ct-selected #walk-area-map > .nm-stage{flex:1 1 auto;min-height:0;height:auto!important}
+
+/* v30.9.280 — row ⇄ tab stand-ins (in page coordinates, above everything, never tappable). */
+.ct-morph{position:absolute;left:0;top:0;width:0;height:0;z-index:50;pointer-events:none}
+.ct-ghost{position:absolute;box-sizing:border-box;border:1px solid transparent;overflow:hidden;white-space:nowrap;
+  font-family:inherit;font-weight:650;will-change:left,top,width,height}
+.ct-ghost > span{position:absolute;top:50%;transform:translateY(-50%);line-height:1.2}
+.ct-ghost-row{left:16px;font-weight:700}
+.ct-ghost-tab{left:0;right:0;text-align:center;font-size:13px;letter-spacing:.02em}
+
+/* v30.9.280 — the 街歩き list's top glow takes the chapter colour (04 CITY WALK). */
+#guide .walk-inline-detail{--walk-tone:142,131,162!important}
+/* The map sits exactly where the 夜市 map sits (same box, no margins), so switching tabs
+   leaves it perfectly still; the area details keep their usual margins. */
+#guide details.ct-on.ct-selected.has-area-map:not(.walk-viewing-detail) > .indented{margin-left:0!important;margin-right:0!important;padding:0!important}

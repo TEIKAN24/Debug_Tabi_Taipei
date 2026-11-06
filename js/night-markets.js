@@ -38,7 +38,7 @@ function tabiSpotMap(cfg) {
   if (!host || !section) return;
   const doc = {markets: Array.isArray(cfg.items) ? cfg.items : []};
   const KEY = cfg.key || 'nm', NOUN = cfg.noun || '夜市';
-  const pick = (m, from) => cfg.onSelect ? cfg.onSelect(m.data, from) : openDetail(m, from);
+  const pick = (m, from) => m.onSelect ? m.onSelect(m.data, from) : cfg.onSelect ? cfg.onSelect(m.data, from) : openDetail(m, from);
   const VERSION = '30.9.260';
   const MAP_SRC = 'data/night-market-map.js?v=' + VERSION;
   const METRO_SRC = 'data/night-market-metro.js?v=' + VERSION;
@@ -91,12 +91,17 @@ function tabiSpotMap(cfg) {
   const color = value => /^#[0-9a-f]{6}$/i.test(str(value)) ? str(value).toUpperCase() : '#8C8C8C';
   const mapsUrl = destination => 'https://www.google.com/maps/dir/?api=1&travelmode=transit&destination=' + encodeURIComponent(destination);
 
-  const markets = doc.markets.filter(m => m && str(m.name)).map((m, i) => {
+  // v30.9.280: one map, several sets of places (夜市, 街歩きエリア). `markets` is the set
+  // on show; the others keep their pins hidden.
+  const makeItems = (list, set, onSelect) => list.filter(m => m && str(m.name)).map((m, i) => {
     const lat = Number(m.location?.lat), lng = Number(m.location?.lng);
     const placed = Number.isFinite(lat) && Number.isFinite(lng) && lat > 24 && lat < 26 && lng > 120.5 && lng < 122.5;
     const code = m.access?.type === 'mrt' ? str(m.access.code).toUpperCase() : '';
-    return {id: idOf(m.id, i), name: str(m.name), data: m, lat, lng, placed, order: i, x: 0, y: 0, w: 0, code};
+    return {id: set + ':' + idOf(m.id, i), name: str(m.name), data: m, lat, lng, placed, order: i, x: 0, y: 0, w: 0, code, set, onSelect};
   });
+  const nmItems = makeItems(doc.markets, KEY, null);
+  let markets = nmItems;
+  const allItems = nmItems.slice();
 
   // ---- Details ----------------------------------------------------------------
   function detailContent(m) {
@@ -206,7 +211,7 @@ function tabiSpotMap(cfg) {
   measurer.inert = true;
 
   const srList = node('ul', {class: 'nm-sr', 'aria-label': cfg.listLabel || '夜市一覧'});
-  markets.forEach(m => {
+  nmItems.forEach(m => {
     const li = node('li');
     const b = node('button', {type: 'button', tabindex: '-1'}, m.name + 'の詳細');
     b.addEventListener('click', () => pick(m, null));
@@ -216,15 +221,18 @@ function tabiSpotMap(cfg) {
   host.replaceChildren(stage);
   for (const el of [stage, mapEl]) el.addEventListener('scroll', () => { el.scrollTop = 0; el.scrollLeft = 0; });
 
-  markets.forEach(m => {
-    m.pin = node('button', {type: 'button', class: 'nm-pin', tabindex: '-1', 'aria-label': m.name + 'の詳細'}, m.name);
-    m.pin.addEventListener('click', () => pick(m, m.pin));
-    pinsLayer.append(m.pin);
-    m.leader = svg('g', {class: 'nm-leader'});
-    m.line = svg('line'); m.dot = svg('circle', {r: 3.1});
-    m.leader.append(m.line, m.dot);
-    leaders.append(m.leader);
-  });
+  function addPins(list) {
+    list.forEach(m => {
+      m.pin = node('button', {type: 'button', class: 'nm-pin', tabindex: '-1', 'aria-label': m.name + 'の詳細'}, m.name);
+      m.pin.addEventListener('click', () => pick(m, m.pin));
+      pinsLayer.append(m.pin);
+      m.leader = svg('g', {class: 'nm-leader'});
+      m.line = svg('line'); m.dot = svg('circle', {r: 3.1});
+      m.leader.append(m.line, m.dot);
+      leaders.append(m.leader);
+    });
+  }
+  addPins(nmItems);
   const clusterPool = [];
   function clusterButton(i) {
     if (!clusterPool[i]) {
@@ -291,7 +299,7 @@ function tabiSpotMap(cfg) {
     map.cities.forEach(c => { c.el = textEl(cityNames, 0, 0, c.name, c.neighbor ? 'is-neighbor' : ''); c.el.style.opacity = 0; });
     map.borderPool = Array.from({length: 6}, () => { const el = textEl(borderNames, 0, 0, ''); el.style.display = 'none'; return el; });
     regionRings = (data.regionRings || []).map(flat => { const r = []; for (let i = 0; i < flat.length; i += 2) r.push([flat[i], flat[i + 1]]); return r; });
-    markets.forEach(m => { if (m.placed) [m.x, m.y] = project(m.lat, m.lng); });
+    allItems.forEach(m => { if (m.placed) [m.x, m.y] = project(m.lat, m.lng); });
     if (metroData && metroData.type === 'night-market-metro') setupRail(metroData);
   }
   const marketCodes = new Set(markets.map(m => m.code).filter(Boolean));
@@ -1064,12 +1072,12 @@ function tabiSpotMap(cfg) {
     const key = String(width);
     if (key === fittedFor) return;
     const pills = node('div', {class: 'tab-pills', role: 'presentation'});
-    pills.append(node('button', {type: 'button', class: 'tab-pill', tabindex: '-1'}, markets[0].name));
+    pills.append(node('button', {type: 'button', class: 'tab-pill', tabindex: '-1'}, nmItems[0].name));
     const panel = node('div', {class: 'tab-panel night-market-panel'});
     measurer.replaceChildren(pills, panel);
     measurer.style.width = Math.max(200, width - 32) + 'px';
     let tallest = 0;
-    for (const m of markets) {
+    for (const m of nmItems) {
       panel.replaceChildren(node('h4', {class: 'nm-title'}, m.name), ...detailContent(m.data));
       tallest = Math.max(tallest, panel.offsetHeight);
     }
@@ -1133,7 +1141,7 @@ function tabiSpotMap(cfg) {
   }
   // ?debugLocation=1: a new simulated position moves the map there at once.
   document.addEventListener('tabi:debug-location', () => {
-    if (!section.open || !map || !W) return;
+    if (!isLive() || !map || !W) return;
     locate().then(pos => {
       userPos = pos; located = true; lastScale = NaN;
       flyTo({cx: (pos || project(...FALLBACK))[0], cy: (pos || project(...FALLBACK))[1], s: Math.max(view.s, sFocus)}, 900);
@@ -1144,25 +1152,25 @@ function tabiSpotMap(cfg) {
     fitHeight();
     loadMap().then(data => {
       setupMap(data);
-      if (!section.open) return;
+      if (!isLive()) return;
       const start = () => { if (!measure()) return false; sizeWaiter = null; intro(); return true; };
       if (!start()) sizeWaiter = start;
     }).catch(showFallbackList);
   }
   function onClose() { introToken++; stopMotion(); sizeWaiter = null; }
   new ResizeObserver(() => {
-    if (!section.open) return;
+    if (!isLive()) return;
     fitHeight();
     if (!map) return;
     if (sizeWaiter) { sizeWaiter(); return; }
     if (measure()) requestRender();
   }).observe(stage);
-  window.addEventListener('resize', () => { if (section.open) fitHeight(); });
+  window.addEventListener('resize', () => { if (isLive()) fitHeight(); });
   // v30.9.278: in a chapter tab the box sets the map's height; re-measure when it changes.
-  window.addEventListener('ct-resize', () => { if (section.open) { measure(); clampView(); requestRender(); } });
+  window.addEventListener('ct-resize', () => { if (isLive()) { measure(); clampView(); requestRender(); } });
   if (document.fonts?.ready) document.fonts.ready.then(() => {
-    markets.forEach(m => { m.w = 0; }); fittedFor = '';
-    if (section.open) fitHeight();
+    allItems.forEach(m => { m.w = 0; }); fittedFor = '';
+    if (isLive()) fitHeight();
     lastScale = NaN; requestRender();
   });
   function showFallbackList() {
@@ -1176,13 +1184,72 @@ function tabiSpotMap(cfg) {
     list.append(ul);
     mapEl.replaceChildren(list);
   }
-  section.addEventListener('toggle', () => { if (section.open) onOpen(); else onClose(); });
-  if (section.open) onOpen();
+  // ---- Sets and the sections that show the map (v30.9.280) ----------------------------
+  // The map lives in whichever section is open. Opening one right after another closed
+  // (a chapter tab switch) keeps the view: the old places fade out, the new fade in,
+  // then the map glides to the visitor (or 台北駅) as when it opens.
+  const isLive = () => !!(stage.isConnected && stage.closest('details')?.open);
+  const sets = {};
+  let liveSet = null, liveClosedAt = 0;
+  const layers = () => [pinsLayer, leaders, edgesLayer];
+  function hidePins(list) {
+    list.forEach(m => { m.pin.classList.remove('is-on'); m.pin.tabIndex = -1; m.leader.classList.remove('is-on'); m.cur = null; m.chasing = false; });
+  }
+  function useSet(S) {
+    if (markets !== S.items) { hidePins(markets); markets = S.items; prevGroup = new Map(); lastScale = NaN; }
+  }
+  function refocus() {
+    const token = ++introToken;
+    interacted = false;
+    const go = pos => { if (token === introToken && !interacted) flyTo({cx: pos[0], cy: pos[1], s: sFocus}, 1500); };
+    if (located) { go(userPos || project(...FALLBACK)); return; }
+    locate().then(pos => {
+      if (token !== introToken) return;
+      userPos = pos; located = true; lastScale = NaN; requestRender();
+      go(pos || project(...FALLBACK));
+    });
+  }
+  function swapTo(S) {
+    stopMotion(); introToken++;
+    setView('map');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fadeIn = () => {
+      useSet(S); measure(); clampView(); lastScale = NaN; render();
+      if (!reduceMotion) layers().forEach(el => el.animate([{opacity: 0}, {opacity: 1}], {duration: 260, easing: 'ease-out'}));
+      setTimeout(refocus, reduceMotion ? 0 : 300);
+    };
+    if (reduceMotion) { fadeIn(); return; }
+    const outs = layers().map(el => el.animate([{opacity: 1}, {opacity: 0}], {duration: 200, easing: 'ease-in', fill: 'forwards'}));
+    outs[0].finished.catch(() => {}).then(() => { fadeIn(); outs.forEach(a => a.cancel()); });
+  }
+  function bindSet(S) {
+    sets[S.name] = S;
+    S.section.addEventListener('toggle', () => {
+      if (S.section.open) {
+        const prev = liveSet;
+        const switching = !!(prev && prev !== S && !prev.section.open && map && W &&
+          (!liveClosedAt || performance.now() - liveClosedAt < 600));
+        if (stage.parentElement !== S.host) S.host.replaceChildren(stage);
+        liveSet = S; liveClosedAt = 0;
+        if (switching) swapTo(S); else { useSet(S); onOpen(); }
+      } else if (S === liveSet) { liveClosedAt = performance.now(); onClose(); }
+    });
+  }
+  bindSet({name: KEY, items: nmItems, section, host});
+  if (section.open) { liveSet = sets[KEY]; onOpen(); }
+  // Another set of places on the same map, shown while its own section is open.
+  function addSet(name, items, opts) {
+    const list = makeItems(items, name, opts.onSelect || null);
+    allItems.push(...list); addPins(list);
+    if (map) list.forEach(m => { if (m.placed) [m.x, m.y] = project(m.lat, m.lng); });
+    bindSet({name, items: list, section: opts.section, host: opts.host});
+  }
+  return {addSet};
 }
 window.tabiSpotMap = tabiSpotMap;
 (() => {
   const doc = window.TABI_NIGHT_MARKETS;
   const ok = doc && doc.schemaVersion === 1 && doc.type === 'night-markets' && Array.isArray(doc.markets) && doc.markets.length;
-  tabiSpotMap({host: document.getElementById('night-markets-tabs'), section: document.getElementById('night-markets-section'),
+  window.tabiPlaceMap = tabiSpotMap({host: document.getElementById('night-markets-tabs'), section: document.getElementById('night-markets-section'),
     items: ok ? doc.markets : [], key: 'nm', noun: '夜市', mapLabel: '夜市マップ', listLabel: '夜市一覧'});
 })();

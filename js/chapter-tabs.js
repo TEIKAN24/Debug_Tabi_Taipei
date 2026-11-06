@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.279.
+/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.280.
 
    Folded, a chapter lists its sections as rows (no + sign). Opening any row turns the
    chapter into "tab mode": the rows become one row of tabs side by side, the open
@@ -9,9 +9,12 @@
    Tapping the chosen tab again folds the chapter back to its rows; opening a section of
    another chapter folds it too.
 
-   Motion (v30.9.279): entering, the tab row fades in and the box grows from nothing;
-   switching, the new section slides in from the side of its tab; folding, the box
-   shrinks away and the rows come back one after another.
+   Motion (v30.9.280): entering, the rows glide up into the tab row, shrinking into tabs,
+   while the box grows from nothing; folding, the box shrinks away and the tabs glide
+   back down into rows. Switching, the white frame slides to the new tab with a little
+   stretch (its front edge first, then the back, a small settle), and the new section
+   slides in from that side — except between 夜市マップ and 街歩きエリア, where the map
+   stays and only its places change (js/night-markets.js).
 
    The <details> blocks stay as they are (every script that works with them keeps
    working); in tab mode their own titles are hidden and only the chosen one shows. */
@@ -37,6 +40,59 @@
     if (reduce.matches) return;
     inner(ch)?.animate([{opacity: 0, transform: `translate3d(${dir * 44}px,0,0)`}, {opacity: 1, transform: 'none'}], {duration: 400, easing: EASE});
   }
+  const isMapRoot = r => !!r && (r.id === 'night-markets-section' || r.classList.contains('has-area-map'));
+  // The white frame of the chosen tab: slides with a stretch (front edge leads, back follows).
+  function placeInd(ch, from) {
+    const b = ch.buttons[ch.current];
+    if (!b || !ch.ind) return;
+    const x1 = b.offsetLeft, w1 = b.offsetWidth;
+    if (from && !reduce.matches && Math.abs(from.x - x1) > 1) {
+      const right = x1 > from.x;
+      const reach = right ? x1 + w1 - from.x : from.x + from.w - x1;
+      const kf = right
+        ? [{left: from.x + 'px', width: from.w + 'px'}, {left: from.x + 'px', width: reach * .88 + 'px', offset: .4},
+           {left: x1 - 5 + 'px', width: w1 + 7 + 'px', offset: .74}, {left: x1 + 'px', width: w1 + 'px'}]
+        : [{left: from.x + 'px', width: from.w + 'px'}, {left: from.x + from.w - reach * .88 + 'px', width: reach * .88 + 'px', offset: .4},
+           {left: x1 - 2 + 'px', width: w1 + 7 + 'px', offset: .74}, {left: x1 + 'px', width: w1 + 'px'}];
+      ch.ind.animate(kf, {duration: 540, easing: 'cubic-bezier(.3,.7,.25,1)'});
+    }
+    ch.ind.style.left = x1 + 'px'; ch.ind.style.width = w1 + 'px';
+  }
+  const indAt = ch => ch.ind && ch.current >= 0 ? {x: ch.ind.offsetLeft, w: ch.ind.offsetWidth} : null;
+  // Row ⇄ tab morph: stand-ins in page coordinates (they ride along with the page glide),
+  // from one set of boxes to the other, the label cross-fading (text never stretches).
+  function morph(ch, fromRects, toRects, fromLabels, toLabels, chosen, toTabs, done) {
+    const sample = ch.roots[0], cs = getComputedStyle(sample), sum = sample.querySelector(':scope > summary');
+    const rowLine = cs.borderTopColor, rowBg = cs.backgroundColor, rowRadius = cs.borderTopLeftRadius;
+    const rowFont = sum ? getComputedStyle(sum.querySelector('h3') || sum).fontSize : '16px';
+    const hi = getComputedStyle(ch.bar).getPropertyValue('--ct-hi').trim() || '#E4E4E2';
+    const ink = getComputedStyle(ch.h2).color;
+    const layer = document.createElement('div');
+    layer.className = 'ct-morph'; layer.setAttribute('aria-hidden', 'true');
+    document.body.append(layer);
+    const anims = fromRects.map((a, i) => {
+      const b = toRects[i];
+      const g = document.createElement('div'); g.className = 'ct-ghost';
+      const t0 = document.createElement('span'), t1 = document.createElement('span');
+      t0.textContent = fromLabels[i]; t1.textContent = toLabels[i];
+      const rowText = toTabs ? t0 : t1, tabText = toTabs ? t1 : t0;
+      rowText.className = 'ct-ghost-row'; rowText.style.fontSize = rowFont;
+      tabText.className = 'ct-ghost-tab';
+      g.append(t0, t1); g.style.color = ink; layer.append(g);
+      const rowBox = {r: rowRadius, line: rowLine, bg: rowBg};
+      const tabBox = {r: '100px', line: i === chosen ? hi : 'transparent', bg: 'transparent'};
+      const A = toTabs ? rowBox : tabBox, B = toTabs ? tabBox : rowBox;
+      const at = (r, x) => ({left: r.left + scrollX + 'px', top: r.top + scrollY + 'px', width: r.width + 'px', height: r.height + 'px',
+        borderRadius: x.r, borderColor: x.line, backgroundColor: x.bg});
+      const opts = {duration: 480, delay: i * 30, easing: 'cubic-bezier(.3,.75,.25,1)', fill: 'both'};
+      const moves = [g.animate([at(a, A), at(b, B)], opts),
+        t0.animate([{opacity: 1}, {opacity: 0}], {...opts, duration: 260}),
+        t1.animate([{opacity: 0}, {opacity: 1}], {...opts, delay: opts.delay + 180, duration: 300})];
+      return Promise.all(moves.map(m => m.finished.catch(() => {})));
+    });
+    Promise.all(anims).then(() => { layer.remove(); done && done(); });
+  }
+  const rowLabel = r => (r.querySelector(':scope > summary')?.textContent || '').trim().replace(/\s+/g, ' ');
   function rowsIn(ch) {
     if (reduce.matches) return;
     ch.roots.forEach((r, i) => r.animate([{opacity: 0, transform: 'translateY(8px)'}, {opacity: 1, transform: 'none'}],
@@ -77,22 +133,30 @@
       bar.append(b);
       return b;
     });
+    const ind = document.createElement('span');
+    ind.className = 'ct-ind'; ind.setAttribute('aria-hidden', 'true');
+    bar.prepend(ind);
     roots[0].before(bar);
     roots.forEach(r => r.classList.add('ct-root'));
-    const ch = {i: ci, h2, hr, lead, roots, bar, buttons, on: false, current: -1, h2Size: 0};
+    const ch = {i: ci, h2, hr, lead, roots, bar, buttons, ind, on: false, current: -1, h2Size: 0};
     bar.addEventListener('click', ev => {
       const b = ev.target.closest('.ct-tab');
       if (!b) return;
       const i = +b.dataset.i;
       if (ch.folding) return;
-      if (i === ch.current) fold(ch); else { const dir = i > ch.current ? 1 : -1; choose(ch, i); slideIn(ch, dir); }
+      if (i === ch.current) { fold(ch); return; }
+      const dir = i > ch.current ? 1 : -1, prev = ch.roots[ch.current], from = indAt(ch);
+      choose(ch, i, from);
+      if (!(isMapRoot(prev) && isMapRoot(ch.roots[i]))) slideIn(ch, dir);
     });
     bar.addEventListener('keydown', ev => {
       if (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight') return;
       ev.preventDefault();
       const i = (ch.current + (ev.key === 'ArrowRight' ? 1 : -1) + roots.length) % roots.length;
-      const dir = i > ch.current ? 1 : -1;
-      choose(ch, i); slideIn(ch, dir); buttons[i].focus();
+      const dir = i > ch.current ? 1 : -1, prev = ch.roots[ch.current], from = indAt(ch);
+      choose(ch, i, from);
+      if (!(isMapRoot(prev) && isMapRoot(ch.roots[i]))) slideIn(ch, dir);
+      buttons[i].focus();
     });
     roots.forEach((root, i) => root.addEventListener('toggle', () => {
       // Opened by another script (a link, the quick menu): enter tab mode on it.
@@ -127,6 +191,9 @@
     chapters.forEach(other => { if (other !== ch && other.on) fold(other, true); });
     document.querySelectorAll('#guide details.root-accordion[open]').forEach(d => { if (!ch.roots.includes(d)) d.open = false; });
     const was = ch.on;
+    const morphing = !was && glide && !reduce.matches;
+    const fromRects = morphing ? ch.roots.map(r => r.getBoundingClientRect()) : null;
+    const fromLabels = morphing ? ch.roots.map(rowLabel) : null;
     if (!ch.on) {
       ch.on = true;
       if (!ch.h2Size) ch.h2Size = parseFloat(getComputedStyle(ch.h2).fontSize) || 0;
@@ -137,7 +204,14 @@
       ch.roots.forEach(r => r.classList.add('ct-on'));
     }
     choose(ch, index);
-    if (!was && glide) growIn(ch);
+    if (morphing) {
+      ch.bar.classList.add('ct-morphing');
+      const toRects = ch.buttons.map(b => b.getBoundingClientRect());
+      morph(ch, fromRects, toRects, fromLabels, ch.buttons.map(b => b.textContent), index, true, () => ch.bar.classList.remove('ct-morphing'));
+      if (!reduce.matches) ch.bar.animate([{borderColor: 'transparent'}, {}], {duration: 480, easing: 'ease-out'});
+      const box = inner(ch);
+      box?.animate([{maxHeight: '0px', opacity: 0}, {maxHeight: boxH(ch) + 'px', opacity: 1}], {duration: 460, delay: 60, easing: EASE, fill: 'backwards'});
+    } else if (!was && glide) growIn(ch);
     if (glide && ch.hr) {
       const go = () => window.tabiGlideTo ? window.tabiGlideTo(ch.hr, 0)
         : window.scrollTo({top: ch.hr.getBoundingClientRect().top + scrollY, behavior: reduce.matches ? 'auto' : 'smooth'});
@@ -145,11 +219,12 @@
     }
   }
 
-  function choose(ch, index) {
+  function choose(ch, index, from) {
     const target = ch.roots[index];
     ch.current = index;
     ch.roots.forEach((r, i) => r.classList.toggle('ct-selected', i === index));
     ch.buttons.forEach((b, i) => { b.setAttribute('aria-selected', String(i === index)); b.tabIndex = i === index ? 0 : -1; });
+    placeInd(ch, from);
     // Open the new one first, so the chapter never has nothing open.
     if (!target.open) target.open = true;
     ch.roots.forEach((r, i) => { if (i !== index && r.open) r.open = false; });
@@ -164,11 +239,17 @@
       const box = inner(ch), h = box ? box.getBoundingClientRect().height : 0;
       const bar = ch.bar.animate([{opacity: 1}, {opacity: 0}], {duration: 220, easing: 'ease-in', fill: 'forwards'});
       const a = box?.animate([{maxHeight: h + 'px', opacity: 1}, {maxHeight: '0px', opacity: 0}], {duration: 280, easing: 'cubic-bezier(.4,0,.8,.6)', fill: 'forwards'});
+      const tabRects = ch.buttons.map(b => b.getBoundingClientRect()), chosen = ch.current;
+      const tabLabels = ch.buttons.map(b => b.textContent);
       (a ? a.finished : Promise.resolve()).catch(() => {}).then(() => {
+        // Stand-ins leave from where the tabs were; the rows appear when they arrive.
+        const at = tabRects.map(r => ({left: r.left, top: r.top, width: r.width, height: r.height}));
         ch.folding = false;
         doFold(ch, false);
         bar.cancel(); a?.cancel();
-        rowsIn(ch);
+        const rowRects = ch.roots.map(r => r.getBoundingClientRect());
+        ch.roots.forEach(r => { r.style.visibility = 'hidden'; });
+        morph(ch, at, rowRects, tabLabels, ch.roots.map(rowLabel), chosen, false, () => ch.roots.forEach(r => { r.style.visibility = ''; }));
       });
       return;
     }
@@ -201,5 +282,5 @@
       window.dispatchEvent(new Event('ct-resize'));   // maps re-measure
     });
   }
-  window.addEventListener('resize', () => chapters.forEach(ch => { if (ch.on) size(ch); }));
+  window.addEventListener('resize', () => chapters.forEach(ch => { if (ch.on) { size(ch); placeInd(ch); } }));
 })();
