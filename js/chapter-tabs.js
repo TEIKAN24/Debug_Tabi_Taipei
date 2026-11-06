@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.284.
+/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.285.
 
    Folded, a chapter lists its sections as rows (no + sign). Opening any row turns the
    chapter into "tab mode": the rows become one row of tabs side by side, the open
@@ -51,29 +51,55 @@
   function rememberRows(ch) {            // the folded layout, relative to the chapter's top line
     const base = ch.hr.getBoundingClientRect().top;
     ch.rowOff = ch.roots.map(r => { const b = r.getBoundingClientRect(); return {dy: b.top - base, left: b.left, width: b.width, height: b.height}; });
-    ch.rowsBlock = outerBottom(ch.roots[ch.roots.length - 1]) - outerTop(ch.roots[0]);
+    // Border boxes: the margins above/below collapse with the same neighbours in both states.
+    ch.rowsBlock = ch.roots[ch.roots.length - 1].getBoundingClientRect().bottom - ch.roots[0].getBoundingClientRect().top;
     const sum = ch.roots[0].querySelector(':scope > summary'), h3 = sum?.querySelector('h3') || sum;
     if (h3) {
       const rb = ch.roots[0].getBoundingClientRect(), hb = h3.getBoundingClientRect(), hs = getComputedStyle(h3);
       ch.rowText = {x: hb.left - rb.left, size: hs.fontSize, weight: hs.fontWeight, spacing: hs.letterSpacing};
     }
-    if (ch.lead) { const ls = getComputedStyle(ch.lead); ch.leadBox = {h: ch.lead.getBoundingClientRect().height, mt: ls.marginTop, mb: ls.marginBottom}; }
+    if (ch.lead) {
+      const ls = getComputedStyle(ch.lead);
+      // Hidden, the title's bottom margin and the tab row's top margin collapse into the larger
+      // one; a 0-tall line with text keeps them apart (adding the smaller one). A negative top
+      // margin of that size makes the 0-tall line take exactly the space of a hidden one.
+      const gap = Math.min(parseFloat(getComputedStyle(ch.h2).marginBottom) || 0, parseFloat(getComputedStyle(ch.bar).marginTop) || 0);
+      ch.leadBox = {h: ch.lead.getBoundingClientRect().height, mt: ls.marginTop, mb: ls.marginBottom, gap};
+    }
   }
   const rowTarget = (ch, i) => () => {
     const base = ch.hr.getBoundingClientRect().top, o = ch.rowOff[i];
     return {left: o.left, top: base + o.dy, width: o.width, height: o.height};
   };
-  const tabBlock = ch => outerBottom(ch.roots[ch.current]) - outerTop(ch.bar);
-  function leadMotion(ch, hide) {
+  const tabBlock = ch => ch.roots[ch.current].getBoundingClientRect().bottom - ch.bar.getBoundingClientRect().top;
+  // v30.9.285: every start and end state is written inline first, so no browser can show
+  // a frame of the old state before an animation takes hold (that made the page jump).
+  // The lead line is clipped with clip-path, not overflow (overflow:hidden would stop the margins
+  // around a 0-tall line from collapsing, pushing the page ~6 px at the start and end).
+  const LEAD_PROPS = ['max-height', 'opacity', 'margin-top', 'margin-bottom', 'clip-path'];
+  function leadMotion(ch, hide, delay = 0) {
     if (!ch.lead || !ch.leadBox) return;
-    const L = ch.leadBox;
-    const full = {maxHeight: L.h + 'px', opacity: 1, marginTop: L.mt, marginBottom: L.mb};
-    const none = {maxHeight: '0px', opacity: 0, marginTop: '0px', marginBottom: '0px'};
-    ch.lead.getAnimations().forEach(x => x.cancel());
-    ch.lead.classList.remove('ct-hidden'); ch.lead.style.overflow = 'hidden';
-    const a = ch.lead.animate(hide ? [full, none] : [none, full], {duration: SYNC, easing: CURVE, fill: 'forwards'});
-    a.finished.then(() => { if (hide && ch.on) ch.lead.classList.add('ct-hidden'); ch.lead.style.removeProperty('overflow'); a.cancel(); }, () => {});
+    // The site's stylesheet fixes this line's margins with !important, which beats both inline
+    // styles and Web Animations; inline !important values moved by a CSS transition win.
+    const L = ch.leadBox, el = ch.lead;
+    const full = {'max-height': L.h + 'px', opacity: '1', 'margin-top': L.mt, 'margin-bottom': L.mb};
+    const none = {'max-height': '0px', opacity: '0', 'margin-top': -L.gap + 'px', 'margin-bottom': '0px'};
+    const put = v => Object.entries(v).forEach(([k, x]) => el.style.setProperty(k, x, 'important'));
+    clearTimeout(el._ctTimer);
+    el.style.setProperty('transition', 'none', 'important');
+    put(hide ? full : none);                                   // start state, before it shows
+    el.style.setProperty('clip-path', 'inset(0)', 'important');
+    el.classList.remove('ct-hidden');
+    void el.offsetHeight;                                      // commit the start state
+    const t = `${SYNC - delay}ms ${CURVE} ${delay}ms`;
+    el.style.setProperty('transition', ['max-height', 'opacity', 'margin-top', 'margin-bottom'].map(k => k + ' ' + t).join(','), 'important');
+    put(hide ? none : full);
+    el._ctTimer = setTimeout(() => {
+      if (hide && ch.on) el.classList.add('ct-hidden');
+      LEAD_PROPS.concat('transition').forEach(k => el.style.removeProperty(k));
+    }, SYNC + 30);
   }
+
   // While the box opens or shuts, its content keeps its full size and is only clipped:
   // squeezing it would make maps and lists re-measure every frame (and stutter).
   function freeze(box) {
@@ -289,8 +315,11 @@
       const box = inner(ch), full = boxH(ch);
       const startH = Math.max(0, full - (tabBlock(ch) - ch.rowsBlock));
       const thaw = freeze(box);
-      const grow = box?.animate([{maxHeight: startH + 'px', opacity: 0}, {maxHeight: full + 'px', opacity: 1}], {duration: SYNC, easing: CURVE, fill: 'backwards'});
-      (grow ? grow.finished : Promise.resolve()).then(thaw, thaw);
+      if (box) { box.style.maxHeight = startH + 'px'; box.style.opacity = '0'; }   // start state, inline
+      ch.animating = true;
+      const grow = box?.animate([{maxHeight: startH + 'px', opacity: 0}, {maxHeight: full + 'px', opacity: 1}], {duration: SYNC, easing: CURVE, fill: 'both'});
+      const settle = () => { if (box) { box.style.removeProperty('max-height'); box.style.removeProperty('opacity'); } grow?.cancel(); thaw(); ch.animating = false; size(ch); };
+      (grow ? grow.finished : Promise.resolve()).then(settle, settle);
       ch.bar.animate([{borderColor: 'transparent'}, {}], {duration: SYNC, easing: CURVE});
       morph(ch, fromRects, ch.buttons.map(b => () => b.getBoundingClientRect()), fromLabels, ch.buttons.map(b => b.textContent), index, true,
         () => ch.bar.classList.remove('ct-morphing'));
@@ -329,9 +358,13 @@
       const endH = Math.max(0, hNow - (tabBlock(ch) - ch.rowsBlock));
       const tabRects = ch.buttons.map(b => { const r = b.getBoundingClientRect(); return {left: r.left, top: r.top, width: r.width, height: r.height}; });
       const chosen = ch.current, tabLabels = ch.buttons.map(b => b.textContent);
-      ch.h2.classList.remove('ct-title-small');
-      leadMotion(ch, false);
+      // The title and lead line start growing a little after the box starts shrinking,
+      // so the page below only ever moves up.
+      const LAG = 90;
+      setTimeout(() => ch.h2.classList.remove('ct-title-small'), LAG);
+      leadMotion(ch, false, LAG);
       const thaw = freeze(box);
+      if (box) { box.style.maxHeight = hNow + 'px'; box.style.opacity = '1'; }   // start state, inline
       const a = box?.animate([{maxHeight: hNow + 'px', opacity: 1}, {maxHeight: endH + 'px', opacity: 0}], {duration: SYNC, easing: CURVE, fill: 'forwards'});
       if (ch.h2.getBoundingClientRect().top < 0) window.tabiGlideTo ? window.tabiGlideTo(ch.hr || ch.h2, 0) : ch.h2.scrollIntoView({block: 'start'});
       morph(ch, tabRects, ch.roots.map((r, i) => rowTarget(ch, i)), tabLabels, ch.roots.map(rowLabel), chosen, false, () => {
@@ -375,5 +408,6 @@
       window.dispatchEvent(new Event('ct-resize'));   // maps re-measure
     });
   }
-  window.addEventListener('resize', () => chapters.forEach(ch => { if (ch.on) { size(ch); placeInd(ch); } }));
+  // (Not while a chapter is opening or folding: iOS resizes the window as its bars slide.)
+  window.addEventListener('resize', () => chapters.forEach(ch => { if (ch.on && !ch.folding && !ch.animating) { size(ch); placeInd(ch); } }));
 })();
