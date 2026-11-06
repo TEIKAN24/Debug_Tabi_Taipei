@@ -66,3 +66,15 @@ html[data-theme="light"] #guide .ct-tabs{--ct-line:#E1E1E0;--ct-sub:#6B6B69;--ct
 /* The map sits exactly where the 夜市 map sits (same box, no margins), so switching tabs
    leaves it perfectly still; the area details keep their usual margins. */
 #guide details.ct-on.ct-selected.has-area-map:not(.walk-viewing-detail) > .indented{margin-left:0!important;margin-right:0!important;padding:0!important}
+
+/* v30.9.282 — 街歩き details: title block, bubbles, the list filling the box, and a
+   full-width 「さっそく出発！」 at the bottom (the 夜市 details' button). */
+#guide details.ct-on.ct-selected > .indented > .walk-inline-detail:not([hidden]){flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected .walk-inline-inner{height:auto!important;flex:1 1 auto;min-height:0}
+#guide details.ct-on.ct-selected .walk-inline-top{margin-bottom:24px!important;padding-top:6px}
+#guide details.ct-on.ct-selected .walk-inline-heading{font-size:17px!important}
+#guide .walk-inline-detail a.walk-inline-go.walk-go-bottom{position:static!important;flex:none;align-self:stretch;display:flex!important;align-items:center;justify-content:center;
+  min-height:50px;margin:14px 20px 22px!important;padding:0!important;border-radius:7px!important;border:0!important;
+  background:#F3F3F3!important;color:#151515!important;-webkit-text-fill-color:#151515;font-size:16px!important;font-weight:800!important;
+  letter-spacing:.06em;text-decoration:none!important}
+html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go.walk-go-bottom{background:#2B2B2B!important;color:#FCFCFB!important;-webkit-text-fill-color:#FCFCFB}
