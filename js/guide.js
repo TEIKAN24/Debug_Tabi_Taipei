@@ -3641,7 +3641,13 @@ update();
     const expandedTarget=rows.some(row=>row.open)
       ? Math.min(480,Math.max(275,window.innerHeight*.56))
       : 0;
-    const max=Math.round(Math.min(cap,Math.max(natural,Math.min(expandedTarget,cap))));
+    let max=Math.round(Math.min(cap,Math.max(natural,Math.min(expandedTarget,cap))));
+    // v30.9.278: inside a chapter tab (js/chapter-tabs.js, a box of fixed height) the
+    // list fills the rest of the box instead.
+    if(block&&block.classList.contains('ct-selected')){
+      const fill=Math.round(block.getBoundingClientRect().bottom-body.getBoundingClientRect().top-14);
+      if(fill>120)max=fill;
+    }
     panel.classList.add('four-row-teaser');
     body.classList.add('teaser-scroll-body');
     if(body.style.maxHeight!==max+'px')body.style.setProperty('max-height',max+'px','important');
@@ -3660,6 +3666,7 @@ update();
   const observer=new MutationObserver(()=>requestAnimationFrame(()=>lists.forEach(sync)));
   root.querySelectorAll('.venue-directory-section .tab-pills button.tab-pill').forEach(tab=>observer.observe(tab,{attributes:true,attributeFilter:['aria-selected']}));
   tabiOnResize(()=>lists.forEach(sync));
+  window.tabiSyncTeasers=()=>lists.forEach(sync);   // v30.9.278: chapter tabs re-fit the lists
   window.addEventListener('load',()=>lists.forEach(sync),{once:true});
   requestAnimationFrame(()=>lists.forEach(sync));
 })();
@@ -3854,7 +3861,9 @@ update();
     const parsed=parseFloat(getComputedStyle(panel).maxHeight);
     const base=Number.isFinite(parsed)?parsed:Infinity;
     const overhead=block.getBoundingClientRect().height-panel.getBoundingClientRect().height;
-    const room=window.innerHeight-overhead-32;
+    let room=window.innerHeight-overhead-32;
+    // v30.9.278: in a chapter tab the list fills the rest of the box.
+    if(block.classList.contains('ct-selected'))room=Math.round(block.getBoundingClientRect().bottom-panel.getBoundingClientRect().top-14);
     if(room<Math.min(base,panel.scrollHeight)){
       panel.style.setProperty('max-height',Math.max(200,Math.round(room))+'px','important');
       panel.style.setProperty('overflow-y','auto','important');
@@ -3887,7 +3896,9 @@ update();
     const area=!!shown.classList.contains('area-panel'),cards=!!shown.classList.contains('night-market-panel');
     const cap=Math.min(room,window.innerHeight*(area?.66:cards?1:.54));
     // One height for all bubbles of the block: the tallest, within the cap.
-    const target=Math.round(Math.max(200,Math.min(Math.max(...heights),cap)));
+    let target=Math.round(Math.max(200,Math.min(Math.max(...heights),cap)));
+    // v30.9.278: in a chapter tab every list fills the rest of the box.
+    if(block.classList.contains('ct-selected')){const fill=Math.round(block.getBoundingClientRect().bottom-shown.getBoundingClientRect().top-14);if(fill>120)target=fill;}
     const set=(panel,prop,value)=>{if(panel.style.getPropertyValue(prop)!==value)panel.style.setProperty(prop,value,'important');};
     group.forEach((panel,i)=>{
       set(panel,'min-height',target+'px');
@@ -3905,6 +3916,7 @@ update();
       else block.querySelectorAll('.tab-panel').forEach(fit);
     });
   }));
+  window.tabiFitLists=all;   // v30.9.278: chapter tabs re-fit the bubble lists
   panels().forEach(panel=>panel.addEventListener('scroll',()=>fade(panel),{passive:true}));
   guide.addEventListener('toggle',all,true);
   const observer=new MutationObserver(all);

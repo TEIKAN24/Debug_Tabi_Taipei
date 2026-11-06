@@ -1152,6 +1152,8 @@
     if (measure()) requestRender();
   }).observe(stage);
   window.addEventListener('resize', () => { if (section.open) fitHeight(); });
+  // v30.9.278: in a chapter tab the box sets the map's height; re-measure when it changes.
+  window.addEventListener('ct-resize', () => { if (section.open) { measure(); clampView(); requestRender(); } });
   if (document.fonts?.ready) document.fonts.ready.then(() => {
     markets.forEach(m => { m.w = 0; }); fittedFor = '';
     if (section.open) fitHeight();

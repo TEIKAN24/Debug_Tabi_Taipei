@@ -1,0 +1,39 @@
+/* TAIPEI CITY GUIDE — chapter tabs (chapters 03, 04, 05), v30.9.278. Built by js/chapter-tabs.js. */
+
+/* Folded rows: no + sign. */
+#guide details.ct-root:not(.ct-on) > summary::after{content:none!important}
+
+/* Chapter heading in tab mode: lead line hidden, title a little smaller. */
+#guide .chapter-lead.ct-hidden{display:none!important}
+#guide h2.ct-title-small{font-size:var(--ct-title)!important;transition:font-size .25s ease}
+
+/* The tab row */
+#guide .ct-tabs{display:flex;gap:4px;margin:14px 0 10px;padding:3px;border:1px solid var(--ct-line,#2E2E2E);border-radius:100px}
+#guide .ct-tabs[hidden]{display:none}
+#guide .ct-tab{flex:1 1 auto;min-width:0;height:34px;margin:0;padding:0 8px;border:1px solid transparent;border-radius:100px;background:transparent;
+  color:var(--ct-sub,#9A9A9A);font:inherit;font-size:13px;font-weight:650;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .2s ease,border-color .2s ease}
+#guide .ct-tab[aria-selected="true"]{border-color:var(--ct-hi,#E4E4E2);color:var(--ct-ink,#EDEDED)}
+#guide .ct-tab:focus-visible{outline:2px solid var(--ct-sub,#9A9A9A);outline-offset:2px}
+html[data-theme="light"] #guide .ct-tabs{--ct-line:#E1E1E0;--ct-sub:#6B6B69;--ct-hi:#333333;--ct-ink:#2B2B2B}
+@media(max-width:350px){#guide .ct-tab{font-size:12px;padding:0 5px}}
+
+/* Tab mode: only the chosen section shows, without its own title, in a box of fixed height. */
+#guide details.ct-on:not(.ct-selected){display:none!important}
+#guide details.ct-on > summary{display:none!important}
+/* The box's height is set on its content (a <details> keeps its children in an internal
+   wrapper, so a height or flex layout on the <details> itself does not reach them). */
+#guide details.ct-on.ct-selected{height:auto!important;max-height:none!important;margin-top:0!important;overflow:hidden}
+#guide details.ct-on.ct-selected > .indented{box-sizing:border-box;height:calc(var(--ct-h,520px) - 2px)!important;min-height:0;
+  display:flex;flex-direction:column;margin-top:0!important;margin-bottom:0!important;padding-top:10px!important;
+  overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain}
+
+/* イベントカレンダー: the event list takes the rest of the box. */
+#guide details.ct-on.ct-selected > .indented > .ec{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected .ec > *{flex:none}
+#guide details.ct-on.ct-selected .ec > .ec-list-box{flex:1 1 auto;min-height:0}
+#guide details.ct-on.ct-selected .ec-list-scroll{height:100%!important}
+
+/* 夜市マップ: the map takes the whole box. */
+#guide details.ct-on.ct-selected > .indented > #night-markets-tabs{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected #night-markets-tabs > .nm-stage{flex:1 1 auto;min-height:0;height:auto!important}
