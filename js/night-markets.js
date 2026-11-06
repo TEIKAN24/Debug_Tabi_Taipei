@@ -28,12 +28,17 @@
      location:{lat, lng} }]}
    The visitor's position is used on this device only: never stored or sent.
    With ?debugLocation=1 the simulated position of the recommender is used. */
-(() => {
+// v30.9.279: the map is a reusable function, called below for 夜市 and by
+// js/area-map.js for 街歩きエリア. cfg: {host, section, items, key, noun,
+// mapLabel, listLabel, fallback, onSelect(item, from) (instead of the 夜市 details),
+// noFit (the box height comes from outside)}.
+function tabiSpotMap(cfg) {
   'use strict';
-  const host = document.getElementById('night-markets-tabs');
-  const section = document.getElementById('night-markets-section');
+  const host = cfg.host, section = cfg.section;
   if (!host || !section) return;
-  const doc = window.TABI_NIGHT_MARKETS;
+  const doc = {markets: Array.isArray(cfg.items) ? cfg.items : []};
+  const KEY = cfg.key || 'nm', NOUN = cfg.noun || '夜市';
+  const pick = (m, from) => cfg.onSelect ? cfg.onSelect(m.data, from) : openDetail(m, from);
   const VERSION = '30.9.260';
   const MAP_SRC = 'data/night-market-map.js?v=' + VERSION;
   const METRO_SRC = 'data/night-market-metro.js?v=' + VERSION;
@@ -78,8 +83,8 @@
   };
   const str = value => (typeof value === 'string' ? value : value == null ? '' : String(value)).trim();
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-  if (!doc || doc.schemaVersion !== 1 || doc.type !== 'night-markets' || !Array.isArray(doc.markets) || !doc.markets.length) {
-    host.replaceChildren(node('p', {class: 'directory-loading'}, '夜市を読み込めませんでした。ページを再読み込みしてください。'));
+  if (!doc.markets.length) {
+    host.replaceChildren(node('p', {class: 'directory-loading'}, NOUN + 'を読み込めませんでした。ページを再読み込みしてください。'));
     return;
   }
   const idOf = (value, index) => (typeof value === 'string' && /^[\w-]+$/.test(value)) ? value : `market-${index + 1}`;
@@ -149,7 +154,7 @@
   function detailParts(m, withIds) {
     const back = node('button', {type: 'button', class: 'nm-back', 'aria-label': '地図に戻る', tabindex: withIds ? null : '-1'});
     back.append(backIcon());
-    const title = node('h4', {class: 'nm-title', id: withIds ? 'nm-detail-title' : null}, m ? m.name : '');
+    const title = node('h4', {class: 'nm-title', id: withIds ? KEY + '-detail-title' : null}, m ? m.name : '');
     const head = node('div', {class: 'nm-detail-head'});
     head.append(back, title);
     const body = node('div', {class: 'nm-detail-body'});
@@ -161,7 +166,7 @@
   // ---- Markup -----------------------------------------------------------------
   const stage = node('div', {class: 'nm-stage', 'data-view': 'map'});
   const mapEl = node('div', {class: 'nm-map', role: 'region', tabindex: '0',
-    'aria-label': '夜市マップ。ドラッグで移動、ピンチで拡大・縮小。キーボードでは矢印キーで移動、＋と−で拡大・縮小'});
+    'aria-label': (cfg.mapLabel || '夜市マップ') + '。ドラッグで移動、ピンチで拡大・縮小。キーボードでは矢印キーで移動、＋と−で拡大・縮小'});
   const base = svg('svg', {class: 'nm-map-base', 'aria-hidden': 'true', focusable: 'false'});
   const world = svg('g', {class: 'nm-world'});
   const neighborLines = [0, 1, 2].map(i => svg('path', {class: 'nm-neighbor-lines nm-neighbor-' + i}));
@@ -191,7 +196,7 @@
   // Leaders above the pills, ending at their edge: an even line, never shaded.
   mapEl.append(base, stationsLayer, me, pinsLayer, leaders, edgesLayer, locateBtn, toast);
 
-  const detail = node('section', {class: 'nm-detail', 'aria-labelledby': 'nm-detail-title', 'aria-hidden': 'true'});
+  const detail = node('section', {class: 'nm-detail', 'aria-labelledby': KEY + '-detail-title', 'aria-hidden': 'true'});
   detail.inert = true;
   const live = detailParts(null, true);
   const {back, title, body} = live;
@@ -200,11 +205,11 @@
   const measurer = node('div', {class: 'nm-measure', 'aria-hidden': 'true'});
   measurer.inert = true;
 
-  const srList = node('ul', {class: 'nm-sr', 'aria-label': '夜市一覧'});
+  const srList = node('ul', {class: 'nm-sr', 'aria-label': cfg.listLabel || '夜市一覧'});
   markets.forEach(m => {
     const li = node('li');
     const b = node('button', {type: 'button', tabindex: '-1'}, m.name + 'の詳細');
-    b.addEventListener('click', () => openDetail(m, null));
+    b.addEventListener('click', () => pick(m, null));
     li.append(b); srList.append(li);
   });
   stage.append(mapEl, detail, measurer, srList, status);
@@ -213,7 +218,7 @@
 
   markets.forEach(m => {
     m.pin = node('button', {type: 'button', class: 'nm-pin', tabindex: '-1', 'aria-label': m.name + 'の詳細'}, m.name);
-    m.pin.addEventListener('click', () => openDetail(m, m.pin));
+    m.pin.addEventListener('click', () => pick(m, m.pin));
     pinsLayer.append(m.pin);
     m.leader = svg('g', {class: 'nm-leader'});
     m.line = svg('line'); m.dot = svg('circle', {r: 3.1});
@@ -682,7 +687,7 @@
       chip._arrow.style.left = `calc(50% + ${dx * (cw / 2 + 5)}px)`;
       chip._arrow.style.top = `calc(50% + ${dy * (ch / 2 + 5)}px)`;
       chip._arrow.style.transform = `rotate(${dir * 45}deg)`;
-      chip.setAttribute('aria-label', DIR_JA[dir] + '方向の画面外の夜市 ' + n + '件（' + chip._members.map(m => m.name).join('、') + '）へ移動');
+      chip.setAttribute('aria-label', DIR_JA[dir] + '方向の画面外の' + NOUN + ' ' + n + '件（' + chip._members.map(m => m.name).join('、') + '）へ移動');
       chip.style.transform = `translate3d(${px.toFixed(1)}px,${py.toFixed(1)}px,0) translate(-50%,-50%)`;
       chip.classList.add('is-on'); chip.tabIndex = 0; chip.removeAttribute('aria-hidden');
       pillBoxes.push(box(px, py, cw, ch));
@@ -1053,6 +1058,7 @@
   // pill strip and the longest market panel, measured in their old layout.
   let fittedFor = '';
   function fitHeight() {
+    if (cfg.noFit) return;
     const width = stage.clientWidth;
     if (!width) return;
     const key = String(width);
@@ -1161,15 +1167,22 @@
   });
   function showFallbackList() {
     const list = node('div', {class: 'nm-fallback'});
-    list.append(node('p', {class: 'nm-fallback-note'}, '地図を読み込めませんでした。夜市を選んでください。'));
+    list.append(node('p', {class: 'nm-fallback-note'}, cfg.fallback || '地図を読み込めませんでした。夜市を選んでください。'));
     const ul = node('ul');
     markets.forEach(m => {
       const li = node('li'), b = node('button', {type: 'button'}, m.name);
-      b.addEventListener('click', () => openDetail(m, b)); li.append(b); ul.append(li);
+      b.addEventListener('click', () => pick(m, b)); li.append(b); ul.append(li);
     });
     list.append(ul);
     mapEl.replaceChildren(list);
   }
   section.addEventListener('toggle', () => { if (section.open) onOpen(); else onClose(); });
   if (section.open) onOpen();
+}
+window.tabiSpotMap = tabiSpotMap;
+(() => {
+  const doc = window.TABI_NIGHT_MARKETS;
+  const ok = doc && doc.schemaVersion === 1 && doc.type === 'night-markets' && Array.isArray(doc.markets) && doc.markets.length;
+  tabiSpotMap({host: document.getElementById('night-markets-tabs'), section: document.getElementById('night-markets-section'),
+    items: ok ? doc.markets : [], key: 'nm', noun: '夜市', mapLabel: '夜市マップ', listLabel: '夜市一覧'});
 })();

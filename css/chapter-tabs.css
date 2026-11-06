@@ -37,3 +37,12 @@ html[data-theme="light"] #guide .ct-tabs{--ct-line:#E1E1E0;--ct-sub:#6B6B69;--ct
 /* 夜市マップ: the map takes the whole box. */
 #guide details.ct-on.ct-selected > .indented > #night-markets-tabs{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
 #guide details.ct-on.ct-selected #night-markets-tabs > .nm-stage{flex:1 1 auto;min-height:0;height:auto!important}
+
+/* v30.9.279 — 街歩きエリア map (js/area-map.js): it replaces the area cards; the area's
+   details still open in its place (‹ returns to the map). */
+#guide details.has-area-map .walk-area-grid{display:none!important}
+#guide details.walk-viewing-detail .walk-area-map{display:none!important}
+#guide #walk-area-map > .nm-stage{height:480px}
+#guide details.ct-on.ct-selected > .indented > .walk-area-map,
+#guide details.ct-on.ct-selected #walk-area-map{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected #walk-area-map > .nm-stage{flex:1 1 auto;min-height:0;height:auto!important}

@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.278.
+/* TAIPEI CITY GUIDE — chapter tabs for chapters 03, 04 and 05, v30.9.279.
 
    Folded, a chapter lists its sections as rows (no + sign). Opening any row turns the
    chapter into "tab mode": the rows become one row of tabs side by side, the open
@@ -8,6 +8,10 @@
    top of the screen.
    Tapping the chosen tab again folds the chapter back to its rows; opening a section of
    another chapter folds it too.
+
+   Motion (v30.9.279): entering, the tab row fades in and the box grows from nothing;
+   switching, the new section slides in from the side of its tab; folding, the box
+   shrinks away and the rows come back one after another.
 
    The <details> blocks stay as they are (every script that works with them keeps
    working); in tab mode their own titles are hidden and only the chosen one shows. */
@@ -20,6 +24,24 @@
   ];
   const MIN_H = 420, MAX_H = 620, BOTTOM_AIR = 24, TITLE_SCALE = .84;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const EASE = 'cubic-bezier(.22,.8,.3,1)';
+  const inner = ch => ch.roots[ch.current]?.querySelector(':scope > .indented');
+  const boxH = ch => (parseFloat(ch.roots[ch.current]?.style.getPropertyValue('--ct-h')) || 520) - 2;
+  function growIn(ch) {
+    if (reduce.matches) return;
+    ch.bar.animate([{opacity: 0, transform: 'translateY(-6px)'}, {opacity: 1, transform: 'none'}], {duration: 260, easing: EASE});
+    // max-height animates (the box's height itself is an !important rule, which wins over animations)
+    inner(ch)?.animate([{maxHeight: '0px', opacity: 0}, {maxHeight: boxH(ch) + 'px', opacity: 1}], {duration: 460, easing: EASE});
+  }
+  function slideIn(ch, dir) {
+    if (reduce.matches) return;
+    inner(ch)?.animate([{opacity: 0, transform: `translate3d(${dir * 44}px,0,0)`}, {opacity: 1, transform: 'none'}], {duration: 400, easing: EASE});
+  }
+  function rowsIn(ch) {
+    if (reduce.matches) return;
+    ch.roots.forEach((r, i) => r.animate([{opacity: 0, transform: 'translateY(8px)'}, {opacity: 1, transform: 'none'}],
+      {duration: 320, delay: i * 45, easing: EASE, fill: 'backwards'}));
+  }
 
   // Bottom safe area (home indicator), read once from a probe.
   let insetBottom = 0;
@@ -62,13 +84,15 @@
       const b = ev.target.closest('.ct-tab');
       if (!b) return;
       const i = +b.dataset.i;
-      if (i === ch.current) fold(ch); else choose(ch, i);
+      if (ch.folding) return;
+      if (i === ch.current) fold(ch); else { const dir = i > ch.current ? 1 : -1; choose(ch, i); slideIn(ch, dir); }
     });
     bar.addEventListener('keydown', ev => {
       if (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight') return;
       ev.preventDefault();
       const i = (ch.current + (ev.key === 'ArrowRight' ? 1 : -1) + roots.length) % roots.length;
-      choose(ch, i); buttons[i].focus();
+      const dir = i > ch.current ? 1 : -1;
+      choose(ch, i); slideIn(ch, dir); buttons[i].focus();
     });
     roots.forEach((root, i) => root.addEventListener('toggle', () => {
       // Opened by another script (a link, the quick menu): enter tab mode on it.
@@ -94,7 +118,7 @@
     const ch = details && chapterOf(details);
     if (!ch || summary !== details.querySelector(':scope > summary')) return;
     ev.preventDefault(); ev.stopImmediatePropagation();
-    enter(ch, ch.roots.indexOf(details), true);
+    if (!ch.folding) enter(ch, ch.roots.indexOf(details), true);
   }, true);
 
   function enter(ch, index, glide) {
@@ -102,6 +126,7 @@
     // One chapter in tab mode at a time; other open sections fold, as before.
     chapters.forEach(other => { if (other !== ch && other.on) fold(other, true); });
     document.querySelectorAll('#guide details.root-accordion[open]').forEach(d => { if (!ch.roots.includes(d)) d.open = false; });
+    const was = ch.on;
     if (!ch.on) {
       ch.on = true;
       if (!ch.h2Size) ch.h2Size = parseFloat(getComputedStyle(ch.h2).fontSize) || 0;
@@ -112,6 +137,7 @@
       ch.roots.forEach(r => r.classList.add('ct-on'));
     }
     choose(ch, index);
+    if (!was && glide) growIn(ch);
     if (glide && ch.hr) {
       const go = () => window.tabiGlideTo ? window.tabiGlideTo(ch.hr, 0)
         : window.scrollTo({top: ch.hr.getBoundingClientRect().top + scrollY, behavior: reduce.matches ? 'auto' : 'smooth'});
@@ -131,7 +157,24 @@
   }
 
   function fold(ch, quiet) {
-    if (!ch.on) return;
+    if (!ch.on || ch.folding) return;
+    if (!quiet && !reduce.matches) {
+      // Shrink the box away first, then bring the rows back.
+      ch.folding = true;
+      const box = inner(ch), h = box ? box.getBoundingClientRect().height : 0;
+      const bar = ch.bar.animate([{opacity: 1}, {opacity: 0}], {duration: 220, easing: 'ease-in', fill: 'forwards'});
+      const a = box?.animate([{maxHeight: h + 'px', opacity: 1}, {maxHeight: '0px', opacity: 0}], {duration: 280, easing: 'cubic-bezier(.4,0,.8,.6)', fill: 'forwards'});
+      (a ? a.finished : Promise.resolve()).catch(() => {}).then(() => {
+        ch.folding = false;
+        doFold(ch, false);
+        bar.cancel(); a?.cancel();
+        rowsIn(ch);
+      });
+      return;
+    }
+    doFold(ch, quiet);
+  }
+  function doFold(ch, quiet) {
     ch.on = false; ch.current = -1;
     ch.roots.forEach(r => { r.classList.remove('ct-on', 'ct-selected'); r.style.removeProperty('--ct-h'); });
     ch.roots.forEach(r => { if (r.open) r.open = false; });
