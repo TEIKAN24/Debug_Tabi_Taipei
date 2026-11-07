@@ -62,6 +62,7 @@
   const timeCaption=document.getElementById('recommend-time-caption');
   const timeOptions=document.getElementById('recommend-time-options');
   const areaButton=document.getElementById('recommend-area-trigger');
+  const modeText=areaButton?.querySelector('.recommend-mode-text');
   const areaLabel=document.getElementById('recommend-area-label');
   const locationStatus=document.getElementById('recommend-location-status');
   const stationControls=document.getElementById('recommend-station-controls');
@@ -89,7 +90,7 @@
   const advancedTrigger=advanced.querySelector('summary');
   const body=document.body;
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const TIME=[['current','現在時刻'],['morning','朝'],['lunch','昼'],['afternoon','午後'],['night','夜'],['late','深夜']];
+  const TIME=[['current','現時刻'],['morning','朝'],['lunch','昼'],['afternoon','午後'],['night','夜'],['late','深夜']];
   // 料理種類 (single choice) filters the shops.
   // Each entry: [key, label, data tags in nearby.json "industries"].
   const CATEGORIES=[
@@ -258,8 +259,12 @@
     if(nearby.length)return {city:nearby[0].d[1],district:null,estimated:true};
     // Existing city outline is kept as a fallback for gaps in district geometry.
     if(pointInOutline(lat,lng,TAIPEI_OUTLINE))return {city:'T',district:null,estimated:true};
+    // v30.9.286: 基隆市 is in the area too. Taipei and New Taipei are matched first above,
+    // so a coarse outline of Keelung (it borders only New Taipei and the sea) is enough.
+    if(pointInOutline(lat,lng,KEELUNG_OUTLINE))return {city:'K',district:null,estimated:true};
     return null;
   }
+  const KEELUNG_OUTLINE=[[121.626,25.192],[121.66,25.205],[121.70,25.20],[121.79,25.168],[121.805,25.13],[121.79,25.09],[121.745,25.07],[121.70,25.075],[121.66,25.095],[121.632,25.125],[121.62,25.16]];
 
   function currentStation(){return metroStations.find(x=>x.code===state.stationCode&&x.line===state.line)||null;}
   function stationOrigin(){const x=currentStation();return x?{lat:x.lat,lng:x.lng}:null;}
@@ -466,7 +471,7 @@
     if(!intervals)return {code:'unknown'};
     const now=clock.minute;
     const current=intervals.find(x=>x.start<=now&&now<x.end);
-    if(current)return {code:current.end-now-walk<=closeSoonMinutes(item)?'soon':'open'};
+    if(current)return {code:current.end-now-walk<=closeSoonMinutes(item)?'soon':'open',end:current.end};
     const next=intervals.find(x=>x.start>now);
     if(next&&next.start-now<=OPEN_SOON_MINUTES)return {code:'opening',at:next.start};
     return {code:'closed'};
@@ -511,7 +516,8 @@
     const live=liveStatus(branch,item,clock,walk);
     return live.code==='closed'?nextOpening(branch,item,clock,null):live;
   }
-  const OPENING_LABEL={open:'営業中',soon:'もうすぐ閉店',opening:'もうすぐ開店',closed:'営業時間外',irregular:'不定期営業',unknown:'営業時間未確認'};
+  const OPENING_LABEL={open:'営業中',soon:'まもなく閉店',opening:'まもなく開店',closed:'営業時間外',irregular:'不定期営業',unknown:'営業時間未確認'};
+  const clock2=m=>{const v=((m%1440)+1440)%1440;return `${String(Math.floor(v/60)).padStart(2,'0')}:${String(v%60).padStart(2,'0')}`;};
   function timingLabel(t){
     if(t.code==='next')return `（${WEEKDAY_JA[t.day]}）${clockText(t.at)}から`;
     return OPENING_LABEL[t.code]||OPENING_LABEL.unknown;
@@ -519,7 +525,13 @@
   function updateOpeningStatusNode(node,item){
     const t=cardTiming(item);
     node.className='recommend-opening-status recommend-opening-'+t.code;
-    node.textContent=timingLabel(t);
+    // v30.9.286: 「● 営業中 00:00まで」; unknown hours show nothing.
+    node.hidden=t.code==='unknown';
+    const when=(t.code==='open'||t.code==='soon')&&Number.isFinite(t.end)?clock2(t.end)+'まで':t.code==='opening'&&Number.isFinite(t.at)?clock2(t.at)+'から':'';
+    const label=t.code==='next'?'営業時間外':timingLabel(t);
+    const next=t.code==='next'?`${t.day!==taipeiClock().dayIndex?'（'+WEEKDAY_JA[t.day]+'）':''}${clock2(t.at)}から`:'';
+    node.replaceChildren(el('span','rp-status-label',label));
+    if(when||next)node.append(el('span','rp-status-time',when||next));
     node.title=t.code==='unknown'?'店舗別の営業時間を確認できません':t.code==='irregular'?'不定期営業のため、訪問前に最新情報をご確認ください':
       t.code==='opening'?'30分以内に営業開始予定です（通常営業時間による目安）':t.code==='soon'?`${closeSoonMinutes(item)===60?'1時間':'35分'}以内に閉店予定です（${Number.isFinite(item.distanceMeters)?'徒歩での到着を含む、':''}通常営業時間による目安）`:
       t.code==='next'?'次の営業開始（通常営業時間による目安）':'登録された通常営業時間による目安です';
@@ -986,6 +998,7 @@
       geoRun++;state.position=null;state.locationStatus='idle';
       syncUI();renderResults();
     }
+    savePick();
   }
   // Codes such as G03A / R22A show the number on top and the letter below.
   function fillStationCode(node,code){
@@ -1029,6 +1042,7 @@
     state.line=item.line;state.stationCode=item.code;state.page=0;
     lineSearch.value='';
     renderStationOptions();buildMetroLineOptions();syncUI();renderResults();closeStationMenus();
+    savePick();
   }
   function renderLineSearch(){
     if(!lineSearch.value.trim()){buildMetroLineOptions();return;}
@@ -1201,7 +1215,7 @@
     syncActiveConditions();
     const timeName=TIME.find(([value])=>value===state.time)?.[1]||'昼';
     timeLabel.textContent=timeName;
-    timeCaption.textContent=state.timeMode==='current'?'現在時刻':'時間帯指定中';
+    timeCaption.textContent='時間帯';
     // A chosen band is not "now": the caption breathes (one bright/dim cycle a
     // second), and v30.9.210: the chosen band itself breathes with it.
     const breathing=state.timeMode!=='current';
@@ -1210,7 +1224,9 @@
       node.classList.toggle('is-breathing',breathing);
     }
     const isStation=state.areaMode==='station';
-    areaLabel.textContent=isStation?'駅から検索':'現在地';
+    areaLabel.textContent=isStation?'駅から探す':'現在地';
+    if(modeText)modeText.textContent=isStation?'現在地から':'駅から探す';
+    currentLocation.dataset.state=state.locationStatus;
     mainPicker.classList.toggle('is-station',isStation);
     stationControls.hidden=!isStation;
     currentLocation.hidden=isStation;
@@ -1242,10 +1258,11 @@
     const inferred=region?.city==='T'?nearbyDistrict(state.position):null;
     const district=region?.district||null;
     const jpDistrict=district?district.replace(/區$/,'区'):inferred?.[0]||'';
-    const cityJa=region?.city==='N'?'新北市':region?.city==='T'?'台北市':'';
+    const cityJa=region?.city==='N'?'新北市':region?.city==='T'?'台北市':region?.city==='K'?'基隆市':'';
     const cityEn=region?.city==='N'?'New Taipei City':'Taipei City';
     const districtEnglish=district?(region.city==='N'?NEW_TAIPEI_DISTRICT_EN[district]:DISTRICTS[district]?.[1]):inferred?.[1];
-    districtName.textContent=state.locationStatus==='outside'?'台北・新北エリア外':cityJa?`${cityJa}${jpDistrict?' '+jpDistrict:''}`:state.locationStatus==='loading'?'測位中':'現在地';
+    const FAIL_NAME={outside:'エリア外',denied:'位置情報オフ',error:'取得できませんでした',imprecise:'取得できませんでした',unsupported:'取得できませんでした',loading:'測位中…'};
+    districtName.textContent=cityJa&&state.locationStatus==='success'?`${cityJa}${jpDistrict?' '+jpDistrict:''}`:FAIL_NAME[state.locationStatus]||'現在地';
     const districtEnLabel=districtEnglish?`${districtEnglish.replace(/\s+Dist\.?$/i,'')} Dist.`:'';
     districtEn.textContent=state.locationStatus==='outside'?'Outside Taipei Area':cityJa?`${districtEnLabel?districtEnLabel+', ':''}${cityEn}`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':state.locationStatus==='idle'?'タップして現在地を取得':'Location';
     currentLocation.title=state.locationStatus==='outside'?'現在地は台北市・新北市の対象エリア外です。':cityJa?'表示された行政区は位置座標からの概算です。境界付近では異なる場合があります。':'現在地をもとにおすすめを表示します。';
@@ -1516,6 +1533,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   // to the status; a wrapped name keeps its place (it would run into the
   // badges) and the status moves up to its first line instead.
   function alignCards(){
+    if(results.querySelector('.rp-card'))return;   // v30.9.286: the new card lays itself out
     // Hidden (folded section, back face): nothing to measure; keep the last values.
     const cards=[...results.querySelectorAll('.recommend-card')].filter(card=>card.getClientRects().length&&card.offsetHeight);
     for(const card of cards)for(const name of ['--rc-type-y','--rc-venue-y','--rc-status-y'])card.style.removeProperty(name);
@@ -1553,13 +1571,17 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       disclaimer.textContent='※ 距離は直線です。';
       return;
     }
-    // v30.9.235: outside Taipei / New Taipei, no restaurant is suggested.
-    if(state.areaMode==='current'&&state.locationStatus==='outside'){
+    // v30.9.286: without a usable position, say why (tap the 現在地 card to try again).
+    const FAIL_TEXT={outside:'GPSエリア外です',denied:'位置情報の利用が許可されていません',error:'位置情報を取得できませんでした',
+      imprecise:'位置情報を取得できませんでした',unsupported:'位置情報を取得できませんでした',loading:'現在地を確認しています…'};
+    if(state.areaMode==='current'&&FAIL_TEXT[state.locationStatus]){
       visibleRecommendations=[];
-      results.replaceChildren(el('p','recommend-no-data','エリア対象外です。'));
-      count.textContent='エリア外';more.hidden=true;relaxed.hidden=true;
+      results.replaceChildren(el('p','rp-empty'+(state.locationStatus==='loading'?' is-loading':''),FAIL_TEXT[state.locationStatus]));
+      count.textContent='';more.hidden=true;relaxed.hidden=true;
+      drawer.classList.toggle('rp-no-results',true);
       reportDebug(0);return;
     }
+    drawer.classList.remove('rp-no-results');
     const {ordered,timeCount,lifted,nearbyFallback,useDistance,nearbyCount}=recommendedPool();
     results.replaceChildren();
     if(!ordered.length){
@@ -1587,44 +1609,40 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       locationStatus.hidden=false;
     }
     reportDebug(ordered.length);
+    // v30.9.286 card: kind (+ chain, stars) | status ;  name (2 lines) | walk + distance ; tags.
+    const WALK_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><circle cx="13" cy="4" r="2"/><path d="M10.6 7.6 7.5 9.4 6.4 13l1.9.6.8-2.7 1.4-.8-1.8 9.4 2 .4 1.1-5.3 2 2V22h2v-6.2l-2.2-2.2.6-3.1c.9 1.2 2.3 2 3.8 2V10.5c-1.2 0-2.3-.7-2.9-1.7l-.9-1.5c-.4-.6-1-1-1.8-1-.3 0-.6.1-.8.2Z"/></svg>';
     slice.forEach((item,resultIndex)=>{
-      const card=el('article','recommend-card');
+      const card=el('article','recommend-card rp-card');
       const shell=el('div','recommend-card-shell');
       const main=el('div','recommend-card-main');
       const side=el('div','recommend-card-side');
       const cuisine=cardCuisine(item);
-      // Chains carry the same チェーン店 pill as the 一覧 list, right of the kind.
       const typeRow=el('div','recommend-type-row');
       if(cuisine)typeRow.append(el('div','recommend-card-type',cuisine));
       if(isChainItem(item))typeRow.append(el('span','recommend-chain-pill','チェーン店'));
-      if(typeRow.childNodes.length)main.append(typeRow);
+      const starsCount=Math.min(3,michelinStars(item));
+      if(starsCount){
+        const starsWrap=el('span','recommend-card-stars');
+        starsWrap.setAttribute('aria-label',`ミシュラン${starsCount}つ星`);
+        for(let i=0;i<starsCount;i++){const star=el('span','recommend-card-star');star.innerHTML=MICHELIN_FLOWER_SVG;starsWrap.append(star);}
+        typeRow.append(starsWrap);
+      }
+      main.append(typeRow);
       const a=el('a','recommend-venue',item.name);a.href=recommendationMapsUrl(item);a.target='_blank';a.rel='noopener noreferrer';main.append(a);
-      const distanceText=Number.isFinite(item.distanceMeters)?`約${formatDistance(item.distanceMeters)}`:'';
-      if(distanceText){
-        const badge=el('span','recommend-distance-pill');
-        if(item.distanceMeters>GEO_PRIORITY_METERS)badge.classList.add('recommend-distance-pill-outer');
-        badge.setAttribute('aria-label',`${state.areaMode==='station'?'選択駅':'現在地'}からの直線距離 ${distanceText}`);
-        const pin=el('span','recommend-distance-pill-icon');
-        pin.setAttribute('aria-hidden','true');
-        pin.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
-        badge.append(pin,el('span','recommend-distance-pill-label',distanceText));
-        side.append(badge);
-      }else side.append(el('span','recommend-distance-pill recommend-distance-pill-empty',''));
       const opening=el('span','recommend-opening-status');
       opening.dataset.resultIndex=String(resultIndex);
       updateOpeningStatusNode(opening,item);
       side.append(opening);
-      const starsCount=Math.min(3,michelinStars(item));
-      const starsWrap=el('div','recommend-card-stars');
-      starsWrap.setAttribute('aria-label',starsCount?`ミシュラン${starsCount}つ星`:'ミシュラン評価なし');
-      if(starsCount){
-        for(let i=0;i<starsCount;i++){
-          const star=el('span','recommend-card-star');
-          star.innerHTML=MICHELIN_FLOWER_SVG;
-          starsWrap.append(star);
-        }
+      if(Number.isFinite(item.distanceMeters)){
+        // Walking time: the straight line × 1.3 (streets are not straight), 80 m a minute.
+        const walk=Math.max(1,Math.round(item.distanceMeters*1.3/80));
+        const box=el('div','rp-walk');
+        box.setAttribute('aria-label',`${state.areaMode==='station'?'選択駅':'現在地'}から徒歩約${walk}分、直線約${formatDistance(item.distanceMeters)}`);
+        const mins=el('span','rp-walk-min');mins.innerHTML=WALK_SVG;mins.append(`約${walk}分`);
+        box.append(mins,el('span','rp-walk-dist',`約${formatDistance(item.distanceMeters)}`));
+        side.append(box);
       }
-      if(starsCount)side.append(starsWrap);
+      shell.append(main,side);
       const tags=orderBadges(cardTags(item),tag=>cardTagTone(tag,item),tag=>String(tag.text||''));
       if(tags.length){
         const tagList=el('div','recommend-guide-tags');
@@ -1642,7 +1660,6 @@ ${GEO_MAX_METERS}m 內：${near} 筆
         tagList.addEventListener('scroll',()=>updateTagFade(tagList),{passive:true});
         shell.append(tagList);
       }
-      shell.prepend(main,side);
       card.append(shell);
       results.append(card);
     });
@@ -1660,6 +1677,54 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   window.setInterval(refreshVisibleOpeningStatuses,60*1000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleOpeningStatuses();});
   window.addEventListener('pageshow',refreshVisibleOpeningStatuses);
+  // ---- v30.9.286 layout: one card, 現在地 / 駅から探す on the left and 時間帯 on the right,
+  // with the mode switch as a small tab under its right end. Same elements, new places.
+  {
+    const controls=drawer.querySelector('.recommend-controls');
+    const top=el('div','rp-top'),left=el('div','rp-cell rp-cell-area'),right=el('div','rp-cell rp-cell-time');
+    const capOf=n=>n.closest('.recommend-source-caption')||n;
+    left.append(capOf(areaLabel),currentLocation,stationControls);
+    right.append(capOf(timeCaption),timeButton.closest('.recommend-control-wrap')||timeButton);
+    top.append(left,right);
+    const head=el('div','rp-head');head.append(top,areaButton);
+    controls.prepend(head);
+  }
+  // ---- v30.9.286: first view, remembered way of searching, 一覧を見る ----
+  const PICK_KEY='tabiFoodPick';
+  function savePick(){try{localStorage.setItem(PICK_KEY,JSON.stringify({mode:state.areaMode,line:state.line||'',station:state.stationCode||''}));}catch(e){}}
+  let savedPick=null;try{savedPick=JSON.parse(localStorage.getItem(PICK_KEY)||'null');}catch(e){}
+  const startView=document.getElementById('rp-start');
+  const flipToList=()=>document.querySelector('#food-flip-front > .food-flip-toggle')?.click();
+  document.getElementById('rp-list')?.addEventListener('click',flipToList);
+  document.getElementById('rp-start-list')?.addEventListener('click',flipToList);
+  // Until a way of searching is known, only the first view shows.
+  if(startView)drawer.classList.add('rp-at-start');
+  function leaveStart(animate){
+    if(!drawer.classList.contains('rp-at-start'))return;
+    const inner=drawer.querySelector('.recommend-drawer-inner');
+    const h0=inner.getBoundingClientRect().height;
+    drawer.classList.remove('rp-at-start');
+    if(!animate||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    // css/recommend.css pins this box's size with !important, which beats inline styles and
+    // Web Animations; inline !important values moved by a CSS transition win.
+    const h1=inner.getBoundingClientRect().height;
+    const put=(k,v)=>inner.style.setProperty(k,v,'important');
+    put('transition','none');put('height',h0+'px');put('min-height','0px');put('max-height','none');put('overflow','hidden');
+    void inner.offsetHeight;
+    put('transition','height 700ms cubic-bezier(.65,0,.35,1)');put('height',h1+'px');
+    for(const n of inner.children){
+      if(n===startView||n.id==='recommend-title')continue;
+      n.animate([{opacity:0},{opacity:1}],{duration:520,delay:180,easing:'ease-out',fill:'backwards'});
+    }
+    setTimeout(()=>{for(const k of ['transition','height','min-height','max-height','overflow'])inner.style.removeProperty(k);},740);
+  }
+  document.getElementById('rp-start-locate')?.addEventListener('click',()=>{leaveStart(true);activateMode('current');});
+  document.getElementById('rp-start-station')?.addEventListener('click',()=>{leaveStart(true);activateMode('station');});
+  // Came back with a station chosen last time: straight to it.
+  if(savedPick?.mode==='station'&&savedPick.line&&savedPick.station){
+    state.areaMode='station';state.line=savedPick.line;state.stationCode=savedPick.station;
+    leaveStart(false);
+  }
   syncUI();renderResults();loadMetroStations();loadNearbyVenues();
   // Safari often restores a previous page snapshot from the Back/Forward cache.
   // Recompute results from current DOM, without requesting location.
@@ -1670,9 +1735,27 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   // visitor taps 現在地 (or the title), unless they have already allowed it.
   try{
     navigator.permissions?.query({name:'geolocation'}).then(permission=>{
-      if(permission.state==='granted'&&state.areaMode==='current'&&!state.geoRequested)requestLocation();
+      // Already allowed: no first view, locate at once.
+      if(permission.state==='granted'&&state.areaMode==='current'&&!state.geoRequested){leaveStart(false);requestLocation();}
     }).catch(()=>{});
   }catch(error){}
+  // v30.9.286: while the page is in use, the position refreshes quietly (every 3 minutes
+  // and when the page comes back); the picks change only after a move of 60 m or more.
+  function quietLocate(){
+    if(state.areaMode!=='current'||state.locationStatus!=='success'||document.hidden||!navigator.geolocation)return;
+    if(debugEnabled&&debugPosition)return;
+    navigator.geolocation.getCurrentPosition(pos=>{
+      if(state.areaMode!=='current'||state.locationStatus!=='success')return;
+      const {latitude:lat,longitude:lng,accuracy}=pos.coords;
+      if(!Number.isFinite(lat)||!Number.isFinite(lng)||!Number.isFinite(accuracy)||accuracy>1000)return;
+      if(!greaterTaipeiRegion(lat,lng,accuracy)){state.position=null;state.locationStatus='outside';syncUI();renderResults();return;}
+      const moved=state.position?distanceMeters(state.position.lat,state.position.lng,lat,lng):Infinity;
+      state.position={lat,lng,accuracy};
+      if(moved>=60){syncUI();renderResults();}
+    },()=>{},{enableHighAccuracy:true,timeout:12000,maximumAge:30000});
+  }
+  window.setInterval(quietLocate,3*60*1000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)quietLocate();});
   currentLocation.setAttribute('role','button');currentLocation.tabIndex=0;
   currentLocation.setAttribute('aria-label','現在地からおすすめを探す');
   const askLocation=()=>{if(state.areaMode==='current'&&state.locationStatus!=='loading')activateMode('current');};

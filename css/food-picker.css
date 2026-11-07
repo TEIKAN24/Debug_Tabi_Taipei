@@ -1,0 +1,129 @@
+/* TAIPEI CITY GUIDE — まずはこの3軒 (v30.9.286). New first view, location/time card, cards and
+   buttons on top of css/recommend.css; selectors carry extra weight because that file
+   uses !important almost everywhere. Built by js/recommend.js (rp-* classes). */
+
+/* the old 一覧へ ＞ beside the title: 一覧を見る buttons replace it */
+html body #food-flip-front:not(#_) > .food-flip-toggle{display:none!important}
+
+/* ---- first view ---- */
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-start{display:none}
+html body #taipei-recommender:not(#_):not(#__):not(#___).rp-at-start .rp-start{display:block!important;padding:84px 0 104px!important;text-align:center}
+html body #taipei-recommender:not(#_):not(#__):not(#___).rp-at-start .recommend-drawer-inner > :not(#recommend-title):not(.rp-start){display:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-start-locate{display:block;width:100%;height:58px;margin:0;border:1px solid #3C3C3C;border-radius:12px;background:transparent;
+  color:#EDEDED;font:inherit;font-size:16px;font-weight:700;letter-spacing:.04em;cursor:pointer;-webkit-tap-highlight-color:transparent}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-start-locate:active{background:rgba(255,255,255,.05)}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-start-links{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:18px;color:#6E6E6E;font-size:13px}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-start-links button{margin:0;padding:6px 4px;border:0;background:none;color:#9A9A9A;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+
+/* ---- location / time card ---- */
+html body #taipei-recommender:not(#_):not(#__):not(#___) .recommend-source-captions,html body #taipei-recommender:not(#_):not(#__):not(#___) .recommend-main-picker:empty,html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-location-status{display:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-head{position:relative;margin:14px 0 0!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-top{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:stretch;padding:10px 16px 12px!important;
+  background:#1A1A1A!important;border:0!important;border-radius:10px!important;box-shadow:0 10px 26px rgba(0,0,0,.38)!important;position:relative;z-index:2}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-cell{min-width:0;display:flex;flex-direction:column;justify-content:center}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-cell-time{margin-left:14px;padding-left:14px;border-left:1px solid #3A3A3A;min-width:96px}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-cell .recommend-source-caption{display:block!important;margin:0 0 3px!important;padding:0!important;color:#9A9A9A!important;font-size:11px!important;font-weight:600!important;letter-spacing:.04em}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-cell .recommend-caption-icon{display:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-current-location{display:flex!important;align-items:center;gap:12px;min-height:32px;margin:0!important;padding:0!important;
+  border:0!important;background:none!important;box-shadow:none!important;cursor:pointer}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-current-location[hidden]{display:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-current-location .recommend-location-pin,html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-district-en{display:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-district-name{color:#EDEDED!important;font-size:20px!important;font-weight:700!important;letter-spacing:.02em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* state mark: green dot when located, a pulsing dot while locating, a crossed pin otherwise */
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-current-location::before{content:"";flex:none;width:8px;height:8px;margin:0 2px 0 4px;border-radius:50%;background:#6E6E6E}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-current-location[data-state="success"]::before{background:#8DB46A}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-current-location[data-state="loading"]::before{animation:rp-pulse 1s ease-in-out infinite alternate}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-current-location:is([data-state="outside"],[data-state="denied"],[data-state="error"],[data-state="imprecise"],[data-state="unsupported"])::before{
+  width:16px;height:16px;margin:0;border-radius:0;background:#8A8A8A;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2.6 10.3 21.5 2.5l-7.7 19-2.7-8.2-8.5-3z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M3 3l18 18' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2.6 10.3 21.5 2.5l-7.7 19-2.7-8.2-8.5-3z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M3 3l18 18' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat}
+@keyframes rp-pulse{from{opacity:.35}to{opacity:1}}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-cell-time .recommend-control-wrap{position:relative;margin:0!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-time-trigger{display:flex!important;align-items:center;gap:10px;min-height:32px;margin:0!important;padding:0!important;border:0!important;
+  background:none!important;box-shadow:none!important;color:#EDEDED!important;font-size:20px!important;font-weight:700!important;width:auto!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-time-trigger .recommend-control-arrow{width:0;height:0;margin:0 0 0 6px!important;border:6px solid transparent;border-top:7px solid #CFCFCF;border-bottom:0;background:none!important;font-size:0!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-time-trigger .recommend-control-arrow::before,html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-time-trigger .recommend-control-arrow::after{display:none!important}
+/* the mode switch: a strip under the card, its words at the right */
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-area-trigger{display:flex!important;justify-content:flex-end;align-items:center;width:100%!important;height:36px;margin:0!important;padding:4px 16px 0!important;
+  border:0!important;border-radius:0 0 10px 10px!important;background:#151515!important;box-shadow:none!important;color:#9A9A9A!important;font-size:14px!important;font-weight:600!important;position:relative;z-index:1}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-area-trigger :is(.recommend-mode-pin,.recommend-mode-return){display:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-area-trigger .recommend-mode-text{display:inline!important;color:inherit!important;font:inherit!important}
+
+/* ---- results ---- */
+html body #taipei-recommender:not(#_):not(#__):not(#___) .recommend-result-head{margin-top:26px!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-empty{display:flex;align-items:center;justify-content:center;min-height:250px;margin:0;color:#EDEDED;font-size:17px;font-weight:600;letter-spacing:.04em;text-align:center}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-empty.is-loading{color:#8A8A8A;font-size:14px;font-weight:500}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card{transform:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-card-shell{display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"main side" "tags side";column-gap:14px;row-gap:8px;
+  padding:14px 2px 16px!important;transform:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-card-main{grid-area:main;min-width:0;display:flex!important;flex-direction:column;gap:6px;transform:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-card-side{grid-area:side;display:flex!important;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:10px;min-width:0;transform:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-guide-tags{grid-area:tags;margin:0!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-type-row{display:flex!important;align-items:center;gap:8px;min-height:18px;transform:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-card-type{color:#9A9A9A!important;font-size:12px!important;font-weight:700!important;letter-spacing:.04em}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-venue{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;color:#EDEDED!important;font-size:18px!important;
+  font-weight:500!important;line-height:1.45!important;text-decoration:none!important;transform:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-opening-status{display:flex!important;align-items:center;gap:10px;white-space:nowrap;font-size:12px!important;font-weight:600!important;
+  transform:none!important;background:none!important;border:0!important;padding:0!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-opening-status[hidden]{display:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .rp-status-label{display:inline-flex;align-items:center;gap:6px}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .rp-status-label::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-opening-open .rp-status-label{color:#8DB46A}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-opening-soon .rp-status-label{color:#D4A35A}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card :is(.recommend-opening-closed,.recommend-opening-next,.recommend-opening-irregular) .rp-status-label{color:#8A8A8A}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-opening-opening .rp-status-label{color:#A9C48E}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .rp-status-time{color:#9A9A9A;font-weight:500}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .rp-walk{display:flex;flex-direction:column;align-items:flex-end;gap:3px;color:#CFCFCF;font-size:14px;line-height:1.25;white-space:nowrap}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .rp-walk-min{display:inline-flex;align-items:center;gap:3px}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .rp-walk-min svg{flex:none}
+/* ---- buttons ---- */
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-actions{display:flex;justify-content:center;gap:8px;margin-top:20px}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-actions > button{height:50px;margin:0!important;border:0!important;border-radius:8px!important;background:#1B1B1B!important;color:#D8D8D8!important;
+  font:inherit;font-size:15px!important;font-weight:600!important;cursor:pointer;box-shadow:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-actions > #recommend-more{flex:1.7 1 0;display:flex!important;align-items:center;justify-content:center;gap:6px;width:auto!important;max-width:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-actions > #recommend-more[hidden]{display:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-actions > .rp-list{flex:1 1 0}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-actions > #recommend-more[hidden] + .rp-list{flex:0 1 66%}
+
+/* ---- light mode ---- */
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-start-locate{border-color:#D6D6D5;color:#2B2B2B}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-start-links button{color:#6B6B69}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-top{background:#FCFCFB!important;box-shadow:0 8px 22px rgba(0,0,0,.08)!important}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-cell-time{border-left-color:#E1E1E0}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-cell .recommend-source-caption{color:#6B6B69!important}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-district-name,html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-time-trigger{color:#2B2B2B!important}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-time-trigger .recommend-control-arrow{border-top-color:#696969}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) #recommend-area-trigger{background:#EFEFEE!important;color:#696969!important}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-empty{color:#2B2B2B}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-venue{color:#2B2B2B!important}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-card-type,html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .rp-status-time{color:#696969!important}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .rp-walk{color:#4A4A4A}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-opening-open .rp-status-label{color:#4E7A2E}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-actions > button{background:#EFEFEE!important;color:#2B2B2B!important}
+
+/* order (css/recommend.css arranges the column with `order`): list, then the buttons, then the note */
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-actions{order:2!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-actions > #recommend-more{order:0!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-actions > .rp-list{order:1!important}
+/* the card: no box, a divider between cards, height from its content */
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card{height:auto!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-bottom:1px solid #2A2A2A!important;
+  border-radius:0!important;background:none!important;box-shadow:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-card-shell{height:auto!important;min-height:0!important;overflow:visible!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-opening-status::before,html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-opening-status::after{display:none!important;content:none!important}
+html[data-theme="light"] body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card{border-bottom-color:#E1E1E0!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card :is(.recommend-card-main,.recommend-card-side,.recommend-venue,.recommend-type-row,.recommend-guide-tags){height:auto!important;max-height:none!important;min-height:0!important;margin-top:0!important;margin-bottom:0!important;position:static!important;top:auto!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___) .rp-card .recommend-venue{max-height:2.9em!important}
+
+/* stronger: css/recommend.css styles these with very heavy selectors */
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) .rp-card .recommend-card-shell{grid-template-rows:auto auto!important;grid-auto-rows:auto!important;align-items:start!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) .rp-card .recommend-card-type{position:static!important;transform:none!important;translate:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) .rp-card .recommend-venue{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;overflow:hidden!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) .rp-card .recommend-guide-tags{overflow:visible!important;display:block!important;mask:none!important;-webkit-mask:none!important;direction:ltr!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) .rp-card .recommend-tag-track{display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;gap:6px!important;margin:0!important;padding:0!important;
+  transform:none!important;translate:none!important;width:auto!important;min-width:0!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) #recommend-results{max-height:none!important;height:auto!important;overflow:visible!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) .rp-card :is(.recommend-opening-status,.rp-walk){position:static!important;inset:auto!important;transform:none!important;translate:none!important;margin:0!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) .rp-card{max-height:none!important;overflow:visible!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) .rp-card .recommend-card-side{align-self:stretch!important;height:auto!important;max-height:none!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) .rp-card,html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) .rp-card .recommend-card-shell{height:auto!important;max-height:none!important;min-height:0!important}
+html body #taipei-recommender:not(#_):not(#__):not(#___):not(#____):not(#_____) #recommend-results{grid-template-rows:none!important;grid-auto-rows:auto!important}
