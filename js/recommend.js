@@ -49,6 +49,7 @@
   // Shared, frame-coalesced resize dispatcher from guide.js (fallback: own listener).
   const onResize=fn=>window.tabiOnResize?window.tabiOnResize(fn):window.addEventListener('resize',fn,{passive:true});
   const drawer = document.getElementById('taipei-recommender');
+  let rpSync=null;   // v30.9.287: the station picker's header, kept in step by syncUI()
   if(!drawer)return;
   const results=document.getElementById('recommend-results');
   const count=document.getElementById('recommend-count');
@@ -1148,8 +1149,8 @@
   function toggleTimeOptions(){const open=timeOptions.hidden;closeOptions();advanced.open=false;if(open){timeOptions.hidden=false;timeButton.setAttribute('aria-expanded','true');}}
   timeButton.addEventListener('click',toggleTimeOptions);
   areaButton.addEventListener('click',()=>activateMode(state.areaMode==='station'?'current':'station'));
-  title.addEventListener('click',()=>activateMode('current'));
-  title.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();activateMode('current');}});
+  title.addEventListener('click',()=>{leaveStart(true);activateMode('current');});
+  title.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();leaveStart(true);activateMode('current');}});
   drawer.addEventListener('keydown',event=>{if(event.key==='Escape'){closeOptions();closeStationMenus();advanced.open=false;}});
   // Do not steal the page position when a pointer opens the advanced filter.
   // Keep the native <details> toggle and keyboard focus for accessibility.
@@ -1276,6 +1277,7 @@
       !selectedStation?'駅を選んでください。':
       `選択した駅から直線${GEO_MAX_METERS}m以内の掲載店を検索します。`;
     locationStatus.hidden=!locationStatus.textContent;
+    if(rpSync)rpSync();
   }
   // The Geolocation API requires HTTPS and explicit browser permission.
   // No coordinates are stored, sent to any service, or persisted.
@@ -1688,6 +1690,137 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     top.append(left,right);
     const head=el('div','rp-head');head.append(top,areaButton);
     controls.prepend(head);
+  }
+  // ---- v30.9.287: 駅から探す — one search field; lines, then a line's stations ----
+  // Typing a line code (BL) or a station number (BL06) shows on the badge at once; a tap,
+  // Enter, or a tap elsewhere with one exact match chooses the station. The search stays as
+  // it was when the panel reopens, until something in another chapter is used.
+  {
+    const stationName=n=>String(n||'').replace(/車站$/,'駅');
+    const lineOf=id=>metroLines.find(l=>l.id===id)||null;
+    const splitCode=code=>{const m=/^([A-Z]+)(\d+[A-Z]?)$/.exec(code||'');return m?[m[1],m[2]]:[code||'',''];};
+    function paintBadge(node,lineId,num){
+      const line=lineOf(lineId);
+      node.replaceChildren(el('span','rp-badge-line',line?line.id:'--'),el('span','rp-badge-num',num||'--'));
+      if(line)node.style.setProperty('--rp-line',line.color);else node.style.removeProperty('--rp-line');
+      node.classList.toggle('is-empty',!line);
+    }
+    const pick={query:'',line:null,open:false,exact:null,preview:null};
+    const box=el('button','rp-station');box.type='button';
+    box.setAttribute('aria-haspopup','listbox');box.setAttribute('aria-expanded','false');
+    const badge=el('span','rp-badge'),copy=el('span','rp-station-copy'),lineName=el('small','rp-station-line'),name=el('span','rp-station-name');
+    copy.append(lineName,name);box.append(badge,copy);
+    stationControls.after(box);
+    const panel=el('div','rp-panel rp-station-panel');panel.hidden=true;
+    const search=document.createElement('input');
+    Object.assign(search,{type:'search',className:'rp-search',placeholder:'駅名・駅番号で検索',autocomplete:'off',spellcheck:false});
+    search.setAttribute('enterkeyhint','done');search.setAttribute('aria-label','駅名・駅番号で検索');
+    const crumb=el('button','rp-crumb');crumb.type='button';crumb.hidden=true;
+    const list=el('div','rp-options');list.setAttribute('role','listbox');
+    panel.append(search,crumb,list);
+    drawer.querySelector('.rp-head').append(panel);
+
+    function match(){
+      const raw=pick.query.trim().replace(/駅$/,''),q=raw.toUpperCase().replace(/\s+/g,'');
+      const code=/^([A-Z]{1,2})(\d{0,2}[A-Z]?)$/.exec(q);
+      if(q&&code&&lineOf(code[1])){
+        const line=code[1],num=code[2];
+        const stations=metroStations.filter(x=>x.line===line&&splitCode(x.code)[1].startsWith(num));
+        let exact=metroStations.find(x=>x.line===line&&x.code===q)||null;
+        if(!exact&&/^\d$/.test(num))exact=metroStations.find(x=>x.code===line+'0'+num)||null;
+        return {stations,exact,preview:{line,num:exact?splitCode(exact.code)[1]:num}};
+      }
+      if(q){
+        // Exact names first (台北駅 → R10, BL12), then names that start with it, then the rest.
+        const full=pick.query.trim(),low=raw.toLowerCase();
+        const rank=x=>{const n=stationName(x.name),e=String(x.en||'').toLowerCase();
+          if(n===full||n===raw||x.name===raw||e===low)return 0;
+          if(n.startsWith(raw)||e.startsWith(low))return 1;
+          return n.includes(raw)||x.name.includes(raw)||e.includes(low)?2:9;};
+        const stations=metroStations.map(x=>[rank(x),x]).filter(([r])=>r<9).sort((a,b)=>a[0]-b[0]).map(([,x])=>x);
+        const exacts=stations.filter(x=>rank(x)===0);
+        const exact=stations.length===1?stations[0]:exacts.length===1?exacts[0]:null;
+        return {stations,exact,preview:exact?{line:exact.line,num:splitCode(exact.code)[1]}:null};
+      }
+      if(pick.line)return {stations:metroStations.filter(x=>x.line===pick.line),exact:null,preview:{line:pick.line,num:''}};
+      return {stations:null,exact:null,preview:null};
+    }
+    function option(cls,onPick){
+      const b=el('button','rp-option '+cls);b.type='button';b.setAttribute('role','option');
+      b.addEventListener('click',onPick);return b;
+    }
+    function render(){
+      const m=match();pick.exact=m.exact;pick.preview=m.preview;
+      crumb.hidden=!(pick.line&&!pick.query.trim());
+      if(!crumb.hidden)crumb.replaceChildren(el('span','rp-crumb-arrow','‹'),el('span','rp-crumb-text','路線一覧'));
+      list.replaceChildren();
+      if(!m.stations){
+        for(const l of metroLines){
+          const b=option('rp-option-line',()=>{pick.line=l.id;pick.query='';search.value='';render();});
+          const code=el('span','rp-line-code',l.id);code.style.background=l.color;
+          b.append(code,el('span','rp-option-name',l.name),el('span','rp-option-en',LINE_EN[l.id]||''));
+          list.append(b);
+        }
+      }else if(!m.stations.length){
+        list.append(el('p','rp-none','該当する駅がありません'));
+      }else{
+        for(const x of m.stations){
+          const b=option('rp-option-station',()=>choose(x));
+          const mini=el('span','rp-badge rp-badge-mini');paintBadge(mini,x.line,splitCode(x.code)[1]);
+          b.append(mini,el('span','rp-option-name',stationName(x.name)),el('span','rp-option-en',x.en||''));
+          if(x===m.exact)b.setAttribute('aria-selected','true');
+          list.append(b);
+        }
+      }
+      sync();
+    }
+    function sync(){
+      box.hidden=state.areaMode!=='station';
+      const chosen=currentStation();
+      const pv=pick.open?pick.preview:null;
+      if(pv&&pv.line){
+        paintBadge(badge,pv.line,pv.num);
+        lineName.textContent=pick.exact?lineOf(pick.exact.line)?.name||'':'';
+        name.replaceChildren(pick.exact?stationName(pick.exact.name):'路線を選択');
+        if(pick.exact)name.append(el('span','rp-station-en',pick.exact.en||''));
+      }else if(chosen){
+        paintBadge(badge,chosen.line,splitCode(chosen.code)[1]);
+        lineName.textContent=lineOf(chosen.line)?.name||'';
+        name.replaceChildren(stationName(chosen.name),el('span','rp-station-en',chosen.en||''));
+      }else{
+        paintBadge(badge,null,'');lineName.textContent='';
+        name.replaceChildren(stationsFailed?'駅データなし':!stationsReady?'読み込み中…':'路線を選択');
+      }
+    }
+    function open(){
+      if(!stationsReady)return;
+      pick.open=true;panel.hidden=false;box.setAttribute('aria-expanded','true');
+      search.value=pick.query;render();
+      requestAnimationFrame(()=>search.focus({preventScroll:true}));
+    }
+    function close(){
+      if(!pick.open)return;
+      pick.open=false;panel.hidden=true;box.setAttribute('aria-expanded','false');sync();
+    }
+    function choose(x){close();if(x)chooseStation(x);}
+    box.addEventListener('click',event=>{event.stopPropagation();pick.open?close():open();});
+    search.addEventListener('input',()=>{pick.query=search.value;if(pick.query.trim())pick.line=null;render();});
+    search.addEventListener('keydown',event=>{
+      if(event.key==='Enter'){event.preventDefault();const first=pick.exact||match().stations?.[0];if(first)choose(first);else close();}
+      else if(event.key==='Escape'){event.preventDefault();close();box.focus();}
+    });
+    crumb.addEventListener('click',()=>{pick.line=null;render();search.focus({preventScroll:true});});
+    // A tap elsewhere finishes the input (an exact match is chosen); a tap in another
+    // chapter also forgets the search.
+    const food=document.getElementById('food-flip')||drawer;
+    document.addEventListener('pointerdown',event=>{
+      const t=event.target;
+      if(pick.open&&!panel.contains(t)&&!box.contains(t)){const x=pick.exact;close();if(x&&currentStation()!==x)chooseStation(x);}
+      if(!food.contains(t)){pick.query='';pick.line=null;}
+    },true);
+    // Leaving 駅から探す closes the panel.
+    rpSync=()=>{if(state.areaMode!=='station')close();sync();};
+    sync();
   }
   // ---- v30.9.286: first view, remembered way of searching, 一覧を見る ----
   const PICK_KEY='tabiFoodPick';
